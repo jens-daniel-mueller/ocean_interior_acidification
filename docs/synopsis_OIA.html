@@ -12,7 +12,7 @@
 <meta name="author" content="Jens Daniel Müller" />
 
 
-<title>OIA computation</title>
+<title>synopsis_OIA</title>
 
 <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -380,7 +380,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">OIA computation</h1>
+<h1 class="title toc-ignore">synopsis_OIA</h1>
 <h4 class="author">Jens Daniel Müller</h4>
 <h4 class="date">03 February, 2023</h4>
 
@@ -604,8 +604,8 @@ have uncommitted changes.
 
 <p>
 These are the previous versions of the repository in which changes were
-made to the R Markdown (<code>analysis/compute_OIA.Rmd</code>) and HTML
-(<code>docs/compute_OIA.html</code>) files. If you’ve configured a
+made to the R Markdown (<code>analysis/synopsis_OIA.Rmd</code>) and HTML
+(<code>docs/synopsis_OIA.html</code>) files. If you’ve configured a
 remote Git repository (see <code>?wflow_git_remote</code>), click on the
 hyperlinks in the table below to view the files as they were in that
 past version.
@@ -637,7 +637,7 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/dde599de1ad7da4a1bb2aba7a5fee06b139ad92c/analysis/compute_OIA.Rmd" target="_blank">dde599d</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/dde599de1ad7da4a1bb2aba7a5fee06b139ad92c/analysis/synopsis_OIA.Rmd" target="_blank">dde599d</a>
 </td>
 <td>
 jens-daniel-mueller
@@ -649,40 +649,6 @@ jens-daniel-mueller
 completed basis OIA computation
 </td>
 </tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/db079b95677364871d03c9b8a42eabaa9844a985/docs/compute_OIA.html" target="_blank">db079b9</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-02
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/808fabc2fe6aa9ceda8dd5bdc6ce7229fd77a701/analysis/compute_OIA.Rmd" target="_blank">808fabc</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-02
-</td>
-<td>
-added RMD for computation
-</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -690,389 +656,8 @@ added RMD for computation
 </div>
 </div>
 </div>
-<pre class="r"><code>center &lt;- -160
-boundary &lt;- center + 180
-target_crs &lt;- paste0(&quot;+proj=robin +over +lon_0=&quot;, center)
-# target_crs &lt;- paste0(&quot;+proj=eqearth +over +lon_0=&quot;, center)
-# target_crs &lt;- paste0(&quot;+proj=eqearth +lon_0=&quot;, center)
-# target_crs &lt;- paste0(&quot;+proj=igh_o +lon_0=&quot;, center)
-
-worldmap &lt;- ne_countries(scale = &#39;small&#39;,
-                         type = &#39;map_units&#39;,
-                         returnclass = &#39;sf&#39;)
-
-worldmap &lt;- worldmap %&gt;% st_break_antimeridian(lon_0 = center)
-worldmap_trans &lt;- st_transform(worldmap, crs = target_crs)
-
-# ggplot() +
-#   geom_sf(data = worldmap_trans)
-
-coastline &lt;- ne_coastline(scale = &#39;small&#39;, returnclass = &quot;sf&quot;)
-coastline &lt;- st_break_antimeridian(coastline, lon_0 = 200)
-coastline_trans &lt;- st_transform(coastline, crs = target_crs)
-
-# ggplot() +
-#   geom_sf(data = worldmap_trans, fill = &quot;grey&quot;, col=&quot;grey&quot;) +
-#   geom_sf(data = coastline_trans)
-
-
-bbox &lt;- st_bbox(c(xmin = -180, xmax = 180, ymax = 65, ymin = -78), crs = st_crs(4326))
-bbox &lt;- st_as_sfc(bbox)
-bbox_trans &lt;- st_break_antimeridian(bbox, lon_0 = center)
-
-bbox_graticules &lt;- st_graticule(
-  x = bbox_trans,
-  crs = st_crs(bbox_trans),
-  datum = st_crs(bbox_trans),
-  lon = c(20, 20.001),
-  lat = c(-78,65),
-  ndiscr = 1e3,
-  margin = 0.001
-)
-
-bbox_graticules_trans &lt;- st_transform(bbox_graticules, crs = target_crs)
-rm(worldmap, coastline, bbox, bbox_trans, bbox_graticules)
-
-# ggplot() +
-#   geom_sf(data = worldmap_trans, fill = &quot;grey&quot;, col=&quot;grey&quot;) +
-#   geom_sf(data = coastline_trans) +
-#   geom_sf(data = bbox_graticules_trans)
-
-lat_lim &lt;- ext(bbox_graticules_trans)[c(3,4)]*1.002
-lon_lim &lt;- ext(bbox_graticules_trans)[c(1,2)]*1.005
-
-# ggplot() +
-#   geom_sf(data = worldmap_trans, fill = &quot;grey90&quot;, col = &quot;grey90&quot;) +
-#   geom_sf(data = coastline_trans) +
-#   geom_sf(data = bbox_graticules_trans, linewidth = 1) +
-#   coord_sf(crs = target_crs,
-#            ylim = lat_lim,
-#            xlim = lon_lim,
-#            expand = FALSE) +
-#   theme(
-#     panel.border = element_blank(),
-#     axis.text = element_blank(),
-#     axis.ticks = element_blank()
-#   )</code></pre>
-<div id="libraries" class="section level1">
-<h1>Libraries</h1>
-<pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
-  filter(MLR_basins == &quot;5&quot;) %&gt;% 
-  select(lon, lat, basin)</code></pre>
-</div>
-<div id="read-data" class="section level1">
-<h1>Read data</h1>
-<div id="delta-cant" class="section level2">
-<h2>Delta Cant</h2>
-<pre class="r"><code>file_out &lt;- paste0(path_out, &quot;dcant_emlr_cstar_mueller_94-04-14.nc&quot;)
-
-dcant_3d_read_mdim &lt;-
-  read_mdim(file_out)
-
-ggplot() +
-  geom_stars(data = dcant_3d_read_mdim %&gt;% 
-               filter(period == &quot;1994 - 2004&quot;,
-                      depth == 50)) +
-  facet_grid(MLR_basins~Version_ID_group) +
-  scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
-                       na.value = &quot;transparent&quot;)</code></pre>
-<p><img src="figure/compute_OIA.Rmd/read_interior_dcant_files-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>dcant_3d_tibble &lt;- dcant_3d_read_mdim %&gt;% 
-               filter(Version_ID_group == &quot;Standard case&quot;,
-                      MLR_basins == &quot;3&quot;) %&gt;% 
-  as_tibble()
-
-rm(dcant_3d_read_mdim)
-
-dcant_3d_tibble &lt;- dcant_3d_tibble %&gt;% 
-  drop_na()
-
-# dcant_3d_tibble &lt;- dcant_3d_tibble %&gt;%
-#   filter(lon == 335.5,
-#          lat == 0.5)
-
-
-dcant_3d_tibble %&gt;%
-  filter(depth == 500) %&gt;% 
-  ggplot() +
-  geom_raster(aes(lon, lat, fill = dcant)) +
-  facet_grid(MLR_basins~Version_ID_group) +
-  scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
-                       na.value = &quot;transparent&quot;)</code></pre>
-<p><img src="figure/compute_OIA.Rmd/read_interior_dcant_files-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code># dcant_3d_tibble %&gt;% 
-#   ggplot() +
-#   geom_path(aes(dcant, depth, col = period)) +
-#   scale_y_reverse()</code></pre>
-<pre class="r"><code>S04_cant_3d &lt;-
-  read_csv(paste(path_preprocessing,
-                 &quot;S04_tcant_3d.csv&quot;,
-                 sep = &quot;&quot;))</code></pre>
-</div>
-</div>
-<div id="required-data" class="section level1">
-<h1>Required data</h1>
-<div id="observational" class="section level2">
-<h2>Observational</h2>
-<p>Currently, following data sets are used for mapping:</p>
-<ul>
-<li>GLODAPv2_2016b_MappedClimatologies, with variables
-<ul>
-<li>Phosphate (-&gt; phosphate_star)</li>
-<li>Silicate</li>
-<li>Oxygen (-&gt; AOU)</li>
-<li>TAlk (surface only)</li>
-<li>TCO2 (surface only)</li>
-</ul></li>
-</ul>
-<pre class="r"><code>variables &lt;-
-  c(&quot;TCO2&quot;, &quot;TAlk&quot;, &quot;PO4&quot;, &quot;silicate&quot;, &quot;NO3&quot;)
-
-# i_variable &lt;- variables[1]
-
-for (i_variable in variables) {
-  temp &lt;- read_csv(paste(
-    path_preprocessing,
-    paste(&quot;GLODAPv2_2016_MappedClimatology_&quot;, i_variable, &quot;.csv&quot;, sep = &quot;&quot;),
-    sep = &quot;&quot;
-  ))
-  
-  if (exists(&quot;GLODAP_predictors&quot;)) {
-    GLODAP_predictors &lt;- full_join(GLODAP_predictors, temp)
-  }
-  
-  if (!exists(&quot;GLODAP_predictors&quot;)) {
-    GLODAP_predictors &lt;- temp
-  }
-}
-
-rm(temp, i_variable, variables)
-
-GLODAP_predictors &lt;- GLODAP_predictors %&gt;%
-  rename(phosphate = PO4,
-         nitrate = NO3,
-         talk = TAlk,
-         tco2 = TCO2)
-
-# removed na&#39;s attributable to slightly different coverage of predictor fields
-GLODAP_predictors &lt;- GLODAP_predictors %&gt;%
-  drop_na()</code></pre>
-<ul>
-<li>World Ocean Atlas 2018
-<ul>
-<li>Salinity</li>
-<li>Temperature</li>
-<li>Neutral density</li>
-</ul></li>
-</ul>
-<pre class="r"><code>WOA18_predictors &lt;-
-  read_csv(paste(path_preprocessing,
-                 &quot;WOA18_sal_temp.csv&quot;,
-                 sep = &quot;&quot;))
-
-WOA18_predictors_nuts_O2 &lt;-
-  read_csv(paste(path_preprocessing,
-                 &quot;WOA18_nuts_O2.csv&quot;,
-                 sep = &quot;&quot;))</code></pre>
-</div>
-</div>
-<div id="join-data" class="section level1">
-<h1>Join data</h1>
-<div id="woa18-glodap" class="section level2">
-<h2>WOA18 + GLODAP</h2>
-<p>WOA18 and GLODAP predictor climatologies are merged. Only horizontal
-grid cells with observations from both predictor fields are kept.</p>
-<pre class="r"><code># join deep water predictors
-
-predictors &lt;- right_join(GLODAP_predictors,
-                          WOA18_predictors)
-
-predictors &lt;- rquery::natural_join(predictors, WOA18_predictors_nuts_O2,
-                           by = c(&quot;lon&quot;, &quot;lat&quot;, &quot;depth&quot;, &quot;basin_AIP&quot;),
-                           jointype = &quot;LEFT&quot;) %&gt;% 
-  as_tibble()
-
-predictors &lt;- predictors %&gt;% 
-  drop_na()
-
-
-rm(GLODAP_predictors, WOA18_predictors_nuts_O2, WOA18_predictors)</code></pre>
-</div>
-<div id="predictors-cant" class="section level2">
-<h2>predictors + Cant</h2>
-<pre class="r"><code># predictors %&gt;% distinct(depth) %&gt;% pull()
-# S04_cant_3d %&gt;% distinct(depth) %&gt;% pull()
-# dcant_3d_tibble %&gt;% distinct(depth) %&gt;% pull()
-
-DIC_1994 &lt;- 
-  inner_join(predictors,
-             dcant_3d_tibble %&gt;% filter(period == &quot;1994 - 2004&quot;) %&gt;% 
-               select(-period))
-
-
-DIC_1994 &lt;- DIC_1994 %&gt;% 
-  mutate(tco2 = tco2 - 0.8 * dcant)
-
-DIC_2004 &lt;- DIC_1994 %&gt;% 
-  mutate(tco2 = tco2 + dcant)
-
-DIC_2014 &lt;-
-  inner_join(DIC_2004 %&gt;% select(-dcant),
-             dcant_3d_tibble %&gt;% filter(period == &quot;2004 - 2014&quot;) %&gt;%
-               select(-period))
-
-DIC_2014 &lt;- DIC_2014 %&gt;% 
-  mutate(tco2 = tco2 + dcant)
-
-
-DIC_1800 &lt;- inner_join(
-  DIC_1994,
-  S04_cant_3d %&gt;% select(lon, lat, depth, tcant)
-)
-
-DIC_1800 &lt;- DIC_1800 %&gt;% 
-  mutate(tco2 = tco2 - tcant)
-
-DIC &lt;- bind_rows(
-  DIC_1800 %&gt;% mutate(tref = &quot;1800&quot;),
-  DIC_1994 %&gt;% mutate(tref = &quot;1994&quot;),
-  DIC_2004 %&gt;% mutate(tref = &quot;2004&quot;),
-  DIC_2014 %&gt;% mutate(tref = &quot;2014&quot;)
-)
-
-rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant_3d)
-
-acidification &lt;- DIC %&gt;%
-  mutate(
-    carb(
-      flag = 15,
-      var1 = talk * 1e-6,
-      var2 = tco2 * 1e-6,
-      S = sal,
-      T = temp,
-      P = depth / 10,
-      Pt = phosphate * 1e-6,
-      Sit = silicate * 1e-6,
-      k1k2 = &quot;s20&quot;,
-      kf = &quot;dg&quot;
-    )
-  )
-
-acidification &lt;- acidification %&gt;%
-  select(-c(dcant, tcant, flag, S, T, Patm, P, DIC, ALK))
-
-acidification &lt;- acidification %&gt;%
-  mutate(hyd_ion = 10^(-pH))
-
-
-calc_delta_total &lt;- function(x) (x - first(x))
-calc_delta_interval &lt;- function(x) (x - lag(x, default = first(x)))
-
-acidification_trend &lt;- acidification %&gt;% 
-  arrange(tref) %&gt;% 
-  group_by(lat, lon, depth) %&gt;% 
-  mutate(
-    across(
-      .cols = c(tco2, pH, pCO2insitu, HCO3, CO3, OmegaAragonite, OmegaCalcite, hyd_ion),
-      .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
-    )
-  ) %&gt;% 
-  ungroup()</code></pre>
-<pre class="r"><code>acidification_zonal &lt;- acidification %&gt;%
-  group_by(tref) %&gt;%
-  nest() %&gt;%
-  mutate(zonal = map(.x = data, ~m_zonal_mean_sd(.x))) %&gt;%
-  select(-data) %&gt;%
-  unnest(zonal)
-
-# dcant_zonal &lt;- m_cut_gamma(dcant_zonal,
-#                            &quot;gamma_mean&quot;)</code></pre>
-<pre class="r"><code>acidification_global_section &lt;- acidification_trend %&gt;%
-  group_by(tref) %&gt;%
-  nest() %&gt;%
-  mutate(zonal = map(.x = data, ~m_section_global_mean_sd(.x))) %&gt;%
-  select(-data) %&gt;%
-  unnest(zonal)
-
-p_section_global(
-  df = acidification_global_section %&gt;%
-    filter(tref == &quot;2014&quot;),
-  var = &quot;pH_mean&quot;,
-  plot_slabs = &quot;n&quot;
-)</code></pre>
-<p><img src="figure/compute_OIA.Rmd/global_section-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>p_section_global(
-  df = acidification_global_section %&gt;%
-    filter(tref == &quot;1994&quot;),
-  var = &quot;pH_delta_interval_mean&quot;,
-  plot_slabs = &quot;n&quot;
-)</code></pre>
-<p><img src="figure/compute_OIA.Rmd/global_section-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>p_section_global(
-  df = acidification_global_section %&gt;%
-    filter(tref == &quot;2014&quot;),
-  var = &quot;hyd_ion_delta_interval_mean&quot;,
-  plot_slabs = &quot;n&quot;
-)</code></pre>
-<p><img src="figure/compute_OIA.Rmd/global_section-3.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
-    mutate(area = earth_surf(lat, lon))
-
-acidification_profiles &lt;- full_join(basinmask,
-          acidification_trend %&gt;% select(-c(basin_AIP, MLR_basins, Version_ID_group))) %&gt;%
-  drop_na() %&gt;%
-  relocate(tref) %&gt;%
-  mutate(across(gamma:hyd_ion_delta_interval,
-                ~ . * area))
-
-acidification_profiles &lt;- acidification_profiles %&gt;%
-  group_by(tref, basin, depth) %&gt;%
-  summarise(across(gamma:hyd_ion_delta_interval,
-                   ~ sum(.) / sum(area))) %&gt;%
-  ungroup()
-
-  
-acidification_profiles %&gt;% 
-  select(tref, basin, depth, contains(&quot;delta_total&quot;)) %&gt;% 
-  pivot_longer(-c(tref:depth),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;delta_total&quot;) %&gt;% 
-  filter(tref != 1800) %&gt;% 
-  ggplot(aes(delta_total, depth, col = tref)) +
-  geom_vline(xintercept = 0) +
-  geom_path() +
-  scale_y_reverse() +
-  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="figure/compute_OIA.Rmd/mean_profiles-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>acidification_profiles %&gt;% 
-  select(tref, basin, depth, contains(&quot;delta_interval&quot;)) %&gt;% 
-  pivot_longer(-c(tref:depth),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;delta_interval&quot;) %&gt;% 
-  filter(!(tref %in% c(1800,1994))) %&gt;% 
-  ggplot(aes(delta_interval, depth, col = tref)) +
-  geom_vline(xintercept = 0) +
-  geom_path() +
-  scale_y_reverse() +
-  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="figure/compute_OIA.Rmd/mean_profiles-2.png" width="672" style="display: block; margin: auto;" /></p>
-</div>
-</div>
-<div id="write-ouput" class="section level1">
-<h1>Write ouput</h1>
-<pre class="r"><code>acidification_trend %&gt;% 
-  write_csv(paste0(path_OIA, &quot;OIA.csv&quot;))
-
-
-acidification_zonal %&gt;% 
-  write_csv(paste0(path_OIA, &quot;OIA_zonal.csv&quot;))
-
-
-acidification_global_section %&gt;% 
-  write_csv(paste0(path_OIA, &quot;OIA_global_section.csv&quot;))
-
-acidification_profiles %&gt;% 
-  write_csv(paste0(path_OIA, &quot;OIA_profiles.csv&quot;))</code></pre>
+<div id="introduction" class="section level2">
+<h2>Introduction</h2>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1102,55 +687,20 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] seacarb_3.3.1       SolveSAPHE_2.1.0    oce_1.7-10         
- [4] gsw_1.1-1           stars_0.6-0         abind_1.4-5        
- [7] ggpattern_1.0.1     ggh4x_0.2.3         khroma_1.9.0       
-[10] kableExtra_1.3.4    ggdist_3.2.0        ggalluvial_0.12.3  
-[13] terra_1.6-41        sf_1.0-9            rnaturalearth_0.1.0
-[16] geomtextpath_0.1.1  colorspace_2.0-3    marelac_2.1.10     
-[19] shape_1.4.6         ggforce_0.4.1       metR_0.13.0        
-[22] scico_1.3.1         patchwork_1.1.2     collapse_1.8.9     
-[25] forcats_0.5.2       stringr_1.4.1       dplyr_1.0.10       
-[28] purrr_0.3.5         readr_2.1.3         tidyr_1.2.1        
-[31] tibble_3.1.8        ggplot2_3.4.0       tidyverse_1.3.2    
-[34] workflowr_1.7.0    
+[1] workflowr_1.7.0
 
 loaded via a namespace (and not attached):
-  [1] googledrive_2.0.0       ellipsis_0.3.2          class_7.3-20           
-  [4] rprojroot_2.0.3         fs_1.5.2                rstudioapi_0.14        
-  [7] proxy_0.4-27            farver_2.1.1            bit64_4.0.5            
- [10] fansi_1.0.3             lubridate_1.9.0         xml2_1.3.3             
- [13] codetools_0.2-18        cachem_1.0.6            knitr_1.41             
- [16] polyclip_1.10-4         rquery_1.4.9            jsonlite_1.8.3         
- [19] broom_1.0.1             dbplyr_2.2.1            compiler_4.2.2         
- [22] httr_1.4.4              backports_1.4.1         assertthat_0.2.1       
- [25] fastmap_1.1.0           gargle_1.2.1            cli_3.4.1              
- [28] later_1.3.0             tweenr_2.0.2            htmltools_0.5.3        
- [31] tools_4.2.2             rnaturalearthdata_0.1.0 gtable_0.3.1           
- [34] glue_1.6.2              Rcpp_1.0.9              cellranger_1.1.0       
- [37] jquerylib_0.1.4         vctrs_0.5.1             rqdatatable_1.3.1      
- [40] svglite_2.1.0           lwgeom_0.2-10           xfun_0.35              
- [43] ps_1.7.2                rvest_1.0.3             timechange_0.1.1       
- [46] lifecycle_1.0.3         googlesheets4_1.0.1     getPass_0.2-2          
- [49] MASS_7.3-58.1           scales_1.2.1            vroom_1.6.0            
- [52] hms_1.1.2               promises_1.2.0.1        parallel_4.2.2         
- [55] yaml_2.3.6              memoise_2.0.1           sass_0.4.4             
- [58] stringi_1.7.8           highr_0.9               e1071_1.7-12           
- [61] checkmate_2.1.0         rlang_1.0.6             pkgconfig_2.0.3        
- [64] systemfonts_1.0.4       distributional_0.3.1    evaluate_0.18          
- [67] lattice_0.20-45         labeling_0.4.2          bit_4.0.5              
- [70] processx_3.8.0          tidyselect_1.2.0        wrapr_2.0.9            
- [73] cubelyr_1.0.2           magrittr_2.0.3          R6_2.5.1               
- [76] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
- [79] haven_2.5.1             whisker_0.4             withr_2.5.0            
- [82] units_0.8-0             sp_1.5-1                modelr_0.1.10          
- [85] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
- [88] tzdb_0.3.0              rmarkdown_2.18          isoband_0.2.6          
- [91] grid_4.2.2              readxl_1.4.1            data.table_1.14.6      
- [94] callr_3.7.3             git2r_0.30.1            webshot_0.5.4          
- [97] reprex_2.0.2            digest_0.6.30           classInt_0.4-8         
-[100] httpuv_1.6.6            textshaping_0.3.6       munsell_0.5.0          
-[103] viridisLite_0.4.1       bslib_0.4.1            </code></pre>
+ [1] Rcpp_1.0.9       compiler_4.2.2   pillar_1.8.1     bslib_0.4.1     
+ [5] later_1.3.0      git2r_0.30.1     jquerylib_0.1.4  tools_4.2.2     
+ [9] getPass_0.2-2    digest_0.6.30    jsonlite_1.8.3   evaluate_0.18   
+[13] tibble_3.1.8     lifecycle_1.0.3  pkgconfig_2.0.3  rlang_1.0.6     
+[17] cli_3.4.1        rstudioapi_0.14  yaml_2.3.6       xfun_0.35       
+[21] fastmap_1.1.0    httr_1.4.4       stringr_1.4.1    knitr_1.41      
+[25] fs_1.5.2         vctrs_0.5.1      sass_0.4.4       rprojroot_2.0.3 
+[29] glue_1.6.2       R6_2.5.1         processx_3.8.0   fansi_1.0.3     
+[33] rmarkdown_2.18   callr_3.7.3      magrittr_2.0.3   whisker_0.4     
+[37] ps_1.7.2         promises_1.2.0.1 htmltools_0.5.3  httpuv_1.6.6    
+[41] utf8_1.2.2       stringi_1.7.8    cachem_1.0.6    </code></pre>
 </div>
 </div>
 
