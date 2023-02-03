@@ -7,9 +7,30 @@ editor_options:
   chunk_output_type: console
 ---
 
-## Introduction
 
-```{r}
+# Read OIA files
+
+```{r write_output_files, eval=FALSE}
+
+acidification_trend <-
+  read_csv(paste0(path_OIA, "OIA.csv"))
+
+
+acidification_layer <-
+  read_csv(paste0(path_OIA, "OIA_layer.csv"))
+
+acidification_zonal <-
+  read_csv(paste0(path_OIA, "OIA_zonal.csv"))
+
+
+acidification_global_section <-
+  read_csv(paste0(path_OIA, "OIA_global_section.csv"))
+
+acidification_profiles <-
+  read_csv(paste0(path_OIA, "OIA_profiles.csv"))
+
+
+
 
 ```
 
