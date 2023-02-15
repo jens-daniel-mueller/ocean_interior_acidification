@@ -1,0 +1,252 @@
+---
+title: "OIA Averaging"
+author: "Jens Daniel Müller"
+date:  "`r format(Sys.time(), '%d %B, %Y')`"
+output: workflowr::wflow_html
+editor_options:
+  chunk_output_type: console
+---
+
+```{r parent, child = "/nfs/kryo/work/jenmueller/emlr_cant/utilities/setup.Rmd"}
+# this chunk runs the code stored in setup.Rmd
+# if required, please refer to instructions given here:
+# https://jdblischak.github.io/workflowr/articles/wflow-07-common-code.html
+```
+
+# Libraries
+
+```{r load_libraries_specific, include = FALSE}
+library(patchwork)
+library(ggalluvial)
+library(marelac)
+library(ggdist)
+library(kableExtra)
+library(khroma)
+library(ggh4x)
+library(ggpattern)
+library(colorspace)
+library(stars)
+library(seacarb)
+```
+
+```{r select_basinmask_5}
+
+basinmask <- basinmask %>% 
+  filter(MLR_basins == "5") %>% 
+  select(lon, lat, basin)
+
+```
+
+
+```{r define_paths_to_access_eMLR_files, include = FALSE}
+
+# only path_observations needs to be changed to model
+path_observations <-
+  paste0(path_root, "/observations/")
+
+path_preprocessing    <-
+  paste0(path_observations, "preprocessing/")
+
+
+path_preprocessing_model    <-
+  paste0(path_root, "/model/preprocessing/")
+
+path_out <-   paste0(path_observations, "output_publication/")
+path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
+
+
+```
+
+# Read data
+
+```{r layered_maps, eval=FALSE}
+
+
+acidification_layer <- acidification_trend %>%
+  mutate(depth_layer = cut(
+    depth,
+    c(0, 50, 100, 250, 500, 1000, 1500, 2000, 3000),
+    include.lowest = TRUE
+  )) %>%
+  drop_na() %>%
+  select(c(lat, lon, depth_layer, tref), where(is.numeric)) %>%
+  fgroup_by(lat, lon, depth_layer, tref) %>% {
+    add_vars(
+      fgroup_vars(., "unique"),
+      fmean(., keep.group_vars = FALSE) %>% add_stub(pre = FALSE, "_mean"),
+      fsd(., keep.group_vars = FALSE) %>% add_stub(pre = FALSE, "_sd")
+    )
+  }
+
+acidification_layer %>% 
+  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
+         tref != 1800) %>% 
+  ggplot(aes(lon, lat, fill = CO3_delta_total_mean)) +
+  geom_raster() +
+  scale_fill_viridis_c(direction = -1) +
+  facet_grid(tref ~ depth_layer) +
+  coord_quickmap()
+
+acidification_layer %>% 
+  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
+         tref != 1800) %>% 
+  ggplot(aes(lon, lat, fill = CO3_delta_interval_mean)) +
+  geom_raster() +
+  scale_fill_viridis_c(direction = -1) +
+  facet_grid(tref ~ depth_layer) +
+  coord_quickmap()
+
+acidification_layer %>% 
+  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
+         tref != 1800) %>% 
+  ggplot(aes(lon, lat, fill = pH_delta_total_mean)) +
+  geom_raster() +
+  scale_fill_viridis_c(direction = -1) +
+  facet_grid(tref ~ depth_layer) +
+  coord_quickmap()
+
+```
+
+
+
+
+```{r zonal_mean_sections, eval=FALSE}
+
+
+acidification_zonal <- acidification_trend %>%
+  group_by(tref) %>%
+  nest() %>%
+  mutate(zonal = map(.x = data, ~m_zonal_mean_sd(.x))) %>%
+  select(-data) %>%
+  unnest(zonal)
+
+acidification_zonal %>%
+  filter(
+    tref!= 1800
+  ) %>%
+  p_section_zonal_continous_depth(var = "tco2_delta_total_mean",
+                                  plot_slabs = "n",
+                                  breaks = c(-Inf,seq(0,80,10), Inf),
+                                  title_text = NULL) +
+  facet_grid(basin_AIP~tref)
+
+acidification_zonal %>%
+  filter(
+    tref!= 1800
+  ) %>%
+  p_section_zonal_continous_depth(var = "CO3_delta_total_mean",
+                                  plot_slabs = "n",
+                                  breaks = c(-Inf,seq(-0.00005,0.00001,0.00001), Inf),
+                                  title_text = NULL) +
+  facet_grid(basin_AIP~tref)
+
+```
+
+```{r global_section, eval=FALSE}
+
+acidification_global_section <- acidification_trend %>%
+  group_by(tref) %>%
+  nest() %>%
+  mutate(zonal = map(.x = data, ~m_section_global_mean_sd(.x))) %>%
+  select(-data) %>%
+  unnest(zonal)
+
+p_section_global(
+  df = acidification_global_section %>%
+    filter(tref == "2014"),
+  var = "pH_mean",
+  plot_slabs = "n"
+)
+
+p_section_global(
+  df = acidification_global_section %>%
+    filter(tref == "1994"),
+  var = "pH_delta_interval_mean",
+  plot_slabs = "n"
+)
+
+p_section_global(
+  df = acidification_global_section %>%
+    filter(tref == "2014"),
+  var = "hyd_ion_delta_interval_mean",
+  plot_slabs = "n"
+)
+
+```
+
+```{r mean_profiles, eval=FALSE}
+
+basinmask <- basinmask %>% 
+    mutate(area = earth_surf(lat, lon))
+
+acidification_profiles <- full_join(basinmask,
+          acidification_trend %>% select(-c(basin_AIP, MLR_basins, Version_ID_group))) %>%
+  drop_na() %>%
+  relocate(tref) %>%
+  mutate(across(gamma:hyd_ion_delta_interval,
+                ~ . * area))
+
+acidification_profiles <- acidification_profiles %>%
+  group_by(tref, basin, depth) %>%
+  summarise(across(gamma:hyd_ion_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+  
+acidification_profiles %>% 
+  select(tref, basin, depth, contains("delta_total")) %>% 
+  pivot_longer(-c(tref:depth),
+               names_to = "variable",
+               values_to = "delta_total") %>% 
+  filter(tref != 1800) %>% 
+  ggplot(aes(delta_total, depth, col = tref)) +
+  geom_vline(xintercept = 0) +
+  geom_path() +
+  scale_y_reverse() +
+  facet_grid(basin ~ variable, scales = "free_x")
+  
+acidification_profiles %>% 
+  select(tref, basin, depth, contains("delta_interval")) %>% 
+  pivot_longer(-c(tref:depth),
+               names_to = "variable",
+               values_to = "delta_interval") %>% 
+  filter(!(tref %in% c(1800,1994))) %>% 
+  ggplot(aes(delta_interval, depth, col = tref)) +
+  geom_vline(xintercept = 0) +
+  geom_path() +
+  scale_y_reverse() +
+  facet_grid(basin ~ variable, scales = "free_x")
+
+
+```
+
+
+
+# Write ouput
+
+```{r write_output_files, eval=FALSE}
+
+acidification_trend %>% 
+  write_csv(paste0(path_OIA, "OIA.csv"))
+
+
+acidification_layer %>% 
+  write_csv(paste0(path_OIA, "OIA_layer.csv"))
+
+acidification_zonal %>% 
+  write_csv(paste0(path_OIA, "OIA_zonal.csv"))
+
+
+acidification_global_section %>% 
+  write_csv(paste0(path_OIA, "OIA_global_section.csv"))
+
+acidification_profiles %>% 
+  write_csv(paste0(path_OIA, "OIA_profiles.csv"))
+
+
+
+
+```
+
+
+

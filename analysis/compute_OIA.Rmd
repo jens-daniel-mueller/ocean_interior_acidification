@@ -78,8 +78,8 @@ ggplot() +
 
 
 dcant_3d_tibble <- dcant_3d_read_mdim %>% 
-               filter(Version_ID_group == "Standard case",
-                      MLR_basins == "3") %>% 
+               # filter(Version_ID_group == "Standard case",
+               #        MLR_basins == "3") %>% 
   as_tibble()
 
 rm(dcant_3d_read_mdim)
@@ -93,11 +93,13 @@ dcant_3d_tibble <- dcant_3d_tibble %>%
 
 
 dcant_3d_tibble %>%
-  filter(depth == 500) %>% 
+  filter(depth == 500,
+         Version_ID_group == "Standard case",
+         MLR_basins == "3") %>%
   ggplot() +
   geom_raster(aes(lon, lat, fill = dcant)) +
-  facet_grid(MLR_basins~Version_ID_group) +
-  scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
+  facet_grid(MLR_basins ~ Version_ID_group) +
+  scale_fill_viridis_b(breaks = c(-Inf, seq(0, 16, 2), Inf),
                        na.value = "transparent")
 
 # dcant_3d_tibble %>% 
@@ -245,7 +247,8 @@ DIC_2014 <- DIC_2014 %>%
 
 
 DIC_1800 <- inner_join(
-  DIC_1994,
+  DIC_1994 %>%   filter(Version_ID_group == "Standard case",
+                        MLR_basins == "3"),
   S04_cant_3d %>% select(lon, lat, depth, tcant)
 )
 
@@ -260,6 +263,16 @@ DIC <- bind_rows(
 )
 
 rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant_3d)
+
+cases <- DIC %>%
+  distinct(tref, Version_ID_group, MLR_basins)
+
+
+```
+
+# Compute acidification trends
+
+```{r compute_acidification_trends}
 
 acidification <- DIC %>%
   mutate(
@@ -277,6 +290,8 @@ acidification <- DIC %>%
     )
   )
 
+rm(DIC)
+
 acidification <- acidification %>%
   select(-c(dcant, tcant, flag, S, T, Patm, P, DIC, ALK))
 
@@ -289,7 +304,7 @@ calc_delta_interval <- function(x) (x - lag(x, default = first(x)))
 
 acidification_trend <- acidification %>% 
   arrange(tref) %>% 
-  group_by(lat, lon, depth) %>% 
+  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>% 
   mutate(
     across(
       .cols = c(tco2, pH, pCO2insitu, HCO3, CO3, OmegaAragonite, OmegaCalcite, hyd_ion),
@@ -298,170 +313,10 @@ acidification_trend <- acidification %>%
   ) %>% 
   ungroup()
 
-
-```
-
-```{r layered_maps}
-
-
-acidification_layer <- acidification_trend %>%
-  mutate(depth_layer = cut(
-    depth,
-    c(0, 50, 100, 250, 500, 1000, 1500, 2000, 3000),
-    include.lowest = TRUE
-  )) %>%
-  drop_na() %>%
-  select(c(lat, lon, depth_layer, tref), where(is.numeric)) %>%
-  fgroup_by(lat, lon, depth_layer, tref) %>% {
-    add_vars(
-      fgroup_vars(., "unique"),
-      fmean(., keep.group_vars = FALSE) %>% add_stub(pre = FALSE, "_mean"),
-      fsd(., keep.group_vars = FALSE) %>% add_stub(pre = FALSE, "_sd")
-    )
-  }
-
-acidification_layer %>% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %>% 
-  ggplot(aes(lon, lat, fill = CO3_delta_total_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
-
-acidification_layer %>% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %>% 
-  ggplot(aes(lon, lat, fill = CO3_delta_interval_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
-
-acidification_layer %>% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %>% 
-  ggplot(aes(lon, lat, fill = pH_delta_total_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
-
-```
-
-
-
-
-```{r zonal_mean_sections}
-
-
-acidification_zonal <- acidification_trend %>%
-  group_by(tref) %>%
-  nest() %>%
-  mutate(zonal = map(.x = data, ~m_zonal_mean_sd(.x))) %>%
-  select(-data) %>%
-  unnest(zonal)
-
-acidification_zonal %>%
-  filter(
-    tref!= 1800
-  ) %>%
-  p_section_zonal_continous_depth(var = "tco2_delta_total_mean",
-                                  plot_slabs = "n",
-                                  breaks = c(-Inf,seq(0,80,10), Inf),
-                                  title_text = NULL) +
-  facet_grid(basin_AIP~tref)
-
-acidification_zonal %>%
-  filter(
-    tref!= 1800
-  ) %>%
-  p_section_zonal_continous_depth(var = "CO3_delta_total_mean",
-                                  plot_slabs = "n",
-                                  breaks = c(-Inf,seq(-0.00005,0.00001,0.00001), Inf),
-                                  title_text = NULL) +
-  facet_grid(basin_AIP~tref)
-
-```
-
-```{r global_section}
-
-acidification_global_section <- acidification_trend %>%
-  group_by(tref) %>%
-  nest() %>%
-  mutate(zonal = map(.x = data, ~m_section_global_mean_sd(.x))) %>%
-  select(-data) %>%
-  unnest(zonal)
-
-p_section_global(
-  df = acidification_global_section %>%
-    filter(tref == "2014"),
-  var = "pH_mean",
-  plot_slabs = "n"
-)
-
-p_section_global(
-  df = acidification_global_section %>%
-    filter(tref == "1994"),
-  var = "pH_delta_interval_mean",
-  plot_slabs = "n"
-)
-
-p_section_global(
-  df = acidification_global_section %>%
-    filter(tref == "2014"),
-  var = "hyd_ion_delta_interval_mean",
-  plot_slabs = "n"
-)
-
-```
-
-```{r mean_profiles}
-
-basinmask <- basinmask %>% 
-    mutate(area = earth_surf(lat, lon))
-
-acidification_profiles <- full_join(basinmask,
-          acidification_trend %>% select(-c(basin_AIP, MLR_basins, Version_ID_group))) %>%
-  drop_na() %>%
-  relocate(tref) %>%
-  mutate(across(gamma:hyd_ion_delta_interval,
-                ~ . * area))
-
-acidification_profiles <- acidification_profiles %>%
-  group_by(tref, basin, depth) %>%
-  summarise(across(gamma:hyd_ion_delta_interval,
-                   ~ sum(.) / sum(area))) %>%
-  ungroup()
-
-  
-acidification_profiles %>% 
-  select(tref, basin, depth, contains("delta_total")) %>% 
-  pivot_longer(-c(tref:depth),
-               names_to = "variable",
-               values_to = "delta_total") %>% 
-  filter(tref != 1800) %>% 
-  ggplot(aes(delta_total, depth, col = tref)) +
-  geom_vline(xintercept = 0) +
-  geom_path() +
-  scale_y_reverse() +
-  facet_grid(basin ~ variable, scales = "free_x")
-  
-acidification_profiles %>% 
-  select(tref, basin, depth, contains("delta_interval")) %>% 
-  pivot_longer(-c(tref:depth),
-               names_to = "variable",
-               values_to = "delta_interval") %>% 
-  filter(!(tref %in% c(1800,1994))) %>% 
-  ggplot(aes(delta_interval, depth, col = tref)) +
-  geom_vline(xintercept = 0) +
-  geom_path() +
-  scale_y_reverse() +
-  facet_grid(basin ~ variable, scales = "free_x")
+rm(acidification)
 
 
 ```
-
 
 
 # Write ouput
@@ -469,21 +324,87 @@ acidification_profiles %>%
 ```{r write_output_files}
 
 acidification_trend %>% 
-  write_csv(paste0(path_OIA, "OIA.csv"))
+  write_csv(paste0(path_OIA, "OIA_all.csv"))
+
+# read_csv(paste0(path_OIA, "OIA_all.csv"))
 
 
-acidification_layer %>% 
-  write_csv(paste0(path_OIA, "OIA_layer.csv"))
+acidification_trend %>%
+  filter(Version_ID_group == "Standard case",
+         MLR_basins == "3") %>%
+  write_csv(paste0(path_OIA, "OIA_standard_case.csv"))
 
-acidification_zonal %>% 
-  write_csv(paste0(path_OIA, "OIA_zonal.csv"))
 
 
-acidification_global_section %>% 
-  write_csv(paste0(path_OIA, "OIA_global_section.csv"))
+```
 
-acidification_profiles %>% 
-  write_csv(paste0(path_OIA, "OIA_profiles.csv"))
+
+```{r write_output_files_stars, eval=FALSE}
+
+
+
+# convert from tibble to stars object
+acidification_trend_stars <- st_as_stars(
+  acidification_trend,
+  dims = c(
+    "lon",
+    "lat",
+    "depth",
+    "tref",
+    "MLR_basins",
+    "Version_ID_group"
+  )
+)
+
+# assign coordinate system to horizontal (lon, lat) coordinates
+# st_crs(dcant_inv_out_stars) <- "+proj=longlat"
+st_crs(acidification_trend_stars) <- st_crs(4326)
+
+# plot variable per depth level
+# ggplot() +
+#   geom_stars(data = acidification_trend_stars %>% 
+#                filter(period == "1994 - 2004",
+#                       depth == 50)) +
+#   facet_grid(MLR_basins~Version_ID_group) +
+#   scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
+#                        na.value = "transparent")
+
+
+file_out <- paste0(path_OIA, "OIA_pH.nc")
+
+# write stars object to .nc file
+
+names_OIA <-
+  acidification_trend_stars %>%
+  names()
+
+acidification_trend_stars %>% 
+  select(names_OIA[12]) %>% 
+  write_mdim(file_out)
+
+# # reopen .nc file with all available stars functions
+# dcant_3d_read_ncdf <-
+#   read_ncdf(file_out)
+# dcant_3d_read_mdim <-
+#   read_mdim(file_out)
+# 
+# # plot variable in object reopened
+# 
+# ggplot() +
+#   geom_stars(data = dcant_3d_read_ncdf %>% 
+#                filter(period == "1994 - 2004",
+#                       depth == 50)) +
+#   facet_grid(MLR_basins~Version_ID_group) +
+#   scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
+#                        na.value = "transparent")
+# 
+# ggplot() +
+#   geom_stars(data = dcant_3d_read_mdim %>% 
+#                filter(period == "1994 - 2004",
+#                       depth == 50)) +
+#   facet_grid(MLR_basins~Version_ID_group) +
+#   scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
+#                        na.value = "transparent")
 
 
 
