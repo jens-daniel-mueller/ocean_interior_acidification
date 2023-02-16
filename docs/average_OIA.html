@@ -12,7 +12,7 @@
 <meta name="author" content="Jens Daniel Müller" />
 
 
-<title>synopsis_OIA</title>
+<title>OIA Averaging</title>
 
 <script src="site_libs/header-attrs-2.18/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -383,9 +383,9 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">synopsis_OIA</h1>
+<h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">16 February, 2023</h4>
+<h4 class="date">15 February, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-02-16
+<strong>Last updated:</strong> 2023-02-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -607,8 +607,8 @@ have uncommitted changes.
 
 <p>
 These are the previous versions of the repository in which changes were
-made to the R Markdown (<code>analysis/synopsis_OIA.Rmd</code>) and HTML
-(<code>docs/synopsis_OIA.html</code>) files. If you’ve configured a
+made to the R Markdown (<code>analysis/average_OIA.Rmd</code>) and HTML
+(<code>docs/average_OIA.html</code>) files. If you’ve configured a
 remote Git repository (see <code>?wflow_git_remote</code>), click on the
 hyperlinks in the table below to view the files as they were in that
 past version.
@@ -637,87 +637,19 @@ Message
 <tbody>
 <tr>
 <td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/b4e6d1c523e53bf215458ac58d7467c1e238eacf/docs/synopsis_OIA.html" target="_blank">b4e6d1c</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-04
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/5926302016c2ae21d1bbb3cf2932dbe16e646b8a/docs/synopsis_OIA.html" target="_blank">5926302</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-03
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
 Rmd
 </td>
 <td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/178670f80ef14bbf2ccd1b822f92e9f8400b3049/analysis/synopsis_OIA.Rmd" target="_blank">178670f</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/680eeb868a7b1d6f3e40b81029a2a3726de24a59/analysis/average_OIA.Rmd" target="_blank">680eeb8</a>
 </td>
 <td>
 jens-daniel-mueller
 </td>
 <td>
-2023-02-03
+2023-02-15
 </td>
 <td>
-test workflow
-</td>
-</tr>
-<tr>
-<td>
-html
-</td>
-<td>
-<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/78b318035cdf152a81f28e096c448404ca4c77e8/docs/synopsis_OIA.html" target="_blank">78b3180</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-03
-</td>
-<td>
-Build site.
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/dde599de1ad7da4a1bb2aba7a5fee06b139ad92c/analysis/synopsis_OIA.Rmd" target="_blank">dde599d</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-03
-</td>
-<td>
-completed basis OIA computation
+calculated OIA for all cases
 </td>
 </tr>
 </tbody>
@@ -727,24 +659,232 @@ completed basis OIA computation
 </div>
 </div>
 </div>
-<div id="read-oia-files" class="section level1">
-<h1>Read OIA files</h1>
-<pre class="r"><code>acidification_trend &lt;-
-  read_csv(paste0(path_OIA, &quot;OIA.csv&quot;))
+<pre class="r"><code>center &lt;- -160
+boundary &lt;- center + 180
+target_crs &lt;- paste0(&quot;+proj=robin +over +lon_0=&quot;, center)
+# target_crs &lt;- paste0(&quot;+proj=eqearth +over +lon_0=&quot;, center)
+# target_crs &lt;- paste0(&quot;+proj=eqearth +lon_0=&quot;, center)
+# target_crs &lt;- paste0(&quot;+proj=igh_o +lon_0=&quot;, center)
+
+worldmap &lt;- ne_countries(scale = &#39;small&#39;,
+                         type = &#39;map_units&#39;,
+                         returnclass = &#39;sf&#39;)
+
+worldmap &lt;- worldmap %&gt;% st_break_antimeridian(lon_0 = center)
+worldmap_trans &lt;- st_transform(worldmap, crs = target_crs)
+
+# ggplot() +
+#   geom_sf(data = worldmap_trans)
+
+coastline &lt;- ne_coastline(scale = &#39;small&#39;, returnclass = &quot;sf&quot;)
+coastline &lt;- st_break_antimeridian(coastline, lon_0 = 200)
+coastline_trans &lt;- st_transform(coastline, crs = target_crs)
+
+# ggplot() +
+#   geom_sf(data = worldmap_trans, fill = &quot;grey&quot;, col=&quot;grey&quot;) +
+#   geom_sf(data = coastline_trans)
 
 
-acidification_layer &lt;-
-  read_csv(paste0(path_OIA, &quot;OIA_layer.csv&quot;))
+bbox &lt;- st_bbox(c(xmin = -180, xmax = 180, ymax = 65, ymin = -78), crs = st_crs(4326))
+bbox &lt;- st_as_sfc(bbox)
+bbox_trans &lt;- st_break_antimeridian(bbox, lon_0 = center)
 
-acidification_zonal &lt;-
-  read_csv(paste0(path_OIA, &quot;OIA_zonal.csv&quot;))
+bbox_graticules &lt;- st_graticule(
+  x = bbox_trans,
+  crs = st_crs(bbox_trans),
+  datum = st_crs(bbox_trans),
+  lon = c(20, 20.001),
+  lat = c(-78,65),
+  ndiscr = 1e3,
+  margin = 0.001
+)
+
+bbox_graticules_trans &lt;- st_transform(bbox_graticules, crs = target_crs)
+rm(worldmap, coastline, bbox, bbox_trans, bbox_graticules)
+
+# ggplot() +
+#   geom_sf(data = worldmap_trans, fill = &quot;grey&quot;, col=&quot;grey&quot;) +
+#   geom_sf(data = coastline_trans) +
+#   geom_sf(data = bbox_graticules_trans)
+
+lat_lim &lt;- ext(bbox_graticules_trans)[c(3,4)]*1.002
+lon_lim &lt;- ext(bbox_graticules_trans)[c(1,2)]*1.005
+
+# ggplot() +
+#   geom_sf(data = worldmap_trans, fill = &quot;grey90&quot;, col = &quot;grey90&quot;) +
+#   geom_sf(data = coastline_trans) +
+#   geom_sf(data = bbox_graticules_trans, linewidth = 1) +
+#   coord_sf(crs = target_crs,
+#            ylim = lat_lim,
+#            xlim = lon_lim,
+#            expand = FALSE) +
+#   theme(
+#     panel.border = element_blank(),
+#     axis.text = element_blank(),
+#     axis.ticks = element_blank()
+#   )</code></pre>
+<div id="libraries" class="section level1">
+<h1>Libraries</h1>
+<pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
+  filter(MLR_basins == &quot;5&quot;) %&gt;% 
+  select(lon, lat, basin)</code></pre>
+</div>
+<div id="read-data" class="section level1">
+<h1>Read data</h1>
+<pre class="r"><code>acidification_layer &lt;- acidification_trend %&gt;%
+  mutate(depth_layer = cut(
+    depth,
+    c(0, 50, 100, 250, 500, 1000, 1500, 2000, 3000),
+    include.lowest = TRUE
+  )) %&gt;%
+  drop_na() %&gt;%
+  select(c(lat, lon, depth_layer, tref), where(is.numeric)) %&gt;%
+  fgroup_by(lat, lon, depth_layer, tref) %&gt;% {
+    add_vars(
+      fgroup_vars(., &quot;unique&quot;),
+      fmean(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_mean&quot;),
+      fsd(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_sd&quot;)
+    )
+  }
+
+acidification_layer %&gt;% 
+  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
+         tref != 1800) %&gt;% 
+  ggplot(aes(lon, lat, fill = CO3_delta_total_mean)) +
+  geom_raster() +
+  scale_fill_viridis_c(direction = -1) +
+  facet_grid(tref ~ depth_layer) +
+  coord_quickmap()
+
+acidification_layer %&gt;% 
+  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
+         tref != 1800) %&gt;% 
+  ggplot(aes(lon, lat, fill = CO3_delta_interval_mean)) +
+  geom_raster() +
+  scale_fill_viridis_c(direction = -1) +
+  facet_grid(tref ~ depth_layer) +
+  coord_quickmap()
+
+acidification_layer %&gt;% 
+  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
+         tref != 1800) %&gt;% 
+  ggplot(aes(lon, lat, fill = pH_delta_total_mean)) +
+  geom_raster() +
+  scale_fill_viridis_c(direction = -1) +
+  facet_grid(tref ~ depth_layer) +
+  coord_quickmap()</code></pre>
+<pre class="r"><code>acidification_zonal &lt;- acidification_trend %&gt;%
+  group_by(tref) %&gt;%
+  nest() %&gt;%
+  mutate(zonal = map(.x = data, ~m_zonal_mean_sd(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(zonal)
+
+acidification_zonal %&gt;%
+  filter(
+    tref!= 1800
+  ) %&gt;%
+  p_section_zonal_continous_depth(var = &quot;tco2_delta_total_mean&quot;,
+                                  plot_slabs = &quot;n&quot;,
+                                  breaks = c(-Inf,seq(0,80,10), Inf),
+                                  title_text = NULL) +
+  facet_grid(basin_AIP~tref)
+
+acidification_zonal %&gt;%
+  filter(
+    tref!= 1800
+  ) %&gt;%
+  p_section_zonal_continous_depth(var = &quot;CO3_delta_total_mean&quot;,
+                                  plot_slabs = &quot;n&quot;,
+                                  breaks = c(-Inf,seq(-0.00005,0.00001,0.00001), Inf),
+                                  title_text = NULL) +
+  facet_grid(basin_AIP~tref)</code></pre>
+<pre class="r"><code>acidification_global_section &lt;- acidification_trend %&gt;%
+  group_by(tref) %&gt;%
+  nest() %&gt;%
+  mutate(zonal = map(.x = data, ~m_section_global_mean_sd(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(zonal)
+
+p_section_global(
+  df = acidification_global_section %&gt;%
+    filter(tref == &quot;2014&quot;),
+  var = &quot;pH_mean&quot;,
+  plot_slabs = &quot;n&quot;
+)
+
+p_section_global(
+  df = acidification_global_section %&gt;%
+    filter(tref == &quot;1994&quot;),
+  var = &quot;pH_delta_interval_mean&quot;,
+  plot_slabs = &quot;n&quot;
+)
+
+p_section_global(
+  df = acidification_global_section %&gt;%
+    filter(tref == &quot;2014&quot;),
+  var = &quot;hyd_ion_delta_interval_mean&quot;,
+  plot_slabs = &quot;n&quot;
+)</code></pre>
+<pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
+    mutate(area = earth_surf(lat, lon))
+
+acidification_profiles &lt;- full_join(basinmask,
+          acidification_trend %&gt;% select(-c(basin_AIP, MLR_basins, Version_ID_group))) %&gt;%
+  drop_na() %&gt;%
+  relocate(tref) %&gt;%
+  mutate(across(gamma:hyd_ion_delta_interval,
+                ~ . * area))
+
+acidification_profiles &lt;- acidification_profiles %&gt;%
+  group_by(tref, basin, depth) %&gt;%
+  summarise(across(gamma:hyd_ion_delta_interval,
+                   ~ sum(.) / sum(area))) %&gt;%
+  ungroup()
+
+  
+acidification_profiles %&gt;% 
+  select(tref, basin, depth, contains(&quot;delta_total&quot;)) %&gt;% 
+  pivot_longer(-c(tref:depth),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_total&quot;) %&gt;% 
+  filter(tref != 1800) %&gt;% 
+  ggplot(aes(delta_total, depth, col = tref)) +
+  geom_vline(xintercept = 0) +
+  geom_path() +
+  scale_y_reverse() +
+  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)
+  
+acidification_profiles %&gt;% 
+  select(tref, basin, depth, contains(&quot;delta_interval&quot;)) %&gt;% 
+  pivot_longer(-c(tref:depth),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_interval&quot;) %&gt;% 
+  filter(!(tref %in% c(1800,1994))) %&gt;% 
+  ggplot(aes(delta_interval, depth, col = tref)) +
+  geom_vline(xintercept = 0) +
+  geom_path() +
+  scale_y_reverse() +
+  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)</code></pre>
+</div>
+<div id="write-ouput" class="section level1">
+<h1>Write ouput</h1>
+<pre class="r"><code>acidification_trend %&gt;% 
+  write_csv(paste0(path_OIA, &quot;OIA.csv&quot;))
 
 
-acidification_global_section &lt;-
-  read_csv(paste0(path_OIA, &quot;OIA_global_section.csv&quot;))
+acidification_layer %&gt;% 
+  write_csv(paste0(path_OIA, &quot;OIA_layer.csv&quot;))
 
-acidification_profiles &lt;-
-  read_csv(paste0(path_OIA, &quot;OIA_profiles.csv&quot;))</code></pre>
+acidification_zonal %&gt;% 
+  write_csv(paste0(path_OIA, &quot;OIA_zonal.csv&quot;))
+
+
+acidification_global_section %&gt;% 
+  write_csv(paste0(path_OIA, &quot;OIA_global_section.csv&quot;))
+
+acidification_profiles %&gt;% 
+  write_csv(paste0(path_OIA, &quot;OIA_profiles.csv&quot;))</code></pre>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -774,20 +914,53 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] workflowr_1.7.0
+ [1] seacarb_3.3.1       SolveSAPHE_2.1.0    oce_1.7-10         
+ [4] gsw_1.1-1           stars_0.6-0         abind_1.4-5        
+ [7] ggpattern_1.0.1     ggh4x_0.2.3         khroma_1.9.0       
+[10] kableExtra_1.3.4    ggdist_3.2.0        ggalluvial_0.12.3  
+[13] terra_1.6-41        sf_1.0-9            rnaturalearth_0.1.0
+[16] geomtextpath_0.1.1  colorspace_2.0-3    marelac_2.1.10     
+[19] shape_1.4.6         ggforce_0.4.1       metR_0.13.0        
+[22] scico_1.3.1         patchwork_1.1.2     collapse_1.8.9     
+[25] forcats_0.5.2       stringr_1.4.1       dplyr_1.0.10       
+[28] purrr_0.3.5         readr_2.1.3         tidyr_1.2.1        
+[31] tibble_3.1.8        ggplot2_3.4.0       tidyverse_1.3.2    
+[34] workflowr_1.7.0    
 
 loaded via a namespace (and not attached):
- [1] Rcpp_1.0.9       compiler_4.2.2   pillar_1.8.1     bslib_0.4.1     
- [5] later_1.3.0      git2r_0.30.1     jquerylib_0.1.4  tools_4.2.2     
- [9] getPass_0.2-2    digest_0.6.30    jsonlite_1.8.3   evaluate_0.18   
-[13] tibble_3.1.8     lifecycle_1.0.3  pkgconfig_2.0.3  rlang_1.0.6     
-[17] cli_3.4.1        rstudioapi_0.14  yaml_2.3.6       xfun_0.35       
-[21] fastmap_1.1.0    httr_1.4.4       stringr_1.4.1    knitr_1.41      
-[25] fs_1.5.2         vctrs_0.5.1      sass_0.4.4       rprojroot_2.0.3 
-[29] glue_1.6.2       R6_2.5.1         processx_3.8.0   fansi_1.0.3     
-[33] rmarkdown_2.18   callr_3.7.3      magrittr_2.0.3   whisker_0.4     
-[37] ps_1.7.2         promises_1.2.0.1 htmltools_0.5.3  httpuv_1.6.6    
-[41] utf8_1.2.2       stringi_1.7.8    cachem_1.0.6    </code></pre>
+ [1] googledrive_2.0.0       ellipsis_0.3.2          class_7.3-20           
+ [4] rprojroot_2.0.3         fs_1.5.2                rstudioapi_0.14        
+ [7] proxy_0.4-27            farver_2.1.1            bit64_4.0.5            
+[10] fansi_1.0.3             lubridate_1.9.0         xml2_1.3.3             
+[13] codetools_0.2-18        cachem_1.0.6            knitr_1.41             
+[16] polyclip_1.10-4         jsonlite_1.8.3          broom_1.0.1            
+[19] dbplyr_2.2.1            compiler_4.2.2          httr_1.4.4             
+[22] backports_1.4.1         assertthat_0.2.1        fastmap_1.1.0          
+[25] gargle_1.2.1            cli_3.4.1               later_1.3.0            
+[28] tweenr_2.0.2            htmltools_0.5.3         tools_4.2.2            
+[31] rnaturalearthdata_0.1.0 gtable_0.3.1            glue_1.6.2             
+[34] Rcpp_1.0.9              cellranger_1.1.0        jquerylib_0.1.4        
+[37] vctrs_0.5.1             svglite_2.1.0           lwgeom_0.2-10          
+[40] xfun_0.35               ps_1.7.2                rvest_1.0.3            
+[43] timechange_0.1.1        lifecycle_1.0.3         googlesheets4_1.0.1    
+[46] getPass_0.2-2           MASS_7.3-58.1           scales_1.2.1           
+[49] vroom_1.6.0             hms_1.1.2               promises_1.2.0.1       
+[52] parallel_4.2.2          yaml_2.3.6              memoise_2.0.1          
+[55] sass_0.4.4              stringi_1.7.8           e1071_1.7-12           
+[58] checkmate_2.1.0         rlang_1.0.6             pkgconfig_2.0.3        
+[61] systemfonts_1.0.4       distributional_0.3.1    evaluate_0.18          
+[64] lattice_0.20-45         bit_4.0.5               processx_3.8.0         
+[67] tidyselect_1.2.0        magrittr_2.0.3          R6_2.5.1               
+[70] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
+[73] haven_2.5.1             whisker_0.4             withr_2.5.0            
+[76] units_0.8-0             sp_1.5-1                modelr_0.1.10          
+[79] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
+[82] tzdb_0.3.0              rmarkdown_2.18          grid_4.2.2             
+[85] readxl_1.4.1            data.table_1.14.6       callr_3.7.3            
+[88] git2r_0.30.1            webshot_0.5.4           reprex_2.0.2           
+[91] digest_0.6.30           classInt_0.4-8          httpuv_1.6.6           
+[94] textshaping_0.3.6       munsell_0.5.0           viridisLite_0.4.1      
+[97] bslib_0.4.1            </code></pre>
 </div>
 </div>
 
