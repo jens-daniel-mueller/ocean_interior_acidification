@@ -3,12 +3,19 @@ output_dir: ../docs
 navbar:
   title: OIA
   left:
-  - text: Home
-    href: index.html
+  - text: Computation
+    href: compute_OIA.html
+  - text: Averaging
+    href: average_OIA.html
+  - text: Synopsis
+    href: synopsis_OIA.html
   right:
   - icon: fab fa-github
     text: Source code
     href: https://github.com/jens-daniel-mueller/ocean_interior_acidification
+  - icon: fa-home
+    text: Jens' homepage
+    href: https://jens-daniel-mueller.github.io/
 output:
   workflowr::wflow_html:
     toc: yes

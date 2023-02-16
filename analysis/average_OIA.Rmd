@@ -59,6 +59,194 @@ path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 
 # Read data
 
+```{r read_OIA_data}
+
+
+acidification_trend <-
+  read_csv(paste0(path_OIA, "OIA_all.csv"))
+
+# read_csv(paste0(path_OIA, "OIA_all.csv"))
+
+# acidification_trend %>%
+#   filter(Version_ID_group == "Standard case",
+#          MLR_basins == "3") %>%
+#   write_csv(paste0(path_OIA, "OIA_standard_case.csv"))
+
+
+```
+
+# Uncertainty determination
+
+```{r reference_dcant_reconstructions}
+
+MLR_basins_reference <- unique(acidification_trend$MLR_basins)[1]
+
+MLR_basins_uncertainty <- unique(acidification_trend$MLR_basins)
+
+MLR_basins_uncertainty <-
+  MLR_basins_uncertainty[!MLR_basins_uncertainty %in% MLR_basins_reference]
+
+
+
+Version_ID_group_reference <-
+  unique(acidification_trend$Version_ID_group)[1]
+Version_ID_group_uncertainty <-
+  unique(acidification_trend$Version_ID_group)
+
+Version_ID_group_uncertainty <-
+  Version_ID_group_uncertainty[Version_ID_group_uncertainty != Version_ID_group_reference]
+
+```
+
+
+
+```{r uncertainty_determination}
+
+# df <- acidification_zonal
+
+additive_uncertainty <- function(df){
+  
+  # df <- df %>%
+  #   filter(tref %in% c("2004", "2014")) %>%
+  #   select(-c(gamma_mean:hyd_ion_mean)) %>% 
+  #   select(-contains(c("_sd", "_total_mean")))
+
+  df_regional_uncertainty <-
+    df %>%
+    filter(MLR_basins != MLR_basins_reference,
+           Version_ID_group == Version_ID_group_reference) %>% 
+    select(-Version_ID_group) %>% 
+    pivot_wider(names_from = MLR_basins,
+                values_from = contains("_interval_mean"),
+                names_sep = "-") %>%
+    pivot_longer(all_of(contains(MLR_basins_uncertainty)),
+                 names_to = c("variable","MLR_basins"),
+                 names_sep = "-",
+                 values_to = "value")
+  
+  df_regional_reference <-
+    df %>%
+    filter(MLR_basins == MLR_basins_reference,
+           Version_ID_group == Version_ID_group_reference) %>% 
+    select(-c(MLR_basins, Version_ID_group)) %>% 
+    pivot_longer(contains("_interval_mean"),
+                 names_to = c("variable"),
+                 values_to = MLR_basins_reference)
+  
+  df_regional <-
+    full_join(df_regional_reference, df_regional_uncertainty)
+  
+  df_regional <-
+    df_regional %>%
+    mutate(delta_value = value-!!sym(MLR_basins_reference)) %>%
+    select(-c(all_of(MLR_basins_reference), MLR_basins, value))
+
+  df_regional_stat <-
+    df_regional %>%
+    group_by(across(-delta_value)) %>%
+    summarise(sd = mean(abs(delta_value))) %>%
+    ungroup()
+
+
+  df_configuration_uncertainty <-
+    df %>%
+    filter(MLR_basins == MLR_basins_reference,
+           Version_ID_group %in% Version_ID_group_uncertainty) %>% 
+    select(-MLR_basins) %>% 
+    pivot_wider(names_from = Version_ID_group,
+                values_from = contains("_interval_mean"),
+                names_sep = "-") %>%
+   pivot_longer(all_of(contains(Version_ID_group_uncertainty)),
+                 names_to = c("variable","Version_ID_group"),
+                 names_sep = "-",
+                 values_to = "value")
+
+  
+  df <-
+    df %>%
+    filter(MLR_basins == MLR_basins_reference,
+           Version_ID_group == Version_ID_group_reference) %>% 
+    select(-c(Version_ID_group, MLR_basins)) %>% 
+    pivot_longer(contains("_interval_mean"),
+                 names_to = c("variable"),
+                 values_to = Version_ID_group_reference)
+
+  df_configuration <-
+    full_join(df, df_configuration_uncertainty) 
+  
+  df_configuration <- df_configuration %>% 
+    mutate(delta_value = value-!!sym(Version_ID_group_reference))
+  
+  
+  df_configuration <-
+    df_configuration %>%
+    rename(sd = delta_value) %>%
+    select(-c(value, all_of(Version_ID_group_reference)))
+  
+  df_factorial <-
+    bind_rows(
+      df_regional_stat %>%
+        mutate(Version_ID_group = "Regional clustering"),
+      df_configuration
+    )
+
+  df_factorial_stat <-
+    df_factorial %>%
+    select(-Version_ID_group) %>%
+    group_by(across(-sd)) %>%
+    summarise(sd = sqrt(sum(sd ^ 2, na.rm = TRUE))) %>%
+    ungroup()
+
+  df_stat <-
+    full_join(
+      df_factorial_stat,
+      df %>%
+        rename(std_case = all_of(Version_ID_group_reference))
+    )
+
+  df_stat <- df_stat %>%
+    mutate(
+      signif_single = if_else(abs(std_case) >= sd,
+                              1,
+                              0),
+      signif_double = if_else(abs(std_case) >= sd * 2,
+                              1,
+                              0)
+    )
+
+  df_stat_delta <-
+    df_stat %>%
+    select(-starts_with("signif_")) %>%
+    arrange(tref) %>%
+    group_by(across(-c(tref, sd, std_case))) %>%
+    mutate(
+      delta_value = std_case - lag(std_case),
+      RSS = sqrt(sd ^ 2 + lag(sd ^ 2)),
+      signif_single = if_else(abs(delta_value) >= RSS,
+                              1,
+                              0),
+      signif_double = if_else(abs(delta_value) >= RSS * 2,
+                              1,
+                              0)
+    ) %>%
+    ungroup() %>%
+    drop_na()
+
+
+df_out <- list(df_stat, df_factorial, df_stat_delta)
+
+return(df_out)
+
+}
+
+
+```
+
+
+
+
+
+
 ```{r layered_maps, eval=FALSE}
 
 
@@ -108,39 +296,293 @@ acidification_layer %>%
 ```
 
 
+## Zonal sections
 
-
-```{r zonal_mean_sections, eval=FALSE}
+```{r zonal_mean_sections}
 
 
 acidification_zonal <- acidification_trend %>%
-  group_by(tref) %>%
+  group_by(tref, Version_ID_group, MLR_basins) %>%
   nest() %>%
   mutate(zonal = map(.x = data, ~m_zonal_mean_sd(.x))) %>%
   select(-data) %>%
-  unnest(zonal)
+  unnest(zonal) %>% 
+  ungroup()
 
-acidification_zonal %>%
+acidification_zonal_reference <- acidification_zonal %>%
   filter(
-    tref!= 1800
-  ) %>%
-  p_section_zonal_continous_depth(var = "tco2_delta_total_mean",
-                                  plot_slabs = "n",
-                                  breaks = c(-Inf,seq(0,80,10), Inf),
-                                  title_text = NULL) +
-  facet_grid(basin_AIP~tref)
+    Version_ID_group == Version_ID_group_reference,
+    MLR_basins == MLR_basins_reference
+  )
 
-acidification_zonal %>%
-  filter(
-    tref!= 1800
-  ) %>%
-  p_section_zonal_continous_depth(var = "CO3_delta_total_mean",
-                                  plot_slabs = "n",
-                                  breaks = c(-Inf,seq(-0.00005,0.00001,0.00001), Inf),
-                                  title_text = NULL) +
-  facet_grid(basin_AIP~tref)
+pdf(here::here("output/zonal_sections_total_changes.pdf"),
+    width = 8,
+    height = 4)
+
+acidification_zonal_reference %>%
+  filter(tref != 1800) %>%
+  select(tref:basin_AIP, contains("_delta_total_mean")) %>%
+  pivot_longer(contains("_delta_total_mean"),
+               names_to = "variable",
+               values_to = "value") %>%
+  mutate(variable = str_remove(variable, "_delta_total_mean")) %>%
+  group_by(variable) %>%
+  group_split() %>%
+  # head(2) %>%
+  map(
+    ~ p_section_zonal_continous_depth(
+      df = .x,
+      var = "value",
+      legend_title = .x$variable,
+      plot_slabs = "n",
+      breaks = NULL,
+      title_text = "Total change since 1800",
+      subtitle_text = NULL
+    ) +
+      facet_grid(basin_AIP ~ tref)
+  )
+
+dev.off()
+
+pdf(here::here("output/zonal_sections_incremental_changes_all.pdf"),
+    width = 8,
+    height = 4)
+
+acidification_zonal_reference %>%
+  filter(tref != 1800) %>%
+  select(tref:basin_AIP, contains("_delta_interval_mean")) %>%
+  pivot_longer(contains("_delta_interval_mean"),
+               names_to = "variable",
+               values_to = "value") %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean")) %>%
+  group_by(variable) %>%
+  group_split() %>%
+  # head(1) %>%
+  map(
+    ~ p_section_zonal_continous_depth(
+      df = .x,
+      var = "value",
+      legend_title = .x$variable,
+      plot_slabs = "n",
+      breaks = NULL,
+      title_text = "Incremental change from previous estimate",
+      subtitle_text = NULL
+    ) +
+      facet_grid(basin_AIP ~ tref)
+  )
+
+dev.off()
+
+pdf(here::here("output/zonal_sections_incremental_changes_post_1994.pdf"),
+    width = 6,
+    height = 4)
+
+acidification_zonal_reference %>%
+  filter(tref %in% c(2004, 2014)) %>%
+  select(tref:basin_AIP, contains("_delta_interval_mean")) %>%
+  pivot_longer(contains("_delta_interval_mean"),
+               names_to = "variable",
+               values_to = "value") %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean")) %>%
+  group_by(variable) %>%
+  group_split() %>%
+  # head(1) %>%
+  map(
+    ~ p_section_zonal_continous_depth(
+      df = .x,
+      var = "value",
+      legend_title = .x$variable,
+      plot_slabs = "n",
+      breaks = NULL,
+      title_text = "Incremental change from previous estimate",
+      subtitle_text = NULL
+    ) +
+      facet_grid(basin_AIP ~ tref)
+  )
+
+dev.off()
+
+pdf(here::here("output/zonal_sections_absolute_levels.pdf"),
+    width = 10,
+    height = 4)
+
+acidification_zonal_reference %>%
+  # filter(tref %in% c(2004, 2014)) %>%
+  select(tref:hyd_ion_mean) %>%
+  pivot_longer(contains("_mean"),
+               names_to = "variable",
+               values_to = "value") %>%
+  mutate(variable = str_remove(variable, "_mean")) %>%
+  group_by(variable) %>%
+  group_split() %>%
+  # head(1) %>%
+  map(
+    ~ p_section_zonal_continous_depth(
+      df = .x,
+      var = "value",
+      legend_title = .x$variable,
+      plot_slabs = "n",
+      breaks = NULL,
+      title_text = "Absolute values",
+      subtitle_text = NULL
+    ) +
+      facet_grid(basin_AIP ~ tref)
+  )
+
+dev.off()
+
 
 ```
+
+
+```{r zonal_uncertainty}
+
+acidification_zonal_uncertainty <-
+  acidification_zonal %>%
+  select(MLR_basins:basin_AIP,
+         contains("_delta_interval"),
+         -contains("_sd")) %>%
+  filter(tref %in% c(2004, 2014)) %>% 
+  mutate(lat = as.numeric(as.character(cut(
+    lat, seq(-90, 90, 10), seq(-85, 85, 10)
+  ))),
+  depth = as.numeric(as.character(cut(
+    depth,
+    c(seq(0, 500, 100), seq(1000, 10000, 500)),
+    c(seq(50, 450, 100), seq(750, 10000, 500)),
+    right = FALSE
+  )))
+  ) %>%
+  group_by(across(-contains("_delta_interval"))) %>%
+  summarise(across(everything(), mean)) %>%
+  ungroup()
+
+
+acidification_zonal_uncertainty <- additive_uncertainty(acidification_zonal_uncertainty)
+
+delta_acidification_zonal_uncertainty <-
+  acidification_zonal_uncertainty[[3]]
+acidification_zonal_uncertainty <-
+  acidification_zonal_uncertainty[[1]]
+
+
+
+
+pdf(here::here("output/zonal_sections_incremental_changes_all_uncertainty_std_case.pdf"),
+    width = 6,
+    height = 4)
+
+acidification_zonal_uncertainty %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean")) %>%
+  group_by(variable) %>%
+  group_split() %>%
+  # head(1) %>%
+  map(
+    ~ p_section_zonal_continous_depth(
+      df = .x,
+      var = "std_case",
+      legend_title = .x$variable,
+      plot_slabs = "n",
+      breaks = NULL,
+      title_text = "Incremental change from previous estimate",
+      subtitle_text = NULL
+    ) +
+        geom_point(
+          data = .x %>% filter(signif_single == 0),
+          aes(lat, depth),
+          shape = 20,
+          size = 1,
+          col = "grey"
+        ) +
+        geom_point(
+          data = .x %>% filter(signif_double == 0),
+          aes(lat, depth),
+          shape = 20,
+          size = 0.1,
+          col = "grey"
+        ) +
+      facet_grid(basin_AIP ~ tref)
+  )
+
+dev.off()
+
+
+pdf(here::here("output/zonal_sections_incremental_changes_all_uncertainty_sd.pdf"),
+    width = 6,
+    height = 4)
+
+acidification_zonal_uncertainty %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean")) %>%
+  group_by(variable) %>%
+  group_split() %>%
+  # head(1) %>%
+  map(
+    ~ p_section_zonal_continous_depth(
+      df = .x,
+      var = "sd",
+      legend_title = .x$variable,
+      plot_slabs = "n",
+      breaks = NULL,
+      title_text = "Uncertainty estimate",
+      subtitle_text = "Incremental change from previous estimate"
+    ) +
+      facet_grid(basin_AIP ~ tref)
+  )
+
+dev.off()
+
+
+
+pdf(here::here("output/delta_zonal_sections_incremental_changes_all_uncertainty_std_case.pdf"),
+    width = 6,
+    height = 6)
+
+delta_acidification_zonal_uncertainty %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean")) %>%
+  group_by(variable) %>%
+  group_split() %>%
+  # head(1) %>%
+  map(
+    ~ p_section_zonal_continous_depth(
+      df = .x,
+      var = "delta_value",
+      legend_title = .x$variable,
+      plot_slabs = "n",
+      col = "div",
+      breaks = NULL,
+      title_text = "Decadal differences",
+      subtitle_text = "Incremental change from previous estimate"
+    ) +
+        geom_point(
+          data = .x %>% filter(signif_single == 0),
+          aes(lat, depth),
+          shape = 20,
+          size = 1,
+          col = "grey"
+        ) +
+        geom_point(
+          data = .x %>% filter(signif_double == 0),
+          aes(lat, depth),
+          shape = 20,
+          size = 0.1,
+          col = "grey"
+        ) +
+      facet_grid(basin_AIP ~ .)
+  )
+
+dev.off()
+
+
+
+
+```
+
+
+
+
+
+
+
 
 ```{r global_section, eval=FALSE}
 
