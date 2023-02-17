@@ -65,6 +65,12 @@ path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 acidification_trend <-
   read_csv(paste0(path_OIA, "OIA_all.csv"))
 
+OIA_variables <- 
+  acidification_trend %>%
+  select(contains("delta_total")) %>% 
+  names() %>% 
+  str_remove("_delta_total")
+
 # read_csv(paste0(path_OIA, "OIA_all.csv"))
 
 # acidification_trend %>%
@@ -102,15 +108,8 @@ Version_ID_group_uncertainty <-
 
 ```{r uncertainty_determination}
 
-# df <- acidification_zonal
-
 additive_uncertainty <- function(df){
   
-  # df <- df %>%
-  #   filter(tref %in% c("2004", "2014")) %>%
-  #   select(-c(gamma_mean:hyd_ion_mean)) %>% 
-  #   select(-contains(c("_sd", "_total_mean")))
-
   df_regional_uncertainty <-
     df %>%
     filter(MLR_basins != MLR_basins_reference,
@@ -298,7 +297,7 @@ acidification_layer %>%
 
 ## Zonal sections
 
-```{r zonal_mean_sections}
+```{r zonal_mean_sections, eval=FALSE}
 
 
 acidification_zonal <- acidification_trend %>%
@@ -435,7 +434,7 @@ dev.off()
 ```
 
 
-```{r zonal_uncertainty}
+```{r zonal_uncertainty, eval=FALSE}
 
 acidification_zonal_uncertainty <-
   acidification_zonal %>%
@@ -572,14 +571,19 @@ dev.off()
 
 
 
+rm(
+  acidification_zonal,
+  acidification_zonal_reference,
+  acidification_zonal_uncertainty,
+  delta_acidification_zonal_uncertainty
+)
 
 ```
 
 
 ## Global sections
 
-
-```{r global_section}
+```{r compute_global_sections}
 
 acidification_global_section <- acidification_trend %>%
   group_by(tref, MLR_basins, Version_ID_group) %>%
@@ -589,6 +593,12 @@ acidification_global_section <- acidification_trend %>%
   unnest(zonal) %>% 
   ungroup()
 
+```
+
+
+```{r global_section_incremental_change}
+
+# subset incremental change sections
 
 acidification_global_section_incremental <-
   acidification_global_section %>%
@@ -596,6 +606,8 @@ acidification_global_section_incremental <-
          contains("_delta_interval"),
          -contains("_sd")) %>%
   filter(tref %in% c(2004, 2014))
+
+# downscaling for uncertainty computation
 
 acidification_global_section_uncertainty <-
   acidification_global_section_incremental %>%
@@ -612,37 +624,25 @@ acidification_global_section_uncertainty <-
   summarise(across(everything(), mean)) %>%
   ungroup()
 
-
-
+# compute uncertainty
 
 acidification_global_section_uncertainty <-
   additive_uncertainty(acidification_global_section_uncertainty)
 
 delta_acidification_global_section_uncertainty <- acidification_global_section_uncertainty[[3]]
-acidification_global_section_uncertainty_contributions <- acidification_global_section_uncertainty[[2]]
 acidification_global_section_uncertainty <- acidification_global_section_uncertainty[[1]]
 
 
+acidification_global_section_uncertainty <-
+  acidification_global_section_uncertainty %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean"))
 
-acidification_global_section_uncertainty %>% 
-  filter(tref == "2014",
-         variable == "CO3_delta_interval_mean") %>% 
-  p_section_global(
-    var = "std_case",
-    plot_slabs = "n",
-    title_text = NULL,
-    subtitle_text = NULL,
-    col = "div"
-  )
+delta_acidification_global_section_uncertainty <-
+  delta_acidification_global_section_uncertainty %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean"))
 
-p_section_global(
-  df = acidification_global_section %>%
-    filter(tref == "2014",
-           MLR_basins == MLR_basins_reference,
-           Version_ID_group == Version_ID_group_reference),
-  var = "pH_mean",
-  plot_slabs = "n"
-)
+
+# subset reference reconstruction
 
 acidification_global_section_incremental <-
   acidification_global_section_incremental %>%
@@ -655,21 +655,7 @@ acidification_global_section_incremental <-
   mutate(variable = str_remove(variable, "_delta_interval_mean"))
 
 
-variables_incremental <- 
-  acidification_global_section_incremental %>% 
-  distinct(variable) %>% 
-  pull()
-
-
-acidification_global_section_uncertainty <-
-  acidification_global_section_uncertainty %>%
-  mutate(variable = str_remove(variable, "_delta_interval_mean"))
-
-delta_acidification_global_section_uncertainty <-
-  delta_acidification_global_section_uncertainty %>%
-  mutate(variable = str_remove(variable, "_delta_interval_mean"))
-
-
+# create pdf document
 
 pdf(
   here::here("output/global_sections_incremental_changes.pdf"),
@@ -677,13 +663,20 @@ pdf(
   height = 12
 )
 
+# loop over OIA variables
+# print incremental sections
 
-for (i_var in variables_incremental) {
-  # i_var <- variables_incremental[1]
+for (i_var in OIA_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
   
   i_acidification_global_section_incremental <-
     acidification_global_section_incremental %>%
-    filter(variable == i_var)
+    filter(variable == i_var,
+           depth <= 3000)
+  
+  # determine endpoints and breaks of color scale
   
   low <- i_acidification_global_section_incremental %>%
     filter(!is.na(delta_interval)) %>%
@@ -698,9 +691,8 @@ for (i_var in variables_incremental) {
   breaks <- c(-Inf, seq(low, high, length.out = 10), Inf)
   
   p_global_section_dec1 <-
-    acidification_global_section_incremental %>%
-    filter(tref == 2004,
-           variable == i_var) %>%
+    i_acidification_global_section_incremental %>%
+    filter(tref == 2004) %>%
     p_section_global(
       var = "delta_interval",
       legend_title = i_var,
@@ -709,9 +701,6 @@ for (i_var in variables_incremental) {
         filter(tref == 2004,
                variable == i_var),
       breaks = breaks,
-      # df_penetration = dcant_global_section_all_penetration %>%
-      #   filter(data_source == "obs",
-      #          period %in% "1994 - 2004"),
       col_uncertainty = "grey",
       subtitle_text = NULL,
       plot_slabs = "n"
@@ -720,9 +709,8 @@ for (i_var in variables_incremental) {
           axis.text.x.bottom = element_blank())
   
   p_global_section_dec2 <-
-    acidification_global_section_incremental %>%
-    filter(tref == 2014,
-           variable == i_var) %>%
+    i_acidification_global_section_incremental %>%
+    filter(tref == 2014) %>%
     p_section_global(
       var = "delta_interval",
       title_text = "B   2004 - 2014",
@@ -733,15 +721,11 @@ for (i_var in variables_incremental) {
                variable == i_var),
       col_uncertainty = "grey",
       breaks = breaks
-      # df_penetration = dcant_global_section_all_penetration %>%
-      #   filter(data_source == "obs",
-      #          period %in% "2004 - 2014")
     ) &
     theme(legend.position = "none")
   
   p_global_section_offset <-
-    acidification_global_section_incremental %>%
-    filter(variable == i_var) %>%
+    i_acidification_global_section_incremental %>%
     arrange(depth, dist) %>%
     select(depth, dist, tref, delta_interval) %>%
     drop_na() %>%
@@ -775,6 +759,272 @@ for (i_var in variables_incremental) {
 
 dev.off()
 
+rm(acidification_global_section_incremental,
+   acidification_global_section_uncertainty,
+   delta_acidification_global_section_uncertainty
+   )
+
+```
+
+```{r global_section_total_change}
+
+# subset total change sections
+
+acidification_global_section_total <-
+  acidification_global_section %>%
+  select(MLR_basins:band, dist,
+         contains("_delta_total_mean")) %>%
+  filter(tref != 1800)
+
+
+# subset reference reconstruction
+
+# acidification_global_section_total %>% 
+#   distinct(tref, MLR_basins, Version_ID_group)
+
+acidification_global_section_total <-
+  acidification_global_section_total %>%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %>%
+  select(-c(MLR_basins, Version_ID_group)) %>%
+  pivot_longer(contains("_delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  mutate(variable = str_remove(variable, "_delta_total_mean"))
+
+
+# create pdf document
+
+pdf(
+  here::here("output/global_sections_total_changes.pdf"),
+  width = 10,
+  height = 12
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_global_section_total <-
+    acidification_global_section_total %>%
+    filter(variable == i_var,
+           depth <= 3000)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_global_section_total %>%
+    filter(!is.na(delta_total)) %>%
+    pull(delta_total) %>%
+    quantile(c(.02), names = FALSE)
+  
+  high <- i_acidification_global_section_total %>%
+    filter(!is.na(delta_total)) %>%
+    pull(delta_total) %>%
+    quantile(c(.98), names = FALSE)
+  
+  breaks <- c(-Inf, seq(low, high, length.out = 10), Inf)
+  
+  p_global_section_period1 <-
+    i_acidification_global_section_total %>%
+    filter(tref == 1994) %>%
+    p_section_global(
+      var = "delta_total",
+      legend_title = i_var,
+      title_text = "A   1800 - 1994",
+      breaks = breaks,
+      subtitle_text = NULL,
+      plot_slabs = "n"
+    ) &
+    theme(legend.position = "none",
+          axis.title.x = element_blank(),
+          axis.text.x.bottom = element_blank())
+  
+  p_global_section_period2 <-
+    i_acidification_global_section_total %>%
+    filter(tref == 2004) %>%
+    p_section_global(
+      var = "delta_total",
+      legend_title = paste("delta\n", i_var),
+      title_text = "B   1800 - 2004",
+      subtitle_text = NULL,
+      plot_slabs = "n",
+      breaks = breaks
+    )
+  
+  p_global_section_period3 <-
+    i_acidification_global_section_total %>%
+    filter(tref == 2014) %>%
+    p_section_global(
+      var = "delta_total",
+      legend_title = i_var,
+      title_text = "C   1800 - 2014",
+      subtitle_text = NULL,
+      plot_slabs = "n",
+      breaks = breaks
+    ) &
+    theme(legend.position = "none")
+  
+  
+  print(
+    wrap_plots(
+      p_global_section_period1,
+      p_global_section_period2 &
+        theme(axis.title.x = element_blank(),
+              axis.text.x = element_blank()),
+      p_global_section_period3 &
+        theme(axis.text.x.top = element_blank()),
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()
+
+rm(acidification_global_section_total)
+
+```
+
+```{r global_section_absolute_state}
+
+# subset absolute value sections
+
+acidification_global_section_absolute <-
+  acidification_global_section %>%
+  select(MLR_basins:band, dist,
+         contains("_mean"),
+         -contains(c("_sd", "_delta")))
+
+
+# subset reference reconstruction
+
+# acidification_global_section_absolute %>% 
+#   distinct(tref, MLR_basins, Version_ID_group)
+
+acidification_global_section_absolute <-
+  acidification_global_section_absolute %>%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %>%
+  select(-c(MLR_basins, Version_ID_group)) %>%
+  pivot_longer(contains("_mean"),
+               names_to = "variable",
+               values_to = "mean") %>%
+  mutate(variable = str_remove(variable, "_mean"))
+
+
+# create pdf document
+
+pdf(
+  here::here("output/global_sections_absolute_state.pdf"),
+  width = 10,
+  height = 16
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_global_section_absolute <-
+    acidification_global_section_absolute %>%
+    filter(variable == i_var,
+           depth <= 3000)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_global_section_absolute %>%
+    filter(!is.na(mean)) %>%
+    pull(mean) %>%
+    quantile(c(.02), names = FALSE)
+  
+  high <- i_acidification_global_section_absolute %>%
+    filter(!is.na(mean)) %>%
+    pull(mean) %>%
+    quantile(c(.98), names = FALSE)
+  
+  breaks <- c(-Inf, seq(low, high, length.out = 10), Inf)
+  
+  p_global_section_period1 <-
+    i_acidification_global_section_absolute %>%
+    filter(tref == 1800) %>%
+    p_section_global(
+      var = "mean",
+      legend_title = i_var,
+      title_text = "A   1800",
+      breaks = breaks,
+      subtitle_text = NULL,
+      plot_slabs = "n"
+    ) &
+    theme(legend.position = "none",
+          axis.title.x = element_blank(),
+          axis.text.x.bottom = element_blank())
+  
+  p_global_section_period2 <-
+    i_acidification_global_section_absolute %>%
+    filter(tref == 1994) %>%
+    p_section_global(
+      var = "mean",
+      legend_title = i_var,
+      title_text = "B   1994",
+      subtitle_text = NULL,
+      plot_slabs = "n",
+      breaks = breaks
+    )
+  
+  p_global_section_period3 <-
+    i_acidification_global_section_absolute %>%
+    filter(tref == 2004) %>%
+    p_section_global(
+      var = "mean",
+      legend_title = i_var,
+      title_text = "C   2004",
+      subtitle_text = NULL,
+      plot_slabs = "n",
+      breaks = breaks
+    ) &
+    theme(legend.position = "none")
+  
+  p_global_section_period4<-
+    i_acidification_global_section_absolute %>%
+    filter(tref == 2014) %>%
+    p_section_global(
+      var = "mean",
+      legend_title = i_var,
+      title_text = "D   2014",
+      subtitle_text = NULL,
+      plot_slabs = "n",
+      breaks = breaks
+    ) &
+    theme(legend.position = "none")
+  
+  
+  print(
+    wrap_plots(
+      p_global_section_period1,
+      p_global_section_period2 &
+        theme(axis.title.x = element_blank(),
+              axis.text.x = element_blank()),
+      p_global_section_period3 &
+        theme(axis.title.x = element_blank(),
+              axis.text.x = element_blank()),
+      p_global_section_period4 &
+        theme(axis.text.x.top = element_blank()),
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()
+
+rm(acidification_global_section_absolute)
 
 ```
 
