@@ -81,20 +81,20 @@ acidification_trend <-
 
 MLR_basins_reference <- unique(acidification_trend$MLR_basins)[1]
 
-MLR_basins_uncertainty <- unique(acidification_trend$MLR_basins)
+MLR_basins_all <- unique(acidification_trend$MLR_basins)
 
 MLR_basins_uncertainty <-
-  MLR_basins_uncertainty[!MLR_basins_uncertainty %in% MLR_basins_reference]
+  MLR_basins_all[!MLR_basins_all %in% MLR_basins_reference]
 
 
 
 Version_ID_group_reference <-
   unique(acidification_trend$Version_ID_group)[1]
-Version_ID_group_uncertainty <-
+Version_ID_group_all <-
   unique(acidification_trend$Version_ID_group)
 
 Version_ID_group_uncertainty <-
-  Version_ID_group_uncertainty[Version_ID_group_uncertainty != Version_ID_group_reference]
+  Version_ID_group_all[Version_ID_group_all != Version_ID_group_reference]
 
 ```
 
@@ -243,9 +243,9 @@ return(df_out)
 ```
 
 
+# Results
 
-
-
+## Maps
 
 ```{r layered_maps, eval=FALSE}
 
@@ -466,8 +466,6 @@ acidification_zonal_uncertainty <-
   acidification_zonal_uncertainty[[1]]
 
 
-
-
 pdf(here::here("output/zonal_sections_incremental_changes_all_uncertainty_std_case.pdf"),
     width = 6,
     height = 4)
@@ -578,86 +576,380 @@ dev.off()
 ```
 
 
+## Global sections
 
 
-
-
-
-
-```{r global_section, eval=FALSE}
+```{r global_section}
 
 acidification_global_section <- acidification_trend %>%
-  group_by(tref) %>%
+  group_by(tref, MLR_basins, Version_ID_group) %>%
   nest() %>%
   mutate(zonal = map(.x = data, ~m_section_global_mean_sd(.x))) %>%
   select(-data) %>%
-  unnest(zonal)
+  unnest(zonal) %>% 
+  ungroup()
+
+
+acidification_global_section_incremental <-
+  acidification_global_section %>%
+  select(MLR_basins:band, dist,
+         contains("_delta_interval"),
+         -contains("_sd")) %>%
+  filter(tref %in% c(2004, 2014))
+
+acidification_global_section_uncertainty <-
+  acidification_global_section_incremental %>%
+  mutate(dist = as.numeric(as.character(cut(
+    dist, seq(0, 50, 1), seq(0.5, 49.5, 1)
+  ))),
+  depth = as.numeric(as.character(cut(
+    depth,
+    c(seq(0, 500, 100), seq(1000, 10000, 500)),
+    c(seq(50, 450, 100), seq(750, 10000, 500)),
+    right = FALSE
+  )))) %>%
+  group_by(across(-contains("_delta_interval"))) %>%
+  summarise(across(everything(), mean)) %>%
+  ungroup()
+
+
+
+
+acidification_global_section_uncertainty <-
+  additive_uncertainty(acidification_global_section_uncertainty)
+
+delta_acidification_global_section_uncertainty <- acidification_global_section_uncertainty[[3]]
+acidification_global_section_uncertainty_contributions <- acidification_global_section_uncertainty[[2]]
+acidification_global_section_uncertainty <- acidification_global_section_uncertainty[[1]]
+
+
+
+acidification_global_section_uncertainty %>% 
+  filter(tref == "2014",
+         variable == "CO3_delta_interval_mean") %>% 
+  p_section_global(
+    var = "std_case",
+    plot_slabs = "n",
+    title_text = NULL,
+    subtitle_text = NULL,
+    col = "div"
+  )
 
 p_section_global(
   df = acidification_global_section %>%
-    filter(tref == "2014"),
+    filter(tref == "2014",
+           MLR_basins == MLR_basins_reference,
+           Version_ID_group == Version_ID_group_reference),
   var = "pH_mean",
   plot_slabs = "n"
 )
 
-p_section_global(
-  df = acidification_global_section %>%
-    filter(tref == "1994"),
-  var = "pH_delta_interval_mean",
-  plot_slabs = "n"
+acidification_global_section_incremental <-
+  acidification_global_section_incremental %>%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %>%
+  select(-c(MLR_basins, Version_ID_group)) %>%
+  pivot_longer(contains("_delta_interval"),
+               names_to = "variable",
+               values_to = "delta_interval") %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean"))
+
+
+variables_incremental <- 
+  acidification_global_section_incremental %>% 
+  distinct(variable) %>% 
+  pull()
+
+
+acidification_global_section_uncertainty <-
+  acidification_global_section_uncertainty %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean"))
+
+delta_acidification_global_section_uncertainty <-
+  delta_acidification_global_section_uncertainty %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean"))
+
+
+
+pdf(
+  here::here("output/global_sections_incremental_changes.pdf"),
+  width = 10,
+  height = 12
 )
 
-p_section_global(
-  df = acidification_global_section %>%
-    filter(tref == "2014"),
-  var = "hyd_ion_delta_interval_mean",
-  plot_slabs = "n"
-)
+
+for (i_var in variables_incremental) {
+  # i_var <- variables_incremental[1]
+  
+  i_acidification_global_section_incremental <-
+    acidification_global_section_incremental %>%
+    filter(variable == i_var)
+  
+  low <- i_acidification_global_section_incremental %>%
+    filter(!is.na(delta_interval)) %>%
+    pull(delta_interval) %>%
+    quantile(c(.02), names = FALSE)
+  
+  high <- i_acidification_global_section_incremental %>%
+    filter(!is.na(delta_interval)) %>%
+    pull(delta_interval) %>%
+    quantile(c(.98), names = FALSE)
+  
+  breaks <- c(-Inf, seq(low, high, length.out = 10), Inf)
+  
+  p_global_section_dec1 <-
+    acidification_global_section_incremental %>%
+    filter(tref == 2004,
+           variable == i_var) %>%
+    p_section_global(
+      var = "delta_interval",
+      legend_title = i_var,
+      title_text = "A   1994 - 2004",
+      df_uncertainty = acidification_global_section_uncertainty %>%
+        filter(tref == 2004,
+               variable == i_var),
+      breaks = breaks,
+      # df_penetration = dcant_global_section_all_penetration %>%
+      #   filter(data_source == "obs",
+      #          period %in% "1994 - 2004"),
+      col_uncertainty = "grey",
+      subtitle_text = NULL,
+      plot_slabs = "n"
+    ) &
+    theme(axis.title.x = element_blank(),
+          axis.text.x.bottom = element_blank())
+  
+  p_global_section_dec2 <-
+    acidification_global_section_incremental %>%
+    filter(tref == 2014,
+           variable == i_var) %>%
+    p_section_global(
+      var = "delta_interval",
+      title_text = "B   2004 - 2014",
+      subtitle_text = NULL,
+      plot_slabs = "n",
+      df_uncertainty = acidification_global_section_uncertainty %>%
+        filter(tref == 2014,
+               variable == i_var),
+      col_uncertainty = "grey",
+      breaks = breaks
+      # df_penetration = dcant_global_section_all_penetration %>%
+      #   filter(data_source == "obs",
+      #          period %in% "2004 - 2014")
+    ) &
+    theme(legend.position = "none")
+  
+  p_global_section_offset <-
+    acidification_global_section_incremental %>%
+    filter(variable == i_var) %>%
+    arrange(depth, dist) %>%
+    select(depth, dist, tref, delta_interval) %>%
+    drop_na() %>%
+    pivot_wider(names_from = tref,
+                values_from = delta_interval) %>%
+    mutate(delta_delta_interval = `2014` - `2004`) %>%
+    p_section_global(
+      var = "delta_delta_interval",
+      legend_title = paste("delta\n", i_var),
+      df_uncertainty = delta_acidification_global_section_uncertainty %>%
+        filter(variable == i_var),
+      plot_slabs = "n",
+      col = "div",
+      title_text = "C   Decadal difference",
+      subtitle_text = NULL
+    )
+  
+  print(
+    wrap_plots(
+      p_global_section_dec1,
+      p_global_section_dec2 &
+        theme(axis.title.x = element_blank(),
+              axis.text.x = element_blank()),
+      p_global_section_offset &
+        theme(axis.text.x.top = element_blank()),
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()
+
 
 ```
 
-```{r mean_profiles, eval=FALSE}
+## Profiles
+
+```{r mean_profiles}
 
 basinmask <- basinmask %>% 
     mutate(area = earth_surf(lat, lon))
 
-acidification_profiles <- full_join(basinmask,
-          acidification_trend %>% select(-c(basin_AIP, MLR_basins, Version_ID_group))) %>%
+acidification_profiles <-
+  full_join(basinmask,
+            acidification_trend %>%
+              select(-c(basin_AIP))) %>%
   drop_na() %>%
-  relocate(tref) %>%
+  relocate(tref, MLR_basins, Version_ID_group)
+
+acidification_profiles <- acidification_profiles %>% 
   mutate(across(gamma:hyd_ion_delta_interval,
                 ~ . * area))
 
-acidification_profiles <- acidification_profiles %>%
-  group_by(tref, basin, depth) %>%
+acidification_profiles_regional <- acidification_profiles %>%
+  group_by(tref, basin, depth, MLR_basins, Version_ID_group) %>%
+  summarise(across(gamma:hyd_ion_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+acidification_profiles_global <- acidification_profiles %>%
+  mutate(basin = "Global") %>% 
+  group_by(tref, basin, depth, MLR_basins, Version_ID_group) %>%
   summarise(across(gamma:hyd_ion_delta_interval,
                    ~ sum(.) / sum(area))) %>%
   ungroup()
 
   
-acidification_profiles %>% 
-  select(tref, basin, depth, contains("delta_total")) %>% 
-  pivot_longer(-c(tref:depth),
+acidification_profiles <-
+  bind_rows(acidification_profiles_global,
+            acidification_profiles_regional)
+  
+rm(acidification_profiles_regional,
+   acidification_profiles_global)
+
+acidification_profiles %>%
+  distinct(basin)
+
+acidification_profiles <- acidification_profiles %>%
+  mutate(
+    basin = str_replace(basin,
+                        "_",
+                        ". "),
+    basin = fct_relevel(
+      basin,
+      "Global",
+      "N. Pacific",
+      "N. Atlantic",
+      "Indian",
+      "S. Pacific",
+      "S. Atlantic"
+    )
+  )
+
+acidification_profiles <- acidification_profiles %>%
+  mutate(tref = as.factor(tref))
+  
+acidification_profiles %>%
+  select(tref,
+         basin,
+         depth,
+         MLR_basins,
+         Version_ID_group,
+         contains("_delta_total")) %>%
+  pivot_longer(contains("_delta_total"),
                names_to = "variable",
-               values_to = "delta_total") %>% 
-  filter(tref != 1800) %>% 
-  ggplot(aes(delta_total, depth, col = tref)) +
+               values_to = "delta_total") %>%
+  filter(tref != 1800,
+         depth <= 3000,
+         MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %>%
+  mutate(variable = str_remove(variable, "_delta_total")) %>% 
+  ggplot(aes(
+    delta_total,
+    depth,
+    col = tref,
+    group = interaction(tref, MLR_basins, Version_ID_group)
+  )) +
   geom_vline(xintercept = 0) +
   geom_path() +
-  scale_y_reverse() +
+  scale_color_brewer(palette = "Set1", direction = -1) +
+  labs(y = "Depth (m)",
+       title = "Total change since 1800")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
   facet_grid(basin ~ variable, scales = "free_x")
   
-acidification_profiles %>% 
-  select(tref, basin, depth, contains("delta_interval")) %>% 
-  pivot_longer(-c(tref:depth),
+
+ggsave(here::here("output/profiles_total_changes.jpg"),
+       width = 18,
+       height = 10)
+
+
+
+acidification_profiles %>%
+  select(tref,
+         basin,
+         depth,
+         MLR_basins,
+         Version_ID_group,
+         contains("_delta_interval")) %>%
+  pivot_longer(contains("_delta_interval"),
                names_to = "variable",
-               values_to = "delta_interval") %>% 
-  filter(!(tref %in% c(1800,1994))) %>% 
-  ggplot(aes(delta_interval, depth, col = tref)) +
+               values_to = "delta_interval") %>%
+  filter(tref != 1800,
+         depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_interval")) %>% 
+  ggplot(aes(
+    delta_interval,
+    depth,
+    col = tref,
+    group = interaction(tref, MLR_basins, Version_ID_group)
+  )) +
   geom_vline(xintercept = 0) +
   geom_path() +
-  scale_y_reverse() +
+  scale_color_brewer(palette = "Set1", direction = -1) +
+  labs(y = "Depth (m)",
+       title = "Incremental change from previous estimate")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
   facet_grid(basin ~ variable, scales = "free_x")
+
+
+ggsave(here::here("output/profiles_incremental_changes_all.jpg"),
+       width = 18,
+       height = 10)
+
+
+
+acidification_profiles %>%
+  select(tref,
+         basin,
+         depth,
+         MLR_basins,
+         Version_ID_group,
+         contains("_delta_interval")) %>%
+  pivot_longer(contains("_delta_interval"),
+               names_to = "variable",
+               values_to = "delta_interval") %>%
+  filter(tref %in% c(2004,2014),
+         depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_interval")) %>% 
+  ggplot(aes(
+    delta_interval,
+    depth,
+    col = tref,
+    group = interaction(tref, MLR_basins, Version_ID_group)
+  )) +
+  geom_vline(xintercept = 0) +
+  geom_path() +
+  scale_color_brewer(palette = "Set1", direction = -1) +
+  labs(y = "Depth (m)",
+       title = "Incremental change from previous estimate")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(basin ~ variable, scales = "free_x")
+
+
+
+ggsave(here::here("output/profiles_incremental_changes_post_1994.jpg"),
+       width = 18,
+       height = 10)
 
 
 ```
