@@ -277,18 +277,21 @@ break_numbers <- 10
 
 ## Maps
 
-```{r layered_maps, eval=FALSE}
+### Computation
 
+```{r compute_layered_maps}
 
-acidification_layer <- acidification_trend %>%
-  mutate(depth_layer = cut(
+acidification_depth_layer <- acidification_trend %>%
+  mutate(depth = cut(
     depth,
-    c(0, 50, 100, 250, 500, 1000, 1500, 2000, 3000),
+    c(0, 100, 500, 1500, 3000),
+    c("A: 0 - 100 m", "B: 100 - 500 m", "C :500 - 1500 m", "D: 1500 - 3000 m"),
     include.lowest = TRUE
   )) %>%
   drop_na() %>%
-  select(c(lat, lon, depth_layer, tref), where(is.numeric)) %>%
-  fgroup_by(lat, lon, depth_layer, tref) %>% {
+  select(c(lat, lon, depth, tref, MLR_basins, Version_ID_group),
+         where(is.numeric)) %>%
+  fgroup_by(lat, lon, depth, tref, MLR_basins, Version_ID_group) %>% {
     add_vars(
       fgroup_vars(., "unique"),
       fmean(., keep.group_vars = FALSE) %>% add_stub(pre = FALSE, "_mean"),
@@ -296,34 +299,269 @@ acidification_layer <- acidification_trend %>%
     )
   }
 
-acidification_layer %>% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %>% 
-  ggplot(aes(lon, lat, fill = CO3_delta_total_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
+```
 
-acidification_layer %>% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %>% 
-  ggplot(aes(lon, lat, fill = CO3_delta_interval_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
+### Incremental changes
 
-acidification_layer %>% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %>% 
-  ggplot(aes(lon, lat, fill = pH_delta_total_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
+```{r depth_layer_incremental_change}
+
+# subset incremental change sections
+
+acidification_depth_layer_incremental <-
+  acidification_depth_layer %>%
+  select(lat:Version_ID_group,
+         contains("_delta_interval"),
+         -contains("_sd")) %>%
+  filter(tref %in% c(2004, 2014))
+
+# downscaling for uncertainty computation
+
+acidification_depth_layer_uncertainty <-
+  m_grid_horizontal_coarse(acidification_depth_layer_incremental)
+
+acidification_depth_layer_uncertainty <-
+  acidification_depth_layer_uncertainty %>% 
+  select(-c(lat,lon)) %>% 
+  rename(lat = lat_grid, lon = lon_grid) %>% 
+  group_by(across(-contains("_delta_interval"))) %>%
+  summarise(across(everything(), mean),
+            n = n()) %>%
+  ungroup() %>% 
+  filter(n == 25) %>% 
+  select(-n)
+
+# compute uncertainty
+
+acidification_depth_layer_uncertainty <-
+  additive_uncertainty(acidification_depth_layer_uncertainty)
+
+delta_acidification_depth_layer_uncertainty <- acidification_depth_layer_uncertainty[[3]]
+acidification_depth_layer_uncertainty <- acidification_depth_layer_uncertainty[[1]]
+
+
+# subset reference reconstruction
+
+acidification_depth_layer_incremental <-
+  acidification_depth_layer_incremental %>%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %>%
+  select(-c(MLR_basins, Version_ID_group)) %>%
+  pivot_longer(contains("_delta_interval"),
+               names_to = "variable",
+               values_to = "delta_interval") %>%
+  mutate(variable = str_remove(variable, "_delta_interval_mean"))
+
+
+# create pdf document
+
+pdf(
+  here::here("output/maps_depth_layer_incremental_changes.pdf"),
+  width = 14,
+  height = 7
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_incremental <-
+    acidification_depth_layer_incremental %>%
+    filter(variable == i_var) %>% 
+    select(lon, lat, depth, tref, delta_interval)
+
+  i_acidification_depth_layer_uncertainty <-
+    acidification_depth_layer_uncertainty %>%
+    filter(variable == i_var)
+
+  i_acidification_depth_layer_uncertainty <-
+    i_acidification_depth_layer_uncertainty %>%
+    select(lon, lat, depth, tref, signif_single, signif_double) %>%
+    st_as_sf(coords = c("lon", "lat"), crs = "+proj=longlat")
+
+  i_delta_acidification_depth_layer_uncertainty <-
+    delta_acidification_depth_layer_uncertainty %>%
+    filter(variable == i_var)
+
+  i_delta_acidification_depth_layer_uncertainty <-
+    i_delta_acidification_depth_layer_uncertainty %>%
+    select(lon, lat, depth, tref, signif_single, signif_double) %>%
+    st_as_sf(coords = c("lon", "lat"), crs = "+proj=longlat")
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_depth_layer_incremental %>%
+    filter(!is.na(delta_interval)) %>%
+    pull(delta_interval) %>%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high <- i_acidification_depth_layer_incremental %>%
+    filter(!is.na(delta_interval)) %>%
+    pull(delta_interval) %>%
+    quantile(c(quantile_high), names = FALSE)
+  
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  p_depth_layer_decades <-
+  i_acidification_depth_layer_incremental %>%
+    p_map_mdim_robinson(
+      df_uncertainty = i_acidification_depth_layer_uncertainty,
+      dim_col = "depth",
+      dim_row = "tref",
+      var = "delta_interval",
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005
+    )
+      
+  i_delta_acidification_depth_layer_incremental <-
+    i_acidification_depth_layer_incremental %>%
+    arrange(lon, lat, depth) %>%
+    drop_na() %>%
+    pivot_wider(names_from = tref,
+                values_from = delta_interval) %>%
+    mutate(delta_delta_interval = `2014` - `2004`) %>%
+    select(lon, lat, depth, delta_delta_interval)
+  
+  
+  low <- i_delta_acidification_depth_layer_incremental %>%
+    filter(!is.na(delta_delta_interval)) %>%
+    pull(delta_delta_interval) %>%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high <- i_delta_acidification_depth_layer_incremental %>%
+    filter(!is.na(delta_delta_interval)) %>%
+    pull(delta_delta_interval) %>%
+    quantile(c(quantile_high), names = FALSE)
+  
+  high_low <- max(abs(c(low,high)))
+  
+  breaks_divergent <-
+    c(-Inf, seq(-high_low, high_low, length.out = break_numbers), Inf)
+  
+  p_depth_layer_offset <-
+    i_delta_acidification_depth_layer_incremental %>% 
+    p_map_mdim_robinson(
+      df_uncertainty = i_delta_acidification_depth_layer_uncertainty,
+      dim_col = "depth",
+      # dim_row = "tref",
+      col = "divergent",
+      var = "delta_delta_interval",
+      legend_title = i_var,
+      breaks = breaks_divergent,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005
+    )
+  
+  print(
+    wrap_plots(
+      p_depth_layer_decades,
+      p_depth_layer_offset,
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()
+
+rm(acidification_depth_layer_incremental,
+   acidification_depth_layer_uncertainty,
+   delta_acidification_depth_layer_uncertainty
+   )
 
 ```
+
+### Total changes
+
+
+```{r depth_layer_total_change}
+
+# subset total change sections
+
+acidification_depth_layer_total <-
+  acidification_depth_layer %>%
+  select(lat:Version_ID_group,
+         contains("_delta_total_mean")) %>%
+  filter(tref != 1800)
+
+
+# subset reference reconstruction
+
+acidification_depth_layer_total <-
+  acidification_depth_layer_total %>%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %>%
+  select(-c(MLR_basins, Version_ID_group)) %>%
+  pivot_longer(contains("_delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  mutate(variable = str_remove(variable, "_delta_total_mean"))
+
+
+# create pdf document
+
+pdf(
+  here::here("output/maps_depth_layer_mean_sections_total_changes.pdf"),
+  width = 14,
+  height = 5
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_total <-
+    acidification_depth_layer_total %>%
+    filter(variable == i_var) %>%
+    select(lon, lat, depth, tref, delta_total)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_depth_layer_total %>%
+    filter(!is.na(delta_total)) %>%
+    pull(delta_total) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_acidification_depth_layer_total %>%
+    filter(!is.na(delta_total)) %>%
+    pull(delta_total) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  # breaks_sub <- breaks[seq(1, length(breaks), 3)]
+  
+  # df <- i_acidification_depth_layer_total
+  
+  p_total_fill <-
+  i_acidification_depth_layer_total %>%
+    p_map_mdim_robinson(
+      # df_uncertainty = i_acidification_depth_layer_uncertainty,
+      dim_col = "depth",
+      dim_row = "tref",
+      var = "delta_total",
+      legend_title = i_var,
+      breaks = breaks
+    )
+  
+  p_total_fill
+  
+}
+
+dev.off()
+
+rm(acidification_depth_layer_total)
+
+```
+
 
 
 ## Zonal sections
