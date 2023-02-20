@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree99119c4c28506340c1243fa7bcad03563411aebetargetblank99119c4a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeb5b0a142780cff886be4ae60bc258e82d6767237targetblankb5b0a14a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/99119c4c28506340c1243fa7bcad03563411aebe" target="_blank">99119c4</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/b5b0a142780cff886be4ae60bc258e82d6767237" target="_blank">b5b0a14</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree99119c4c28506340c1243fa7bcad03563411aebetargetblank99119c4a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeb5b0a142780cff886be4ae60bc258e82d6767237targetblankb5b0a14a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/99119c4c28506340c1243fa7bcad03563411aebe" target="_blank">99119c4</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/b5b0a142780cff886be4ae60bc258e82d6767237" target="_blank">b5b0a14</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -630,6 +630,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/b5b0a142780cff886be4ae60bc258e82d6767237/analysis/average_OIA.Rmd" target="_blank">b5b0a14</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-20
+</td>
+<td>
+included depth layer maps
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/7316de46d642d34477e96c169bcd38b4f42ef01f/docs/average_OIA.html" target="_blank">7316de4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1059,52 +1093,284 @@ break_numbers &lt;- 10</code></pre>
 <h1>Results</h1>
 <div id="maps" class="section level2">
 <h2>Maps</h2>
-<pre class="r"><code>acidification_layer &lt;- acidification_trend %&gt;%
-  mutate(depth_layer = cut(
+<div id="computation" class="section level3">
+<h3>Computation</h3>
+<pre class="r"><code>acidification_depth_layer &lt;- acidification_trend %&gt;%
+  mutate(depth = cut(
     depth,
-    c(0, 50, 100, 250, 500, 1000, 1500, 2000, 3000),
+    c(0, 100, 500, 1500, 3000),
+    c(&quot;A: 0 - 100 m&quot;, &quot;B: 100 - 500 m&quot;, &quot;C :500 - 1500 m&quot;, &quot;D: 1500 - 3000 m&quot;),
     include.lowest = TRUE
   )) %&gt;%
   drop_na() %&gt;%
-  select(c(lat, lon, depth_layer, tref), where(is.numeric)) %&gt;%
-  fgroup_by(lat, lon, depth_layer, tref) %&gt;% {
+  select(c(lat, lon, depth, tref, MLR_basins, Version_ID_group),
+         where(is.numeric)) %&gt;%
+  fgroup_by(lat, lon, depth, tref, MLR_basins, Version_ID_group) %&gt;% {
     add_vars(
       fgroup_vars(., &quot;unique&quot;),
       fmean(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_mean&quot;),
       fsd(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_sd&quot;)
     )
-  }
+  }</code></pre>
+</div>
+<div id="incremental-changes" class="section level3">
+<h3>Incremental changes</h3>
+<pre class="r"><code># subset incremental change sections
 
-acidification_layer %&gt;% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %&gt;% 
-  ggplot(aes(lon, lat, fill = CO3_delta_total_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
+acidification_depth_layer_incremental &lt;-
+  acidification_depth_layer %&gt;%
+  select(lat:Version_ID_group,
+         contains(&quot;_delta_interval&quot;),
+         -contains(&quot;_sd&quot;)) %&gt;%
+  filter(tref %in% c(2004, 2014))
 
-acidification_layer %&gt;% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %&gt;% 
-  ggplot(aes(lon, lat, fill = CO3_delta_interval_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()
+# downscaling for uncertainty computation
 
-acidification_layer %&gt;% 
-  filter(depth_layer %in% unique(acidification_layer$depth_layer)[c(1,5)],
-         tref != 1800) %&gt;% 
-  ggplot(aes(lon, lat, fill = pH_delta_total_mean)) +
-  geom_raster() +
-  scale_fill_viridis_c(direction = -1) +
-  facet_grid(tref ~ depth_layer) +
-  coord_quickmap()</code></pre>
+acidification_depth_layer_uncertainty &lt;-
+  m_grid_horizontal_coarse(acidification_depth_layer_incremental)
+
+acidification_depth_layer_uncertainty &lt;-
+  acidification_depth_layer_uncertainty %&gt;% 
+  select(-c(lat,lon)) %&gt;% 
+  rename(lat = lat_grid, lon = lon_grid) %&gt;% 
+  group_by(across(-contains(&quot;_delta_interval&quot;))) %&gt;%
+  summarise(across(everything(), mean),
+            n = n()) %&gt;%
+  ungroup() %&gt;% 
+  filter(n == 25) %&gt;% 
+  select(-n)
+
+# compute uncertainty
+
+acidification_depth_layer_uncertainty &lt;-
+  additive_uncertainty(acidification_depth_layer_uncertainty)
+
+delta_acidification_depth_layer_uncertainty &lt;- acidification_depth_layer_uncertainty[[3]]
+acidification_depth_layer_uncertainty &lt;- acidification_depth_layer_uncertainty[[1]]
+
+
+# subset reference reconstruction
+
+acidification_depth_layer_incremental &lt;-
+  acidification_depth_layer_incremental %&gt;%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %&gt;%
+  select(-c(MLR_basins, Version_ID_group)) %&gt;%
+  pivot_longer(contains(&quot;_delta_interval&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_interval&quot;) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
+
+
+# create pdf document
+
+pdf(
+  here::here(&quot;output/maps_depth_layer_incremental_changes.pdf&quot;),
+  width = 14,
+  height = 7
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var &lt;- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_incremental &lt;-
+    acidification_depth_layer_incremental %&gt;%
+    filter(variable == i_var) %&gt;% 
+    select(lon, lat, depth, tref, delta_interval)
+
+  i_acidification_depth_layer_uncertainty &lt;-
+    acidification_depth_layer_uncertainty %&gt;%
+    filter(variable == i_var)
+
+  i_acidification_depth_layer_uncertainty &lt;-
+    i_acidification_depth_layer_uncertainty %&gt;%
+    select(lon, lat, depth, tref, signif_single, signif_double) %&gt;%
+    st_as_sf(coords = c(&quot;lon&quot;, &quot;lat&quot;), crs = &quot;+proj=longlat&quot;)
+
+  i_delta_acidification_depth_layer_uncertainty &lt;-
+    delta_acidification_depth_layer_uncertainty %&gt;%
+    filter(variable == i_var)
+
+  i_delta_acidification_depth_layer_uncertainty &lt;-
+    i_delta_acidification_depth_layer_uncertainty %&gt;%
+    select(lon, lat, depth, tref, signif_single, signif_double) %&gt;%
+    st_as_sf(coords = c(&quot;lon&quot;, &quot;lat&quot;), crs = &quot;+proj=longlat&quot;)
+  
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_acidification_depth_layer_incremental %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high &lt;- i_acidification_depth_layer_incremental %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+  
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  p_depth_layer_decades &lt;-
+  i_acidification_depth_layer_incremental %&gt;%
+    p_map_mdim_robinson(
+      df_uncertainty = i_acidification_depth_layer_uncertainty,
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      var = &quot;delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005
+    )
+      
+  i_delta_acidification_depth_layer_incremental &lt;-
+    i_acidification_depth_layer_incremental %&gt;%
+    arrange(lon, lat, depth) %&gt;%
+    drop_na() %&gt;%
+    pivot_wider(names_from = tref,
+                values_from = delta_interval) %&gt;%
+    mutate(delta_delta_interval = `2014` - `2004`) %&gt;%
+    select(lon, lat, depth, delta_delta_interval)
+  
+  
+  low &lt;- i_delta_acidification_depth_layer_incremental %&gt;%
+    filter(!is.na(delta_delta_interval)) %&gt;%
+    pull(delta_delta_interval) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high &lt;- i_delta_acidification_depth_layer_incremental %&gt;%
+    filter(!is.na(delta_delta_interval)) %&gt;%
+    pull(delta_delta_interval) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+  
+  high_low &lt;- max(abs(c(low,high)))
+  
+  breaks_divergent &lt;-
+    c(-Inf, seq(-high_low, high_low, length.out = break_numbers), Inf)
+  
+  p_depth_layer_offset &lt;-
+    i_delta_acidification_depth_layer_incremental %&gt;% 
+    p_map_mdim_robinson(
+      df_uncertainty = i_delta_acidification_depth_layer_uncertainty,
+      dim_col = &quot;depth&quot;,
+      # dim_row = &quot;tref&quot;,
+      col = &quot;divergent&quot;,
+      var = &quot;delta_delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks_divergent,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005
+    )
+  
+  print(
+    wrap_plots(
+      p_depth_layer_decades,
+      p_depth_layer_offset,
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(acidification_depth_layer_incremental,
+   acidification_depth_layer_uncertainty,
+   delta_acidification_depth_layer_uncertainty
+   )</code></pre>
+</div>
+<div id="total-changes" class="section level3">
+<h3>Total changes</h3>
+<pre class="r"><code># subset total change sections
+
+acidification_depth_layer_total &lt;-
+  acidification_depth_layer %&gt;%
+  select(lat:Version_ID_group,
+         contains(&quot;_delta_total_mean&quot;)) %&gt;%
+  filter(tref != 1800)
+
+
+# subset reference reconstruction
+
+acidification_depth_layer_total &lt;-
+  acidification_depth_layer_total %&gt;%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %&gt;%
+  select(-c(MLR_basins, Version_ID_group)) %&gt;%
+  pivot_longer(contains(&quot;_delta_total&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_total&quot;) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_total_mean&quot;))
+
+
+# create pdf document
+
+pdf(
+  here::here(&quot;output/maps_depth_layer_mean_sections_total_changes.pdf&quot;),
+  width = 14,
+  height = 5
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var &lt;- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_total &lt;-
+    acidification_depth_layer_total %&gt;%
+    filter(variable == i_var) %&gt;%
+    select(lon, lat, depth, tref, delta_total)
+  
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_acidification_depth_layer_total %&gt;%
+    filter(!is.na(delta_total)) %&gt;%
+    pull(delta_total) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+
+  high &lt;- i_acidification_depth_layer_total %&gt;%
+    filter(!is.na(delta_total)) %&gt;%
+    pull(delta_total) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  # breaks_sub &lt;- breaks[seq(1, length(breaks), 3)]
+  
+  # df &lt;- i_acidification_depth_layer_total
+  
+  p_total_fill &lt;-
+  i_acidification_depth_layer_total %&gt;%
+    p_map_mdim_robinson(
+      # df_uncertainty = i_acidification_depth_layer_uncertainty,
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      var = &quot;delta_total&quot;,
+      legend_title = i_var,
+      breaks = breaks
+    )
+  
+  p_total_fill
+  
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(acidification_depth_layer_total)</code></pre>
+</div>
 </div>
 <div id="zonal-sections" class="section level2">
 <h2>Zonal sections</h2>
-<div id="computation" class="section level3">
+<div id="computation-1" class="section level3">
 <h3>Computation</h3>
 <pre class="r"><code>acidification_zonal &lt;- acidification_trend %&gt;%
   group_by(tref, Version_ID_group, MLR_basins) %&gt;%
@@ -1114,7 +1380,7 @@ acidification_layer %&gt;%
   unnest(zonal) %&gt;% 
   ungroup()</code></pre>
 </div>
-<div id="incremental-changes" class="section level3">
+<div id="incremental-changes-1" class="section level3">
 <h3>Incremental changes</h3>
 <pre class="r"><code># subset incremental change sections
 
@@ -1288,7 +1554,7 @@ dev.off()</code></pre>
    delta_acidification_zonal_uncertainty
    )</code></pre>
 </div>
-<div id="total-changes" class="section level3">
+<div id="total-changes-1" class="section level3">
 <h3>Total changes</h3>
 <pre class="r"><code># subset total change sections
 
@@ -1407,7 +1673,7 @@ dev.off()</code></pre>
 </div>
 <div id="global-sections" class="section level2">
 <h2>Global sections</h2>
-<div id="computation-1" class="section level3">
+<div id="computation-2" class="section level3">
 <h3>Computation</h3>
 <pre class="r"><code>acidification_global_section &lt;- acidification_trend %&gt;%
   group_by(tref, MLR_basins, Version_ID_group) %&gt;%
@@ -1417,7 +1683,7 @@ dev.off()</code></pre>
   unnest(zonal) %&gt;% 
   ungroup()</code></pre>
 </div>
-<div id="incremental-changes-1" class="section level3">
+<div id="incremental-changes-2" class="section level3">
 <h3>Incremental changes</h3>
 <pre class="r"><code># subset incremental change sections
 
@@ -1577,7 +1843,7 @@ dev.off()</code></pre>
    delta_acidification_global_section_uncertainty
    )</code></pre>
 </div>
-<div id="total-changes-1" class="section level3">
+<div id="total-changes-2" class="section level3">
 <h3>Total changes</h3>
 <pre class="r"><code># subset total change sections
 
@@ -1837,7 +2103,7 @@ dev.off()</code></pre>
 </div>
 <div id="profiles" class="section level2">
 <h2>Profiles</h2>
-<div id="computation-2" class="section level3">
+<div id="computation-3" class="section level3">
 <h3>Computation</h3>
 <pre class="r"><code># compute grid cell surface area
 
@@ -1907,7 +2173,7 @@ acidification_profiles &lt;- acidification_profiles %&gt;%
 acidification_profiles &lt;- acidification_profiles %&gt;%
   mutate(tref = as.factor(tref))</code></pre>
 </div>
-<div id="incremental-changes-2" class="section level3">
+<div id="incremental-changes-3" class="section level3">
 <h3>Incremental changes</h3>
 <pre class="r"><code># create pdf document
 
@@ -1951,7 +2217,7 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 </div>
-<div id="total-changes-2" class="section level3">
+<div id="total-changes-3" class="section level3">
 <h3>Total changes</h3>
 <pre class="r"><code># create pdf document
 
