@@ -552,7 +552,9 @@ for (i_var in OIA_variables) {
       breaks = breaks
     )
   
+  print(
   p_total_fill
+  )
   
 }
 
