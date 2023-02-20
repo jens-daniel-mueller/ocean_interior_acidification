@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">17 February, 2023</h4>
+<h4 class="date">20 February, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-02-17
+<strong>Last updated:</strong> 2023-02-20
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree87e87452f32e4314a0559c3587b7a54627a0b718targetblank87e8745a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree99119c4c28506340c1243fa7bcad03563411aebetargetblank99119c4a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/87e87452f32e4314a0559c3587b7a54627a0b718" target="_blank">87e8745</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/99119c4c28506340c1243fa7bcad03563411aebe" target="_blank">99119c4</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree87e87452f32e4314a0559c3587b7a54627a0b718targetblank87e8745a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree99119c4c28506340c1243fa7bcad03563411aebetargetblank99119c4a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/87e87452f32e4314a0559c3587b7a54627a0b718" target="_blank">87e8745</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/99119c4c28506340c1243fa7bcad03563411aebe" target="_blank">99119c4</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -630,6 +630,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/99119c4c28506340c1243fa7bcad03563411aebe/analysis/average_OIA.Rmd" target="_blank">99119c4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-20
+</td>
+<td>
+harmonized output and uncertainty assesment for profiles and sections
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/47b500894b7b94a4f4f9d4ce45ed418ae2fe56fd/docs/average_OIA.html" target="_blank">47b5008</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -846,6 +880,8 @@ OIA_variables &lt;-
 </div>
 <div id="uncertainty-determination" class="section level1">
 <h1>Uncertainty determination</h1>
+<div id="reference-dcant-case" class="section level2">
+<h2>Reference dCant case</h2>
 <pre class="r"><code>MLR_basins_reference &lt;- unique(acidification_trend$MLR_basins)[1]
 
 MLR_basins_all &lt;- unique(acidification_trend$MLR_basins)
@@ -862,6 +898,9 @@ Version_ID_group_all &lt;-
 
 Version_ID_group_uncertainty &lt;-
   Version_ID_group_all[Version_ID_group_all != Version_ID_group_reference]</code></pre>
+</div>
+<div id="additive-computation" class="section level2">
+<h2>Additive computation</h2>
 <pre class="r"><code>additive_uncertainty &lt;- function(df){
   
   df_regional_uncertainty &lt;-
@@ -984,6 +1023,19 @@ Version_ID_group_uncertainty &lt;-
     ) %&gt;%
     ungroup() %&gt;%
     drop_na()
+  
+  
+  df_stat &lt;-
+    df_stat %&gt;%
+    mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
+  
+  df_factorial &lt;-
+    df_factorial %&gt;%
+    mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
+  
+  df_stat_delta &lt;-
+    df_stat_delta %&gt;%
+    mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
 
 
 df_out &lt;- list(df_stat, df_factorial, df_stat_delta)
@@ -991,6 +1043,17 @@ df_out &lt;- list(df_stat, df_factorial, df_stat_delta)
 return(df_out)
 
 }</code></pre>
+</div>
+</div>
+<div id="color-scale-settings" class="section level1">
+<h1>Color scale settings</h1>
+<div id="section" class="section level2">
+<h2></h2>
+<pre class="r"><code>quantile_high &lt;- 0.98
+quantile_low &lt;- 0.02
+
+break_numbers &lt;- 10</code></pre>
+</div>
 </div>
 <div id="results" class="section level1">
 <h1>Results</h1>
@@ -1041,141 +1104,31 @@ acidification_layer %&gt;%
 </div>
 <div id="zonal-sections" class="section level2">
 <h2>Zonal sections</h2>
+<div id="computation" class="section level3">
+<h3>Computation</h3>
 <pre class="r"><code>acidification_zonal &lt;- acidification_trend %&gt;%
   group_by(tref, Version_ID_group, MLR_basins) %&gt;%
   nest() %&gt;%
   mutate(zonal = map(.x = data, ~m_zonal_mean_sd(.x))) %&gt;%
   select(-data) %&gt;%
   unnest(zonal) %&gt;% 
-  ungroup()
+  ungroup()</code></pre>
+</div>
+<div id="incremental-changes" class="section level3">
+<h3>Incremental changes</h3>
+<pre class="r"><code># subset incremental change sections
 
-acidification_zonal_reference &lt;- acidification_zonal %&gt;%
-  filter(
-    Version_ID_group == Version_ID_group_reference,
-    MLR_basins == MLR_basins_reference
-  )
-
-pdf(here::here(&quot;output/zonal_sections_total_changes.pdf&quot;),
-    width = 8,
-    height = 4)
-
-acidification_zonal_reference %&gt;%
-  filter(tref != 1800) %&gt;%
-  select(tref:basin_AIP, contains(&quot;_delta_total_mean&quot;)) %&gt;%
-  pivot_longer(contains(&quot;_delta_total_mean&quot;),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;value&quot;) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_total_mean&quot;)) %&gt;%
-  group_by(variable) %&gt;%
-  group_split() %&gt;%
-  # head(2) %&gt;%
-  map(
-    ~ p_section_zonal_continous_depth(
-      df = .x,
-      var = &quot;value&quot;,
-      legend_title = .x$variable,
-      plot_slabs = &quot;n&quot;,
-      breaks = NULL,
-      title_text = &quot;Total change since 1800&quot;,
-      subtitle_text = NULL
-    ) +
-      facet_grid(basin_AIP ~ tref)
-  )
-
-dev.off()
-
-pdf(here::here(&quot;output/zonal_sections_incremental_changes_all.pdf&quot;),
-    width = 8,
-    height = 4)
-
-acidification_zonal_reference %&gt;%
-  filter(tref != 1800) %&gt;%
-  select(tref:basin_AIP, contains(&quot;_delta_interval_mean&quot;)) %&gt;%
-  pivot_longer(contains(&quot;_delta_interval_mean&quot;),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;value&quot;) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;)) %&gt;%
-  group_by(variable) %&gt;%
-  group_split() %&gt;%
-  # head(1) %&gt;%
-  map(
-    ~ p_section_zonal_continous_depth(
-      df = .x,
-      var = &quot;value&quot;,
-      legend_title = .x$variable,
-      plot_slabs = &quot;n&quot;,
-      breaks = NULL,
-      title_text = &quot;Incremental change from previous estimate&quot;,
-      subtitle_text = NULL
-    ) +
-      facet_grid(basin_AIP ~ tref)
-  )
-
-dev.off()
-
-pdf(here::here(&quot;output/zonal_sections_incremental_changes_post_1994.pdf&quot;),
-    width = 6,
-    height = 4)
-
-acidification_zonal_reference %&gt;%
-  filter(tref %in% c(2004, 2014)) %&gt;%
-  select(tref:basin_AIP, contains(&quot;_delta_interval_mean&quot;)) %&gt;%
-  pivot_longer(contains(&quot;_delta_interval_mean&quot;),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;value&quot;) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;)) %&gt;%
-  group_by(variable) %&gt;%
-  group_split() %&gt;%
-  # head(1) %&gt;%
-  map(
-    ~ p_section_zonal_continous_depth(
-      df = .x,
-      var = &quot;value&quot;,
-      legend_title = .x$variable,
-      plot_slabs = &quot;n&quot;,
-      breaks = NULL,
-      title_text = &quot;Incremental change from previous estimate&quot;,
-      subtitle_text = NULL
-    ) +
-      facet_grid(basin_AIP ~ tref)
-  )
-
-dev.off()
-
-pdf(here::here(&quot;output/zonal_sections_absolute_levels.pdf&quot;),
-    width = 10,
-    height = 4)
-
-acidification_zonal_reference %&gt;%
-  # filter(tref %in% c(2004, 2014)) %&gt;%
-  select(tref:hyd_ion_mean) %&gt;%
-  pivot_longer(contains(&quot;_mean&quot;),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;value&quot;) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_mean&quot;)) %&gt;%
-  group_by(variable) %&gt;%
-  group_split() %&gt;%
-  # head(1) %&gt;%
-  map(
-    ~ p_section_zonal_continous_depth(
-      df = .x,
-      var = &quot;value&quot;,
-      legend_title = .x$variable,
-      plot_slabs = &quot;n&quot;,
-      breaks = NULL,
-      title_text = &quot;Absolute values&quot;,
-      subtitle_text = NULL
-    ) +
-      facet_grid(basin_AIP ~ tref)
-  )
-
-dev.off()</code></pre>
-<pre class="r"><code>acidification_zonal_uncertainty &lt;-
+acidification_zonal_incremental &lt;-
   acidification_zonal %&gt;%
   select(MLR_basins:basin_AIP,
          contains(&quot;_delta_interval&quot;),
          -contains(&quot;_sd&quot;)) %&gt;%
-  filter(tref %in% c(2004, 2014)) %&gt;% 
+  filter(tref %in% c(2004, 2014))
+
+# downscaling for uncertainty computation
+
+acidification_zonal_uncertainty &lt;-
+  acidification_zonal_incremental %&gt;%
   mutate(lat = as.numeric(as.character(cut(
     lat, seq(-90, 90, 10), seq(-85, 85, 10)
   ))),
@@ -1190,130 +1143,272 @@ dev.off()</code></pre>
   summarise(across(everything(), mean)) %&gt;%
   ungroup()
 
+# compute uncertainty
 
-acidification_zonal_uncertainty &lt;- additive_uncertainty(acidification_zonal_uncertainty)
-
-delta_acidification_zonal_uncertainty &lt;-
-  acidification_zonal_uncertainty[[3]]
 acidification_zonal_uncertainty &lt;-
-  acidification_zonal_uncertainty[[1]]
+  additive_uncertainty(acidification_zonal_uncertainty)
+
+delta_acidification_zonal_uncertainty &lt;- acidification_zonal_uncertainty[[3]]
+acidification_zonal_uncertainty &lt;- acidification_zonal_uncertainty[[1]]
 
 
-pdf(here::here(&quot;output/zonal_sections_incremental_changes_all_uncertainty_std_case.pdf&quot;),
-    width = 6,
-    height = 4)
+# subset reference reconstruction
 
-acidification_zonal_uncertainty %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;)) %&gt;%
-  group_by(variable) %&gt;%
-  group_split() %&gt;%
-  # head(1) %&gt;%
-  map(
-    ~ p_section_zonal_continous_depth(
-      df = .x,
-      var = &quot;std_case&quot;,
-      legend_title = .x$variable,
+acidification_zonal_incremental &lt;-
+  acidification_zonal_incremental %&gt;%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %&gt;%
+  select(-c(MLR_basins, Version_ID_group)) %&gt;%
+  pivot_longer(contains(&quot;_delta_interval&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_interval&quot;) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
+
+
+# create pdf document
+
+pdf(
+  here::here(&quot;output/zonal_mean_sections_incremental_changes.pdf&quot;),
+  width = 12,
+  height = 8
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var &lt;- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_zonal_incremental &lt;-
+    acidification_zonal_incremental %&gt;%
+    filter(variable == i_var,
+           depth &lt;= 3000)
+  
+  i_acidification_zonal_uncertainty = acidification_zonal_uncertainty %&gt;%
+    filter(variable == i_var,
+           depth &lt;= 3000)
+
+  i_delta_acidification_zonal_uncertainty = delta_acidification_zonal_uncertainty %&gt;%
+    filter(variable == i_var,
+           depth &lt;= 3000)
+  
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_acidification_zonal_incremental %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high &lt;- i_acidification_zonal_incremental %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+  
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  p_zonal_dec &lt;-
+    p_section_zonal_continous_depth(
+      df = i_acidification_zonal_incremental,
+      var = &quot;delta_interval&quot;,
+      legend_title = i_var,
       plot_slabs = &quot;n&quot;,
-      breaks = NULL,
-      title_text = &quot;Incremental change from previous estimate&quot;,
+      breaks = breaks,
+      title_text = NULL,
       subtitle_text = NULL
     ) +
-        geom_point(
-          data = .x %&gt;% filter(signif_single == 0),
-          aes(lat, depth),
-          shape = 20,
-          size = 1,
-          col = &quot;grey&quot;
-        ) +
-        geom_point(
-          data = .x %&gt;% filter(signif_double == 0),
-          aes(lat, depth),
-          shape = 20,
-          size = 0.1,
-          col = &quot;grey&quot;
-        ) +
-      facet_grid(basin_AIP ~ tref)
-  )
+    geom_point(
+      data = i_acidification_zonal_uncertainty %&gt;% filter(signif_single == 0),
+      aes(lat, depth),
+      shape = 20,
+      size = 1,
+      col = &quot;grey&quot;
+    ) +
+    geom_point(
+      data = i_acidification_zonal_uncertainty %&gt;% filter(signif_double == 0),
+      aes(lat, depth),
+      shape = 20,
+      size = 0.1,
+      col = &quot;grey&quot;
+    ) +
+    facet_grid(tref ~ basin_AIP)
 
-dev.off()
-
-
-pdf(here::here(&quot;output/zonal_sections_incremental_changes_all_uncertainty_sd.pdf&quot;),
-    width = 6,
-    height = 4)
-
-acidification_zonal_uncertainty %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;)) %&gt;%
-  group_by(variable) %&gt;%
-  group_split() %&gt;%
-  # head(1) %&gt;%
-  map(
-    ~ p_section_zonal_continous_depth(
-      df = .x,
-      var = &quot;sd&quot;,
-      legend_title = .x$variable,
+  
+  
+  
+  p_zonal_offset &lt;-
+    i_acidification_zonal_incremental %&gt;%
+    arrange(depth, lat) %&gt;%
+    select(depth, lat, basin_AIP, tref, delta_interval) %&gt;%
+    drop_na() %&gt;%
+    pivot_wider(names_from = tref,
+                values_from = delta_interval) %&gt;%
+    mutate(delta_delta_interval = `2014` - `2004`) %&gt;%
+    p_section_zonal_continous_depth(
+      var = &quot;delta_delta_interval&quot;,
+      legend_title = paste0(&quot;delta\n&quot;,i_var),
       plot_slabs = &quot;n&quot;,
       breaks = NULL,
-      title_text = &quot;Uncertainty estimate&quot;,
-      subtitle_text = &quot;Incremental change from previous estimate&quot;
-    ) +
-      facet_grid(basin_AIP ~ tref)
-  )
-
-dev.off()
-
-
-
-pdf(here::here(&quot;output/delta_zonal_sections_incremental_changes_all_uncertainty_std_case.pdf&quot;),
-    width = 6,
-    height = 6)
-
-delta_acidification_zonal_uncertainty %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;)) %&gt;%
-  group_by(variable) %&gt;%
-  group_split() %&gt;%
-  # head(1) %&gt;%
-  map(
-    ~ p_section_zonal_continous_depth(
-      df = .x,
-      var = &quot;delta_value&quot;,
-      legend_title = .x$variable,
-      plot_slabs = &quot;n&quot;,
       col = &quot;div&quot;,
-      breaks = NULL,
-      title_text = &quot;Decadal differences&quot;,
-      subtitle_text = &quot;Incremental change from previous estimate&quot;
+      title_text = NULL,
+      subtitle_text = NULL
     ) +
-        geom_point(
-          data = .x %&gt;% filter(signif_single == 0),
-          aes(lat, depth),
-          shape = 20,
-          size = 1,
-          col = &quot;grey&quot;
-        ) +
-        geom_point(
-          data = .x %&gt;% filter(signif_double == 0),
-          aes(lat, depth),
-          shape = 20,
-          size = 0.1,
-          col = &quot;grey&quot;
-        ) +
-      facet_grid(basin_AIP ~ .)
+    geom_point(
+      data = i_acidification_zonal_uncertainty %&gt;% filter(signif_single == 0),
+      aes(lat, depth),
+      shape = 20,
+      size = 1
+    ) +
+    geom_point(
+      data = i_acidification_zonal_uncertainty %&gt;% filter(signif_double == 0),
+      aes(lat, depth),
+      shape = 20,
+      size = 0.1
+    ) +
+    facet_grid(. ~ basin_AIP)
+  
+  print(
+    wrap_plots(
+      p_zonal_dec &amp;
+        theme(axis.title.x = element_blank(),
+              axis.text.x = element_blank()),
+      p_zonal_offset,
+      ncol = 1
+    )
   )
+  
+}
 
-dev.off()
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(acidification_zonal_incremental,
+   acidification_zonal_uncertainty,
+   delta_acidification_zonal_uncertainty
+   )</code></pre>
+</div>
+<div id="total-changes" class="section level3">
+<h3>Total changes</h3>
+<pre class="r"><code># subset total change sections
+
+acidification_zonal_total &lt;-
+  acidification_zonal %&gt;%
+  select(MLR_basins:basin_AIP,
+         contains(&quot;_delta_total_mean&quot;)) %&gt;%
+  filter(tref != 1800)
 
 
+# subset reference reconstruction
 
-rm(
-  acidification_zonal,
-  acidification_zonal_reference,
-  acidification_zonal_uncertainty,
-  delta_acidification_zonal_uncertainty
-)</code></pre>
+acidification_zonal_total &lt;-
+  acidification_zonal_total %&gt;%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %&gt;%
+  select(-c(MLR_basins, Version_ID_group)) %&gt;%
+  pivot_longer(contains(&quot;_delta_total&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_total&quot;) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_total_mean&quot;))
+
+
+# create pdf document
+
+pdf(
+  here::here(&quot;output/zonal_mean_sections_total_changes.pdf&quot;),
+  width = 10,
+  height = 8
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var &lt;- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_zonal_total &lt;-
+    acidification_zonal_total %&gt;%
+    filter(variable == i_var,
+           depth &lt;= 3000)
+  
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_acidification_zonal_total %&gt;%
+    filter(!is.na(delta_total)) %&gt;%
+    pull(delta_total) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+
+  high &lt;- i_acidification_zonal_total %&gt;%
+    filter(!is.na(delta_total)) %&gt;%
+    pull(delta_total) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  breaks_sub &lt;- breaks[seq(1, length(breaks), 3)]
+  
+  
+  p_total_fill &lt;-
+    p_section_zonal_continous_depth(
+      df = i_acidification_zonal_total,
+      var = &quot;delta_total&quot;,
+      legend_title = i_var,
+      plot_slabs = &quot;n&quot;,
+      breaks = breaks,
+      title_text = NULL,
+      subtitle_text = NULL
+    ) +
+    facet_grid(tref ~ basin_AIP) +
+    geom_contour(
+      data = i_acidification_zonal_total,
+      aes(lat, depth, z = delta_total),
+      col = &quot;white&quot;,
+      breaks = breaks_sub
+    )
+  
+  p_total_contour &lt;-
+    i_acidification_zonal_total %&gt;%
+    mutate(tref = as.factor(tref)) %&gt;%
+    ggplot() +
+    geom_contour(aes(lat, depth, z = delta_total,
+                     col = tref),
+                 breaks = breaks_sub) +
+    scale_y_continuous(
+      trans = trans_reverser(&quot;sqrt&quot;),
+      breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+      limits = c(params_global$inventory_depth_standard, 0),
+      name = &quot;Depth (m)&quot;
+    ) +
+    scale_x_continuous(
+      breaks = seq(-100, 100, 20),
+      limits = c(-80, 65),
+      name = &quot;Latitude (°N)&quot;
+    ) +
+    scale_color_brewer(palette = &quot;YlGnBu&quot;) +
+    coord_fixed(ratio = 1, expand = 0) +
+    facet_grid(. ~ basin_AIP)
+  
+  print(
+    wrap_plots(
+      p_total_fill,
+      p_total_contour,
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(acidification_zonal_total)</code></pre>
+</div>
 </div>
 <div id="global-sections" class="section level2">
 <h2>Global sections</h2>
+<div id="computation-1" class="section level3">
+<h3>Computation</h3>
 <pre class="r"><code>acidification_global_section &lt;- acidification_trend %&gt;%
   group_by(tref, MLR_basins, Version_ID_group) %&gt;%
   nest() %&gt;%
@@ -1321,6 +1416,9 @@ rm(
   select(-data) %&gt;%
   unnest(zonal) %&gt;% 
   ungroup()</code></pre>
+</div>
+<div id="incremental-changes-1" class="section level3">
+<h3>Incremental changes</h3>
 <pre class="r"><code># subset incremental change sections
 
 acidification_global_section_incremental &lt;-
@@ -1354,15 +1452,6 @@ acidification_global_section_uncertainty &lt;-
 
 delta_acidification_global_section_uncertainty &lt;- acidification_global_section_uncertainty[[3]]
 acidification_global_section_uncertainty &lt;- acidification_global_section_uncertainty[[1]]
-
-
-acidification_global_section_uncertainty &lt;-
-  acidification_global_section_uncertainty %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
-
-delta_acidification_global_section_uncertainty &lt;-
-  delta_acidification_global_section_uncertainty %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
 
 
 # subset reference reconstruction
@@ -1404,14 +1493,14 @@ for (i_var in OIA_variables) {
   low &lt;- i_acidification_global_section_incremental %&gt;%
     filter(!is.na(delta_interval)) %&gt;%
     pull(delta_interval) %&gt;%
-    quantile(c(.02), names = FALSE)
+    quantile(c(quantile_low), names = FALSE)
   
   high &lt;- i_acidification_global_section_incremental %&gt;%
     filter(!is.na(delta_interval)) %&gt;%
     pull(delta_interval) %&gt;%
-    quantile(c(.98), names = FALSE)
+    quantile(c(quantile_high), names = FALSE)
   
-  breaks &lt;- c(-Inf, seq(low, high, length.out = 10), Inf)
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
   
   p_global_section_dec1 &lt;-
     i_acidification_global_section_incremental %&gt;%
@@ -1487,6 +1576,9 @@ dev.off()</code></pre>
    acidification_global_section_uncertainty,
    delta_acidification_global_section_uncertainty
    )</code></pre>
+</div>
+<div id="total-changes-1" class="section level3">
+<h3>Total changes</h3>
 <pre class="r"><code># subset total change sections
 
 acidification_global_section_total &lt;-
@@ -1497,9 +1589,6 @@ acidification_global_section_total &lt;-
 
 
 # subset reference reconstruction
-
-# acidification_global_section_total %&gt;% 
-#   distinct(tref, MLR_basins, Version_ID_group)
 
 acidification_global_section_total &lt;-
   acidification_global_section_total %&gt;%
@@ -1538,14 +1627,14 @@ for (i_var in OIA_variables) {
   low &lt;- i_acidification_global_section_total %&gt;%
     filter(!is.na(delta_total)) %&gt;%
     pull(delta_total) %&gt;%
-    quantile(c(.02), names = FALSE)
-  
+    quantile(c(quantile_low), names = FALSE)
+
   high &lt;- i_acidification_global_section_total %&gt;%
     filter(!is.na(delta_total)) %&gt;%
     pull(delta_total) %&gt;%
-    quantile(c(.98), names = FALSE)
-  
-  breaks &lt;- c(-Inf, seq(low, high, length.out = 10), Inf)
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
   
   p_global_section_period1 &lt;-
     i_acidification_global_section_total %&gt;%
@@ -1554,7 +1643,7 @@ for (i_var in OIA_variables) {
       var = &quot;delta_total&quot;,
       legend_title = i_var,
       title_text = &quot;A   1800 - 1994&quot;,
-      breaks = breaks,
+      breaks = NULL,
       subtitle_text = NULL,
       plot_slabs = &quot;n&quot;
     ) &amp;
@@ -1606,6 +1695,9 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 <pre class="r"><code>rm(acidification_global_section_total)</code></pre>
+</div>
+<div id="absolute-state" class="section level3">
+<h3>Absolute state</h3>
 <pre class="r"><code># subset absolute value sections
 
 acidification_global_section_absolute &lt;-
@@ -1742,10 +1834,17 @@ dev.off()</code></pre>
   2 </code></pre>
 <pre class="r"><code>rm(acidification_global_section_absolute)</code></pre>
 </div>
+</div>
 <div id="profiles" class="section level2">
 <h2>Profiles</h2>
-<pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
+<div id="computation-2" class="section level3">
+<h3>Computation</h3>
+<pre class="r"><code># compute grid cell surface area
+
+basinmask &lt;- basinmask %&gt;% 
     mutate(area = earth_surf(lat, lon))
+
+# join with 3D acidifcation fields
 
 acidification_profiles &lt;-
   full_join(basinmask,
@@ -1754,15 +1853,21 @@ acidification_profiles &lt;-
   drop_na() %&gt;%
   relocate(tref, MLR_basins, Version_ID_group)
 
+# scale values to surface area
+
 acidification_profiles &lt;- acidification_profiles %&gt;% 
   mutate(across(gamma:hyd_ion_delta_interval,
                 ~ . * area))
+
+# calculate regional means
 
 acidification_profiles_regional &lt;- acidification_profiles %&gt;%
   group_by(tref, basin, depth, MLR_basins, Version_ID_group) %&gt;%
   summarise(across(gamma:hyd_ion_delta_interval,
                    ~ sum(.) / sum(area))) %&gt;%
   ungroup()
+
+# calculate global means
 
 acidification_profiles_global &lt;- acidification_profiles %&gt;%
   mutate(basin = &quot;Global&quot;) %&gt;% 
@@ -1771,6 +1876,7 @@ acidification_profiles_global &lt;- acidification_profiles %&gt;%
                    ~ sum(.) / sum(area))) %&gt;%
   ungroup()
 
+# join global and regional profiles
   
 acidification_profiles &lt;-
   bind_rows(acidification_profiles_global,
@@ -1779,18 +1885,10 @@ acidification_profiles &lt;-
 rm(acidification_profiles_regional,
    acidification_profiles_global)
 
-acidification_profiles %&gt;%
-  distinct(basin)</code></pre>
-<pre><code># A tibble: 6 × 1
-  basin     
-  &lt;chr&gt;     
-1 Global    
-2 Indian    
-3 N_Atlantic
-4 N_Pacific 
-5 S_Atlantic
-6 S_Pacific </code></pre>
-<pre class="r"><code>acidification_profiles &lt;- acidification_profiles %&gt;%
+
+# rename basins
+
+acidification_profiles &lt;- acidification_profiles %&gt;%
   mutate(
     basin = str_replace(basin,
                         &quot;_&quot;,
@@ -1807,8 +1905,62 @@ acidification_profiles %&gt;%
   )
 
 acidification_profiles &lt;- acidification_profiles %&gt;%
-  mutate(tref = as.factor(tref))
-  
+  mutate(tref = as.factor(tref))</code></pre>
+</div>
+<div id="incremental-changes-2" class="section level3">
+<h3>Incremental changes</h3>
+<pre class="r"><code># create pdf document
+
+pdf(
+  here::here(&quot;output/profiles_incremental_changes.pdf&quot;),
+  width = 14,
+  height = 8
+)
+
+acidification_profiles %&gt;%
+  select(tref,
+         basin,
+         depth,
+         MLR_basins,
+         Version_ID_group,
+         contains(&quot;_delta_interval&quot;)) %&gt;%
+  pivot_longer(contains(&quot;_delta_interval&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_interval&quot;) %&gt;%
+  filter(tref %in% c(2004,2014),
+         depth &lt;= 3000) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_interval&quot;)) %&gt;% 
+  ggplot(aes(
+    delta_interval,
+    depth,
+    col = tref,
+    group = interaction(tref, MLR_basins, Version_ID_group)
+  )) +
+  geom_vline(xintercept = 0, col = &quot;grey&quot;) +
+  geom_path() +
+  scale_color_manual(values = c(&quot;#EE7733&quot;, &quot;#009988&quot;)) +
+  labs(y = &quot;Depth (m)&quot;,
+       title = &quot;Incremental change from previous estimate&quot;)+
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+</div>
+<div id="total-changes-2" class="section level3">
+<h3>Total changes</h3>
+<pre class="r"><code># create pdf document
+
+pdf(
+  here::here(&quot;output/profiles_total_changes.pdf&quot;),
+  width = 14,
+  height = 8
+)
+
 acidification_profiles %&gt;%
   select(tref,
          basin,
@@ -1830,59 +1982,30 @@ acidification_profiles %&gt;%
     col = tref,
     group = interaction(tref, MLR_basins, Version_ID_group)
   )) +
-  geom_vline(xintercept = 0) +
+  geom_vline(xintercept = 0, col = &quot;grey&quot;) +
   geom_path() +
-  scale_color_brewer(palette = &quot;Set1&quot;, direction = -1) +
+  scale_color_brewer(palette = &quot;YlGnBu&quot;) +
   labs(y = &quot;Depth (m)&quot;,
        title = &quot;Total change since 1800&quot;)+
   scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
   theme(legend.title = element_blank(),
         axis.title.x = element_blank()) +
-  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="figure/average_OIA.Rmd/mean_profiles-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_profiles-1">
-Past versions of mean_profiles-1.png
-</button>
-</p>
-<div id="fig-mean_profiles-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4bc95a098ad28c5b7153f3888da5379b8047bc30/docs/figure/average_OIA.Rmd/mean_profiles-1.png" target="_blank">4bc95a0</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-17
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>ggsave(here::here(&quot;output/profiles_total_changes.jpg&quot;),
-       width = 18,
-       height = 10)
+  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)
 
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+</div>
+<div id="absolute-state-1" class="section level3">
+<h3>Absolute state</h3>
+<pre class="r"><code># create pdf document
 
+pdf(
+  here::here(&quot;output/profiles_absolute_state.pdf&quot;),
+  width = 14,
+  height = 8
+)
 
 acidification_profiles %&gt;%
   select(tref,
@@ -1890,143 +2013,33 @@ acidification_profiles %&gt;%
          depth,
          MLR_basins,
          Version_ID_group,
-         contains(&quot;_delta_interval&quot;)) %&gt;%
-  pivot_longer(contains(&quot;_delta_interval&quot;),
+         all_of(OIA_variables)) %&gt;%
+  pivot_longer(-c(tref:Version_ID_group),
                names_to = &quot;variable&quot;,
-               values_to = &quot;delta_interval&quot;) %&gt;%
-  filter(tref != 1800,
-         depth &lt;= 3000) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval&quot;)) %&gt;% 
+               values_to = &quot;total&quot;) %&gt;%
+  filter(depth &lt;= 3000, 
+         MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %&gt;%
   ggplot(aes(
-    delta_interval,
+    total,
     depth,
     col = tref,
     group = interaction(tref, MLR_basins, Version_ID_group)
   )) +
-  geom_vline(xintercept = 0) +
   geom_path() +
-  scale_color_brewer(palette = &quot;Set1&quot;, direction = -1) +
+  scale_color_brewer(palette = &quot;YlGnBu&quot;) +
   labs(y = &quot;Depth (m)&quot;,
-       title = &quot;Incremental change from previous estimate&quot;)+
+       title = &quot;Total change since 1800&quot;)+
   scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
   theme(legend.title = element_blank(),
         axis.title.x = element_blank()) +
-  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="figure/average_OIA.Rmd/mean_profiles-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_profiles-2">
-Past versions of mean_profiles-2.png
-</button>
-</p>
-<div id="fig-mean_profiles-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4bc95a098ad28c5b7153f3888da5379b8047bc30/docs/figure/average_OIA.Rmd/mean_profiles-2.png" target="_blank">4bc95a0</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-17
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>ggsave(here::here(&quot;output/profiles_incremental_changes_all.jpg&quot;),
-       width = 18,
-       height = 10)
+  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)
 
-
-
-acidification_profiles %&gt;%
-  select(tref,
-         basin,
-         depth,
-         MLR_basins,
-         Version_ID_group,
-         contains(&quot;_delta_interval&quot;)) %&gt;%
-  pivot_longer(contains(&quot;_delta_interval&quot;),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;delta_interval&quot;) %&gt;%
-  filter(tref %in% c(2004,2014),
-         depth &lt;= 3000) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval&quot;)) %&gt;% 
-  ggplot(aes(
-    delta_interval,
-    depth,
-    col = tref,
-    group = interaction(tref, MLR_basins, Version_ID_group)
-  )) +
-  geom_vline(xintercept = 0) +
-  geom_path() +
-  scale_color_brewer(palette = &quot;Set1&quot;, direction = -1) +
-  labs(y = &quot;Depth (m)&quot;,
-       title = &quot;Incremental change from previous estimate&quot;)+
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
-  theme(legend.title = element_blank(),
-        axis.title.x = element_blank()) +
-  facet_grid(basin ~ variable, scales = &quot;free_x&quot;)</code></pre>
-<p><img src="figure/average_OIA.Rmd/mean_profiles-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_profiles-3">
-Past versions of mean_profiles-3.png
-</button>
-</p>
-<div id="fig-mean_profiles-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4bc95a098ad28c5b7153f3888da5379b8047bc30/docs/figure/average_OIA.Rmd/mean_profiles-3.png" target="_blank">4bc95a0</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-02-17
-</td>
-</tr>
-</tbody>
-</table>
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
 </div>
-</div>
-<pre class="r"><code>ggsave(here::here(&quot;output/profiles_incremental_changes_post_1994.jpg&quot;),
-       width = 18,
-       height = 10)</code></pre>
 </div>
 </div>
 <div id="write-ouput" class="section level1">
@@ -2106,25 +2119,24 @@ loaded via a namespace (and not attached):
  [40] xfun_0.35               ps_1.7.2                rvest_1.0.3            
  [43] timechange_0.1.1        lifecycle_1.0.3         googlesheets4_1.0.1    
  [46] getPass_0.2-2           MASS_7.3-58.1           scales_1.2.1           
- [49] vroom_1.6.0             ragg_1.2.4              hms_1.1.2              
- [52] promises_1.2.0.1        parallel_4.2.2          RColorBrewer_1.1-3     
- [55] yaml_2.3.6              memoise_2.0.1           sass_0.4.4             
- [58] stringi_1.7.8           highr_0.9               e1071_1.7-12           
- [61] checkmate_2.1.0         rlang_1.0.6             pkgconfig_2.0.3        
- [64] systemfonts_1.0.4       distributional_0.3.1    evaluate_0.18          
- [67] lattice_0.20-45         labeling_0.4.2          bit_4.0.5              
- [70] processx_3.8.0          tidyselect_1.2.0        here_1.0.1             
- [73] magrittr_2.0.3          R6_2.5.1                generics_0.1.3         
- [76] DBI_1.1.3               pillar_1.8.1            haven_2.5.1            
- [79] whisker_0.4             withr_2.5.0             units_0.8-0            
- [82] sp_1.5-1                modelr_0.1.10           crayon_1.5.2           
- [85] KernSmooth_2.23-20      utf8_1.2.2              tzdb_0.3.0             
- [88] rmarkdown_2.18          isoband_0.2.6           grid_4.2.2             
- [91] readxl_1.4.1            data.table_1.14.6       callr_3.7.3            
- [94] git2r_0.30.1            webshot_0.5.4           reprex_2.0.2           
- [97] digest_0.6.30           classInt_0.4-8          httpuv_1.6.6           
-[100] textshaping_0.3.6       munsell_0.5.0           viridisLite_0.4.1      
-[103] bslib_0.4.1            </code></pre>
+ [49] vroom_1.6.0             hms_1.1.2               promises_1.2.0.1       
+ [52] parallel_4.2.2          RColorBrewer_1.1-3      yaml_2.3.6             
+ [55] memoise_2.0.1           sass_0.4.4              stringi_1.7.8          
+ [58] e1071_1.7-12            checkmate_2.1.0         rlang_1.0.6            
+ [61] pkgconfig_2.0.3         systemfonts_1.0.4       distributional_0.3.1   
+ [64] evaluate_0.18           lattice_0.20-45         labeling_0.4.2         
+ [67] bit_4.0.5               processx_3.8.0          tidyselect_1.2.0       
+ [70] here_1.0.1              magrittr_2.0.3          R6_2.5.1               
+ [73] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
+ [76] haven_2.5.1             whisker_0.4             withr_2.5.0            
+ [79] units_0.8-0             sp_1.5-1                modelr_0.1.10          
+ [82] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
+ [85] tzdb_0.3.0              rmarkdown_2.18          isoband_0.2.6          
+ [88] grid_4.2.2              readxl_1.4.1            data.table_1.14.6      
+ [91] callr_3.7.3             git2r_0.30.1            webshot_0.5.4          
+ [94] reprex_2.0.2            digest_0.6.30           classInt_0.4-8         
+ [97] httpuv_1.6.6            textshaping_0.3.6       munsell_0.5.0          
+[100] viridisLite_0.4.1       bslib_0.4.1            </code></pre>
 </div>
 </div>
 
