@@ -275,7 +275,7 @@ break_numbers <- 10
 
 # Results
 
-## Maps
+## Depth layer maps
 
 ### Computation
 
@@ -564,6 +564,166 @@ rm(acidification_depth_layer_total)
 
 ```
 
+
+## Saturation horizon maps
+
+```{r compute_saturation_horizon_maps}
+
+acidification_saturation_horizon <- acidification_trend %>%
+  filter(MLR_basins == MLR_basins_reference,
+         Version_ID_group == Version_ID_group_reference) %>%
+  select(lat,lon, depth, tref,
+         contains("Omega"),
+         -contains("delta"))
+
+acidification_saturation_horizon <-
+  acidification_saturation_horizon %>%
+  pivot_longer(
+    contains("Omega"),
+    names_to = "mineral",
+    names_prefix = "Omega",
+    values_to = "Omega"
+  )
+
+# downscaling for computation
+
+acidification_saturation_horizon <-
+  m_grid_horizontal_coarse(acidification_saturation_horizon)
+
+acidification_saturation_horizon <-
+  acidification_saturation_horizon %>% 
+  select(-c(lat,lon)) %>% 
+  rename(lat = lat_grid, lon = lon_grid) %>% 
+  group_by(lat,lon,tref,depth,mineral) %>%
+  summarise(Omega = mean(Omega, na_rm = TRUE),
+            n = n()) %>%
+  ungroup() %>% 
+  filter(n == 25) %>% 
+  select(-n)
+
+depth_grid <-
+  expand_grid(
+    acidification_saturation_horizon %>%
+      distinct(lat, lon, tref, mineral),
+    depth = seq(0, 5500, 10)
+  )
+
+acidification_saturation_horizon <-
+  full_join(acidification_saturation_horizon,
+            depth_grid)
+
+rm(depth_grid)
+
+acidification_saturation_horizon <-
+  acidification_saturation_horizon %>%
+  group_by(lon, lat, tref, mineral) %>%
+  mutate(n = n()) %>%
+  ungroup() 
+
+acidification_saturation_horizon <-
+  acidification_saturation_horizon %>%
+  filter(n == 553) %>%
+  select(-n)
+
+# acidification_saturation_horizon <-
+#   acidification_saturation_horizon %>%
+#   arrange(lon, lat, tref, mineral, depth)
+
+acidification_saturation_horizon <-
+  acidification_saturation_horizon %>%
+  group_by(lon, lat, tref, mineral) %>%
+  mutate(Omega = approxfun(depth, Omega, rule = 1)(depth)) %>%
+  ungroup()
+
+acidification_saturation_horizon <-
+  acidification_saturation_horizon %>%
+  drop_na()
+
+for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
+  
+  temp <-
+    acidification_saturation_horizon %>%
+    filter(Omega >= i_sat_level) %>%
+    group_by(lat, lon, tref, mineral) %>%
+    summarise(saturation_horizon = max(depth)) %>%
+    ungroup() %>%
+    mutate(sat_level = i_sat_level)
+  
+  if (exists("acidification_saturation_horizon_levels")) {
+    acidification_saturation_horizon_levels <-
+      bind_rows(acidification_saturation_horizon_levels, temp)
+  }
+  
+  if (!exists("acidification_saturation_horizon_levels")) {
+    acidification_saturation_horizon_levels <- temp
+  }
+  
+}
+
+
+
+pdf(
+  here::here("output/maps_saturation_horizon_absolute_state.pdf"),
+  width = 10,
+  height = 8
+)
+
+for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  
+  print(
+  acidification_saturation_horizon_levels %>%
+    relocate(lon) %>%
+    filter(sat_level == i_sat_level) %>% 
+    select(-sat_level) %>% 
+    p_map_mdim_robinson(
+      dim_row = "tref",
+      dim_col = "mineral",
+      var = "saturation_horizon",
+      legend_title = "Saturation\nhorizon\n(m)",
+      breaks = seq(0, 6000, 500)
+    ) +
+    labs(title = paste("Saturation threshold:",i_sat_level))
+  )
+}
+
+dev.off()
+
+pdf(
+  here::here("output/maps_saturation_horizon_total_changes.pdf"),
+  width = 10,
+  height = 6
+)
+
+
+for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  print(
+    acidification_saturation_horizon_levels %>%
+      filter(sat_level == i_sat_level) %>%
+      select(-sat_level) %>%
+      arrange(tref) %>%
+      group_by(lat, lon, mineral) %>%
+      mutate(
+        delta_saturation_horizon = saturation_horizon - lag(saturation_horizon),
+        period = paste(lag(tref), "-", tref)
+      ) %>%
+      ungroup() %>%
+      drop_na() %>%
+      select(lon, lat, period, mineral, delta_saturation_horizon) %>%
+      p_map_mdim_robinson(
+        dim_row = "period",
+        dim_col = "mineral",
+        col = "div",
+        var = "delta_saturation_horizon",
+        legend_title = "Change\nsaturation\nhorizon\n(m)",
+        breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
+      ) +
+      labs(title = paste("Saturation threshold:", i_sat_level))
+  )
+}
+
+dev.off()
+
+```
 
 
 ## Zonal sections
