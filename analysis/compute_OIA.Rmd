@@ -87,6 +87,10 @@ rm(dcant_3d_read_mdim)
 dcant_3d_tibble <- dcant_3d_tibble %>% 
   drop_na()
 
+
+dcant_3d_tibble <- dcant_3d_tibble %>%
+  mutate(dcant = if_else(dcant < 0, 0, dcant))
+
 # dcant_3d_tibble <- dcant_3d_tibble %>%
 #   filter(lon == 335.5,
 #          lat == 0.5)
@@ -114,7 +118,8 @@ dcant_3d_tibble %>%
 S04_cant_3d <-
   read_csv(paste(path_preprocessing,
                  "S04_tcant_3d.csv",
-                 sep = ""))
+                 sep = "")) %>% 
+  mutate(tcant = if_else(tcant < 0, 0, tcant))
 
 ```
 

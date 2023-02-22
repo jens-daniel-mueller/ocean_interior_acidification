@@ -610,43 +610,43 @@ acidification_saturation_horizon <-
   filter(n == 25) %>% 
   select(-n)
 
-depth_grid <-
-  expand_grid(
-    acidification_saturation_horizon %>%
-      distinct(lat, lon, tref, mineral),
-    depth = seq(0, 5500, 10)
-  )
-
-acidification_saturation_horizon <-
-  full_join(acidification_saturation_horizon,
-            depth_grid)
-
-rm(depth_grid)
-
-acidification_saturation_horizon <-
-  acidification_saturation_horizon %>%
-  group_by(lon, lat, tref, mineral) %>%
-  mutate(n = n()) %>%
-  ungroup() 
-
-acidification_saturation_horizon <-
-  acidification_saturation_horizon %>%
-  filter(n == 553) %>%
-  select(-n)
-
+# depth_grid <-
+#   expand_grid(
+#     acidification_saturation_horizon %>%
+#       distinct(lat, lon, tref, mineral),
+#     depth = seq(0, 5500, 10)
+#   )
+# 
+# acidification_saturation_horizon <-
+#   full_join(acidification_saturation_horizon,
+#             depth_grid)
+# 
+# rm(depth_grid)
+# 
 # acidification_saturation_horizon <-
 #   acidification_saturation_horizon %>%
-#   arrange(lon, lat, tref, mineral, depth)
-
-acidification_saturation_horizon <-
-  acidification_saturation_horizon %>%
-  group_by(lon, lat, tref, mineral) %>%
-  mutate(Omega = approxfun(depth, Omega, rule = 1)(depth)) %>%
-  ungroup()
-
-acidification_saturation_horizon <-
-  acidification_saturation_horizon %>%
-  drop_na()
+#   group_by(lon, lat, tref, mineral) %>%
+#   mutate(n = n()) %>%
+#   ungroup() 
+# 
+# acidification_saturation_horizon <-
+#   acidification_saturation_horizon %>%
+#   filter(n == 553) %>%
+#   select(-n)
+# 
+# # acidification_saturation_horizon <-
+# #   acidification_saturation_horizon %>%
+# #   arrange(lon, lat, tref, mineral, depth)
+# 
+# acidification_saturation_horizon <-
+#   acidification_saturation_horizon %>%
+#   group_by(lon, lat, tref, mineral) %>%
+#   mutate(Omega = approxfun(depth, Omega, rule = 1)(depth)) %>%
+#   ungroup()
+# 
+# acidification_saturation_horizon <-
+#   acidification_saturation_horizon %>%
+#   drop_na()
 
 for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
   
@@ -654,9 +654,9 @@ for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
   
   temp <-
     acidification_saturation_horizon %>%
-    filter(Omega >= i_sat_level) %>%
+    filter(Omega < i_sat_level) %>%
     group_by(lat, lon, tref, mineral) %>%
-    summarise(saturation_horizon = max(depth)) %>%
+    summarise(saturation_horizon = min(depth)) %>%
     ungroup() %>%
     mutate(sat_level = i_sat_level)
   
@@ -700,7 +700,7 @@ for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
   
 }
 
-# rm(acidification_volume)
+# rm(acidification_volume, acidification_saturation_horizon_levels)
 
 pdf(
   here::here("output/maps_saturation_horizon_absolute_state.pdf"),
