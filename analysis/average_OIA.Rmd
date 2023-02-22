@@ -269,6 +269,15 @@ break_numbers <- 10
 
 ```
  
+# Surface area mask
+
+```{r surface_area_mask}
+# compute grid cell surface area
+
+basinmask <- basinmask %>% 
+    mutate(area = earth_surf(lat, lon))
+
+```
 
 
 
@@ -641,12 +650,34 @@ acidification_saturation_horizon <-
 
 for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
   
+  # i_sat_level <- 2
+  
   temp <-
     acidification_saturation_horizon %>%
     filter(Omega >= i_sat_level) %>%
     group_by(lat, lon, tref, mineral) %>%
     summarise(saturation_horizon = max(depth)) %>%
     ungroup() %>%
+    mutate(sat_level = i_sat_level)
+  
+  temp_volume <- inner_join(temp,
+             basinmask)
+  
+  temp_volume <- temp_volume %>% 
+    mutate(volume = saturation_horizon * area) %>% 
+    group_by(tref, mineral, basin) %>% 
+    summarise(volume = sum(volume, na.rm = TRUE)) %>% 
+    ungroup()
+  
+  temp_volume_global <- temp_volume %>% 
+    group_by(tref, mineral) %>% 
+    summarise(volume = sum(volume, na.rm = TRUE)) %>% 
+    ungroup() %>% 
+    mutate(basin = "Global")
+  
+  
+  temp_volume <- bind_rows(temp_volume,
+                           temp_volume_global) %>%
     mutate(sat_level = i_sat_level)
   
   if (exists("acidification_saturation_horizon_levels")) {
@@ -658,9 +689,18 @@ for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
     acidification_saturation_horizon_levels <- temp
   }
   
+  if (exists("acidification_volume")) {
+    acidification_volume <-
+      bind_rows(acidification_volume, temp_volume)
+  }
+  
+  if (!exists("acidification_volume")) {
+    acidification_volume <- temp_volume
+  }
+  
 }
 
-
+# rm(acidification_volume)
 
 pdf(
   here::here("output/maps_saturation_horizon_absolute_state.pdf"),
@@ -720,6 +760,24 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
       labs(title = paste("Saturation threshold:", i_sat_level))
   )
 }
+
+dev.off()
+
+pdf(
+  here::here("output/volume_saturation_total_changes.pdf"),
+  width = 10,
+  height = 8
+)
+
+  print(
+    acidification_volume %>%
+      filter(sat_level %in% c(1,2)) %>%
+      mutate(sat_level = as.factor(sat_level),
+             tref = as.factor(tref)) %>% 
+      ggplot(aes(tref, volume,col=sat_level)) +
+      geom_point()+
+      facet_wrap(basin~mineral, scales = "free")
+  )
 
 dev.off()
 
@@ -1497,10 +1555,7 @@ rm(acidification_global_section_absolute)
 
 ```{r compute_mean_profiles}
 
-# compute grid cell surface area
 
-basinmask <- basinmask %>% 
-    mutate(area = earth_surf(lat, lon))
 
 # join with 3D acidifcation fields
 
@@ -1700,7 +1755,7 @@ acidification_profiles %>%
   geom_path() +
   scale_color_brewer(palette = "YlGnBu") +
   labs(y = "Depth (m)",
-       title = "Total change since 1800")+
+       title = "Absolute state at reference years")+
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
   theme(legend.title = element_blank(),
