@@ -16,18 +16,14 @@ editor_options:
 # Libraries
 
 ```{r load_libraries_specific, include = FALSE}
-library(patchwork)
-library(ggalluvial)
-library(marelac)
-library(ggdist)
-library(kableExtra)
-library(khroma)
-library(ggh4x)
-library(ggpattern)
-library(colorspace)
+
 library(stars)
 library(seacarb)
+library(tidync)
+
 ```
+
+# Basinmask
 
 ```{r select_basinmask_5}
 
@@ -37,21 +33,28 @@ basinmask <- basinmask %>%
 
 ```
 
+# Path to files
 
 ```{r define_paths_to_access_eMLR_files, include = FALSE}
 
-# only path_observations needs to be changed to model
+# path to eMLR estimates of delta Cant
+
 path_observations <-
   paste0(path_root, "/observations/")
 
 path_preprocessing    <-
   paste0(path_observations, "preprocessing/")
 
-
-path_preprocessing_model    <-
-  paste0(path_root, "/model/preprocessing/")
-
 path_out <-   paste0(path_observations, "output_publication/")
+
+
+# path to ocean interior temperature reconstructions
+
+path_temperature <- 
+  "/nfs/kryo/work/updata/cheng/CZ16_v3_IAP_Temperature_gridded_1month_netcdf/Monthly"
+
+# path to OIA data generated for this study
+
 path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 
 
@@ -82,19 +85,14 @@ dcant_3d_tibble <- dcant_3d_read_mdim %>%
                #        MLR_basins == "3") %>% 
   as_tibble()
 
-rm(dcant_3d_read_mdim)
+rm(dcant_3d_read_mdim, file_out)
 
 dcant_3d_tibble <- dcant_3d_tibble %>% 
   drop_na()
 
-
-dcant_3d_tibble <- dcant_3d_tibble %>%
-  mutate(dcant = if_else(dcant < 0, 0, dcant))
-
-# dcant_3d_tibble <- dcant_3d_tibble %>%
-#   filter(lon == 335.5,
-#          lat == 0.5)
-
+# remove negative delta Cant
+# dcant_3d_tibble <- dcant_3d_tibble
+#   mutate(dcant = if_else(dcant < 0, 0, dcant))
 
 dcant_3d_tibble %>%
   filter(depth == 500,
@@ -106,36 +104,25 @@ dcant_3d_tibble %>%
   scale_fill_viridis_b(breaks = c(-Inf, seq(0, 16, 2), Inf),
                        na.value = "transparent")
 
-# dcant_3d_tibble %>% 
-#   ggplot() +
-#   geom_path(aes(dcant, depth, col = period)) +
-#   scale_y_reverse()
-
 ```
+
+## Total Cant 1994
 
 ```{r tcant_sabine_2004}
 
 S04_cant_3d <-
   read_csv(paste(path_preprocessing,
                  "S04_tcant_3d.csv",
-                 sep = "")) %>% 
-  mutate(tcant = if_else(tcant < 0, 0, tcant))
+                 sep = ""))
+
+# remove negative delta Cant
+# S04_cant_3d <- S04_cant_3d %>%
+#   mutate(tcant = if_else(tcant < 0, 0, tcant))
 
 ```
 
 
-# Required data
-
-## Observational
-
-Currently, following data sets are used for mapping:
-
-- GLODAPv2_2016b_MappedClimatologies, with variables  
-  - Phosphate (-> phosphate_star)
-  - Silicate
-  - Oxygen (-> AOU)
-  - TAlk (surface only)
-  - TCO2 (surface only)
+## GLODAP climatologies
 
 
 ```{r load_GLODAPv2_2016b_MappedClimatologies_interior_mapping}
@@ -177,10 +164,7 @@ GLODAP_predictors <- GLODAP_predictors %>%
 
 
 
-- World Ocean Atlas 2018  
-  - Salinity
-  - Temperature
-  - Neutral density
+## World Ocean Atlas 2018  
 
 ```{r load_WOA18}
 
@@ -195,6 +179,157 @@ WOA18_predictors_nuts_O2 <-
                  sep = ""))
 
 ```
+
+
+## Cheng temperature
+
+```{r read_cheng_temperature}
+
+# loop over reference years, plus/minus enveloppe years, and month
+# to obtain a decadal averaged temperature field
+
+
+for (i_tref in c(1994, 2004, 2014)) {
+  # i_tref <- 1994
+  print(i_tref)
+  
+  for (i_year in i_tref + seq(-2, 2, 1)) {
+    # i_year <- i_tref + seq(-2,2,1)[1]
+    print(i_year)
+    
+    for (i_month in c("01",
+                      "02",
+                      "03",
+                      "04",
+                      "05",
+                      "06",
+                      "07",
+                      "08",
+                      "09",
+                      "10",
+                      "11",
+                      "12")) {
+      # i_month <- "01"
+      print(i_month)
+      
+      i_temperature_file <-
+        paste0("CZ16_1_2000m_Temp_year_",
+               i_year,
+               "_month_",
+               i_month,
+               ".nc")
+      print(i_temperature_file)
+      
+      tidy_df <-
+        tidync(paste(path_temperature, i_temperature_file, sep = "/"))
+      
+      tibble_df <- tidy_df %>%
+        hyper_tibble()
+      
+      tibble_df <-
+        tibble_df %>%
+        mutate(temp = if_else(temp == 999, NaN, temp))
+      
+      if (exists("temperature_year")) {
+        temperature_year <- bind_rows(temperature_year, tibble_df)
+      }
+      
+      if (!exists("temperature_year")) {
+        temperature_year <- tibble_df
+      }
+      
+    }
+    
+    temperature_year <- temperature_year %>%
+      group_by(lat, lon, depth_std) %>%
+      summarise(temp = mean(temp, na_rm = TRUE)) %>%
+      ungroup()
+    
+    temperature_year <- temperature_year %>%
+      mutate(year = i_year)
+    
+    if (exists("temperature_decade")) {
+      temperature_decade <-
+        bind_rows(temperature_decade, temperature_year)
+    }
+    
+    if (!exists("temperature_decade")) {
+      temperature_decade <- temperature_year
+    }
+    
+    rm(temperature_year)
+    
+    
+  }
+  
+  
+  temperature_decade <- temperature_decade %>%
+    group_by(lat, lon, depth_std) %>%
+    summarise(temp = mean(temp, na_rm = TRUE)) %>%
+    ungroup()
+  
+  temperature_decade <- temperature_decade %>%
+    mutate(tref = i_tref)
+  
+  if (exists("temperature_all")) {
+    temperature_all <-
+      bind_rows(temperature_all, temperature_decade)
+  }
+  
+  if (!exists("temperature_all")) {
+    temperature_all <- temperature_decade
+  }
+  
+  rm(temperature_decade)
+  
+}
+
+rm(tibble_df,tidy_df, i_month, i_temperature_file, i_tref, i_year)
+
+# rm(temperature_all)
+
+temperature_all <-
+  temperature_all %>%
+  rename(depth = depth_std)
+
+temperature_all %>%
+  distinct(depth) %>% 
+  pull
+
+# change surface depth level from 1 to 0 for consistency with other data
+temperature_all <-
+  temperature_all %>%
+  mutate(depth = if_else(depth == 1, 0, depth))
+
+temperature_all %>%
+  filter(depth == 500) %>%
+  ggplot(aes(lon, lat, fill = temp)) +
+  geom_tile() +
+  scale_fill_viridis_c() +
+  facet_wrap(~tref) +
+  coord_quickmap()
+
+# calculate decadal temperature change
+temperature_all <- temperature_all %>%
+  arrange(tref) %>%
+  group_by(lon, lat, depth) %>%
+  mutate(delta_temp = temp - first(temp)) %>%
+  ungroup() %>% 
+  filter(tref != 1994) %>% 
+  select(lon, lat, depth, tref, delta_temp)
+
+
+temperature_all %>%
+  filter(depth == 500) %>%
+  ggplot(aes(lon, lat, fill = delta_temp)) +
+  geom_tile() +
+  scale_fill_gradient2() +
+  facet_wrap( ~ tref) +
+  coord_quickmap()
+
+
+```
+
 
 # Join data
 
@@ -222,7 +357,7 @@ rm(GLODAP_predictors, WOA18_predictors_nuts_O2, WOA18_predictors)
 
 ```
 
-## predictors + Cant
+## Predictors + Cant
 
 ```{r join_predictors_dcant}
 
@@ -272,6 +407,94 @@ rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant
 cases <- DIC %>%
   distinct(tref, Version_ID_group, MLR_basins)
 
+# create DIC fields with variable temperature
+
+DIC_temp <- DIC %>%
+  filter(tref %in% c(2004, 2014),
+         Version_ID_group == "Standard case",
+         MLR_basins == 3) %>%
+  mutate(Version_ID_group = "Temperature")
+
+DIC_temp %>%
+  distinct(tref, Version_ID_group, MLR_basins)
+
+DIC_depths <- DIC_temp %>% 
+  distinct(depth) %>% 
+  filter(depth <= 2000) %>% 
+  pull()
+
+# extend temperature field with DIC depth for interpolation
+depth_grid <-
+  expand_grid(
+    temperature_all %>%
+      distinct(lat, lon, tref),
+    depth = DIC_depths
+  )
+
+temperature_all <-
+  full_join(temperature_all,
+            depth_grid)
+
+rm(depth_grid)
+
+temperature_all <-
+  temperature_all %>%
+  group_by(lon, lat, tref) %>%
+  mutate(count_available = sum(!is.na(delta_temp))) %>% 
+  ungroup()
+
+
+temperature_all_surface <-
+  temperature_all %>%
+  filter(count_available == 1) %>%
+  select(-count_available) %>%
+  filter(!is.na(delta_temp))
+
+temperature_all_int <-
+  temperature_all %>%
+  filter(count_available >= 2) %>% 
+  select(-count_available) %>% 
+  group_by(lon, lat, tref) %>%
+  mutate(delta_temp = approxfun(depth, delta_temp, rule = 1)(depth)) %>%
+  ungroup() %>% 
+  filter(!is.na(delta_temp))
+
+temperature_all <- bind_rows(
+  temperature_all_surface,
+  temperature_all_int
+)
+
+rm(
+  temperature_all_surface,
+  temperature_all_int
+)
+
+temperature_all <-
+  temperature_all %>%
+  filter(depth %in% DIC_depths)
+
+temperature_all <- temperature_all %>% 
+  mutate(tref = as.character(tref))
+
+temperature_all <- temperature_all %>% 
+  mutate(lon = lon - 0.5,
+         lon = if_else(lon < 20, lon + 360, lon))
+
+DIC_temp <- inner_join(
+  DIC_temp,
+  temperature_all)
+
+DIC_temp <-
+  DIC_temp %>%
+  mutate(temp = temp + delta_temp) %>%
+  select(-delta_temp)
+
+DIC <- bind_rows(
+  DIC,
+  DIC_temp
+)
+
+rm(DIC_temp)
 
 ```
 
@@ -280,8 +503,11 @@ cases <- DIC %>%
 ```{r compute_acidification_trends}
 
 acidification <- DIC %>%
+  filter(lon == 190.5,
+         lat == 0.5,
+         depth == 0) %>% 
   mutate(
-    carb(
+    sir(
       flag = 15,
       var1 = talk * 1e-6,
       var2 = tco2 * 1e-6,
@@ -291,31 +517,78 @@ acidification <- DIC %>%
       Pt = phosphate * 1e-6,
       Sit = silicate * 1e-6,
       k1k2 = "s20",
-      kf = "dg"
+      kf = "dg",
+      pHscale = "T"
     )
   )
 
-rm(DIC)
+# rm(DIC)
+
 
 acidification <- acidification %>%
-  select(-c(dcant, tcant, flag, S, T, Patm, P, DIC, ALK))
+  select(-c(
+    dcant,
+    tcant,
+    flag,
+    S,
+    T,
+    Patm,
+    P,
+    CO2,
+    contains("fCO2"),
+    contains("_t"),
+    contains("_sws"),
+    pH_free,
+    HCO3,
+    pCO2pot,
+    pCO2,
+    DIC,
+    ALK
+  ))
 
 acidification <- acidification %>%
-  mutate(hyd_ion = 10^(-pH))
+  mutate(hyd_ion_calc = 10^(-pH) * 1e6,
+         CO3 = CO3 * 1e6,
+         tco2_talk_ratio = tco2 / talk)
+
+
+acidification_temp <- acidification %>%
+  filter(tref %in% c(1800, 1994),
+         Version_ID_group == "Standard case",
+         MLR_basins == 3) %>%
+  mutate(Version_ID_group = "Temperature")
+
+acidification <- 
+  bind_rows(
+    acidification,
+    acidification_temp
+  )
+
+rm(acidification_temp)
 
 
 calc_delta_total <- function(x) (x - first(x))
 calc_delta_interval <- function(x) (x - lag(x, default = first(x)))
 
-acidification_trend <- acidification %>% 
-  arrange(tref) %>% 
-  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>% 
-  mutate(
-    across(
-      .cols = c(tco2, pH, pCO2insitu, HCO3, CO3, OmegaAragonite, OmegaCalcite, hyd_ion),
-      .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
-    )
-  ) %>% 
+acidification_trend <- acidification %>%
+  arrange(tref) %>%
+  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+  mutate(across(
+    .cols = c(
+      tco2,
+      pH,
+      pCO2insitu,
+      CO3,
+      OmegaAragonite,
+      OmegaCalcite,
+      hyd_ion_calc,
+      tco2_talk_ratio,
+      SIR,
+      H_free,
+      temp
+    ),
+    .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+  )) %>%
   ungroup()
 
 rm(acidification)
@@ -324,22 +597,94 @@ rm(acidification)
 ```
 
 
-# Write ouput
+## Write ouput
 
-```{r write_output_files}
+```{r write_acidification_output_files}
 
 acidification_trend %>% 
   write_csv(paste0(path_OIA, "OIA_all.csv"))
 
-# read_csv(paste0(path_OIA, "OIA_all.csv"))
+```
+
+# Compute buffer factors
+
+```{r compute_buffer_factors}
+
+buffer <- DIC %>%
+  filter(lon == 190.5,
+         lat == 0.5,
+         depth == 0) %>% 
+  mutate(
+    buffesm(
+      flag = 15,
+      var1 = talk * 1e-6,
+      var2 = tco2 * 1e-6,
+      S = sal,
+      T = temp,
+      P = depth / 10,
+      Pt = phosphate * 1e-6,
+      Sit = silicate * 1e-6,
+      k1k2 = "s20",
+      kf = "dg",
+      pHscale = "T"
+    )
+  )
+
+rm(DIC)
 
 
-acidification_trend %>%
-  filter(Version_ID_group == "Standard case",
-         MLR_basins == "3") %>%
-  write_csv(paste0(path_OIA, "OIA_standard_case.csv"))
+buffer <- buffer %>%
+  select(c(
+    lon,
+    lat,
+    depth,
+    tref,
+    MLR_basins,
+    Version_ID_group,
+    gammaDIC,
+    betaDIC,
+    omegaDIC,
+    R
+  ))
+
+buffer_temp <- buffer %>%
+  filter(tref %in% c(1800, 1994),
+         Version_ID_group == "Standard case",
+         MLR_basins == 3) %>%
+  mutate(Version_ID_group = "Temperature")
+
+buffer <- 
+  bind_rows(
+    buffer,
+    buffer_temp
+  )
+
+rm(buffer_temp)
+
+buffer_trend <- buffer %>%
+  arrange(tref) %>%
+  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+  mutate(across(
+    .cols = c(gammaDIC,
+              betaDIC,
+              omegaDIC,
+              R),
+    .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+  )) %>%
+  ungroup()
+
+rm(buffer)
 
 
+```
+
+
+## Write ouput
+
+```{r write_buffer_output_files}
+
+buffer_trend %>% 
+  write_csv(paste0(path_OIA, "buffer_all.csv"))
 
 ```
 
