@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">22 February, 2023</h4>
+<h4 class="date">23 February, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-02-22
+<strong>Last updated:</strong> 2023-02-23
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree426d39f7aa8c891ee740a403d42275edbfd534f5targetblank426d39fa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreecdf77c4fba3e063cbba79f8e7686a5af03c8df06targetblankcdf77c4a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/426d39f7aa8c891ee740a403d42275edbfd534f5" target="_blank">426d39f</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/cdf77c4fba3e063cbba79f8e7686a5af03c8df06" target="_blank">cdf77c4</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree426d39f7aa8c891ee740a403d42275edbfd534f5targetblank426d39fa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreecdf77c4fba3e063cbba79f8e7686a5af03c8df06targetblankcdf77c4a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/426d39f7aa8c891ee740a403d42275edbfd534f5" target="_blank">426d39f</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/cdf77c4fba3e063cbba79f8e7686a5af03c8df06" target="_blank">cdf77c4</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -630,6 +630,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/cdf77c4fba3e063cbba79f8e7686a5af03c8df06/analysis/average_OIA.Rmd" target="_blank">cdf77c4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-22
+</td>
+<td>
+run without negative Cant
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/7ea12c902e7937df60d1f97230e905183d487316/docs/average_OIA.html" target="_blank">7ea12c9</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1513,43 +1547,43 @@ acidification_saturation_horizon &lt;-
   filter(n == 25) %&gt;% 
   select(-n)
 
-depth_grid &lt;-
-  expand_grid(
-    acidification_saturation_horizon %&gt;%
-      distinct(lat, lon, tref, mineral),
-    depth = seq(0, 5500, 10)
-  )
-
-acidification_saturation_horizon &lt;-
-  full_join(acidification_saturation_horizon,
-            depth_grid)
-
-rm(depth_grid)
-
-acidification_saturation_horizon &lt;-
-  acidification_saturation_horizon %&gt;%
-  group_by(lon, lat, tref, mineral) %&gt;%
-  mutate(n = n()) %&gt;%
-  ungroup() 
-
-acidification_saturation_horizon &lt;-
-  acidification_saturation_horizon %&gt;%
-  filter(n == 553) %&gt;%
-  select(-n)
-
+# depth_grid &lt;-
+#   expand_grid(
+#     acidification_saturation_horizon %&gt;%
+#       distinct(lat, lon, tref, mineral),
+#     depth = seq(0, 5500, 10)
+#   )
+# 
+# acidification_saturation_horizon &lt;-
+#   full_join(acidification_saturation_horizon,
+#             depth_grid)
+# 
+# rm(depth_grid)
+# 
 # acidification_saturation_horizon &lt;-
 #   acidification_saturation_horizon %&gt;%
-#   arrange(lon, lat, tref, mineral, depth)
-
-acidification_saturation_horizon &lt;-
-  acidification_saturation_horizon %&gt;%
-  group_by(lon, lat, tref, mineral) %&gt;%
-  mutate(Omega = approxfun(depth, Omega, rule = 1)(depth)) %&gt;%
-  ungroup()
-
-acidification_saturation_horizon &lt;-
-  acidification_saturation_horizon %&gt;%
-  drop_na()
+#   group_by(lon, lat, tref, mineral) %&gt;%
+#   mutate(n = n()) %&gt;%
+#   ungroup() 
+# 
+# acidification_saturation_horizon &lt;-
+#   acidification_saturation_horizon %&gt;%
+#   filter(n == 553) %&gt;%
+#   select(-n)
+# 
+# # acidification_saturation_horizon &lt;-
+# #   acidification_saturation_horizon %&gt;%
+# #   arrange(lon, lat, tref, mineral, depth)
+# 
+# acidification_saturation_horizon &lt;-
+#   acidification_saturation_horizon %&gt;%
+#   group_by(lon, lat, tref, mineral) %&gt;%
+#   mutate(Omega = approxfun(depth, Omega, rule = 1)(depth)) %&gt;%
+#   ungroup()
+# 
+# acidification_saturation_horizon &lt;-
+#   acidification_saturation_horizon %&gt;%
+#   drop_na()
 
 for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
   
@@ -1557,9 +1591,9 @@ for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
   
   temp &lt;-
     acidification_saturation_horizon %&gt;%
-    filter(Omega &gt;= i_sat_level) %&gt;%
+    filter(Omega &lt; i_sat_level) %&gt;%
     group_by(lat, lon, tref, mineral) %&gt;%
-    summarise(saturation_horizon = max(depth)) %&gt;%
+    summarise(saturation_horizon = min(depth)) %&gt;%
     ungroup() %&gt;%
     mutate(sat_level = i_sat_level)
   
@@ -1603,7 +1637,7 @@ for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
   
 }
 
-# rm(acidification_volume)
+# rm(acidification_volume, acidification_saturation_horizon_levels)
 
 pdf(
   here::here(&quot;output/maps_saturation_horizon_absolute_state.pdf&quot;),
