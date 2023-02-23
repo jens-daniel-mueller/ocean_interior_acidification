@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA computation</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">22 February, 2023</h4>
+<h4 class="date">23 February, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-02-22
+<strong>Last updated:</strong> 2023-02-23
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreecdf77c4fba3e063cbba79f8e7686a5af03c8df06targetblankcdf77c4a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree5796fdb83aabd0031e65a2a4c50ae83e7b6d9657targetblank5796fdba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/cdf77c4fba3e063cbba79f8e7686a5af03c8df06" target="_blank">cdf77c4</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/5796fdb83aabd0031e65a2a4c50ae83e7b6d9657" target="_blank">5796fdb</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreecdf77c4fba3e063cbba79f8e7686a5af03c8df06targetblankcdf77c4a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree5796fdb83aabd0031e65a2a4c50ae83e7b6d9657targetblank5796fdba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/cdf77c4fba3e063cbba79f8e7686a5af03c8df06" target="_blank">cdf77c4</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/5796fdb83aabd0031e65a2a4c50ae83e7b6d9657" target="_blank">5796fdb</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -630,6 +630,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5796fdb83aabd0031e65a2a4c50ae83e7b6d9657/analysis/compute_OIA.Rmd" target="_blank">5796fdb</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-23
+</td>
+<td>
+test buffer computation and temperature impact
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/eaf95ed27198ef1ef988a942778fe40b7279a58d/docs/compute_OIA.html" target="_blank">eaf95ed</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-23
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -856,9 +890,15 @@ lon_lim &lt;- ext(bbox_graticules_trans)[c(1,2)]*1.005
 #   )</code></pre>
 <div id="libraries" class="section level1">
 <h1>Libraries</h1>
+</div>
+<div id="basinmask" class="section level1">
+<h1>Basinmask</h1>
 <pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
   filter(MLR_basins == &quot;5&quot;) %&gt;% 
   select(lon, lat, basin)</code></pre>
+</div>
+<div id="path-to-files" class="section level1">
+<h1>Path to files</h1>
 </div>
 <div id="read-data" class="section level1">
 <h1>Read data</h1>
@@ -919,19 +959,14 @@ jens-daniel-mueller
                #        MLR_basins == &quot;3&quot;) %&gt;% 
   as_tibble()
 
-rm(dcant_3d_read_mdim)
+rm(dcant_3d_read_mdim, file_out)
 
 dcant_3d_tibble &lt;- dcant_3d_tibble %&gt;% 
   drop_na()
 
-
-dcant_3d_tibble &lt;- dcant_3d_tibble %&gt;%
-  mutate(dcant = if_else(dcant &lt; 0, 0, dcant))
-
-# dcant_3d_tibble &lt;- dcant_3d_tibble %&gt;%
-#   filter(lon == 335.5,
-#          lat == 0.5)
-
+# remove negative delta Cant
+# dcant_3d_tibble &lt;- dcant_3d_tibble
+#   mutate(dcant = if_else(dcant &lt; 0, 0, dcant))
 
 dcant_3d_tibble %&gt;%
   filter(depth == 500,
@@ -967,6 +1002,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/eaf95ed27198ef1ef988a942778fe40b7279a58d/docs/figure/compute_OIA.Rmd/read_interior_dcant_files-2.png" target="_blank">eaf95ed</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-02-23
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/78b318035cdf152a81f28e096c448404ca4c77e8/docs/figure/compute_OIA.Rmd/read_interior_dcant_files-2.png" target="_blank">78b3180</a>
 </td>
 <td>
@@ -980,32 +1026,20 @@ jens-daniel-mueller
 </table>
 </div>
 </div>
-<pre class="r"><code># dcant_3d_tibble %&gt;% 
-#   ggplot() +
-#   geom_path(aes(dcant, depth, col = period)) +
-#   scale_y_reverse()</code></pre>
+</div>
+<div id="total-cant-1994" class="section level2">
+<h2>Total Cant 1994</h2>
 <pre class="r"><code>S04_cant_3d &lt;-
   read_csv(paste(path_preprocessing,
                  &quot;S04_tcant_3d.csv&quot;,
-                 sep = &quot;&quot;)) %&gt;% 
-  mutate(tcant = if_else(tcant &lt; 0, 0, tcant))</code></pre>
+                 sep = &quot;&quot;))
+
+# remove negative delta Cant
+# S04_cant_3d &lt;- S04_cant_3d %&gt;%
+#   mutate(tcant = if_else(tcant &lt; 0, 0, tcant))</code></pre>
 </div>
-</div>
-<div id="required-data" class="section level1">
-<h1>Required data</h1>
-<div id="observational" class="section level2">
-<h2>Observational</h2>
-<p>Currently, following data sets are used for mapping:</p>
-<ul>
-<li>GLODAPv2_2016b_MappedClimatologies, with variables
-<ul>
-<li>Phosphate (-&gt; phosphate_star)</li>
-<li>Silicate</li>
-<li>Oxygen (-&gt; AOU)</li>
-<li>TAlk (surface only)</li>
-<li>TCO2 (surface only)</li>
-</ul></li>
-</ul>
+<div id="glodap-climatologies" class="section level2">
+<h2>GLODAP climatologies</h2>
 <pre class="r"><code>variables &lt;-
   c(&quot;TCO2&quot;, &quot;TAlk&quot;, &quot;PO4&quot;, &quot;silicate&quot;, &quot;NO3&quot;)
 
@@ -1038,14 +1072,9 @@ GLODAP_predictors &lt;- GLODAP_predictors %&gt;%
 # removed na&#39;s attributable to slightly different coverage of predictor fields
 GLODAP_predictors &lt;- GLODAP_predictors %&gt;%
   drop_na()</code></pre>
-<ul>
-<li>World Ocean Atlas 2018
-<ul>
-<li>Salinity</li>
-<li>Temperature</li>
-<li>Neutral density</li>
-</ul></li>
-</ul>
+</div>
+<div id="world-ocean-atlas-2018" class="section level2">
+<h2>World Ocean Atlas 2018</h2>
 <pre class="r"><code>WOA18_predictors &lt;-
   read_csv(paste(path_preprocessing,
                  &quot;WOA18_sal_temp.csv&quot;,
@@ -1055,6 +1084,530 @@ WOA18_predictors_nuts_O2 &lt;-
   read_csv(paste(path_preprocessing,
                  &quot;WOA18_nuts_O2.csv&quot;,
                  sep = &quot;&quot;))</code></pre>
+</div>
+<div id="cheng-temperature" class="section level2">
+<h2>Cheng temperature</h2>
+<pre class="r"><code># loop over reference years, plus/minus enveloppe years, and month
+# to obtain a decadal averaged temperature field
+
+
+for (i_tref in c(1994, 2004, 2014)) {
+  # i_tref &lt;- 1994
+  print(i_tref)
+  
+  for (i_year in i_tref + seq(-2, 2, 1)) {
+    # i_year &lt;- i_tref + seq(-2,2,1)[1]
+    print(i_year)
+    
+    for (i_month in c(&quot;01&quot;,
+                      &quot;02&quot;,
+                      &quot;03&quot;,
+                      &quot;04&quot;,
+                      &quot;05&quot;,
+                      &quot;06&quot;,
+                      &quot;07&quot;,
+                      &quot;08&quot;,
+                      &quot;09&quot;,
+                      &quot;10&quot;,
+                      &quot;11&quot;,
+                      &quot;12&quot;)) {
+      # i_month &lt;- &quot;01&quot;
+      print(i_month)
+      
+      i_temperature_file &lt;-
+        paste0(&quot;CZ16_1_2000m_Temp_year_&quot;,
+               i_year,
+               &quot;_month_&quot;,
+               i_month,
+               &quot;.nc&quot;)
+      print(i_temperature_file)
+      
+      tidy_df &lt;-
+        tidync(paste(path_temperature, i_temperature_file, sep = &quot;/&quot;))
+      
+      tibble_df &lt;- tidy_df %&gt;%
+        hyper_tibble()
+      
+      tibble_df &lt;-
+        tibble_df %&gt;%
+        mutate(temp = if_else(temp == 999, NaN, temp))
+      
+      if (exists(&quot;temperature_year&quot;)) {
+        temperature_year &lt;- bind_rows(temperature_year, tibble_df)
+      }
+      
+      if (!exists(&quot;temperature_year&quot;)) {
+        temperature_year &lt;- tibble_df
+      }
+      
+    }
+    
+    temperature_year &lt;- temperature_year %&gt;%
+      group_by(lat, lon, depth_std) %&gt;%
+      summarise(temp = mean(temp, na_rm = TRUE)) %&gt;%
+      ungroup()
+    
+    temperature_year &lt;- temperature_year %&gt;%
+      mutate(year = i_year)
+    
+    if (exists(&quot;temperature_decade&quot;)) {
+      temperature_decade &lt;-
+        bind_rows(temperature_decade, temperature_year)
+    }
+    
+    if (!exists(&quot;temperature_decade&quot;)) {
+      temperature_decade &lt;- temperature_year
+    }
+    
+    rm(temperature_year)
+    
+    
+  }
+  
+  
+  temperature_decade &lt;- temperature_decade %&gt;%
+    group_by(lat, lon, depth_std) %&gt;%
+    summarise(temp = mean(temp, na_rm = TRUE)) %&gt;%
+    ungroup()
+  
+  temperature_decade &lt;- temperature_decade %&gt;%
+    mutate(tref = i_tref)
+  
+  if (exists(&quot;temperature_all&quot;)) {
+    temperature_all &lt;-
+      bind_rows(temperature_all, temperature_decade)
+  }
+  
+  if (!exists(&quot;temperature_all&quot;)) {
+    temperature_all &lt;- temperature_decade
+  }
+  
+  rm(temperature_decade)
+  
+}</code></pre>
+<pre><code>[1] 1994
+[1] 1992
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1992_month_12.nc&quot;
+[1] 1993
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1993_month_12.nc&quot;
+[1] 1994
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1994_month_12.nc&quot;
+[1] 1995
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1995_month_12.nc&quot;
+[1] 1996
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_1996_month_12.nc&quot;
+[1] 2004
+[1] 2002
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2002_month_12.nc&quot;
+[1] 2003
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2003_month_12.nc&quot;
+[1] 2004
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2004_month_12.nc&quot;
+[1] 2005
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2005_month_12.nc&quot;
+[1] 2006
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2006_month_12.nc&quot;
+[1] 2014
+[1] 2012
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2012_month_12.nc&quot;
+[1] 2013
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2013_month_12.nc&quot;
+[1] 2014
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2014_month_12.nc&quot;
+[1] 2015
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2015_month_12.nc&quot;
+[1] 2016
+[1] &quot;01&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_01.nc&quot;
+[1] &quot;02&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_02.nc&quot;
+[1] &quot;03&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_03.nc&quot;
+[1] &quot;04&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_04.nc&quot;
+[1] &quot;05&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_05.nc&quot;
+[1] &quot;06&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_06.nc&quot;
+[1] &quot;07&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_07.nc&quot;
+[1] &quot;08&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_08.nc&quot;
+[1] &quot;09&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_09.nc&quot;
+[1] &quot;10&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_10.nc&quot;
+[1] &quot;11&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_11.nc&quot;
+[1] &quot;12&quot;
+[1] &quot;CZ16_1_2000m_Temp_year_2016_month_12.nc&quot;</code></pre>
+<pre class="r"><code>rm(tibble_df,tidy_df, i_month, i_temperature_file, i_tref, i_year)
+
+# rm(temperature_all)
+
+temperature_all &lt;-
+  temperature_all %&gt;%
+  rename(depth = depth_std)
+
+temperature_all %&gt;%
+  distinct(depth) %&gt;% 
+  pull</code></pre>
+<pre><code> [1]    1    5   10   20   30   40   50   60   70   80   90  100  120  140  160
+[16]  180  200  250  300  350  400  450  500  550  600  650  700  750  800  850
+[31]  900 1000 1100 1200 1300 1400 1500 1600 1700 1800 2000</code></pre>
+<pre class="r"><code># change surface depth level from 1 to 0 for consistency with other data
+temperature_all &lt;-
+  temperature_all %&gt;%
+  mutate(depth = if_else(depth == 1, 0, depth))
+
+temperature_all %&gt;%
+  filter(depth == 500) %&gt;%
+  ggplot(aes(lon, lat, fill = temp)) +
+  geom_tile() +
+  scale_fill_viridis_c() +
+  facet_wrap(~tref) +
+  coord_quickmap()</code></pre>
+<p><img src="figure/compute_OIA.Rmd/read_cheng_temperature-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># calculate decadal temperature change
+temperature_all &lt;- temperature_all %&gt;%
+  arrange(tref) %&gt;%
+  group_by(lon, lat, depth) %&gt;%
+  mutate(delta_temp = temp - first(temp)) %&gt;%
+  ungroup() %&gt;% 
+  filter(tref != 1994) %&gt;% 
+  select(lon, lat, depth, tref, delta_temp)
+
+
+temperature_all %&gt;%
+  filter(depth == 500) %&gt;%
+  ggplot(aes(lon, lat, fill = delta_temp)) +
+  geom_tile() +
+  scale_fill_gradient2() +
+  facet_wrap( ~ tref) +
+  coord_quickmap()</code></pre>
+<p><img src="figure/compute_OIA.Rmd/read_cheng_temperature-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="join-data" class="section level1">
@@ -1080,7 +1633,7 @@ predictors &lt;- predictors %&gt;%
 rm(GLODAP_predictors, WOA18_predictors_nuts_O2, WOA18_predictors)</code></pre>
 </div>
 <div id="predictors-cant" class="section level2">
-<h2>predictors + Cant</h2>
+<h2>Predictors + Cant</h2>
 <pre class="r"><code># predictors %&gt;% distinct(depth) %&gt;% pull()
 # S04_cant_3d %&gt;% distinct(depth) %&gt;% pull()
 # dcant_3d_tibble %&gt;% distinct(depth) %&gt;% pull()
@@ -1125,14 +1678,110 @@ DIC &lt;- bind_rows(
 rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant_3d)
 
 cases &lt;- DIC %&gt;%
+  distinct(tref, Version_ID_group, MLR_basins)
+
+# create DIC fields with variable temperature
+
+DIC_temp &lt;- DIC %&gt;%
+  filter(tref %in% c(2004, 2014),
+         Version_ID_group == &quot;Standard case&quot;,
+         MLR_basins == 3) %&gt;%
+  mutate(Version_ID_group = &quot;Temperature&quot;)
+
+DIC_temp %&gt;%
   distinct(tref, Version_ID_group, MLR_basins)</code></pre>
+<pre><code># A tibble: 2 × 3
+  MLR_basins Version_ID_group tref 
+  &lt;fct&gt;      &lt;chr&gt;            &lt;chr&gt;
+1 3          Temperature      2004 
+2 3          Temperature      2014 </code></pre>
+<pre class="r"><code>DIC_depths &lt;- DIC_temp %&gt;% 
+  distinct(depth) %&gt;% 
+  filter(depth &lt;= 2000) %&gt;% 
+  pull()
+
+# extend temperature field with DIC depth for interpolation
+depth_grid &lt;-
+  expand_grid(
+    temperature_all %&gt;%
+      distinct(lat, lon, tref),
+    depth = DIC_depths
+  )
+
+temperature_all &lt;-
+  full_join(temperature_all,
+            depth_grid)
+
+rm(depth_grid)
+
+temperature_all &lt;-
+  temperature_all %&gt;%
+  group_by(lon, lat, tref) %&gt;%
+  mutate(count_available = sum(!is.na(delta_temp))) %&gt;% 
+  ungroup()
+
+
+temperature_all_surface &lt;-
+  temperature_all %&gt;%
+  filter(count_available == 1) %&gt;%
+  select(-count_available) %&gt;%
+  filter(!is.na(delta_temp))
+
+temperature_all_int &lt;-
+  temperature_all %&gt;%
+  filter(count_available &gt;= 2) %&gt;% 
+  select(-count_available) %&gt;% 
+  group_by(lon, lat, tref) %&gt;%
+  mutate(delta_temp = approxfun(depth, delta_temp, rule = 1)(depth)) %&gt;%
+  ungroup() %&gt;% 
+  filter(!is.na(delta_temp))
+
+temperature_all &lt;- bind_rows(
+  temperature_all_surface,
+  temperature_all_int
+)
+
+rm(
+  temperature_all_surface,
+  temperature_all_int
+)
+
+temperature_all &lt;-
+  temperature_all %&gt;%
+  filter(depth %in% DIC_depths)
+
+temperature_all &lt;- temperature_all %&gt;% 
+  mutate(tref = as.character(tref))
+
+temperature_all &lt;- temperature_all %&gt;% 
+  mutate(lon = lon - 0.5,
+         lon = if_else(lon &lt; 20, lon + 360, lon))
+
+DIC_temp &lt;- inner_join(
+  DIC_temp,
+  temperature_all)
+
+DIC_temp &lt;-
+  DIC_temp %&gt;%
+  mutate(temp = temp + delta_temp) %&gt;%
+  select(-delta_temp)
+
+DIC &lt;- bind_rows(
+  DIC,
+  DIC_temp
+)
+
+rm(DIC_temp)</code></pre>
 </div>
 </div>
 <div id="compute-acidification-trends" class="section level1">
 <h1>Compute acidification trends</h1>
 <pre class="r"><code>acidification &lt;- DIC %&gt;%
+  filter(lon == 190.5,
+         lat == 0.5,
+         depth == 0) %&gt;% 
   mutate(
-    carb(
+    sir(
       flag = 15,
       var1 = talk * 1e-6,
       var2 = tco2 * 1e-6,
@@ -1142,47 +1791,157 @@ cases &lt;- DIC %&gt;%
       Pt = phosphate * 1e-6,
       Sit = silicate * 1e-6,
       k1k2 = &quot;s20&quot;,
-      kf = &quot;dg&quot;
+      kf = &quot;dg&quot;,
+      pHscale = &quot;T&quot;
     )
   )
 
-rm(DIC)
+# rm(DIC)
+
 
 acidification &lt;- acidification %&gt;%
-  select(-c(dcant, tcant, flag, S, T, Patm, P, DIC, ALK))
+  select(-c(
+    dcant,
+    tcant,
+    flag,
+    S,
+    T,
+    Patm,
+    P,
+    CO2,
+    contains(&quot;fCO2&quot;),
+    contains(&quot;_t&quot;),
+    contains(&quot;_sws&quot;),
+    pH_free,
+    HCO3,
+    pCO2pot,
+    pCO2,
+    DIC,
+    ALK
+  ))
 
 acidification &lt;- acidification %&gt;%
-  mutate(hyd_ion = 10^(-pH))
+  mutate(hyd_ion_calc = 10^(-pH) * 1e6,
+         CO3 = CO3 * 1e6,
+         tco2_talk_ratio = tco2 / talk)
+
+
+acidification_temp &lt;- acidification %&gt;%
+  filter(tref %in% c(1800, 1994),
+         Version_ID_group == &quot;Standard case&quot;,
+         MLR_basins == 3) %&gt;%
+  mutate(Version_ID_group = &quot;Temperature&quot;)
+
+acidification &lt;- 
+  bind_rows(
+    acidification,
+    acidification_temp
+  )
+
+rm(acidification_temp)
 
 
 calc_delta_total &lt;- function(x) (x - first(x))
 calc_delta_interval &lt;- function(x) (x - lag(x, default = first(x)))
 
-acidification_trend &lt;- acidification %&gt;% 
-  arrange(tref) %&gt;% 
-  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %&gt;% 
-  mutate(
-    across(
-      .cols = c(tco2, pH, pCO2insitu, HCO3, CO3, OmegaAragonite, OmegaCalcite, hyd_ion),
-      .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
-    )
-  ) %&gt;% 
+acidification_trend &lt;- acidification %&gt;%
+  arrange(tref) %&gt;%
+  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %&gt;%
+  mutate(across(
+    .cols = c(
+      tco2,
+      pH,
+      pCO2insitu,
+      CO3,
+      OmegaAragonite,
+      OmegaCalcite,
+      hyd_ion_calc,
+      tco2_talk_ratio,
+      SIR,
+      H_free,
+      temp
+    ),
+    .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+  )) %&gt;%
   ungroup()
 
 rm(acidification)</code></pre>
-</div>
-<div id="write-ouput" class="section level1">
-<h1>Write ouput</h1>
+<div id="write-ouput" class="section level2">
+<h2>Write ouput</h2>
 <pre class="r"><code>acidification_trend %&gt;% 
-  write_csv(paste0(path_OIA, &quot;OIA_all.csv&quot;))
+  write_csv(paste0(path_OIA, &quot;OIA_all.csv&quot;))</code></pre>
+</div>
+</div>
+<div id="compute-buffer-factors" class="section level1">
+<h1>Compute buffer factors</h1>
+<pre class="r"><code>buffer &lt;- DIC %&gt;%
+  filter(lon == 190.5,
+         lat == 0.5,
+         depth == 0) %&gt;% 
+  mutate(
+    buffesm(
+      flag = 15,
+      var1 = talk * 1e-6,
+      var2 = tco2 * 1e-6,
+      S = sal,
+      T = temp,
+      P = depth / 10,
+      Pt = phosphate * 1e-6,
+      Sit = silicate * 1e-6,
+      k1k2 = &quot;s20&quot;,
+      kf = &quot;dg&quot;,
+      pHscale = &quot;T&quot;
+    )
+  )
 
-# read_csv(paste0(path_OIA, &quot;OIA_all.csv&quot;))
+rm(DIC)
 
 
-acidification_trend %&gt;%
-  filter(Version_ID_group == &quot;Standard case&quot;,
-         MLR_basins == &quot;3&quot;) %&gt;%
-  write_csv(paste0(path_OIA, &quot;OIA_standard_case.csv&quot;))</code></pre>
+buffer &lt;- buffer %&gt;%
+  select(c(
+    lon,
+    lat,
+    depth,
+    tref,
+    MLR_basins,
+    Version_ID_group,
+    gammaDIC,
+    betaDIC,
+    omegaDIC,
+    R
+  ))
+
+buffer_temp &lt;- buffer %&gt;%
+  filter(tref %in% c(1800, 1994),
+         Version_ID_group == &quot;Standard case&quot;,
+         MLR_basins == 3) %&gt;%
+  mutate(Version_ID_group = &quot;Temperature&quot;)
+
+buffer &lt;- 
+  bind_rows(
+    buffer,
+    buffer_temp
+  )
+
+rm(buffer_temp)
+
+buffer_trend &lt;- buffer %&gt;%
+  arrange(tref) %&gt;%
+  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %&gt;%
+  mutate(across(
+    .cols = c(gammaDIC,
+              betaDIC,
+              omegaDIC,
+              R),
+    .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+  )) %&gt;%
+  ungroup()
+
+rm(buffer)</code></pre>
+<div id="write-ouput-1" class="section level2">
+<h2>Write ouput</h2>
+<pre class="r"><code>buffer_trend %&gt;% 
+  write_csv(paste0(path_OIA, &quot;buffer_all.csv&quot;))</code></pre>
 <pre class="r"><code># convert from tibble to stars object
 acidification_trend_stars &lt;- st_as_stars(
   acidification_trend,
@@ -1274,55 +2033,54 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] seacarb_3.3.1       SolveSAPHE_2.1.0    oce_1.7-10         
- [4] gsw_1.1-1           stars_0.6-0         abind_1.4-5        
- [7] ggpattern_1.0.1     ggh4x_0.2.3         khroma_1.9.0       
-[10] kableExtra_1.3.4    ggdist_3.2.0        ggalluvial_0.12.3  
-[13] terra_1.6-41        sf_1.0-9            rnaturalearth_0.1.0
-[16] geomtextpath_0.1.1  colorspace_2.0-3    marelac_2.1.10     
-[19] shape_1.4.6         ggforce_0.4.1       metR_0.13.0        
-[22] scico_1.3.1         patchwork_1.1.2     collapse_1.8.9     
-[25] forcats_0.5.2       stringr_1.4.1       dplyr_1.0.10       
-[28] purrr_0.3.5         readr_2.1.3         tidyr_1.2.1        
-[31] tibble_3.1.8        ggplot2_3.4.0       tidyverse_1.3.2    
-[34] workflowr_1.7.0    
+ [1] tidync_0.3.0        seacarb_3.3.1       SolveSAPHE_2.1.0   
+ [4] oce_1.7-10          gsw_1.1-1           stars_0.6-0        
+ [7] abind_1.4-5         terra_1.6-41        sf_1.0-9           
+[10] rnaturalearth_0.1.0 geomtextpath_0.1.1  colorspace_2.0-3   
+[13] marelac_2.1.10      shape_1.4.6         ggforce_0.4.1      
+[16] metR_0.13.0         scico_1.3.1         patchwork_1.1.2    
+[19] collapse_1.8.9      forcats_0.5.2       stringr_1.4.1      
+[22] dplyr_1.0.10        purrr_0.3.5         readr_2.1.3        
+[25] tidyr_1.2.1         tibble_3.1.8        ggplot2_3.4.0      
+[28] tidyverse_1.3.2     workflowr_1.7.0    
 
 loaded via a namespace (and not attached):
   [1] googledrive_2.0.0       ellipsis_0.3.2          class_7.3-20           
   [4] rprojroot_2.0.3         fs_1.5.2                rstudioapi_0.14        
   [7] proxy_0.4-27            farver_2.1.1            bit64_4.0.5            
  [10] fansi_1.0.3             lubridate_1.9.0         xml2_1.3.3             
- [13] codetools_0.2-18        cachem_1.0.6            knitr_1.41             
- [16] polyclip_1.10-4         rquery_1.4.9            jsonlite_1.8.3         
- [19] broom_1.0.1             dbplyr_2.2.1            compiler_4.2.2         
- [22] httr_1.4.4              backports_1.4.1         assertthat_0.2.1       
- [25] fastmap_1.1.0           gargle_1.2.1            cli_3.4.1              
- [28] later_1.3.0             tweenr_2.0.2            htmltools_0.5.3        
- [31] tools_4.2.2             rnaturalearthdata_0.1.0 gtable_0.3.1           
- [34] glue_1.6.2              Rcpp_1.0.9              cellranger_1.1.0       
- [37] jquerylib_0.1.4         vctrs_0.5.1             rqdatatable_1.3.1      
- [40] svglite_2.1.0           lwgeom_0.2-10           xfun_0.35              
- [43] ps_1.7.2                rvest_1.0.3             timechange_0.1.1       
- [46] lifecycle_1.0.3         googlesheets4_1.0.1     getPass_0.2-2          
- [49] MASS_7.3-58.1           scales_1.2.1            vroom_1.6.0            
- [52] hms_1.1.2               promises_1.2.0.1        parallel_4.2.2         
- [55] yaml_2.3.6              memoise_2.0.1           sass_0.4.4             
- [58] stringi_1.7.8           highr_0.9               e1071_1.7-12           
- [61] checkmate_2.1.0         rlang_1.0.6             pkgconfig_2.0.3        
- [64] systemfonts_1.0.4       distributional_0.3.1    evaluate_0.18          
- [67] lattice_0.20-45         labeling_0.4.2          bit_4.0.5              
- [70] processx_3.8.0          tidyselect_1.2.0        wrapr_2.0.9            
- [73] cubelyr_1.0.2           magrittr_2.0.3          R6_2.5.1               
- [76] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
- [79] haven_2.5.1             whisker_0.4             withr_2.5.0            
- [82] units_0.8-0             sp_1.5-1                modelr_0.1.10          
- [85] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
- [88] tzdb_0.3.0              rmarkdown_2.18          grid_4.2.2             
- [91] readxl_1.4.1            data.table_1.14.6       callr_3.7.3            
- [94] git2r_0.30.1            webshot_0.5.4           reprex_2.0.2           
+ [13] codetools_0.2-18        ncdf4_1.19              cachem_1.0.6           
+ [16] knitr_1.41              polyclip_1.10-4         rquery_1.4.9           
+ [19] jsonlite_1.8.3          broom_1.0.1             dbplyr_2.2.1           
+ [22] compiler_4.2.2          httr_1.4.4              backports_1.4.1        
+ [25] assertthat_0.2.1        fastmap_1.1.0           gargle_1.2.1           
+ [28] cli_3.4.1               later_1.3.0             tweenr_2.0.2           
+ [31] htmltools_0.5.3         tools_4.2.2             rnaturalearthdata_0.1.0
+ [34] gtable_0.3.1            glue_1.6.2              Rcpp_1.0.9             
+ [37] RNetCDF_2.6-1           cellranger_1.1.0        jquerylib_0.1.4        
+ [40] vctrs_0.5.1             rqdatatable_1.3.1       lwgeom_0.2-10          
+ [43] xfun_0.35               ps_1.7.2                rvest_1.0.3            
+ [46] ncmeta_0.3.5            timechange_0.1.1        lifecycle_1.0.3        
+ [49] googlesheets4_1.0.1     getPass_0.2-2           MASS_7.3-58.1          
+ [52] scales_1.2.1            vroom_1.6.0             hms_1.1.2              
+ [55] promises_1.2.0.1        parallel_4.2.2          yaml_2.3.6             
+ [58] memoise_2.0.1           sass_0.4.4              stringi_1.7.8          
+ [61] highr_0.9               e1071_1.7-12            checkmate_2.1.0        
+ [64] rlang_1.0.6             pkgconfig_2.0.3         systemfonts_1.0.4      
+ [67] evaluate_0.18           lattice_0.20-45         labeling_0.4.2         
+ [70] bit_4.0.5               processx_3.8.0          tidyselect_1.2.0       
+ [73] wrapr_2.0.9             cubelyr_1.0.2           magrittr_2.0.3         
+ [76] R6_2.5.1                generics_0.1.3          DBI_1.1.3              
+ [79] pillar_1.8.1            haven_2.5.1             whisker_0.4            
+ [82] withr_2.5.0             units_0.8-0             sp_1.5-1               
+ [85] modelr_0.1.10           crayon_1.5.2            KernSmooth_2.23-20     
+ [88] utf8_1.2.2              tzdb_0.3.0              rmarkdown_2.18         
+ [91] grid_4.2.2              readxl_1.4.1            data.table_1.14.6      
+ [94] callr_3.7.3             git2r_0.30.1            reprex_2.0.2           
  [97] digest_0.6.30           classInt_0.4-8          httpuv_1.6.6           
 [100] textshaping_0.3.6       munsell_0.5.0           viridisLite_0.4.1      
 [103] bslib_0.4.1            </code></pre>
+</div>
 </div>
 </div>
 
