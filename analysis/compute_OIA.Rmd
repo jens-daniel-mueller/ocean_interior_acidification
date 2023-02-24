@@ -193,7 +193,7 @@ for (i_tref in c(1994, 2004, 2014)) {
   # i_tref <- 1994
   print(i_tref)
   
-  for (i_year in i_tref + seq(-2, 2, 1)) {
+  for (i_year in i_tref + seq(-1, 1, 1)) {
     # i_year <- i_tref + seq(-2,2,1)[1]
     print(i_year)
     
@@ -404,9 +404,6 @@ DIC <- bind_rows(
 
 rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant_3d)
 
-cases <- DIC %>%
-  distinct(tref, Version_ID_group, MLR_basins)
-
 # create DIC fields with variable temperature
 
 DIC_temp <- DIC %>%
@@ -494,7 +491,7 @@ DIC <- bind_rows(
   DIC_temp
 )
 
-rm(DIC_temp)
+rm(DIC_temp, temperature_all)
 
 ```
 
@@ -502,107 +499,125 @@ rm(DIC_temp)
 
 ```{r compute_acidification_trends}
 
-acidification <- DIC %>%
-  filter(lon == 190.5,
-         lat == 0.5,
-         depth == 0) %>% 
-  mutate(
-    sir(
-      flag = 15,
-      var1 = talk * 1e-6,
-      var2 = tco2 * 1e-6,
-      S = sal,
-      T = temp,
-      P = depth / 10,
-      Pt = phosphate * 1e-6,
-      Sit = silicate * 1e-6,
-      k1k2 = "s20",
-      kf = "dg",
-      pHscale = "T"
+cases <- DIC %>%
+  distinct(Version_ID_group, MLR_basins)
+
+
+calc_delta_total <- function(x)
+  (x - first(x))
+calc_delta_interval <- function(x)
+  (x - lag(x, default = first(x)))
+
+for (i in 1:nrow(cases)) {
+  # i <- 1
+  
+  i_Version_ID_group <-  cases[i, ]$Version_ID_group
+  i_MLR_basins <-  cases[i, ]$MLR_basins
+  
+  i_DIC <- DIC %>%
+    filter(Version_ID_group == i_Version_ID_group,
+           MLR_basins == i_MLR_basins)
+  
+  
+  acidification <- i_DIC %>%
+    # filter(lon == 190.5,
+    #        lat == 0.5,
+    #        depth == 0) %>%
+    mutate(
+      sir(
+        flag = 15,
+        var1 = talk * 1e-6,
+        var2 = tco2 * 1e-6,
+        S = sal,
+        T = temp,
+        P = depth / 10,
+        Pt = phosphate * 1e-6,
+        Sit = silicate * 1e-6,
+        k1k2 = "s20",
+        kf = "dg",
+        pHscale = "T"
+      )
     )
-  )
-
-# rm(DIC)
-
-
-acidification <- acidification %>%
-  select(-c(
-    dcant,
-    tcant,
-    flag,
-    S,
-    T,
-    Patm,
-    P,
-    CO2,
-    contains("fCO2"),
-    contains("_t"),
-    contains("_sws"),
-    pH_free,
-    HCO3,
-    pCO2pot,
-    pCO2,
-    DIC,
-    ALK
-  ))
-
-acidification <- acidification %>%
-  mutate(hyd_ion_calc = 10^(-pH) * 1e6,
-         CO3 = CO3 * 1e6,
-         tco2_talk_ratio = tco2 / talk)
-
-
-acidification_temp <- acidification %>%
-  filter(tref %in% c(1800, 1994),
-         Version_ID_group == "Standard case",
-         MLR_basins == 3) %>%
-  mutate(Version_ID_group = "Temperature")
-
-acidification <- 
-  bind_rows(
-    acidification,
-    acidification_temp
-  )
-
-rm(acidification_temp)
-
-
-calc_delta_total <- function(x) (x - first(x))
-calc_delta_interval <- function(x) (x - lag(x, default = first(x)))
-
-acidification_trend <- acidification %>%
-  arrange(tref) %>%
-  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
-  mutate(across(
-    .cols = c(
-      tco2,
-      pH,
-      pCO2insitu,
-      CO3,
-      OmegaAragonite,
-      OmegaCalcite,
-      hyd_ion_calc,
-      tco2_talk_ratio,
-      SIR,
-      H_free,
-      temp
-    ),
-    .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
-  )) %>%
-  ungroup()
-
-rm(acidification)
-
-
-```
-
-
-## Write ouput
-
-```{r write_acidification_output_files}
-
-acidification_trend %>% 
-  write_csv(paste0(path_OIA, "OIA_all.csv"))
+  
+  rm(i_DIC)
+  
+  acidification <- acidification %>%
+    select(
+      -c(
+        dcant,
+        tcant,
+        flag,
+        S,
+        T,
+        Patm,
+        P,
+        CO2,
+        contains("fCO2"),
+        contains("_t"),
+        contains("_sws"),
+        pH_free,
+        HCO3,
+        pCO2pot,
+        pCO2,
+        DIC,
+        ALK
+      )
+    )
+  
+  acidification <- acidification %>%
+    mutate(
+      hyd_ion_calc = 10 ^ (-pH) * 1e6,
+      CO3 = CO3 * 1e6,
+      tco2_talk_ratio = tco2 / talk
+    )
+  
+  if (i_Version_ID_group == "Temperature") {
+    
+    acidification_temp <- acidification %>%
+      filter(tref %in% c(1800, 1994),
+             Version_ID_group == "Standard case",
+             MLR_basins == 3) %>%
+      mutate(Version_ID_group = "Temperature")
+    
+    acidification <-
+      bind_rows(acidification,
+                acidification_temp)
+    
+    rm(acidification_temp)
+    
+  }
+  
+  
+  acidification_trend <- acidification %>%
+    arrange(tref) %>%
+    group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+    mutate(across(
+      .cols = c(
+        tco2,
+        pH,
+        pCO2insitu,
+        CO3,
+        OmegaAragonite,
+        OmegaCalcite,
+        hyd_ion_calc,
+        tco2_talk_ratio,
+        SIR,
+        H_free,
+        temp
+      ),
+      .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+    )) %>%
+    ungroup()
+  
+  rm(acidification)
+  
+  
+  acidification_trend %>%
+    write_csv(paste0(path_OIA,"OIA_",i_Version_ID_group,"_",i_MLR_basins,".csv"))
+  
+  rm(acidification_trend)
+  
+}
 
 ```
 
@@ -610,83 +625,96 @@ acidification_trend %>%
 
 ```{r compute_buffer_factors}
 
-buffer <- DIC %>%
-  filter(lon == 190.5,
-         lat == 0.5,
-         depth == 0) %>% 
-  mutate(
-    buffesm(
-      flag = 15,
-      var1 = talk * 1e-6,
-      var2 = tco2 * 1e-6,
-      S = sal,
-      T = temp,
-      P = depth / 10,
-      Pt = phosphate * 1e-6,
-      Sit = silicate * 1e-6,
-      k1k2 = "s20",
-      kf = "dg",
-      pHscale = "T"
+for (i in 1:nrow(cases)) {
+  # i <- 1
+  
+  i_Version_ID_group <-  cases[i,]$Version_ID_group
+  i_MLR_basins <-  cases[i,]$MLR_basins
+  
+  
+  i_DIC <- DIC %>%
+    filter(Version_ID_group == i_Version_ID_group,
+           MLR_basins == i_MLR_basins)
+  
+  buffer <- i_DIC %>%
+    # filter(lon == 190.5,
+    #        lat == 0.5,
+    #        depth == 0) %>%
+    mutate(
+      buffesm(
+        flag = 15,
+        var1 = talk * 1e-6,
+        var2 = tco2 * 1e-6,
+        S = sal,
+        T = temp,
+        P = depth / 10,
+        Pt = phosphate * 1e-6,
+        Sit = silicate * 1e-6,
+        k1k2 = "s20",
+        kf = "dg",
+        pHscale = "T"
+      )
     )
-  )
-
-rm(DIC)
-
-
-buffer <- buffer %>%
-  select(c(
-    lon,
-    lat,
-    depth,
-    tref,
-    MLR_basins,
-    Version_ID_group,
-    gammaDIC,
-    betaDIC,
-    omegaDIC,
-    R
-  ))
-
-buffer_temp <- buffer %>%
-  filter(tref %in% c(1800, 1994),
-         Version_ID_group == "Standard case",
-         MLR_basins == 3) %>%
-  mutate(Version_ID_group = "Temperature")
-
-buffer <- 
-  bind_rows(
-    buffer,
-    buffer_temp
-  )
-
-rm(buffer_temp)
-
-buffer_trend <- buffer %>%
-  arrange(tref) %>%
-  group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
-  mutate(across(
-    .cols = c(gammaDIC,
-              betaDIC,
-              omegaDIC,
-              R),
-    .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
-  )) %>%
-  ungroup()
-
-rm(buffer)
+  
+  rm(i_DIC)
+  
+  buffer <- buffer %>%
+    select(
+      c(
+        lon,
+        lat,
+        depth,
+        tref,
+        MLR_basins,
+        Version_ID_group,
+        gammaDIC,
+        betaDIC,
+        omegaDIC,
+        R
+      )
+    )
+  
+    
+  if (i_Version_ID_group == "Temperature") {
+    
+    buffer_temp <- buffer %>%
+      filter(tref %in% c(1800, 1994),
+             Version_ID_group == "Standard case",
+             MLR_basins == 3) %>%
+      mutate(Version_ID_group = "Temperature")
+    
+    buffer <-
+      bind_rows(buffer,
+                buffer_temp)
+    
+    rm(buffer_temp)
+  }
+  
+  buffer_trend <- buffer %>%
+    arrange(tref) %>%
+    group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+    mutate(across(
+      .cols = c(gammaDIC,
+                betaDIC,
+                omegaDIC,
+                R),
+      .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+    )) %>%
+    ungroup()
+  
+  rm(buffer)
+  
+  
+  buffer_trend %>%
+    write_csv(paste0(path_OIA,"buffer_",i_Version_ID_group,"_",i_MLR_basins,".csv"))
+  
+  rm(buffer_trend)
+  
+}
 
 
 ```
 
-
-## Write ouput
-
-```{r write_buffer_output_files}
-
-buffer_trend %>% 
-  write_csv(paste0(path_OIA, "buffer_all.csv"))
-
-```
 
 
 ```{r write_output_files_stars, eval=FALSE}
