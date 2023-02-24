@@ -315,7 +315,6 @@ temperature_all <- temperature_all %>%
   group_by(lon, lat, depth) %>%
   mutate(delta_temp = temp - first(temp)) %>%
   ungroup() %>% 
-  filter(tref != 1994) %>% 
   select(lon, lat, depth, tref, delta_temp)
 
 
@@ -407,7 +406,7 @@ rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant
 # create DIC fields with variable temperature
 
 DIC_temp <- DIC %>%
-  filter(tref %in% c(2004, 2014),
+  filter(tref != 1800,
          Version_ID_group == "Standard case",
          MLR_basins == 3) %>%
   mutate(Version_ID_group = "Temperature")
@@ -571,21 +570,21 @@ for (i in 1:nrow(cases)) {
       tco2_talk_ratio = tco2 / talk
     )
   
-  if (i_Version_ID_group == "Temperature") {
-    
-    acidification_temp <- acidification %>%
-      filter(tref %in% c(1800, 1994),
-             Version_ID_group == "Standard case",
-             MLR_basins == 3) %>%
-      mutate(Version_ID_group = "Temperature")
-    
-    acidification <-
-      bind_rows(acidification,
-                acidification_temp)
-    
-    rm(acidification_temp)
-    
-  }
+  # if (i_Version_ID_group == "Temperature") {
+  #   
+  #   acidification_temp <- acidification %>%
+  #     filter(tref %in% c(1800, 1994),
+  #            Version_ID_group == "Standard case",
+  #            MLR_basins == 3) %>%
+  #     mutate(Version_ID_group = "Temperature")
+  #   
+  #   acidification <-
+  #     bind_rows(acidification,
+  #               acidification_temp)
+  #   
+  #   rm(acidification_temp)
+  #   
+  # }
   
   
   acidification_trend <- acidification %>%
@@ -675,20 +674,20 @@ for (i in 1:nrow(cases)) {
     )
   
     
-  if (i_Version_ID_group == "Temperature") {
-    
-    buffer_temp <- buffer %>%
-      filter(tref %in% c(1800, 1994),
-             Version_ID_group == "Standard case",
-             MLR_basins == 3) %>%
-      mutate(Version_ID_group = "Temperature")
-    
-    buffer <-
-      bind_rows(buffer,
-                buffer_temp)
-    
-    rm(buffer_temp)
-  }
+  # if (i_Version_ID_group == "Temperature") {
+  #   
+  #   buffer_temp <- buffer %>%
+  #     filter(tref %in% c(1800, 1994),
+  #            Version_ID_group == "Standard case",
+  #            MLR_basins == 3) %>%
+  #     mutate(Version_ID_group = "Temperature")
+  #   
+  #   buffer <-
+  #     bind_rows(buffer,
+  #               buffer_temp)
+  #   
+  #   rm(buffer_temp)
+  # }
   
   buffer_trend <- buffer %>%
     arrange(tref) %>%
