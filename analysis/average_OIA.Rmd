@@ -59,6 +59,8 @@ path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 
 # Read data
 
+## dCant
+
 ```{r read_OIA_data}
 
 all_files <- list.files(path_OIA) %>% 
@@ -84,6 +86,8 @@ OIA_variables <- OIA_variables[-c(3,7,8)]
 
 
 ```
+
+## Temperature driver
 
 ```{r read_OIA_temperature_driven}
 
@@ -125,12 +129,31 @@ dCant_temp_trend <-
 
 rm(temperature_trend, dCant_trend, temp_trend, dCant_temp_trend_depth_grid)
 
-# dCant_temp_trend <-
-#   dCant_temp_trend %>%
-#   pivot_longer(contains("delta_interval"),
-#                names_to = "variable",
-#                values_to = "delta_interval") %>%
-#   mutate(variable = str_remove(variable, "_delta_interval"))
+
+```
+
+## Buffer changes
+
+```{r read_buffer_changes}
+
+buffer_trend <-
+  read_csv(paste0(path_OIA, "buffer_Standard case_3.csv"))
+
+buffer_trend <- buffer_trend %>% 
+  select(-c(MLR_basins, Version_ID_group))
+
+buffer_trend <-
+  full_join(
+    buffer_trend,
+    acidification_trend %>% select(lon, lat, depth, tref, basin_AIP,
+                                   contains("tco2_talk"))
+  )
+
+buffer_variables <- 
+  buffer_trend %>%
+  select(contains("delta_total")) %>% 
+  names() %>% 
+  str_remove("_delta_total")
 
 ```
 
@@ -337,7 +360,7 @@ basinmask <- basinmask %>%
 
 
 
-# Results
+# OIA
 
 ## Depth layer maps
 
@@ -1108,6 +1131,19 @@ acidification_zonal_dCant_temp <- dCant_temp_trend %>%
 ```
 
 
+```{r compute_zonal_mean_sections_buffer}
+
+acidification_zonal_buffer <- buffer_trend %>%
+  group_by(tref) %>%
+  nest() %>%
+  mutate(zonal = map(.x = data, ~m_zonal_mean_sd(.x))) %>%
+  select(-data) %>%
+  unnest(zonal) %>% 
+  ungroup()
+
+```
+
+
 ### Incremental changes
 
 #### dCant + Temperature
@@ -1438,9 +1474,6 @@ acidification_zonal_total <-
 
 acidification_zonal_total <-
   acidification_zonal_total %>%
-  # filter(MLR_basins == MLR_basins_reference,
-  #        Version_ID_group == Version_ID_group_reference) %>%
-  # select(-c(MLR_basins, Version_ID_group)) %>%
   pivot_longer(contains("_delta_total"),
                names_to = "variable",
                values_to = "delta_total") %>%
@@ -1537,8 +1570,352 @@ for (i_var in OIA_variables) {
 dev.off()
 
 rm(acidification_zonal_total,
-   acidification_zonal,
    i_acidification_zonal_total)
+
+```
+
+
+
+```{r zonal_total_change_buffer}
+
+# subset total change sections
+
+acidification_zonal_buffer_total <-
+  acidification_zonal_buffer %>%
+  select(tref:basin_AIP,
+         contains("_delta_total_mean")) %>%
+  filter(tref != 1800)
+
+
+# subset reference reconstruction
+
+acidification_zonal_buffer_total <-
+  acidification_zonal_buffer_total %>%
+  pivot_longer(contains("_delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  mutate(variable = str_remove(variable, "_delta_total_mean"))
+
+
+# create pdf document
+
+pdf(
+  here::here("output/zonal_mean_sections_total_changes_buffer.pdf"),
+  width = 10,
+  height = 8
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in buffer_variables) {
+  # i_var <- buffer_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_zonal_buffer_total <-
+    acidification_zonal_buffer_total %>%
+    filter(variable == i_var,
+           depth <= 3000)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_zonal_buffer_total %>%
+    filter(!is.na(delta_total)) %>%
+    pull(delta_total) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_acidification_zonal_buffer_total %>%
+    filter(!is.na(delta_total)) %>%
+    pull(delta_total) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  breaks_sub <- breaks[seq(1, length(breaks), 3)]
+  
+  
+  p_total_fill <-
+    p_section_zonal_continous_depth(
+      df = i_acidification_zonal_buffer_total,
+      var = "delta_total",
+      legend_title = i_var,
+      plot_slabs = "n",
+      breaks = breaks,
+      title_text = NULL,
+      subtitle_text = NULL
+    ) +
+    facet_grid(tref ~ basin_AIP) +
+    geom_contour(
+      data = i_acidification_zonal_buffer_total,
+      aes(lat, depth, z = delta_total),
+      col = "white",
+      breaks = breaks_sub
+    )
+  
+  p_total_contour <-
+    i_acidification_zonal_buffer_total %>%
+    mutate(tref = as.factor(tref)) %>%
+    ggplot() +
+    geom_contour(aes(lat, depth, z = delta_total,
+                     col = tref),
+                 breaks = breaks_sub) +
+    scale_y_continuous(
+      trans = trans_reverser("sqrt"),
+      breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+      limits = c(params_global$inventory_depth_standard, 0),
+      name = "Depth (m)"
+    ) +
+    scale_x_continuous(
+      breaks = seq(-100, 100, 20),
+      limits = c(-80, 65),
+      name = "Latitude (°N)"
+    ) +
+    scale_color_brewer(palette = "YlGnBu") +
+    coord_fixed(ratio = 1, expand = 0) +
+    facet_grid(. ~ basin_AIP)
+  
+  print(
+    wrap_plots(
+      p_total_fill,
+      p_total_contour,
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()
+
+rm(acidification_zonal_buffer_total,
+   i_acidification_zonal_buffer_total)
+
+```
+
+
+### Absolute state
+
+```{r zonal_absolute_state}
+
+# subset absolute value sections
+
+acidification_zonal_absolute <-
+  acidification_zonal %>%
+  select(tref:basin_AIP,
+         contains("_mean"),
+         -contains(c("_sd", "_delta")))
+
+acidification_zonal_absolute <-
+  acidification_zonal_absolute %>%
+  pivot_longer(contains("_mean"),
+               names_to = "variable",
+               values_to = "mean") %>%
+  mutate(variable = str_remove(variable, "_mean"))
+
+# create pdf document
+
+pdf(
+  here::here("output/zonal_mean_sections_absolute_state.pdf"),
+  width = 8,
+  height = 8
+)
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_zonal_absolute <-
+    acidification_zonal_absolute %>%
+    filter(variable == i_var,
+           depth <= 3000)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_zonal_absolute %>%
+    filter(!is.na(mean)) %>%
+    pull(mean) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_acidification_zonal_absolute %>%
+    filter(!is.na(mean)) %>%
+    pull(mean) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  breaks_sub <- breaks[seq(1, length(breaks), 3)]
+  
+  
+  p_total_fill <-
+    p_section_zonal_continous_depth(
+      df = i_acidification_zonal_absolute,
+      var = "mean",
+      legend_title = i_var,
+      plot_slabs = "n",
+      breaks = breaks,
+      title_text = NULL,
+      subtitle_text = NULL
+    ) +
+    facet_grid(tref ~ basin_AIP) +
+    geom_contour(
+      data = i_acidification_zonal_absolute,
+      aes(lat, depth, z = mean),
+      col = "white",
+      breaks = breaks_sub
+    )
+  
+  p_total_contour <-
+    i_acidification_zonal_absolute %>%
+    mutate(tref = as.factor(tref)) %>%
+    ggplot() +
+    geom_contour(aes(lat, depth, z = mean,
+                     col = tref),
+                 breaks = breaks_sub) +
+    scale_y_continuous(
+      trans = trans_reverser("sqrt"),
+      breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+      limits = c(params_global$inventory_depth_standard, 0),
+      name = "Depth (m)"
+    ) +
+    scale_x_continuous(
+      breaks = seq(-100, 100, 20),
+      limits = c(-80, 65),
+      name = "Latitude (°N)"
+    ) +
+    scale_color_brewer(palette = "YlGnBu") +
+    coord_fixed(ratio = 1, expand = 0) +
+    facet_grid(. ~ basin_AIP)
+  
+  print(
+    wrap_plots(
+      p_total_fill,
+      p_total_contour,
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()
+
+
+rm(acidification_zonal_absolute,
+   acidification_zonal,
+   i_acidification_zonal_absolute)
+
+```
+
+
+```{r zonal_absolute_state_buffer}
+
+# subset absolute value sections
+
+acidification_zonal_buffer_absolute <-
+  acidification_zonal_buffer %>%
+  select(tref:basin_AIP,
+         contains("_mean"),
+         -contains(c("_sd", "_delta")))
+
+acidification_zonal_buffer_absolute <-
+  acidification_zonal_buffer_absolute %>%
+  pivot_longer(contains("_mean"),
+               names_to = "variable",
+               values_to = "mean") %>%
+  mutate(variable = str_remove(variable, "_mean"))
+
+# create pdf document
+
+pdf(
+  here::here("output/zonal_mean_sections_absolute_state_buffer.pdf"),
+  width = 8,
+  height = 8
+)
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in buffer_variables) {
+  # i_var <- buffer_variables[1]
+  
+  # subset OIA variable
+  
+  i_acidification_zonal_buffer_absolute <-
+    acidification_zonal_buffer_absolute %>%
+    filter(variable == i_var,
+           depth <= 3000)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_zonal_buffer_absolute %>%
+    filter(!is.na(mean)) %>%
+    pull(mean) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_acidification_zonal_buffer_absolute %>%
+    filter(!is.na(mean)) %>%
+    pull(mean) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  breaks_sub <- breaks[seq(1, length(breaks), 3)]
+  
+  
+  p_total_fill <-
+    p_section_zonal_continous_depth(
+      df = i_acidification_zonal_buffer_absolute,
+      var = "mean",
+      legend_title = i_var,
+      plot_slabs = "n",
+      breaks = breaks,
+      title_text = NULL,
+      subtitle_text = NULL
+    ) +
+    facet_grid(tref ~ basin_AIP) +
+    geom_contour(
+      data = i_acidification_zonal_buffer_absolute,
+      aes(lat, depth, z = mean),
+      col = "white",
+      breaks = breaks_sub
+    )
+  
+  p_total_contour <-
+    i_acidification_zonal_buffer_absolute %>%
+    mutate(tref = as.factor(tref)) %>%
+    ggplot() +
+    geom_contour(aes(lat, depth, z = mean,
+                     col = tref),
+                 breaks = breaks_sub) +
+    scale_y_continuous(
+      trans = trans_reverser("sqrt"),
+      breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+      limits = c(params_global$inventory_depth_standard, 0),
+      name = "Depth (m)"
+    ) +
+    scale_x_continuous(
+      breaks = seq(-100, 100, 20),
+      limits = c(-80, 65),
+      name = "Latitude (°N)"
+    ) +
+    scale_color_brewer(palette = "YlGnBu") +
+    coord_fixed(ratio = 1, expand = 0) +
+    facet_grid(. ~ basin_AIP)
+  
+  print(
+    wrap_plots(
+      p_total_fill,
+      p_total_contour,
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()
+
+
+rm(acidification_zonal_buffer_absolute,
+   acidification_zonal_buffer,
+   i_acidification_zonal_buffer_absolute)
 
 ```
 
@@ -1999,7 +2376,6 @@ rm(acidification_global_section_absolute,
 
 ```{r compute_mean_profiles_total_acidification}
 
-
 # join with 3D acidification fields
 
 acidification_profiles <-
@@ -2126,6 +2502,71 @@ dCant_temp_profiles <- dCant_temp_profiles %>%
   )
 
 dCant_temp_profiles <- dCant_temp_profiles %>%
+  mutate(tref = as.factor(tref))
+
+```
+
+```{r compute_mean_profiles_buffer}
+
+
+# join with 3D acidification fields
+
+buffer_profiles <-
+  full_join(basinmask,
+            buffer_trend %>% select(-basin_AIP))
+
+# scale values to surface area
+
+buffer_profiles <- buffer_profiles %>% 
+  mutate(across(gammaDIC:tco2_talk_ratio_delta_interval,
+                ~ . * area))
+
+# calculate regional means
+
+buffer_profiles_regional <- buffer_profiles %>%
+  group_by(tref, basin, depth) %>%
+  summarise(across(gammaDIC:tco2_talk_ratio_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# calculate global means
+
+buffer_profiles_global <- buffer_profiles %>%
+  mutate(basin = "Global") %>% 
+  group_by(tref, basin, depth) %>%
+  summarise(across(gammaDIC:tco2_talk_ratio_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# join global and regional profiles
+  
+buffer_profiles <-
+  bind_rows(buffer_profiles_global,
+            buffer_profiles_regional)
+  
+rm(buffer_profiles_regional,
+   buffer_profiles_global)
+
+
+# rename basins
+
+buffer_profiles <- buffer_profiles %>%
+  mutate(
+    basin = str_replace(basin,
+                        "_",
+                        ". "),
+    basin = fct_relevel(
+      basin,
+      "Global",
+      "N. Pacific",
+      "N. Atlantic",
+      "Indian",
+      "S. Pacific",
+      "S. Atlantic"
+    )
+  )
+
+buffer_profiles <- buffer_profiles %>%
   mutate(tref = as.factor(tref))
 
 ```
@@ -2338,6 +2779,49 @@ dev.off()
 
 ```
 
+
+```{r profiles_total_change_buffer}
+
+# create pdf document
+
+pdf(
+  here::here("output/profiles_total_changes_buffer.pdf"),
+  width = 10,
+  height = 8
+)
+
+buffer_profiles %>%
+  select(tref,
+         basin,
+         depth,
+         contains("_delta_total")) %>%
+  pivot_longer(contains("_delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  filter(tref != 1800,
+         depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_total")) %>% 
+  ggplot(aes(
+    delta_total,
+    depth,
+    col = tref)) +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path() +
+  scale_color_brewer(palette = "YlGnBu") +
+  labs(y = "Depth (m)",
+       title = "Total change since 1800")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(basin ~ variable, scales = "free_x")
+
+
+
+dev.off()
+
+```
+
 ### Absolute state
 
 ```{r profiles_absolute_state}
@@ -2358,6 +2842,49 @@ acidification_profiles %>%
          # MLR_basins,
          # Version_ID_group,
          all_of(OIA_variables[-8])) %>%
+  pivot_longer(-c(tref:depth),
+               names_to = "variable",
+               values_to = "total") %>%
+  filter(depth <= 3000) %>%
+  ggplot(aes(
+    total,
+    depth,
+    col = tref
+  )) +
+  geom_path() +
+  scale_color_brewer(palette = "YlGnBu") +
+  labs(y = "Depth (m)",
+       title = "Absolute state at reference years")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(basin ~ variable, scales = "free_x")
+
+dev.off()
+
+
+```
+
+
+
+```{r profiles_absolute_state_buffer}
+
+
+# create pdf document
+
+pdf(
+  here::here("output/profiles_absolute_state_buffer.pdf"),
+  width = 10,
+  height = 8
+)
+
+buffer_profiles %>%
+  select(tref,
+         basin,
+         depth,
+         gammaDIC:R,
+         tco2_talk_ratio) %>%
   pivot_longer(-c(tref:depth),
                names_to = "variable",
                values_to = "total") %>%
