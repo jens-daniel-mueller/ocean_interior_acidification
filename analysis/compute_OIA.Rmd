@@ -20,6 +20,7 @@ editor_options:
 library(stars)
 library(seacarb)
 library(tidync)
+library(lubridate)
 
 ```
 
@@ -52,6 +53,11 @@ path_out <-   paste0(path_observations, "output_publication/")
 
 path_temperature <- 
   "/nfs/kryo/work/updata/cheng/CZ16_v3_IAP_Temperature_gridded_1month_netcdf/Monthly"
+
+# path to ocean interior DIC reconstructions
+
+path_mobo <- 
+  "/nfs/kryo/work/updata/mobo-dic/"
 
 # path to OIA data generated for this study
 
@@ -259,6 +265,7 @@ for (i_tref in c(1994, 2004, 2014)) {
     
     rm(temperature_year)
     
+    gc()
     
   }
   
@@ -281,6 +288,8 @@ for (i_tref in c(1994, 2004, 2014)) {
   }
   
   rm(temperature_decade)
+  
+  gc()
   
 }
 
@@ -330,6 +339,85 @@ temperature_all %>%
 ```
 
 
+## MOBO-DIC
+
+```{r read_mobo-dic}
+
+mobo_dic_dates <-
+  read_ncdf(paste0(path_mobo, "MPI_MOBO-DIC_2004-2019_Oct2022.nc")) %>%
+  st_get_dimension_values("juld")
+
+
+mobo_dic_dates <-
+mobo_dic_dates %>% 
+  as_tibble() %>% 
+  rename(date = value) %>% 
+  mutate(year = year(date),
+         juld = row_number()) %>% 
+  select(juld, year)
+
+
+
+mobo_dic <-
+  tidync(paste0(path_mobo, "MPI_MOBO-DIC_2004-2019_Oct2022.nc")) %>%
+  hyper_tibble()
+
+mobo_dic <-
+  full_join(mobo_dic, mobo_dic_dates)
+
+rm(mobo_dic_dates)
+
+mobo_dic_clim <-
+  mobo_dic %>%
+  filter(year %in% c(seq(2004,2006,1), seq(2014,2016,1))) %>%
+  mutate(tref = if_else(year < 2010, "2004", "2014")) %>% 
+  group_by(tref, lon, lat, depth) %>%
+  summarise(DIC = mean(DIC, na.rm = TRUE)) %>%
+  ungroup()
+
+rm(mobo_dic)
+
+mobo_dic_clim %>% 
+  distinct(lat) %>% 
+  pull
+
+mobo_dic_clim %>% 
+  distinct(lon) %>% 
+  pull
+
+mobo_dic_clim <-
+  mobo_dic_clim %>%
+  mutate(lon = if_else(lon < 20, lon + 360, lon))
+
+mobo_dic_clim %>% 
+  distinct(depth) %>% 
+  pull
+
+mobo_dic_clim %>% 
+  filter(depth == 10) %>% 
+  ggplot(aes(lon, lat, fill = DIC)) +
+  geom_raster() +
+  coord_quickmap() +
+  scale_fill_viridis_c() +
+  facet_wrap(~ tref)
+
+mobo_dic_clim %>% 
+  filter(depth == 10) %>%
+  arrange(tref) %>% 
+  group_by(lat, lon) %>%
+  mutate(delta_DIC = DIC - lag(DIC)) %>% 
+  ungroup() %>% 
+  ggplot(aes(lon, lat, fill = delta_DIC)) +
+  geom_raster() +
+  coord_quickmap() +
+  scale_fill_divergent() +
+  facet_wrap(~ tref)
+
+gc()
+
+```
+
+
 # Join data
 
 ## WOA18 + GLODAP
@@ -364,11 +452,46 @@ rm(GLODAP_predictors, WOA18_predictors_nuts_O2, WOA18_predictors)
 # S04_cant_3d %>% distinct(depth) %>% pull()
 # dcant_3d_tibble %>% distinct(depth) %>% pull()
 
+# create depth grid for which all reconstructions are available
+
+coord_grid <- predictors %>% 
+  distinct(lon, lat, depth)
+
+coord_grid <-
+  inner_join(coord_grid,
+             dcant_3d_tibble %>%
+               distinct(lon, lat, depth))
+
+coord_grid <-
+  inner_join(coord_grid,
+             S04_cant_3d %>%
+               distinct(lon, lat, depth))
+
+# restrict CO2 fields to common grid
+
+predictors <- inner_join(
+  predictors,
+  coord_grid
+)
+
+dcant_3d_tibble <- inner_join(
+  dcant_3d_tibble,
+  coord_grid
+)
+
+S04_cant_3d <- inner_join(
+  S04_cant_3d,
+  coord_grid
+)
+
+rm(coord_grid)
+
+# join data frames
+
 DIC_1994 <- 
   inner_join(predictors,
              dcant_3d_tibble %>% filter(period == "1994 - 2004") %>% 
                select(-period))
-
 
 DIC_1994 <- DIC_1994 %>% 
   mutate(tco2 = tco2 - 0.8 * dcant)
@@ -394,6 +517,7 @@ DIC_1800 <- inner_join(
 DIC_1800 <- DIC_1800 %>% 
   mutate(tco2 = tco2 - tcant)
 
+
 DIC <- bind_rows(
   DIC_1800 %>% mutate(tref = "1800"),
   DIC_1994 %>% mutate(tref = "1994"),
@@ -403,13 +527,17 @@ DIC <- bind_rows(
 
 rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant_3d)
 
+```
+
+```{r join_dCant_temperature}
+
 # create DIC fields with variable temperature
 
 DIC_temp <- DIC %>%
   filter(tref != 1800,
          Version_ID_group == "Standard case",
          MLR_basins == 3) %>%
-  mutate(Version_ID_group = "Temperature")
+  mutate(Version_ID_group = "dCant + temp")
 
 DIC_temp %>%
   distinct(tref, Version_ID_group, MLR_basins)
@@ -494,6 +622,54 @@ rm(DIC_temp, temperature_all)
 
 ```
 
+
+
+```{r join_dCant_DIC}
+
+# create DIC fields with variable temperature
+
+DIC_DIC <- DIC %>%
+  filter(tref %in% c("2004", "2014"),
+         Version_ID_group %in% c("Standard case", "dCant + temp"),
+         MLR_basins == 3) %>%
+  mutate(Version_ID_group = if_else(
+    Version_ID_group == "Standard case",
+    "DIC",
+    "DIC + temp"
+  ))
+
+mobo_dic_clim <- 
+  mobo_dic_clim %>% 
+  mutate(depth = if_else(depth == 2.5, 0, depth))
+
+mobo_dic_clim %>% 
+  distinct(depth) %>% 
+  pull
+
+
+DIC_DIC <- inner_join(
+  DIC_DIC,
+  mobo_dic_clim)
+
+DIC_DIC <-
+  DIC_DIC %>%
+  mutate(tco2 = DIC) %>%
+  select(-DIC)
+
+DIC <- bind_rows(
+  DIC,
+  DIC_DIC
+)
+
+rm(DIC_DIC, mobo_dic_clim)
+
+gc()
+
+```
+
+
+
+
 # Compute acidification trends
 
 ```{r compute_acidification_trends}
@@ -501,6 +677,9 @@ rm(DIC_temp, temperature_all)
 cases <- DIC %>%
   distinct(Version_ID_group, MLR_basins)
 
+cases <- cases %>% 
+  filter(MLR_basins == 3) %>% 
+  slice(-c(2:6))
 
 calc_delta_total <- function(x)
   (x - first(x))
@@ -539,6 +718,7 @@ for (i in 1:nrow(cases)) {
     )
   
   rm(i_DIC)
+  gc()
   
   acidification <- acidification %>%
     select(
@@ -570,23 +750,6 @@ for (i in 1:nrow(cases)) {
       tco2_talk_ratio = tco2 / talk
     )
   
-  # if (i_Version_ID_group == "Temperature") {
-  #   
-  #   acidification_temp <- acidification %>%
-  #     filter(tref %in% c(1800, 1994),
-  #            Version_ID_group == "Standard case",
-  #            MLR_basins == 3) %>%
-  #     mutate(Version_ID_group = "Temperature")
-  #   
-  #   acidification <-
-  #     bind_rows(acidification,
-  #               acidification_temp)
-  #   
-  #   rm(acidification_temp)
-  #   
-  # }
-  
-  
   acidification_trend <- acidification %>%
     arrange(tref) %>%
     group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
@@ -609,12 +772,13 @@ for (i in 1:nrow(cases)) {
     ungroup()
   
   rm(acidification)
-  
+  gc()
   
   acidification_trend %>%
     write_csv(paste0(path_OIA,"OIA_",i_Version_ID_group,"_",i_MLR_basins,".csv"))
   
   rm(acidification_trend)
+  gc()
   
 }
 
@@ -656,6 +820,7 @@ for (i in 1:nrow(cases)) {
     )
   
   rm(i_DIC)
+  gc()
   
   buffer <- buffer %>%
     select(
@@ -673,22 +838,6 @@ for (i in 1:nrow(cases)) {
       )
     )
   
-    
-  # if (i_Version_ID_group == "Temperature") {
-  #   
-  #   buffer_temp <- buffer %>%
-  #     filter(tref %in% c(1800, 1994),
-  #            Version_ID_group == "Standard case",
-  #            MLR_basins == 3) %>%
-  #     mutate(Version_ID_group = "Temperature")
-  #   
-  #   buffer <-
-  #     bind_rows(buffer,
-  #               buffer_temp)
-  #   
-  #   rm(buffer_temp)
-  # }
-  
   buffer_trend <- buffer %>%
     arrange(tref) %>%
     group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
@@ -702,12 +851,13 @@ for (i in 1:nrow(cases)) {
     ungroup()
   
   rm(buffer)
-  
+  gc()
   
   buffer_trend %>%
     write_csv(paste0(path_OIA,"buffer_",i_Version_ID_group,"_",i_MLR_basins,".csv"))
   
   rm(buffer_trend)
+  gc()
   
 }
 
