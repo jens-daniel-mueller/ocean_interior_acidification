@@ -132,6 +132,76 @@ rm(temperature_trend, dCant_trend, temp_trend, dCant_temp_trend_depth_grid)
 
 ```
 
+## DIC driver
+
+```{r read_OIA_DIC_driven}
+
+DIC_trend <-
+  read_csv(paste0(path_OIA, "OIA_DIC_3.csv"))
+
+DIC_temperature_trend <-
+  read_csv(paste0(path_OIA, "OIA_DIC + temp_3.csv"))
+
+# create common grid
+DIC_dCant_temp_trend_depth_grid <-
+  inner_join(
+    DIC_trend %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      distinct(lon, lat, depth, tref),
+    DIC_temperature_trend %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      distinct(lon, lat, depth, tref)
+  )
+
+DIC_dCant_temp_trend_depth_grid <-
+  inner_join(
+    DIC_dCant_temp_trend_depth_grid,
+    dCant_temp_trend %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      distinct(lon, lat, depth, tref)
+  )
+
+
+# reduce input data frames to common grid
+DIC_trend <-
+  inner_join(
+    DIC_trend %>%
+      filter(tref %in% c(2014)) %>%
+      select(lon, lat, depth, tref, basin_AIP, contains("delta_interval")),
+    DIC_dCant_temp_trend_depth_grid
+  )
+
+DIC_temperature_trend <-
+  inner_join(
+    DIC_temperature_trend %>%
+      filter(tref %in% c(2014)) %>%
+      select(lon, lat, depth, tref, basin_AIP, contains("delta_interval")),
+    DIC_dCant_temp_trend_depth_grid
+  )
+
+dCant_temp_trend_temporary <-
+  inner_join(
+    dCant_temp_trend %>%
+      filter(tref %in% c(2014)) %>%
+      select(lon, lat, depth, tref, driver, basin_AIP, contains("delta_interval")),
+    DIC_dCant_temp_trend_depth_grid
+  )
+
+
+DIC_dCant_temp_trend <-
+  bind_rows(DIC_trend %>%
+              mutate(driver = "DIC"),
+            DIC_temperature_trend %>%
+              mutate(driver = "DIC + temp"),
+            dCant_temp_trend_temporary)
+
+rm(DIC_trend, DIC_temperature_trend,
+   dCant_temp_trend_temporary,
+   DIC_dCant_temp_trend_depth_grid)
+
+
+```
+
 ## Buffer changes
 
 ```{r read_buffer_changes}
@@ -2506,6 +2576,71 @@ dCant_temp_profiles <- dCant_temp_profiles %>%
 
 ```
 
+```{r compute_mean_profiles_DIC_dCant_temperature_trend}
+
+
+# join with 3D acidification fields
+
+DIC_dCant_temp_profiles <-
+  full_join(basinmask,
+            DIC_dCant_temp_trend)
+
+# scale values to surface area
+
+DIC_dCant_temp_profiles <- DIC_dCant_temp_profiles %>% 
+  mutate(across(contains("_delta_interval"),
+                ~ . * area))
+
+# calculate regional means
+
+DIC_dCant_temp_profiles_regional <- DIC_dCant_temp_profiles %>%
+  group_by(tref, basin, depth, driver) %>%
+  summarise(across(contains("_delta_interval"),
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# calculate global means
+
+DIC_dCant_temp_profiles_global <- DIC_dCant_temp_profiles %>%
+  mutate(basin = "Global") %>% 
+  group_by(tref, basin, depth, driver) %>%
+  summarise(across(contains("_delta_interval"),
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# join global and regional profiles
+  
+DIC_dCant_temp_profiles <-
+  bind_rows(DIC_dCant_temp_profiles_global,
+            DIC_dCant_temp_profiles_regional)
+  
+rm(DIC_dCant_temp_profiles_regional,
+   DIC_dCant_temp_profiles_global)
+
+
+# rename basins
+
+DIC_dCant_temp_profiles <- DIC_dCant_temp_profiles %>%
+  mutate(
+    basin = str_replace(basin,
+                        "_",
+                        ". "),
+    basin = fct_relevel(
+      basin,
+      "Global",
+      "N. Pacific",
+      "N. Atlantic",
+      "Indian",
+      "S. Pacific",
+      "S. Atlantic"
+    )
+  )
+
+DIC_dCant_temp_profiles <- DIC_dCant_temp_profiles %>%
+  mutate(tref = as.factor(tref))
+
+```
+
 ```{r compute_mean_profiles_buffer}
 
 
@@ -2573,6 +2708,50 @@ buffer_profiles <- buffer_profiles %>%
 
 ### Incremental changes
 
+#### DIC + dCant + Temperature
+
+```{r profiles_DIC_dCant_temp_change}
+
+
+DIC_dCant_temp_profiles <-
+  DIC_dCant_temp_profiles %>%
+  pivot_longer(contains("_delta_interval"),
+               names_to = "variable",
+               values_to = "delta_interval") %>%
+  filter(depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_interval"))
+
+
+# create pdf document
+
+pdf(
+  here::here("output/profiles_DIC_dCant_temp_changes.pdf"),
+  width = 14,
+  height = 8
+)
+
+ggplot() +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path(data = DIC_dCant_temp_profiles, aes(delta_interval,
+                                            depth,
+                                            col = driver)) +
+  scale_color_brewer(palette = "Dark2") +
+  labs(y = "Depth (m)",
+       title = "Incremental change from previous estimate") +
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(basin ~ variable, scales = "free_x")
+
+dev.off()
+
+rm(DIC_dCant_temp_profiles, DIC_dCant_temp_profiles_min_max)
+
+
+```
+
+
 #### dCant + Temperature
 
 ```{r profiles_dCant_temp_change}
@@ -2628,6 +2807,7 @@ rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 
 
 ```
+
 
 #### dCant
 
