@@ -495,17 +495,26 @@ DIC_1994 <-
 
 DIC_1994 <- DIC_1994 %>% 
   mutate(tco2 = tco2 - 0.8 * dcant)
+  
 
 DIC_2004 <- DIC_1994 %>% 
   mutate(tco2 = tco2 + dcant)
 
+DIC_1994 <- DIC_1994 %>% 
+  select(-dcant)
+
+DIC_2004 <- DIC_2004 %>% 
+  select(-dcant)
+
+
 DIC_2014 <-
-  inner_join(DIC_2004 %>% select(-dcant),
+  inner_join(DIC_2004,
              dcant_3d_tibble %>% filter(period == "2004 - 2014") %>%
                select(-period))
 
 DIC_2014 <- DIC_2014 %>% 
-  mutate(tco2 = tco2 + dcant)
+  mutate(tco2 = tco2 + dcant) %>% 
+  select(-dcant)
 
 
 DIC_1800 <- inner_join(
@@ -515,10 +524,14 @@ DIC_1800 <- inner_join(
 )
 
 DIC_1800 <- DIC_1800 %>% 
-  mutate(tco2 = tco2 - tcant)
+  mutate(tco2 = tco2 - tcant) %>% 
+  select(-tcant)
 
 
 DIC <- bind_rows(
+  predictors %>% mutate(tref = "2002",
+                        Version_ID_group = "DIC_climatology",
+                        MLR_basins = "none"),
   DIC_1800 %>% mutate(tref = "1800"),
   DIC_1994 %>% mutate(tref = "1994"),
   DIC_2004 %>% mutate(tref = "2004"),
@@ -678,8 +691,11 @@ cases <- DIC %>%
   distinct(Version_ID_group, MLR_basins)
 
 cases <- cases %>% 
-  filter(MLR_basins == 3) %>% 
-  slice(-c(2:6))
+  filter(MLR_basins == "none")
+
+# cases <- cases %>% 
+#   filter(MLR_basins == "3") %>% 
+#   slice(-c(2:6))
 
 calc_delta_total <- function(x)
   (x - first(x))
@@ -723,8 +739,6 @@ for (i in 1:nrow(cases)) {
   acidification <- acidification %>%
     select(
       -c(
-        dcant,
-        tcant,
         flag,
         S,
         T,
@@ -745,7 +759,6 @@ for (i in 1:nrow(cases)) {
   
   acidification <- acidification %>%
     mutate(
-      hyd_ion_calc = 10 ^ (-pH) * 1e6,
       CO3 = CO3 * 1e6,
       tco2_talk_ratio = tco2 / talk
     )
@@ -761,7 +774,6 @@ for (i in 1:nrow(cases)) {
         CO3,
         OmegaAragonite,
         OmegaCalcite,
-        hyd_ion_calc,
         tco2_talk_ratio,
         SIR,
         H_free,
