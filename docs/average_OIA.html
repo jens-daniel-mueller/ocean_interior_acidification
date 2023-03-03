@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">01 March, 2023</h4>
+<h4 class="date">03 March, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-01
+<strong>Last updated:</strong> 2023-03-03
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree6ff02c866317e33f034d7336609aa28b208258e2targetblank6ff02c8a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeeaa31236579dfb1b8eebe9a5dd84203e4402f090targetblankeaa3123a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/6ff02c866317e33f034d7336609aa28b208258e2" target="_blank">6ff02c8</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/eaa31236579dfb1b8eebe9a5dd84203e4402f090" target="_blank">eaa3123</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree6ff02c866317e33f034d7336609aa28b208258e2targetblank6ff02c8a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeeaa31236579dfb1b8eebe9a5dd84203e4402f090targetblankeaa3123a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/6ff02c866317e33f034d7336609aa28b208258e2" target="_blank">6ff02c8</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/eaa31236579dfb1b8eebe9a5dd84203e4402f090" target="_blank">eaa3123</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -631,6 +631,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/eaa31236579dfb1b8eebe9a5dd84203e4402f090/analysis/average_OIA.Rmd" target="_blank">eaa3123</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-03
+</td>
+<td>
+updated DIC and DIC+temp plots
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/a27c5de47f7250e4cee765f9d32ba55144698628/docs/average_OIA.html" target="_blank">a27c5de</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1160,6 +1194,9 @@ lon_lim &lt;- ext(bbox_graticules_trans)[c(1,2)]*1.005
 acidification_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_Standard case_3.csv&quot;))
 
+acidification_trend &lt;- acidification_trend %&gt;% 
+  select(-c(MLR_basins, Version_ID_group))
+
 OIA_variables &lt;- 
   acidification_trend %&gt;%
   select(contains(&quot;delta_total&quot;)) %&gt;% 
@@ -1180,6 +1217,11 @@ OIA_variables &lt;- OIA_variables[-c(3,7,8)]
 <pre class="r"><code>temperature_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_Temperature_3.csv&quot;))
 
+temperature_trend &lt;- temperature_trend %&gt;%
+  select(-c(MLR_basins, Version_ID_group))
+
+# create joined coordinate grid
+
 dCant_temp_trend_depth_grid &lt;-
   inner_join(
     acidification_trend %&gt;%
@@ -1189,6 +1231,8 @@ dCant_temp_trend_depth_grid &lt;-
       filter(tref %in% c(2004, 2014)) %&gt;%
       distinct(lon, lat, depth, tref)
   )
+
+# reduce data to joined coordinate grid
 
 dCant_trend &lt;-
   inner_join(
@@ -1206,6 +1250,7 @@ temp_trend &lt;-
     dCant_temp_trend_depth_grid
   )
 
+# join relevant data sets
 
 dCant_temp_trend &lt;-
   bind_rows(dCant_trend %&gt;%
@@ -1213,17 +1258,27 @@ dCant_temp_trend &lt;-
             temp_trend %&gt;%
               mutate(driver = &quot;dCant + temp&quot;))
 
-rm(temperature_trend, dCant_trend, temp_trend, dCant_temp_trend_depth_grid)</code></pre>
+rm(temperature_trend,
+   dCant_trend,
+   temp_trend,
+   dCant_temp_trend_depth_grid)</code></pre>
 </div>
 <div id="dic-driver" class="section level2">
 <h2>DIC driver</h2>
 <pre class="r"><code>DIC_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_DIC_3.csv&quot;))
 
+DIC_trend &lt;- DIC_trend %&gt;%
+  select(-c(MLR_basins, Version_ID_group))
+
 DIC_temperature_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_DIC + temp_3.csv&quot;))
 
-# create common grid
+DIC_temperature_trend &lt;- DIC_temperature_trend %&gt;%
+  select(-c(MLR_basins, Version_ID_group))
+
+# create joined coordinate grid
+
 DIC_dCant_temp_trend_depth_grid &lt;-
   inner_join(
     DIC_trend %&gt;%
@@ -1242,8 +1297,8 @@ DIC_dCant_temp_trend_depth_grid &lt;-
       distinct(lon, lat, depth, tref)
   )
 
+# reduce data to joined coordinate grid
 
-# reduce input data frames to common grid
 DIC_trend &lt;-
   inner_join(
     DIC_trend %&gt;%
@@ -1264,29 +1319,45 @@ dCant_temp_trend_temporary &lt;-
   inner_join(
     dCant_temp_trend %&gt;%
       filter(tref %in% c(2014)) %&gt;%
-      select(lon, lat, depth, tref, driver, basin_AIP, contains(&quot;delta_interval&quot;)),
+      select(
+        lon,
+        lat,
+        depth,
+        tref,
+        driver,
+        basin_AIP,
+        contains(&quot;delta_interval&quot;)
+      ),
     DIC_dCant_temp_trend_depth_grid
   )
 
+# join relevant data sets
 
 DIC_dCant_temp_trend &lt;-
-  bind_rows(DIC_trend %&gt;%
-              mutate(driver = &quot;DIC&quot;),
-            DIC_temperature_trend %&gt;%
-              mutate(driver = &quot;DIC + temp&quot;),
-            dCant_temp_trend_temporary)
+  bind_rows(
+    DIC_trend %&gt;%
+      mutate(driver = &quot;DIC&quot;),
+    DIC_temperature_trend %&gt;%
+      mutate(driver = &quot;DIC + temp&quot;),
+    dCant_temp_trend_temporary
+  )
 
-rm(DIC_trend, DIC_temperature_trend,
-   dCant_temp_trend_temporary,
-   DIC_dCant_temp_trend_depth_grid)</code></pre>
+rm(
+  DIC_trend,
+  DIC_temperature_trend,
+  dCant_temp_trend_temporary,
+  DIC_dCant_temp_trend_depth_grid
+)</code></pre>
 </div>
 <div id="buffer-changes" class="section level2">
 <h2>Buffer changes</h2>
 <pre class="r"><code>buffer_trend &lt;-
   read_csv(paste0(path_OIA, &quot;buffer_Standard case_3.csv&quot;))
 
-buffer_trend &lt;- buffer_trend %&gt;% 
+buffer_trend &lt;- buffer_trend %&gt;%
   select(-c(MLR_basins, Version_ID_group))
+
+# merge tco2-talk-ratio into buffer variables
 
 buffer_trend &lt;-
   full_join(
@@ -1295,10 +1366,10 @@ buffer_trend &lt;-
                                    contains(&quot;tco2_talk&quot;))
   )
 
-buffer_variables &lt;- 
+buffer_variables &lt;-
   buffer_trend %&gt;%
-  select(contains(&quot;delta_total&quot;)) %&gt;% 
-  names() %&gt;% 
+  select(contains(&quot;delta_total&quot;)) %&gt;%
+  names() %&gt;%
   str_remove(&quot;_delta_total&quot;)</code></pre>
 </div>
 </div>
@@ -1471,13 +1542,10 @@ return(df_out)
 </div>
 <div id="color-scale-settings" class="section level1">
 <h1>Color scale settings</h1>
-<div id="section" class="section level2">
-<h2></h2>
 <pre class="r"><code>quantile_high &lt;- 0.98
 quantile_low &lt;- 0.02
 
 break_numbers &lt;- 10</code></pre>
-</div>
 </div>
 <div id="surface-area-mask" class="section level1">
 <h1>Surface area mask</h1>
@@ -1492,9 +1560,7 @@ basinmask &lt;- basinmask %&gt;%
 <h2>Depth layer maps</h2>
 <div id="computation" class="section level3">
 <h3>Computation</h3>
-<pre class="r"><code># total acidification
-
-acidification_depth_layer &lt;- acidification_trend %&gt;%
+<pre class="r"><code>acidification_depth_layer &lt;- acidification_trend %&gt;%
   mutate(depth = cut(
     depth,
     c(0, 100, 500, 1500, 3000),
@@ -1507,13 +1573,10 @@ acidification_depth_layer &lt;- acidification_trend %&gt;%
   fgroup_by(lat, lon, depth, tref) %&gt;% {
     add_vars(
       fgroup_vars(., &quot;unique&quot;),
-      fmean(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_mean&quot;),
-      fsd(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_sd&quot;)
+      fmean(., keep.group_vars = FALSE) # %&gt;% add_stub(pre = FALSE, &quot;_mean&quot;)
     )
   }
 
-
-# total acidification
 
 acidification_depth_layer_dCant_temp &lt;- dCant_temp_trend %&gt;%
   mutate(depth = cut(
@@ -1528,13 +1591,188 @@ acidification_depth_layer_dCant_temp &lt;- dCant_temp_trend %&gt;%
   fgroup_by(lat, lon, depth, tref, driver) %&gt;% {
     add_vars(
       fgroup_vars(., &quot;unique&quot;),
-      fmean(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_mean&quot;),
-      fsd(., keep.group_vars = FALSE) %&gt;% add_stub(pre = FALSE, &quot;_sd&quot;)
+      fmean(., keep.group_vars = FALSE)
+    )
+  }
+
+
+acidification_depth_layer_DIC_dCant_temp &lt;- DIC_dCant_temp_trend %&gt;%
+  mutate(depth = cut(
+    depth,
+    c(0, 100, 500, 1500, 3000),
+    c(&quot;A: 0 - 100 m&quot;, &quot;B: 100 - 500 m&quot;, &quot;C :500 - 1500 m&quot;, &quot;D: 1500 - 3000 m&quot;),
+    include.lowest = TRUE
+  )) %&gt;%
+  drop_na() %&gt;%
+  select(c(lat, lon, depth, tref, driver),
+         where(is.numeric)) %&gt;%
+  fgroup_by(lat, lon, depth, tref, driver) %&gt;% {
+    add_vars(
+      fgroup_vars(., &quot;unique&quot;),
+      fmean(., keep.group_vars = FALSE)
     )
   }</code></pre>
 </div>
 <div id="incremental-changes" class="section level3">
 <h3>Incremental changes</h3>
+<div id="dic-dcant-temp" class="section level4">
+<h4>DIC + dCant (+ temp)</h4>
+<p>Note: temperature influence was not considered for maps</p>
+<pre class="r"><code># subset DIC_dCant_temp change sections
+
+acidification_depth_layer_DIC_dCant_temp &lt;-
+  acidification_depth_layer_DIC_dCant_temp %&gt;%
+  filter(driver %in% c(&quot;dCant&quot;, &quot;DIC&quot;)) %&gt;% 
+  select(lat:driver,
+         contains(&quot;_delta_interval&quot;))
+
+acidification_depth_layer_DIC_dCant_temp &lt;-
+  acidification_depth_layer_DIC_dCant_temp %&gt;%
+  pivot_longer(contains(&quot;_delta_interval&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_interval&quot;) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_interval&quot;))
+
+# create pdf document
+
+pdf(
+  here::here(&quot;output/maps_depth_layer_DIC_dCant_changes.pdf&quot;),
+  width = 14,
+  height = 10
+)
+
+# loop over OIA variables
+# print DIC_dCant_temp sections
+
+for (i_var in OIA_variables[-8]) {
+  # i_var &lt;- OIA_variables[4]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_DIC_dCant_temp &lt;-
+    acidification_depth_layer_DIC_dCant_temp %&gt;%
+    filter(variable == i_var) %&gt;% 
+    select(lon, lat, depth, tref, driver, delta_interval)
+
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_acidification_depth_layer_DIC_dCant_temp %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high &lt;- i_acidification_depth_layer_DIC_dCant_temp %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+  
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  # create maps with absolute values
+  
+  p_depth_layer_dCant &lt;-
+  i_acidification_depth_layer_DIC_dCant_temp %&gt;%
+    filter(driver == &quot;dCant&quot;) %&gt;% 
+    p_map_mdim_robinson(
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      var = &quot;delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005,
+    ) &amp;
+    labs(title = &quot;Driver: dCant&quot;)
+  
+  p_depth_layer_DIC &lt;-
+  i_acidification_depth_layer_DIC_dCant_temp %&gt;%
+    filter(driver == &quot;DIC&quot;) %&gt;% 
+    p_map_mdim_robinson(
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      var = &quot;delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005,
+    ) &amp;
+    labs(title = &quot;Driver: DIC&quot;)
+      
+  
+  i_delta_acidification_depth_layer_driver &lt;-
+    i_acidification_depth_layer_DIC_dCant_temp %&gt;%
+    arrange(lon, lat, depth) %&gt;%
+    drop_na() %&gt;%
+    pivot_wider(names_from = driver,
+                values_from = delta_interval) %&gt;%
+    mutate(delta_delta_interval = `dCant` - `DIC`) %&gt;%
+    select(lon, lat, depth, tref, delta_delta_interval)
+  
+  
+  low &lt;- i_delta_acidification_depth_layer_driver %&gt;%
+    filter(!is.na(delta_delta_interval)) %&gt;%
+    pull(delta_delta_interval) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high &lt;- i_delta_acidification_depth_layer_driver %&gt;%
+    filter(!is.na(delta_delta_interval)) %&gt;%
+    pull(delta_delta_interval) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+  
+  high_low &lt;- max(abs(c(low,high)))
+  
+  if (high_low != 0) {
+    breaks_divergent_driver &lt;-
+      c(-Inf,
+        seq(-high_low, high_low, length.out = break_numbers),
+        Inf)
+  } else {
+    breaks_divergent_driver &lt;-
+      c(-Inf, 0, Inf)
+  }
+  
+  p_depth_layer_driver &lt;-
+    i_delta_acidification_depth_layer_driver %&gt;% 
+    p_map_mdim_robinson(
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      col = &quot;divergent&quot;,
+      var = &quot;delta_delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks_divergent_driver,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005
+    ) &amp;
+    labs(title = &quot;Driver difference: dCant - DIC&quot;)
+  
+  print(
+    wrap_plots(
+      p_depth_layer_dCant,
+      p_depth_layer_DIC,
+      p_depth_layer_driver,
+      ncol = 1
+    )
+  )
+  
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(acidification_depth_layer_DIC_dCant_temp,
+   i_acidification_depth_layer_DIC_dCant_temp,
+   i_delta_acidification_depth_layer_decadal,
+   i_delta_acidification_depth_layer_driver,
+   high, low,
+   high_low_decadal,
+   high_low_driver,
+   breaks_divergent_decadal,
+   breaks_divergent_driver,
+   p_depth_layer_dCant,
+   p_depth_layer_DIC_dCant_temp,
+   p_depth_layer_decadal,
+   p_depth_layer_driver)</code></pre>
+</div>
 <div id="dcant-temp" class="section level4">
 <h4>dCant + temp</h4>
 <pre class="r"><code># subset dCant_temp change sections
@@ -1542,15 +1780,14 @@ acidification_depth_layer_dCant_temp &lt;- dCant_temp_trend %&gt;%
 acidification_depth_layer_dCant_temp &lt;-
   acidification_depth_layer_dCant_temp %&gt;%
   select(lat:driver,
-         contains(&quot;_delta_interval&quot;),
-         -contains(&quot;_sd&quot;))
+         contains(&quot;_delta_interval&quot;))
 
 acidification_depth_layer_dCant_temp &lt;-
   acidification_depth_layer_dCant_temp %&gt;%
   pivot_longer(contains(&quot;_delta_interval&quot;),
                names_to = &quot;variable&quot;,
                values_to = &quot;delta_interval&quot;) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_interval_mean&quot;))
+  mutate(variable = str_remove(variable, &quot;_delta_interval&quot;))
 
 # create pdf document
 
@@ -1564,7 +1801,7 @@ pdf(
 # print dCant_temp sections
 
 for (i_var in OIA_variables) {
-  # i_var &lt;- OIA_variables[1]
+  # i_var &lt;- OIA_variables[4]
   
   # subset OIA variable
   
@@ -1586,6 +1823,8 @@ for (i_var in OIA_variables) {
     quantile(c(quantile_high), names = FALSE)
   
   breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  # create maps with absolute values
   
   p_depth_layer_dCant &lt;-
   i_acidification_depth_layer_dCant_temp %&gt;%
@@ -1615,6 +1854,8 @@ for (i_var in OIA_variables) {
     ) &amp;
     labs(title = &quot;Driver: dCant + temp&quot;)
       
+  # create maps wiht decadal differences
+  
   i_delta_acidification_depth_layer_decadal &lt;-
     i_acidification_depth_layer_dCant_temp %&gt;%
     arrange(lon, lat, depth) %&gt;%
@@ -1719,9 +1960,10 @@ for (i_var in OIA_variables) {
   
 }
 
-dev.off()
-
-rm(acidification_depth_layer_dCant_temp,
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(acidification_depth_layer_dCant_temp,
    i_acidification_depth_layer_dCant_temp,
    i_delta_acidification_depth_layer_decadal,
    i_delta_acidification_depth_layer_driver,
@@ -1914,7 +2156,7 @@ rm(acidification_depth_layer_incremental,
 acidification_depth_layer_total &lt;-
   acidification_depth_layer %&gt;%
   select(lat:tref,
-         contains(&quot;_delta_total_mean&quot;)) %&gt;%
+         contains(&quot;_delta_total&quot;)) %&gt;%
   filter(tref != 1800)
 
 
@@ -1928,7 +2170,7 @@ acidification_depth_layer_total &lt;-
   pivot_longer(contains(&quot;_delta_total&quot;),
                names_to = &quot;variable&quot;,
                values_to = &quot;delta_total&quot;) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_total_mean&quot;))
+  mutate(variable = str_remove(variable, &quot;_delta_total&quot;))
 
 
 # create pdf document
@@ -3187,7 +3429,7 @@ pdf(
 # loop over OIA variables
 # print incremental sections
 
-for (i_var in OIA_variables) {
+for (i_var in OIA_variables[-8]) {
   # i_var &lt;- OIA_variables[1]
   
   # subset OIA variable
@@ -3285,14 +3527,8 @@ acidification_global_section_absolute &lt;-
 
 # subset reference reconstruction
 
-# acidification_global_section_absolute %&gt;% 
-#   distinct(tref, MLR_basins, Version_ID_group)
-
 acidification_global_section_absolute &lt;-
   acidification_global_section_absolute %&gt;%
-  # filter(MLR_basins == MLR_basins_reference,
-  #        Version_ID_group == Version_ID_group_reference) %&gt;%
-  # select(-c(MLR_basins, Version_ID_group)) %&gt;%
   pivot_longer(contains(&quot;_mean&quot;),
                names_to = &quot;variable&quot;,
                values_to = &quot;mean&quot;) %&gt;%
@@ -3422,7 +3658,7 @@ dev.off()</code></pre>
 acidification_profiles &lt;-
   full_join(basinmask,
             acidification_trend %&gt;%
-              select(-c(basin_AIP, MLR_basins, Version_ID_group, contains(&quot;temp&quot;)))) %&gt;%
+              select(-c(basin_AIP, contains(&quot;temp&quot;)))) %&gt;%
   drop_na() %&gt;%
   relocate(tref)
 
@@ -3669,33 +3905,45 @@ buffer_profiles &lt;- buffer_profiles %&gt;%
   filter(depth &lt;= 3000) %&gt;%
   mutate(variable = str_remove(variable, &quot;_delta_interval&quot;))
 
+DIC_dCant_temp_profiles &lt;- DIC_dCant_temp_profiles %&gt;%
+  filter(variable %in% OIA_variables)
+
+
+DIC_dCant_temp_profiles &lt;- DIC_dCant_temp_profiles %&gt;%
+  mutate(
+    temperature = if_else(str_detect(driver, &quot;temp&quot;), &quot;variable&quot;, &quot;climatology&quot;),
+    driver = if_else(str_detect(driver, &quot;dCant&quot;), &quot;dCant&quot;, &quot;DIC&quot;)
+  )
 
 # create pdf document
 
 pdf(
   here::here(&quot;output/profiles_DIC_dCant_temp_changes.pdf&quot;),
   width = 14,
-  height = 8
+  height = 12
 )
 
 ggplot() +
   geom_vline(xintercept = 0, col = &quot;grey&quot;) +
   geom_path(data = DIC_dCant_temp_profiles, aes(delta_interval,
                                             depth,
-                                            col = driver)) +
-  scale_color_brewer(palette = &quot;Dark2&quot;) +
+                                            col = driver,
+                                            linetype = temperature)) +
+  scale_color_brewer(palette = &quot;Set1&quot;) +
   labs(y = &quot;Depth (m)&quot;,
-       title = &quot;Incremental change from previous estimate&quot;) +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
-  theme(legend.title = element_blank(),
-        axis.title.x = element_blank()) +
+       title = &quot;Decadal ocean interior acidification 2004 - 2014&quot;) +
+  scale_y_reverse(breaks = seq(0, 5000, 500)) +
+  # scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
+  # scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
+  #                    breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust=1)) +
   facet_grid(basin ~ variable, scales = &quot;free_x&quot;)
 
 dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
-<pre class="r"><code>rm(DIC_dCant_temp_profiles, DIC_dCant_temp_profiles_min_max)</code></pre>
+<pre class="r"><code>rm(DIC_dCant_temp_profiles)</code></pre>
 </div>
 <div id="dcant-temperature-1" class="section level4">
 <h4>dCant + Temperature</h4>
