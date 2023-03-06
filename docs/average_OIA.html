@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">03 March, 2023</h4>
+<h4 class="date">06 March, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-03
+<strong>Last updated:</strong> 2023-03-06
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeeaa31236579dfb1b8eebe9a5dd84203e4402f090targetblankeaa3123a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef010b0c91024615f7d02fd25de135654e6ed20aetargetblankf010b0ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/eaa31236579dfb1b8eebe9a5dd84203e4402f090" target="_blank">eaa3123</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f010b0c91024615f7d02fd25de135654e6ed20ae" target="_blank">f010b0c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeeaa31236579dfb1b8eebe9a5dd84203e4402f090targetblankeaa3123a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef010b0c91024615f7d02fd25de135654e6ed20aetargetblankf010b0ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/eaa31236579dfb1b8eebe9a5dd84203e4402f090" target="_blank">eaa3123</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f010b0c91024615f7d02fd25de135654e6ed20ae" target="_blank">f010b0c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -586,6 +586,9 @@ Ignored files:
 Untracked files:
     Untracked:  code/Workflowr_project_managment.R
     Untracked:  code/start_job.R
+
+Unstaged changes:
+    Modified:   analysis/compute_OIA.Rmd
 
 </code></pre>
 <p>
@@ -631,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f010b0c91024615f7d02fd25de135654e6ed20ae/analysis/average_OIA.Rmd" target="_blank">f010b0c</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-06
+</td>
+<td>
+revised saturation analysis
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/472013b82b203a081cdc0b0d3df6b7902de9f627/docs/average_OIA.html" target="_blank">472013b</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1183,15 +1220,82 @@ lon_lim &lt;- ext(bbox_graticules_trans)[c(1,2)]*1.005
 <pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
   filter(MLR_basins == &quot;5&quot;) %&gt;% 
   select(lon, lat, basin)</code></pre>
+<pre class="r"><code>biome_mask &lt;-
+  read_ncdf(paste(path_reccap2, &quot;RECCAP2_region_masks_all_v20220620.nc&quot;, sep = &quot;&quot;)) %&gt;%
+  as_tibble()
+
+biome_mask &lt;- biome_mask %&gt;%
+  filter(seamask == 1) %&gt;% 
+  select(lon, lat, atlantic:southern) %&gt;% 
+  pivot_longer(atlantic:southern,
+               names_to = &quot;region&quot;,
+               values_to = &quot;value&quot;) %&gt;%
+  mutate(value = as.factor(value))
+
+biome_mask &lt;- biome_mask %&gt;%
+  filter(value != 0)
+
+# biome_mask &lt;- biome_mask %&gt;%
+#   mutate(biome = paste(region, value, sep = &quot;_&quot;)) %&gt;% 
+#   select(lon, lat, biome)
+
+
+biome_mask &lt;- biome_mask  %&gt;% 
+  mutate(biome = case_when(
+    region == &quot;atlantic&quot; &amp; value == &quot;1&quot; ~ &quot;NA-SPSS&quot;,
+    region == &quot;atlantic&quot; &amp; value == &quot;2&quot; ~ &quot;NA-STSS&quot;,
+    region == &quot;atlantic&quot; &amp; value == &quot;3&quot; ~ &quot;NA-STPS&quot;,
+    region == &quot;atlantic&quot; &amp; value == &quot;4&quot; ~ &quot;AEQU&quot;,
+    region == &quot;atlantic&quot; &amp; value == &quot;5&quot; ~ &quot;SA-STPS&quot;,
+    region == &quot;atlantic&quot; &amp; value == &quot;6&quot; ~ &quot;MED&quot;,
+    region == &quot;pacific&quot; &amp; value == &quot;1&quot; ~ &quot;NP-SPSS&quot;,
+    region == &quot;pacific&quot; &amp; value == &quot;2&quot; ~ &quot;NP-STSS&quot;,
+    region == &quot;pacific&quot; &amp; value == &quot;3&quot; ~ &quot;NP-STPS&quot;,
+    region == &quot;pacific&quot; &amp; value == &quot;4&quot; ~ &quot;PEQU-E&quot;,
+    region == &quot;pacific&quot; &amp; value == &quot;5&quot; ~ &quot;PEQU-W&quot;,
+    region == &quot;pacific&quot; &amp; value == &quot;6&quot; ~ &quot;SP-STSS&quot;,
+    region == &quot;indian&quot; &amp; value == &quot;1&quot; ~ &quot;Arabian Sea&quot;,
+    region == &quot;indian&quot; &amp; value == &quot;2&quot; ~ &quot;Bay of Bengal&quot;,
+    region == &quot;indian&quot; &amp; value == &quot;3&quot; ~ &quot;Equatorial Indian&quot;,
+    region == &quot;indian&quot; &amp; value == &quot;4&quot; ~ &quot;Southern Indian&quot;,
+    region == &quot;arctic&quot; &amp; value == &quot;1&quot; ~ &quot;ARCTIC-ICE&quot;,
+    region == &quot;arctic&quot; &amp; value == &quot;2&quot; ~ &quot;NP-ICE&quot;,
+    region == &quot;arctic&quot; &amp; value == &quot;3&quot; ~ &quot;NA-ICE&quot;,
+    region == &quot;arctic&quot; &amp; value == &quot;4&quot; ~ &quot;Barents&quot;,
+    region == &quot;southern&quot; &amp; value == &quot;1&quot; ~ &quot;STSS&quot;,
+    region == &quot;southern&quot; &amp; value == &quot;2&quot; ~ &quot;SPSS&quot;,
+    region == &quot;southern&quot; &amp; value == &quot;3&quot; ~ &quot;ICE&quot;,
+    TRUE ~ &quot;other&quot;
+  ))
+
+biome_mask &lt;- biome_mask %&gt;% 
+  select(-value)
+
+biome_mask %&gt;%
+  ggplot(aes(lon, lat, fill = biome)) +
+  geom_raster() +
+  coord_quickmap(expand = 0) +
+  facet_wrap(~ region)</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_biome_mask-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="read-data" class="section level1">
 <h1>Read data</h1>
+<div id="list-of-files" class="section level2">
+<h2>List of files</h2>
+<pre class="r"><code>all_files &lt;- list.files(path_OIA) %&gt;% 
+  str_subset(&quot;.csv&quot;)</code></pre>
+</div>
+<div id="climatology" class="section level2">
+<h2>2002 climatology</h2>
+<pre class="r"><code>climatology &lt;-
+  read_csv(paste0(path_OIA, &quot;OIA_DIC_climatology_none.csv&quot;))
+
+climatology &lt;- climatology %&gt;%
+  select(-c(MLR_basins, Version_ID_group))</code></pre>
+</div>
 <div id="dcant" class="section level2">
 <h2>dCant</h2>
-<pre class="r"><code>all_files &lt;- list.files(path_OIA) %&gt;% 
-  str_subset(&quot;.csv&quot;)
-
-acidification_trend &lt;-
+<pre class="r"><code>acidification_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_Standard case_3.csv&quot;))
 
 acidification_trend &lt;- acidification_trend %&gt;% 
@@ -1203,7 +1307,7 @@ OIA_variables &lt;-
   names() %&gt;% 
   str_remove(&quot;_delta_total&quot;)
 
-OIA_variables &lt;- OIA_variables[-c(3,7,8)]
+OIA_variables &lt;- OIA_variables[-c(3,7)]
 
 # read_csv(paste0(path_OIA, &quot;OIA_all.csv&quot;))
 
@@ -1215,7 +1319,7 @@ OIA_variables &lt;- OIA_variables[-c(3,7,8)]
 <div id="temperature-driver" class="section level2">
 <h2>Temperature driver</h2>
 <pre class="r"><code>temperature_trend &lt;-
-  read_csv(paste0(path_OIA, &quot;OIA_Temperature_3.csv&quot;))
+  read_csv(paste0(path_OIA, &quot;OIA_dCant + temp_3.csv&quot;))
 
 temperature_trend &lt;- temperature_trend %&gt;%
   select(-c(MLR_basins, Version_ID_group))
@@ -1552,6 +1656,9 @@ break_numbers &lt;- 10</code></pre>
 <pre class="r"><code># compute grid cell surface area
 
 basinmask &lt;- basinmask %&gt;% 
+    mutate(area = earth_surf(lat, lon))
+
+biome_mask &lt;- biome_mask %&gt;% 
     mutate(area = earth_surf(lat, lon))</code></pre>
 </div>
 <div id="oia" class="section level1">
@@ -1560,58 +1667,49 @@ basinmask &lt;- basinmask %&gt;%
 <h2>Depth layer maps</h2>
 <div id="computation" class="section level3">
 <h3>Computation</h3>
-<pre class="r"><code>acidification_depth_layer &lt;- acidification_trend %&gt;%
-  mutate(depth = cut(
-    depth,
-    c(0, 100, 500, 1500, 3000),
-    c(&quot;A: 0 - 100 m&quot;, &quot;B: 100 - 500 m&quot;, &quot;C :500 - 1500 m&quot;, &quot;D: 1500 - 3000 m&quot;),
-    include.lowest = TRUE
-  )) %&gt;%
-  drop_na() %&gt;%
-  select(c(lat, lon, depth, tref),
-         where(is.numeric)) %&gt;%
-  fgroup_by(lat, lon, depth, tref) %&gt;% {
-    add_vars(
-      fgroup_vars(., &quot;unique&quot;),
-      fmean(., keep.group_vars = FALSE) # %&gt;% add_stub(pre = FALSE, &quot;_mean&quot;)
-    )
-  }
+<pre class="r"><code>m_depth_layer &lt;- function(df) {
+  
+  df &lt;- df %&gt;%
+    mutate(depth = cut(
+      depth,
+      c(0, 100, 500, 1500, 3000),
+      c(&quot;A: 0 - 100 m&quot;, &quot;B: 100 - 500 m&quot;, &quot;C :500 - 1500 m&quot;, &quot;D: 1500 - 3000 m&quot;),
+      include.lowest = TRUE
+    )) %&gt;%
+    drop_na() %&gt;%
+    select(c(lat, lon, depth, tref),
+           where(is.numeric)) %&gt;%
+    fgroup_by(lat, lon, depth, tref) %&gt;% {
+      add_vars(fgroup_vars(., &quot;unique&quot;),
+               fmean(., keep.group_vars = FALSE))
+    }
+  
+  return(df)
+  
+}
 
+
+
+
+acidification_depth_layer &lt;- m_depth_layer(acidification_trend)
 
 acidification_depth_layer_dCant_temp &lt;- dCant_temp_trend %&gt;%
-  mutate(depth = cut(
-    depth,
-    c(0, 100, 500, 1500, 3000),
-    c(&quot;A: 0 - 100 m&quot;, &quot;B: 100 - 500 m&quot;, &quot;C :500 - 1500 m&quot;, &quot;D: 1500 - 3000 m&quot;),
-    include.lowest = TRUE
-  )) %&gt;%
-  drop_na() %&gt;%
-  select(c(lat, lon, depth, tref, driver),
-         where(is.numeric)) %&gt;%
-  fgroup_by(lat, lon, depth, tref, driver) %&gt;% {
-    add_vars(
-      fgroup_vars(., &quot;unique&quot;),
-      fmean(., keep.group_vars = FALSE)
-    )
-  }
-
+  group_by(driver) %&gt;%
+  nest() %&gt;%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(layer) %&gt;% 
+  ungroup()
 
 acidification_depth_layer_DIC_dCant_temp &lt;- DIC_dCant_temp_trend %&gt;%
-  mutate(depth = cut(
-    depth,
-    c(0, 100, 500, 1500, 3000),
-    c(&quot;A: 0 - 100 m&quot;, &quot;B: 100 - 500 m&quot;, &quot;C :500 - 1500 m&quot;, &quot;D: 1500 - 3000 m&quot;),
-    include.lowest = TRUE
-  )) %&gt;%
-  drop_na() %&gt;%
-  select(c(lat, lon, depth, tref, driver),
-         where(is.numeric)) %&gt;%
-  fgroup_by(lat, lon, depth, tref, driver) %&gt;% {
-    add_vars(
-      fgroup_vars(., &quot;unique&quot;),
-      fmean(., keep.group_vars = FALSE)
-    )
-  }</code></pre>
+  group_by(driver) %&gt;%
+  nest() %&gt;%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(layer) %&gt;% 
+  ungroup()
+
+climatology_depth_layer &lt;- m_depth_layer(climatology)</code></pre>
 </div>
 <div id="incremental-changes" class="section level3">
 <h3>Incremental changes</h3>
@@ -1623,7 +1721,7 @@ acidification_depth_layer_DIC_dCant_temp &lt;- DIC_dCant_temp_trend %&gt;%
 acidification_depth_layer_DIC_dCant_temp &lt;-
   acidification_depth_layer_DIC_dCant_temp %&gt;%
   filter(driver %in% c(&quot;dCant&quot;, &quot;DIC&quot;)) %&gt;% 
-  select(lat:driver,
+  select(driver:tref,
          contains(&quot;_delta_interval&quot;))
 
 acidification_depth_layer_DIC_dCant_temp &lt;-
@@ -1761,16 +1859,11 @@ dev.off()</code></pre>
   2 </code></pre>
 <pre class="r"><code>rm(acidification_depth_layer_DIC_dCant_temp,
    i_acidification_depth_layer_DIC_dCant_temp,
-   i_delta_acidification_depth_layer_decadal,
    i_delta_acidification_depth_layer_driver,
    high, low,
-   high_low_decadal,
-   high_low_driver,
-   breaks_divergent_decadal,
    breaks_divergent_driver,
    p_depth_layer_dCant,
-   p_depth_layer_DIC_dCant_temp,
-   p_depth_layer_decadal,
+   p_depth_layer_DIC,
    p_depth_layer_driver)</code></pre>
 </div>
 <div id="dcant-temp" class="section level4">
@@ -1779,7 +1872,7 @@ dev.off()</code></pre>
 
 acidification_depth_layer_dCant_temp &lt;-
   acidification_depth_layer_dCant_temp %&gt;%
-  select(lat:driver,
+  select(driver:tref,
          contains(&quot;_delta_interval&quot;))
 
 acidification_depth_layer_dCant_temp &lt;-
@@ -1968,8 +2061,6 @@ dev.off()</code></pre>
    i_delta_acidification_depth_layer_decadal,
    i_delta_acidification_depth_layer_driver,
    high, low,
-   high_low_decadal,
-   high_low_driver,
    breaks_divergent_decadal,
    breaks_divergent_driver,
    p_depth_layer_dCant,
@@ -2160,13 +2251,8 @@ acidification_depth_layer_total &lt;-
   filter(tref != 1800)
 
 
-# subset reference reconstruction
-
 acidification_depth_layer_total &lt;-
   acidification_depth_layer_total %&gt;%
-  # filter(MLR_basins == MLR_basins_reference,
-  #        Version_ID_group == Version_ID_group_reference) %&gt;%
-  # select(-c(MLR_basins, Version_ID_group)) %&gt;%
   pivot_longer(contains(&quot;_delta_total&quot;),
                names_to = &quot;variable&quot;,
                values_to = &quot;delta_total&quot;) %&gt;%
@@ -2176,7 +2262,7 @@ acidification_depth_layer_total &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/maps_depth_layer_mean_sections_total_changes.pdf&quot;),
+  here::here(&quot;output/maps_depth_layer_dCant_total_changes.pdf&quot;),
   width = 14,
   height = 5
 )
@@ -2233,15 +2319,110 @@ dev.off()</code></pre>
   2 </code></pre>
 <pre class="r"><code>rm(acidification_depth_layer_total,
    acidification_depth_layer,
-   i_acidification_depth_layer_total)</code></pre>
+   i_acidification_depth_layer_total,
+   low, high)</code></pre>
+</div>
+<div id="climatology-1" class="section level3">
+<h3>Climatology</h3>
+<pre class="r"><code># subset total change sections
+
+climatology_depth_layer &lt;-
+  climatology_depth_layer %&gt;%
+  select(-contains(&quot;_delta&quot;))
+
+
+climatology_depth_layer &lt;-
+  climatology_depth_layer %&gt;%
+  pivot_longer(-c(lat:tref),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;value&quot;)
+
+climatology_depth_layer %&gt;% 
+  distinct(variable)</code></pre>
+<pre><code># A tibble: 18 × 1
+   variable       
+   &lt;chr&gt;          
+ 1 gamma          
+ 2 nitrate        
+ 3 phosphate      
+ 4 sal            
+ 5 silicate       
+ 6 talk           
+ 7 tco2           
+ 8 temp           
+ 9 aou            
+10 oxygen         
+11 pH             
+12 pCO2insitu     
+13 CO3            
+14 OmegaAragonite 
+15 OmegaCalcite   
+16 SIR            
+17 H_free         
+18 tco2_talk_ratio</code></pre>
+<pre class="r"><code># create pdf document
+
+pdf(
+  here::here(&quot;output/maps_depth_layer_climatology.pdf&quot;),
+  width = 14,
+  height = 4
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var &lt;- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_climatology_depth_layer &lt;-
+    climatology_depth_layer %&gt;%
+    filter(variable == i_var) %&gt;%
+    select(lon, lat, depth, tref, value)
+  
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_climatology_depth_layer %&gt;%
+    filter(!is.na(value)) %&gt;%
+    pull(value) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+
+  high &lt;- i_climatology_depth_layer %&gt;%
+    filter(!is.na(value)) %&gt;%
+    pull(value) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  p_climatology &lt;-
+  i_climatology_depth_layer %&gt;%
+    p_map_mdim_robinson(
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      var = &quot;value&quot;,
+      legend_title = i_var,
+      breaks = breaks
+    )
+  
+  print(
+  p_climatology
+  )
+  
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(climatology_depth_layer,
+   i_climatology_depth_layer,
+   low, high)</code></pre>
 </div>
 </div>
 <div id="saturation-horizon-maps" class="section level2">
 <h2>Saturation horizon maps</h2>
 <pre class="r"><code>acidification_saturation_horizon &lt;- acidification_trend %&gt;%
-  # filter(MLR_basins == MLR_basins_reference,
-  #        Version_ID_group == Version_ID_group_reference) %&gt;%
-  select(lat,lon, depth, tref,
+  select(lat, lon, depth, tref,
          contains(&quot;Omega&quot;),
          -contains(&quot;delta&quot;))
 
@@ -2266,101 +2447,184 @@ acidification_saturation_horizon &lt;-
   group_by(lat,lon,tref,depth,mineral) %&gt;%
   summarise(Omega = mean(Omega, na_rm = TRUE),
             n = n()) %&gt;%
-  ungroup() %&gt;% 
-  filter(n == 25) %&gt;% 
+  ungroup() 
+
+acidification_saturation_horizon &lt;-
+  acidification_saturation_horizon %&gt;%
+  filter(n == 25) %&gt;%
   select(-n)
 
-# depth_grid &lt;-
-#   expand_grid(
-#     acidification_saturation_horizon %&gt;%
-#       distinct(lat, lon, tref, mineral),
-#     depth = seq(0, 5500, 10)
-#   )
-# 
-# acidification_saturation_horizon &lt;-
-#   full_join(acidification_saturation_horizon,
-#             depth_grid)
-# 
-# rm(depth_grid)
-# 
-# acidification_saturation_horizon &lt;-
-#   acidification_saturation_horizon %&gt;%
-#   group_by(lon, lat, tref, mineral) %&gt;%
-#   mutate(n = n()) %&gt;%
-#   ungroup() 
-# 
-# acidification_saturation_horizon &lt;-
-#   acidification_saturation_horizon %&gt;%
-#   filter(n == 553) %&gt;%
-#   select(-n)
-# 
-# # acidification_saturation_horizon &lt;-
-# #   acidification_saturation_horizon %&gt;%
-# #   arrange(lon, lat, tref, mineral, depth)
-# 
-# acidification_saturation_horizon &lt;-
-#   acidification_saturation_horizon %&gt;%
-#   group_by(lon, lat, tref, mineral) %&gt;%
-#   mutate(Omega = approxfun(depth, Omega, rule = 1)(depth)) %&gt;%
-#   ungroup()
-# 
-# acidification_saturation_horizon &lt;-
-#   acidification_saturation_horizon %&gt;%
-#   drop_na()
 
-for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
+# acidification_saturation_horizon %&gt;%
+#   # distinct(lat, lon, tref, mineral) %&gt;% 
+#   group_by(tref, mineral) %&gt;% 
+#   summarise(n()) %&gt;% 
+#   ungroup()
+
+bathymetry &lt;-
+  acidification_saturation_horizon %&gt;%
+  group_by(lat, lon, tref, mineral) %&gt;%
+  summarise(depth = max(depth)) %&gt;%
+  ungroup()
+
+bathymetry %&gt;% 
+  ggplot(aes(lon, lat, fill = depth)) +
+  geom_tile() +
+  scale_fill_viridis_b() +
+  coord_quickmap() +
+  facet_grid(mineral ~ tref)</code></pre>
+<p><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
   
   # i_sat_level &lt;- 2
   
-  temp &lt;-
+  saturation_horizon_deep &lt;-
     acidification_saturation_horizon %&gt;%
     filter(Omega &lt; i_sat_level) %&gt;%
     group_by(lat, lon, tref, mineral) %&gt;%
-    summarise(saturation_horizon = min(depth)) %&gt;%
-    ungroup() %&gt;%
+    mutate(saturation_horizon_deep = min(depth)) %&gt;%
+    ungroup() %&gt;% 
+    filter(depth == saturation_horizon_deep)
+  
+  saturation_horizon_shallow &lt;-
+    inner_join(
+      acidification_saturation_horizon,
+      saturation_horizon_deep %&gt;%
+        select(lat, lon, tref, mineral,
+               saturation_horizon_deep)
+    )
+  
+  saturation_horizon_shallow &lt;-
+    saturation_horizon_shallow %&gt;%
+    filter(depth &lt; saturation_horizon_deep) %&gt;%
+    group_by(lat, lon, tref, mineral) %&gt;%
+    mutate(saturation_horizon_shallow = max(depth)) %&gt;%
+    ungroup() %&gt;% 
+    filter(depth == saturation_horizon_shallow)
+  
+  saturation_horizon &lt;-
+    bind_rows(saturation_horizon_deep,
+              saturation_horizon_shallow) %&gt;%
+    select(-contains(&quot;saturation_horizon&quot;))
+  
+  surface_grid &lt;- saturation_horizon %&gt;% 
+    distinct(lat, lon, tref, mineral)
+  
+  surface_grid &lt;-
+    expand_grid(
+      surface_grid,
+      Omega = i_sat_level
+    )
+  
+  saturation_horizon &lt;-
+    full_join(saturation_horizon,
+              surface_grid)
+  
+  rm(surface_grid)
+  
+  saturation_horizon &lt;-
+    saturation_horizon %&gt;%
+    group_by(lon, lat, tref, mineral) %&gt;%
+    mutate(n = n()) %&gt;%
+    ungroup()
+  
+  saturation_horizon &lt;-
+    saturation_horizon %&gt;%
+    filter(n == 3) %&gt;%
+    select(-n)
+  
+  saturation_horizon &lt;-
+    saturation_horizon %&gt;%
+    arrange(lat, lon, tref, mineral, Omega) %&gt;% 
+    group_by(lon, lat, tref, mineral) %&gt;%
+    mutate(depth = approxfun(Omega, depth, rule = 1)(Omega)) %&gt;%
+    ungroup()
+  
+  saturation_horizon &lt;-
+    saturation_horizon %&gt;%
+    filter(Omega == i_sat_level) %&gt;%
+    select(lon, lat, tref, mineral, depth)
+  
+  print(
+    nrow(saturation_horizon) == nrow(saturation_horizon_shallow))
+  
+  # fill regions with saturation horizon at surface
+  
+  saturation_horizon &lt;-
+    bind_rows(
+      saturation_horizon,
+      saturation_horizon_deep %&gt;%
+        filter(saturation_horizon_deep == 0) %&gt;%
+        select(lon, lat, tref, depth, mineral, depth)
+    )
+  
+  # fill other regions with bathymetry
+  
+  bathymetry_fill &lt;-
+    anti_join(bathymetry,
+              saturation_horizon %&gt;%
+                select(lat, lon, tref, mineral))
+  
+  saturation_horizon &lt;-
+    bind_rows(
+      saturation_horizon,
+      bathymetry_fill
+    )
+  
+  saturation_horizon &lt;- saturation_horizon %&gt;%
     mutate(sat_level = i_sat_level)
   
-  temp_volume &lt;- inner_join(temp,
-             basinmask)
   
-  temp_volume &lt;- temp_volume %&gt;% 
-    mutate(volume = saturation_horizon * area) %&gt;% 
+  rm(saturation_horizon_deep,
+     saturation_horizon_shallow,
+     bathymetry_fill)
+  
+  saturation_volume &lt;- inner_join(saturation_horizon,
+                                  basinmask)
+  
+  saturation_volume &lt;- saturation_volume %&gt;% 
+    mutate(volume = depth * area * 25) %&gt;% 
     group_by(tref, mineral, basin) %&gt;% 
     summarise(volume = sum(volume, na.rm = TRUE)) %&gt;% 
     ungroup()
   
-  temp_volume_global &lt;- temp_volume %&gt;% 
+  saturation_volume_global &lt;- saturation_volume %&gt;% 
     group_by(tref, mineral) %&gt;% 
     summarise(volume = sum(volume, na.rm = TRUE)) %&gt;% 
     ungroup() %&gt;% 
     mutate(basin = &quot;Global&quot;)
   
   
-  temp_volume &lt;- bind_rows(temp_volume,
-                           temp_volume_global) %&gt;%
+  saturation_volume &lt;- bind_rows(saturation_volume,
+                                 saturation_volume_global) %&gt;%
     mutate(sat_level = i_sat_level)
   
   if (exists(&quot;acidification_saturation_horizon_levels&quot;)) {
     acidification_saturation_horizon_levels &lt;-
-      bind_rows(acidification_saturation_horizon_levels, temp)
+      bind_rows(acidification_saturation_horizon_levels, saturation_horizon)
   }
   
   if (!exists(&quot;acidification_saturation_horizon_levels&quot;)) {
-    acidification_saturation_horizon_levels &lt;- temp
+    acidification_saturation_horizon_levels &lt;- saturation_horizon
   }
   
   if (exists(&quot;acidification_volume&quot;)) {
     acidification_volume &lt;-
-      bind_rows(acidification_volume, temp_volume)
+      bind_rows(acidification_volume, saturation_volume)
   }
   
   if (!exists(&quot;acidification_volume&quot;)) {
-    acidification_volume &lt;- temp_volume
+    acidification_volume &lt;- saturation_volume
   }
   
-}
-
-# rm(acidification_volume, acidification_saturation_horizon_levels)
+}</code></pre>
+<pre><code>[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE
+[1] TRUE</code></pre>
+<pre class="r"><code># rm(acidification_volume, acidification_saturation_horizon_levels)
 
 pdf(
   here::here(&quot;output/maps_saturation_horizon_absolute_state.pdf&quot;),
@@ -2378,7 +2642,7 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
     p_map_mdim_robinson(
       dim_row = &quot;tref&quot;,
       dim_col = &quot;mineral&quot;,
-      var = &quot;saturation_horizon&quot;,
+      var = &quot;depth&quot;,
       legend_title = &quot;Saturation\nhorizon\n(m)&quot;,
       breaks = seq(0, 6000, 500)
     ) +
@@ -2403,18 +2667,20 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
       select(-sat_level) %&gt;%
       arrange(tref) %&gt;%
       group_by(lat, lon, mineral) %&gt;%
+      mutate(n = n()) %&gt;% 
+      filter(n == 4) %&gt;% 
       mutate(
-        delta_saturation_horizon = saturation_horizon - lag(saturation_horizon),
-        period = paste(lag(tref), &quot;-&quot;, tref)
+        delta_depth = depth - first(depth),
+        period = paste(first(tref), &quot;-&quot;, tref)
       ) %&gt;%
       ungroup() %&gt;%
       drop_na() %&gt;%
-      select(lon, lat, period, mineral, delta_saturation_horizon) %&gt;%
+      select(lon, lat, period, mineral, delta_depth) %&gt;%
       p_map_mdim_robinson(
         dim_row = &quot;period&quot;,
         dim_col = &quot;mineral&quot;,
         col = &quot;div&quot;,
-        var = &quot;delta_saturation_horizon&quot;,
+        var = &quot;delta_depth&quot;,
         legend_title = &quot;Change\nsaturation\nhorizon\n(m)&quot;,
         breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       ) +
@@ -2426,20 +2692,161 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 <pre class="r"><code>pdf(
-  here::here(&quot;output/volume_saturation_total_changes.pdf&quot;),
+  here::here(&quot;output/maps_saturation_horizon_changes.pdf&quot;),
+  width = 10,
+  height = 6
+)
+
+
+for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  print(
+    acidification_saturation_horizon_levels %&gt;%
+      filter(sat_level == i_sat_level) %&gt;%
+      select(-sat_level) %&gt;%
+      arrange(tref) %&gt;%
+      group_by(lat, lon, mineral) %&gt;%
+      mutate(n = n()) %&gt;% 
+      filter(n == 4) %&gt;% 
+      mutate(
+        delta_depth = depth - lag(depth),
+        period = paste(lag(tref), &quot;-&quot;, tref)
+      ) %&gt;%
+      ungroup() %&gt;%
+      drop_na() %&gt;%
+      select(lon, lat, period, mineral, delta_depth) %&gt;%
+      p_map_mdim_robinson(
+        dim_row = &quot;period&quot;,
+        dim_col = &quot;mineral&quot;,
+        col = &quot;div&quot;,
+        var = &quot;delta_depth&quot;,
+        legend_title = &quot;Change\nsaturation\nhorizon\n(m)&quot;,
+        breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
+      ) +
+      labs(title = paste(&quot;Saturation threshold:&quot;, i_sat_level))
+  )
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>ocean_bathymetry &lt;- acidification_trend %&gt;%
+  group_by(lat, lon) %&gt;%
+  summarise(depth = max(depth)) %&gt;%
+  ungroup()
+
+ocean_volume &lt;- inner_join(ocean_bathymetry,
+                           basinmask)
+
+rm(ocean_bathymetry)
+
+ocean_volume &lt;- ocean_volume %&gt;%
+  mutate(volume_total = depth * area) %&gt;%
+  group_by(basin) %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  ungroup()
+
+ocean_volume_global &lt;- ocean_volume %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  mutate(basin = &quot;Global&quot;)
+
+
+ocean_volume &lt;- bind_rows(
+  ocean_volume,
+  ocean_volume_global
+)
+
+rm(ocean_volume_global)
+
+acidification_volume &lt;-
+full_join(acidification_volume,
+          ocean_volume)
+
+
+acidification_volume &lt;- acidification_volume %&gt;% 
+  mutate(volume_sat = 100 * volume / volume_total)
+
+
+pdf(
+  here::here(&quot;output/relative_saturation_volumes_absolute.pdf&quot;),
   width = 10,
   height = 8
 )
 
-  print(
-    acidification_volume %&gt;%
-      filter(sat_level %in% c(1,2)) %&gt;%
-      mutate(sat_level = as.factor(sat_level),
-             tref = as.factor(tref)) %&gt;% 
-      ggplot(aes(tref, volume,col=sat_level)) +
-      geom_point()+
-      facet_wrap(basin~mineral, scales = &quot;free&quot;)
-  )
+print(
+  acidification_volume %&gt;%
+    mutate(sat_level = as.factor(sat_level),
+           tref = as.factor(tref)) %&gt;%
+    ggplot(aes(sat_level, volume_sat, fill = tref)) +
+    geom_hline(yintercept = 0,
+               col = &quot;grey20&quot;) +
+    geom_col(position = position_dodge(),
+             col = &quot;grey20&quot;) +
+    scale_fill_viridis_d() +
+    labs(x = &quot;Saturation threshold&quot;,
+         y = &quot;Saturated ocean volume (%)&quot;) +
+    facet_nested_wrap(vars(basin,mineral))
+  
+)
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>pdf(
+  here::here(&quot;output/relative_saturation_volumes_total_changes.pdf&quot;),
+  width = 10,
+  height = 8
+)
+
+print(
+  acidification_volume %&gt;%
+    mutate(sat_level = as.factor(sat_level),
+           tref = as.factor(tref)) %&gt;%
+    arrange(tref) %&gt;% 
+    group_by(basin, mineral, sat_level) %&gt;% 
+    mutate(volume_sat_rel = 100 * volume_sat / first(volume_sat)) %&gt;% 
+    ungroup() %&gt;% 
+    filter(tref != 1800) %&gt;% 
+    ggplot(aes(sat_level, volume_sat_rel, fill = tref)) +
+    geom_hline(yintercept = 0,
+               col = &quot;grey20&quot;) +
+    geom_col(position = position_dodge(),
+             col = &quot;grey20&quot;) +
+    scale_fill_viridis_d() +
+    labs(x = &quot;Saturation threshold&quot;,
+         y = &quot;Saturated ocean volume\nrelative to 1800 (%)&quot;) +
+    facet_nested_wrap(vars(basin,mineral))
+  
+)
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>pdf(
+  here::here(&quot;output/relative_saturation_volumes_changes.pdf&quot;),
+  width = 10,
+  height = 8
+)
+
+print(
+  acidification_volume %&gt;%
+    mutate(sat_level = as.factor(sat_level),
+           tref = as.factor(tref)) %&gt;%
+    arrange(tref) %&gt;% 
+    group_by(basin, mineral, sat_level) %&gt;% 
+    mutate(volume_sat_rel = 100*(volume_sat - lag(volume_sat)) / lag(volume_sat)) %&gt;% 
+    ungroup() %&gt;% 
+    filter(tref != 1800) %&gt;% 
+    ggplot(aes(sat_level, volume_sat_rel, fill = tref)) +
+    geom_hline(yintercept = 0,
+               col = &quot;grey20&quot;) +
+    geom_col(position = position_dodge(),
+             col = &quot;grey20&quot;) +
+    scale_fill_viridis_d() +
+    labs(x = &quot;Saturation threshold&quot;,
+         y = &quot;Loss of saturated ocean volume\nrelative to previous tref (%)&quot;) +
+    facet_nested_wrap(vars(basin,mineral))
+  
+)
 
 dev.off()</code></pre>
 <pre><code>png 
@@ -4325,29 +4732,30 @@ loaded via a namespace (and not attached):
  [25] gargle_1.2.1            cli_3.4.1               later_1.3.0            
  [28] tweenr_2.0.2            htmltools_0.5.3         tools_4.2.2            
  [31] rnaturalearthdata_0.1.0 gtable_0.3.1            glue_1.6.2             
- [34] Rcpp_1.0.9              cellranger_1.1.0        jquerylib_0.1.4        
- [37] vctrs_0.5.1             svglite_2.1.0           lwgeom_0.2-10          
- [40] xfun_0.35               ps_1.7.2                rvest_1.0.3            
- [43] timechange_0.1.1        lifecycle_1.0.3         googlesheets4_1.0.1    
- [46] getPass_0.2-2           MASS_7.3-58.1           scales_1.2.1           
- [49] vroom_1.6.0             hms_1.1.2               promises_1.2.0.1       
- [52] parallel_4.2.2          RColorBrewer_1.1-3      yaml_2.3.6             
- [55] memoise_2.0.1           sass_0.4.4              stringi_1.7.8          
- [58] e1071_1.7-12            checkmate_2.1.0         rlang_1.0.6            
- [61] pkgconfig_2.0.3         systemfonts_1.0.4       distributional_0.3.1   
- [64] evaluate_0.18           lattice_0.20-45         labeling_0.4.2         
- [67] bit_4.0.5               processx_3.8.0          tidyselect_1.2.0       
- [70] here_1.0.1              magrittr_2.0.3          R6_2.5.1               
- [73] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
- [76] haven_2.5.1             whisker_0.4             withr_2.5.0            
- [79] units_0.8-0             sp_1.5-1                modelr_0.1.10          
- [82] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
- [85] tzdb_0.3.0              rmarkdown_2.18          isoband_0.2.6          
- [88] grid_4.2.2              readxl_1.4.1            data.table_1.14.6      
- [91] callr_3.7.3             git2r_0.30.1            webshot_0.5.4          
- [94] reprex_2.0.2            digest_0.6.30           classInt_0.4-8         
- [97] httpuv_1.6.6            textshaping_0.3.6       munsell_0.5.0          
-[100] viridisLite_0.4.1       bslib_0.4.1            </code></pre>
+ [34] Rcpp_1.0.9              RNetCDF_2.6-1           cellranger_1.1.0       
+ [37] jquerylib_0.1.4         vctrs_0.5.1             svglite_2.1.0          
+ [40] lwgeom_0.2-10           xfun_0.35               ps_1.7.2               
+ [43] rvest_1.0.3             ncmeta_0.3.5            timechange_0.1.1       
+ [46] lifecycle_1.0.3         googlesheets4_1.0.1     getPass_0.2-2          
+ [49] MASS_7.3-58.1           scales_1.2.1            vroom_1.6.0            
+ [52] hms_1.1.2               promises_1.2.0.1        parallel_4.2.2         
+ [55] RColorBrewer_1.1-3      yaml_2.3.6              memoise_2.0.1          
+ [58] sass_0.4.4              stringi_1.7.8           highr_0.9              
+ [61] e1071_1.7-12            checkmate_2.1.0         rlang_1.0.6            
+ [64] pkgconfig_2.0.3         systemfonts_1.0.4       distributional_0.3.1   
+ [67] evaluate_0.18           lattice_0.20-45         labeling_0.4.2         
+ [70] bit_4.0.5               processx_3.8.0          tidyselect_1.2.0       
+ [73] here_1.0.1              magrittr_2.0.3          R6_2.5.1               
+ [76] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
+ [79] haven_2.5.1             whisker_0.4             withr_2.5.0            
+ [82] units_0.8-0             sp_1.5-1                modelr_0.1.10          
+ [85] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
+ [88] tzdb_0.3.0              rmarkdown_2.18          isoband_0.2.6          
+ [91] grid_4.2.2              readxl_1.4.1            data.table_1.14.6      
+ [94] callr_3.7.3             git2r_0.30.1            webshot_0.5.4          
+ [97] reprex_2.0.2            digest_0.6.30           classInt_0.4-8         
+[100] httpuv_1.6.6            textshaping_0.3.6       munsell_0.5.0          
+[103] viridisLite_0.4.1       bslib_0.4.1            </code></pre>
 </div>
 </div>
 
