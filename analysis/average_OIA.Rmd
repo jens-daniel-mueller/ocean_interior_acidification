@@ -29,14 +29,6 @@ library(stars)
 library(seacarb)
 ```
 
-```{r select_basinmask_5}
-
-basinmask <- basinmask %>% 
-  filter(MLR_basins == "5") %>% 
-  select(lon, lat, basin)
-
-```
-
 
 ```{r define_paths_to_access_eMLR_files, include = FALSE}
 
@@ -47,9 +39,11 @@ path_observations <-
 path_preprocessing    <-
   paste0(path_observations, "preprocessing/")
 
-
 path_preprocessing_model    <-
   paste0(path_root, "/model/preprocessing/")
+
+path_reccap2 <-
+  "/nfs/kryo/work/updata/reccap2/"
 
 path_out <-   paste0(path_observations, "output_publication/")
 path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
@@ -57,14 +51,110 @@ path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 
 ```
 
+
+```{r select_basinmask_5}
+
+basinmask <- basinmask %>% 
+  filter(MLR_basins == "5") %>% 
+  select(lon, lat, basin)
+
+```
+
+```{r read_biome_mask}
+
+biome_mask <-
+  read_ncdf(paste(path_reccap2, "RECCAP2_region_masks_all_v20220620.nc", sep = "")) %>%
+  as_tibble()
+
+biome_mask <- biome_mask %>%
+  filter(seamask == 1) %>% 
+  select(lon, lat, atlantic:southern) %>% 
+  pivot_longer(atlantic:southern,
+               names_to = "region",
+               values_to = "value") %>%
+  mutate(value = as.factor(value))
+
+biome_mask <- biome_mask %>%
+  filter(value != 0)
+
+# biome_mask <- biome_mask %>%
+#   mutate(biome = paste(region, value, sep = "_")) %>% 
+#   select(lon, lat, biome)
+
+
+biome_mask <- biome_mask  %>% 
+  mutate(biome = case_when(
+    region == "atlantic" & value == "1" ~ "NA-SPSS",
+    region == "atlantic" & value == "2" ~ "NA-STSS",
+    region == "atlantic" & value == "3" ~ "NA-STPS",
+    region == "atlantic" & value == "4" ~ "AEQU",
+    region == "atlantic" & value == "5" ~ "SA-STPS",
+    region == "atlantic" & value == "6" ~ "MED",
+    region == "pacific" & value == "1" ~ "NP-SPSS",
+    region == "pacific" & value == "2" ~ "NP-STSS",
+    region == "pacific" & value == "3" ~ "NP-STPS",
+    region == "pacific" & value == "4" ~ "PEQU-E",
+    region == "pacific" & value == "5" ~ "PEQU-W",
+    region == "pacific" & value == "6" ~ "SP-STSS",
+    region == "indian" & value == "1" ~ "Arabian Sea",
+    region == "indian" & value == "2" ~ "Bay of Bengal",
+    region == "indian" & value == "3" ~ "Equatorial Indian",
+    region == "indian" & value == "4" ~ "Southern Indian",
+    region == "arctic" & value == "1" ~ "ARCTIC-ICE",
+    region == "arctic" & value == "2" ~ "NP-ICE",
+    region == "arctic" & value == "3" ~ "NA-ICE",
+    region == "arctic" & value == "4" ~ "Barents",
+    region == "southern" & value == "1" ~ "STSS",
+    region == "southern" & value == "2" ~ "SPSS",
+    region == "southern" & value == "3" ~ "ICE",
+    TRUE ~ "other"
+  ))
+
+biome_mask <- biome_mask %>% 
+  select(-value)
+
+biome_mask %>%
+  ggplot(aes(lon, lat, fill = biome)) +
+  geom_raster() +
+  coord_quickmap(expand = 0) +
+  facet_wrap(~ region)
+
+
+```
+
+
+
 # Read data
+
+## List of files
+
+```{r read_list_files}
+
+all_files <- list.files(path_OIA) %>% 
+  str_subset(".csv")
+
+```
+
+## 2002 climatology
+
+
+```{r climatology_2002_Lauvset}
+
+
+climatology <-
+  read_csv(paste0(path_OIA, "OIA_DIC_climatology_none.csv"))
+
+climatology <- climatology %>%
+  select(-c(MLR_basins, Version_ID_group))
+
+```
+
+
 
 ## dCant
 
 ```{r read_OIA_data}
 
-all_files <- list.files(path_OIA) %>% 
-  str_subset(".csv")
 
 acidification_trend <-
   read_csv(paste0(path_OIA, "OIA_Standard case_3.csv"))
@@ -78,7 +168,7 @@ OIA_variables <-
   names() %>% 
   str_remove("_delta_total")
 
-OIA_variables <- OIA_variables[-c(3,7,8)]
+OIA_variables <- OIA_variables[-c(3,7)]
 
 # read_csv(paste0(path_OIA, "OIA_all.csv"))
 
@@ -95,7 +185,7 @@ OIA_variables <- OIA_variables[-c(3,7,8)]
 ```{r read_OIA_temperature_driven}
 
 temperature_trend <-
-  read_csv(paste0(path_OIA, "OIA_Temperature_3.csv"))
+  read_csv(paste0(path_OIA, "OIA_dCant + temp_3.csv"))
 
 temperature_trend <- temperature_trend %>%
   select(-c(MLR_basins, Version_ID_group))
@@ -461,6 +551,9 @@ break_numbers <- 10
 basinmask <- basinmask %>% 
     mutate(area = earth_surf(lat, lon))
 
+biome_mask <- biome_mask %>% 
+    mutate(area = earth_surf(lat, lon))
+
 ```
 
 
@@ -474,58 +567,49 @@ basinmask <- basinmask %>%
 
 ```{r compute_layered_maps}
 
-acidification_depth_layer <- acidification_trend %>%
-  mutate(depth = cut(
-    depth,
-    c(0, 100, 500, 1500, 3000),
-    c("A: 0 - 100 m", "B: 100 - 500 m", "C :500 - 1500 m", "D: 1500 - 3000 m"),
-    include.lowest = TRUE
-  )) %>%
-  drop_na() %>%
-  select(c(lat, lon, depth, tref),
-         where(is.numeric)) %>%
-  fgroup_by(lat, lon, depth, tref) %>% {
-    add_vars(
-      fgroup_vars(., "unique"),
-      fmean(., keep.group_vars = FALSE) # %>% add_stub(pre = FALSE, "_mean")
-    )
-  }
+m_depth_layer <- function(df) {
+  
+  df <- df %>%
+    mutate(depth = cut(
+      depth,
+      c(0, 100, 500, 1500, 3000),
+      c("A: 0 - 100 m", "B: 100 - 500 m", "C :500 - 1500 m", "D: 1500 - 3000 m"),
+      include.lowest = TRUE
+    )) %>%
+    drop_na() %>%
+    select(c(lat, lon, depth, tref),
+           where(is.numeric)) %>%
+    fgroup_by(lat, lon, depth, tref) %>% {
+      add_vars(fgroup_vars(., "unique"),
+               fmean(., keep.group_vars = FALSE))
+    }
+  
+  return(df)
+  
+}
 
+
+
+
+acidification_depth_layer <- m_depth_layer(acidification_trend)
 
 acidification_depth_layer_dCant_temp <- dCant_temp_trend %>%
-  mutate(depth = cut(
-    depth,
-    c(0, 100, 500, 1500, 3000),
-    c("A: 0 - 100 m", "B: 100 - 500 m", "C :500 - 1500 m", "D: 1500 - 3000 m"),
-    include.lowest = TRUE
-  )) %>%
-  drop_na() %>%
-  select(c(lat, lon, depth, tref, driver),
-         where(is.numeric)) %>%
-  fgroup_by(lat, lon, depth, tref, driver) %>% {
-    add_vars(
-      fgroup_vars(., "unique"),
-      fmean(., keep.group_vars = FALSE)
-    )
-  }
-
+  group_by(driver) %>%
+  nest() %>%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
+  select(-data) %>%
+  unnest(layer) %>% 
+  ungroup()
 
 acidification_depth_layer_DIC_dCant_temp <- DIC_dCant_temp_trend %>%
-  mutate(depth = cut(
-    depth,
-    c(0, 100, 500, 1500, 3000),
-    c("A: 0 - 100 m", "B: 100 - 500 m", "C :500 - 1500 m", "D: 1500 - 3000 m"),
-    include.lowest = TRUE
-  )) %>%
-  drop_na() %>%
-  select(c(lat, lon, depth, tref, driver),
-         where(is.numeric)) %>%
-  fgroup_by(lat, lon, depth, tref, driver) %>% {
-    add_vars(
-      fgroup_vars(., "unique"),
-      fmean(., keep.group_vars = FALSE)
-    )
-  }
+  group_by(driver) %>%
+  nest() %>%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
+  select(-data) %>%
+  unnest(layer) %>% 
+  ungroup()
+
+climatology_depth_layer <- m_depth_layer(climatology)
 
 ```
 
@@ -542,7 +626,7 @@ Note: temperature influence was not considered for maps
 acidification_depth_layer_DIC_dCant_temp <-
   acidification_depth_layer_DIC_dCant_temp %>%
   filter(driver %in% c("dCant", "DIC")) %>% 
-  select(lat:driver,
+  select(driver:tref,
          contains("_delta_interval"))
 
 acidification_depth_layer_DIC_dCant_temp <-
@@ -679,16 +763,11 @@ dev.off()
 
 rm(acidification_depth_layer_DIC_dCant_temp,
    i_acidification_depth_layer_DIC_dCant_temp,
-   i_delta_acidification_depth_layer_decadal,
    i_delta_acidification_depth_layer_driver,
    high, low,
-   high_low_decadal,
-   high_low_driver,
-   breaks_divergent_decadal,
    breaks_divergent_driver,
    p_depth_layer_dCant,
-   p_depth_layer_DIC_dCant_temp,
-   p_depth_layer_decadal,
+   p_depth_layer_DIC,
    p_depth_layer_driver)
 
 ```
@@ -701,7 +780,7 @@ rm(acidification_depth_layer_DIC_dCant_temp,
 
 acidification_depth_layer_dCant_temp <-
   acidification_depth_layer_dCant_temp %>%
-  select(lat:driver,
+  select(driver:tref,
          contains("_delta_interval"))
 
 acidification_depth_layer_dCant_temp <-
@@ -889,8 +968,6 @@ rm(acidification_depth_layer_dCant_temp,
    i_delta_acidification_depth_layer_decadal,
    i_delta_acidification_depth_layer_driver,
    high, low,
-   high_low_decadal,
-   high_low_driver,
    breaks_divergent_decadal,
    breaks_divergent_driver,
    p_depth_layer_dCant,
@@ -1088,13 +1165,8 @@ acidification_depth_layer_total <-
   filter(tref != 1800)
 
 
-# subset reference reconstruction
-
 acidification_depth_layer_total <-
   acidification_depth_layer_total %>%
-  # filter(MLR_basins == MLR_basins_reference,
-  #        Version_ID_group == Version_ID_group_reference) %>%
-  # select(-c(MLR_basins, Version_ID_group)) %>%
   pivot_longer(contains("_delta_total"),
                names_to = "variable",
                values_to = "delta_total") %>%
@@ -1104,7 +1176,7 @@ acidification_depth_layer_total <-
 # create pdf document
 
 pdf(
-  here::here("output/maps_depth_layer_mean_sections_total_changes.pdf"),
+  here::here("output/maps_depth_layer_dCant_total_changes.pdf"),
   width = 14,
   height = 5
 )
@@ -1160,7 +1232,89 @@ dev.off()
 
 rm(acidification_depth_layer_total,
    acidification_depth_layer,
-   i_acidification_depth_layer_total)
+   i_acidification_depth_layer_total,
+   low, high)
+
+```
+
+
+
+### Climatology
+
+```{r depth_layer_climatology}
+
+# subset total change sections
+
+climatology_depth_layer <-
+  climatology_depth_layer %>%
+  select(-contains("_delta"))
+
+
+climatology_depth_layer <-
+  climatology_depth_layer %>%
+  pivot_longer(-c(lat:tref),
+               names_to = "variable",
+               values_to = "value")
+
+climatology_depth_layer %>% 
+  distinct(variable)
+
+# create pdf document
+
+pdf(
+  here::here("output/maps_depth_layer_climatology.pdf"),
+  width = 14,
+  height = 4
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in OIA_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_climatology_depth_layer <-
+    climatology_depth_layer %>%
+    filter(variable == i_var) %>%
+    select(lon, lat, depth, tref, value)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_climatology_depth_layer %>%
+    filter(!is.na(value)) %>%
+    pull(value) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_climatology_depth_layer %>%
+    filter(!is.na(value)) %>%
+    pull(value) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  p_climatology <-
+  i_climatology_depth_layer %>%
+    p_map_mdim_robinson(
+      dim_col = "depth",
+      dim_row = "tref",
+      var = "value",
+      legend_title = i_var,
+      breaks = breaks
+    )
+  
+  print(
+  p_climatology
+  )
+  
+}
+
+dev.off()
+
+rm(climatology_depth_layer,
+   i_climatology_depth_layer,
+   low, high)
 
 ```
 
@@ -1170,9 +1324,7 @@ rm(acidification_depth_layer_total,
 ```{r compute_saturation_horizon_maps}
 
 acidification_saturation_horizon <- acidification_trend %>%
-  # filter(MLR_basins == MLR_basins_reference,
-  #        Version_ID_group == Version_ID_group_reference) %>%
-  select(lat,lon, depth, tref,
+  select(lat, lon, depth, tref,
          contains("Omega"),
          -contains("delta"))
 
@@ -1197,96 +1349,174 @@ acidification_saturation_horizon <-
   group_by(lat,lon,tref,depth,mineral) %>%
   summarise(Omega = mean(Omega, na_rm = TRUE),
             n = n()) %>%
-  ungroup() %>% 
-  filter(n == 25) %>% 
+  ungroup() 
+
+acidification_saturation_horizon <-
+  acidification_saturation_horizon %>%
+  filter(n == 25) %>%
   select(-n)
 
-# depth_grid <-
-#   expand_grid(
-#     acidification_saturation_horizon %>%
-#       distinct(lat, lon, tref, mineral),
-#     depth = seq(0, 5500, 10)
-#   )
-# 
-# acidification_saturation_horizon <-
-#   full_join(acidification_saturation_horizon,
-#             depth_grid)
-# 
-# rm(depth_grid)
-# 
-# acidification_saturation_horizon <-
-#   acidification_saturation_horizon %>%
-#   group_by(lon, lat, tref, mineral) %>%
-#   mutate(n = n()) %>%
-#   ungroup() 
-# 
-# acidification_saturation_horizon <-
-#   acidification_saturation_horizon %>%
-#   filter(n == 553) %>%
-#   select(-n)
-# 
-# # acidification_saturation_horizon <-
-# #   acidification_saturation_horizon %>%
-# #   arrange(lon, lat, tref, mineral, depth)
-# 
-# acidification_saturation_horizon <-
-#   acidification_saturation_horizon %>%
-#   group_by(lon, lat, tref, mineral) %>%
-#   mutate(Omega = approxfun(depth, Omega, rule = 1)(depth)) %>%
-#   ungroup()
-# 
-# acidification_saturation_horizon <-
-#   acidification_saturation_horizon %>%
-#   drop_na()
 
-for(i_sat_level in c(3, 2, 1.5, 1, 0.5)) {
+# acidification_saturation_horizon %>%
+#   # distinct(lat, lon, tref, mineral) %>% 
+#   group_by(tref, mineral) %>% 
+#   summarise(n()) %>% 
+#   ungroup()
+
+bathymetry <-
+  acidification_saturation_horizon %>%
+  group_by(lat, lon, tref, mineral) %>%
+  summarise(depth = max(depth)) %>%
+  ungroup()
+
+bathymetry %>% 
+  ggplot(aes(lon, lat, fill = depth)) +
+  geom_tile() +
+  scale_fill_viridis_b() +
+  coord_quickmap() +
+  facet_grid(mineral ~ tref)
+
+for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
   
   # i_sat_level <- 2
   
-  temp <-
+  saturation_horizon_deep <-
     acidification_saturation_horizon %>%
     filter(Omega < i_sat_level) %>%
     group_by(lat, lon, tref, mineral) %>%
-    summarise(saturation_horizon = min(depth)) %>%
-    ungroup() %>%
+    mutate(saturation_horizon_deep = min(depth)) %>%
+    ungroup() %>% 
+    filter(depth == saturation_horizon_deep)
+  
+  saturation_horizon_shallow <-
+    inner_join(
+      acidification_saturation_horizon,
+      saturation_horizon_deep %>%
+        select(lat, lon, tref, mineral,
+               saturation_horizon_deep)
+    )
+  
+  saturation_horizon_shallow <-
+    saturation_horizon_shallow %>%
+    filter(depth < saturation_horizon_deep) %>%
+    group_by(lat, lon, tref, mineral) %>%
+    mutate(saturation_horizon_shallow = max(depth)) %>%
+    ungroup() %>% 
+    filter(depth == saturation_horizon_shallow)
+  
+  saturation_horizon <-
+    bind_rows(saturation_horizon_deep,
+              saturation_horizon_shallow) %>%
+    select(-contains("saturation_horizon"))
+  
+  surface_grid <- saturation_horizon %>% 
+    distinct(lat, lon, tref, mineral)
+  
+  surface_grid <-
+    expand_grid(
+      surface_grid,
+      Omega = i_sat_level
+    )
+  
+  saturation_horizon <-
+    full_join(saturation_horizon,
+              surface_grid)
+  
+  rm(surface_grid)
+  
+  saturation_horizon <-
+    saturation_horizon %>%
+    group_by(lon, lat, tref, mineral) %>%
+    mutate(n = n()) %>%
+    ungroup()
+  
+  saturation_horizon <-
+    saturation_horizon %>%
+    filter(n == 3) %>%
+    select(-n)
+  
+  saturation_horizon <-
+    saturation_horizon %>%
+    arrange(lat, lon, tref, mineral, Omega) %>% 
+    group_by(lon, lat, tref, mineral) %>%
+    mutate(depth = approxfun(Omega, depth, rule = 1)(Omega)) %>%
+    ungroup()
+  
+  saturation_horizon <-
+    saturation_horizon %>%
+    filter(Omega == i_sat_level) %>%
+    select(lon, lat, tref, mineral, depth)
+  
+  print(
+    nrow(saturation_horizon) == nrow(saturation_horizon_shallow))
+  
+  # fill regions with saturation horizon at surface
+  
+  saturation_horizon <-
+    bind_rows(
+      saturation_horizon,
+      saturation_horizon_deep %>%
+        filter(saturation_horizon_deep == 0) %>%
+        select(lon, lat, tref, depth, mineral, depth)
+    )
+  
+  # fill other regions with bathymetry
+  
+  bathymetry_fill <-
+    anti_join(bathymetry,
+              saturation_horizon %>%
+                select(lat, lon, tref, mineral))
+  
+  saturation_horizon <-
+    bind_rows(
+      saturation_horizon,
+      bathymetry_fill
+    )
+  
+  saturation_horizon <- saturation_horizon %>%
     mutate(sat_level = i_sat_level)
   
-  temp_volume <- inner_join(temp,
-             basinmask)
   
-  temp_volume <- temp_volume %>% 
-    mutate(volume = saturation_horizon * area) %>% 
+  rm(saturation_horizon_deep,
+     saturation_horizon_shallow,
+     bathymetry_fill)
+  
+  saturation_volume <- inner_join(saturation_horizon,
+                                  basinmask)
+  
+  saturation_volume <- saturation_volume %>% 
+    mutate(volume = depth * area * 25) %>% 
     group_by(tref, mineral, basin) %>% 
     summarise(volume = sum(volume, na.rm = TRUE)) %>% 
     ungroup()
   
-  temp_volume_global <- temp_volume %>% 
+  saturation_volume_global <- saturation_volume %>% 
     group_by(tref, mineral) %>% 
     summarise(volume = sum(volume, na.rm = TRUE)) %>% 
     ungroup() %>% 
     mutate(basin = "Global")
   
   
-  temp_volume <- bind_rows(temp_volume,
-                           temp_volume_global) %>%
+  saturation_volume <- bind_rows(saturation_volume,
+                                 saturation_volume_global) %>%
     mutate(sat_level = i_sat_level)
   
   if (exists("acidification_saturation_horizon_levels")) {
     acidification_saturation_horizon_levels <-
-      bind_rows(acidification_saturation_horizon_levels, temp)
+      bind_rows(acidification_saturation_horizon_levels, saturation_horizon)
   }
   
   if (!exists("acidification_saturation_horizon_levels")) {
-    acidification_saturation_horizon_levels <- temp
+    acidification_saturation_horizon_levels <- saturation_horizon
   }
   
   if (exists("acidification_volume")) {
     acidification_volume <-
-      bind_rows(acidification_volume, temp_volume)
+      bind_rows(acidification_volume, saturation_volume)
   }
   
   if (!exists("acidification_volume")) {
-    acidification_volume <- temp_volume
+    acidification_volume <- saturation_volume
   }
   
 }
@@ -1309,7 +1539,7 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
     p_map_mdim_robinson(
       dim_row = "tref",
       dim_col = "mineral",
-      var = "saturation_horizon",
+      var = "depth",
       legend_title = "Saturation\nhorizon\n(m)",
       breaks = seq(0, 6000, 500)
     ) +
@@ -1333,18 +1563,20 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
       select(-sat_level) %>%
       arrange(tref) %>%
       group_by(lat, lon, mineral) %>%
+      mutate(n = n()) %>% 
+      filter(n == 4) %>% 
       mutate(
-        delta_saturation_horizon = saturation_horizon - lag(saturation_horizon),
-        period = paste(lag(tref), "-", tref)
+        delta_depth = depth - first(depth),
+        period = paste(first(tref), "-", tref)
       ) %>%
       ungroup() %>%
       drop_na() %>%
-      select(lon, lat, period, mineral, delta_saturation_horizon) %>%
+      select(lon, lat, period, mineral, delta_depth) %>%
       p_map_mdim_robinson(
         dim_row = "period",
         dim_col = "mineral",
         col = "div",
-        var = "delta_saturation_horizon",
+        var = "delta_depth",
         legend_title = "Change\nsaturation\nhorizon\n(m)",
         breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       ) +
@@ -1354,21 +1586,162 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
 
 dev.off()
 
+
 pdf(
-  here::here("output/volume_saturation_total_changes.pdf"),
+  here::here("output/maps_saturation_horizon_changes.pdf"),
+  width = 10,
+  height = 6
+)
+
+
+for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  print(
+    acidification_saturation_horizon_levels %>%
+      filter(sat_level == i_sat_level) %>%
+      select(-sat_level) %>%
+      arrange(tref) %>%
+      group_by(lat, lon, mineral) %>%
+      mutate(n = n()) %>% 
+      filter(n == 4) %>% 
+      mutate(
+        delta_depth = depth - lag(depth),
+        period = paste(lag(tref), "-", tref)
+      ) %>%
+      ungroup() %>%
+      drop_na() %>%
+      select(lon, lat, period, mineral, delta_depth) %>%
+      p_map_mdim_robinson(
+        dim_row = "period",
+        dim_col = "mineral",
+        col = "div",
+        var = "delta_depth",
+        legend_title = "Change\nsaturation\nhorizon\n(m)",
+        breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
+      ) +
+      labs(title = paste("Saturation threshold:", i_sat_level))
+  )
+}
+
+dev.off()
+
+
+ocean_bathymetry <- acidification_trend %>%
+  group_by(lat, lon) %>%
+  summarise(depth = max(depth)) %>%
+  ungroup()
+
+ocean_volume <- inner_join(ocean_bathymetry,
+                           basinmask)
+
+rm(ocean_bathymetry)
+
+ocean_volume <- ocean_volume %>%
+  mutate(volume_total = depth * area) %>%
+  group_by(basin) %>%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
+  ungroup()
+
+ocean_volume_global <- ocean_volume %>%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
+  mutate(basin = "Global")
+
+
+ocean_volume <- bind_rows(
+  ocean_volume,
+  ocean_volume_global
+)
+
+rm(ocean_volume_global)
+
+acidification_volume <-
+full_join(acidification_volume,
+          ocean_volume)
+
+
+acidification_volume <- acidification_volume %>% 
+  mutate(volume_sat = 100 * volume / volume_total)
+
+
+pdf(
+  here::here("output/relative_saturation_volumes_absolute.pdf"),
   width = 10,
   height = 8
 )
 
-  print(
-    acidification_volume %>%
-      filter(sat_level %in% c(1,2)) %>%
-      mutate(sat_level = as.factor(sat_level),
-             tref = as.factor(tref)) %>% 
-      ggplot(aes(tref, volume,col=sat_level)) +
-      geom_point()+
-      facet_wrap(basin~mineral, scales = "free")
-  )
+print(
+  acidification_volume %>%
+    mutate(sat_level = as.factor(sat_level),
+           tref = as.factor(tref)) %>%
+    ggplot(aes(sat_level, volume_sat, fill = tref)) +
+    geom_hline(yintercept = 0,
+               col = "grey20") +
+    geom_col(position = position_dodge(),
+             col = "grey20") +
+    scale_fill_viridis_d() +
+    labs(x = "Saturation threshold",
+         y = "Saturated ocean volume (%)") +
+    facet_nested_wrap(vars(basin,mineral))
+  
+)
+
+dev.off()
+
+
+pdf(
+  here::here("output/relative_saturation_volumes_total_changes.pdf"),
+  width = 10,
+  height = 8
+)
+
+print(
+  acidification_volume %>%
+    mutate(sat_level = as.factor(sat_level),
+           tref = as.factor(tref)) %>%
+    arrange(tref) %>% 
+    group_by(basin, mineral, sat_level) %>% 
+    mutate(volume_sat_rel = 100 * volume_sat / first(volume_sat)) %>% 
+    ungroup() %>% 
+    filter(tref != 1800) %>% 
+    ggplot(aes(sat_level, volume_sat_rel, fill = tref)) +
+    geom_hline(yintercept = 0,
+               col = "grey20") +
+    geom_col(position = position_dodge(),
+             col = "grey20") +
+    scale_fill_viridis_d() +
+    labs(x = "Saturation threshold",
+         y = "Saturated ocean volume\nrelative to 1800 (%)") +
+    facet_nested_wrap(vars(basin,mineral))
+  
+)
+
+dev.off()
+
+pdf(
+  here::here("output/relative_saturation_volumes_changes.pdf"),
+  width = 10,
+  height = 8
+)
+
+print(
+  acidification_volume %>%
+    mutate(sat_level = as.factor(sat_level),
+           tref = as.factor(tref)) %>%
+    arrange(tref) %>% 
+    group_by(basin, mineral, sat_level) %>% 
+    mutate(volume_sat_rel = 100*(volume_sat - lag(volume_sat)) / lag(volume_sat)) %>% 
+    ungroup() %>% 
+    filter(tref != 1800) %>% 
+    ggplot(aes(sat_level, volume_sat_rel, fill = tref)) +
+    geom_hline(yintercept = 0,
+               col = "grey20") +
+    geom_col(position = position_dodge(),
+             col = "grey20") +
+    scale_fill_viridis_d() +
+    labs(x = "Saturation threshold",
+         y = "Loss of saturated ocean volume\nrelative to previous tref (%)") +
+    facet_nested_wrap(vars(basin,mineral))
+  
+)
 
 dev.off()
 
