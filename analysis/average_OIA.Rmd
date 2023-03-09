@@ -1339,29 +1339,29 @@ acidification_saturation_horizon <-
 
 # downscaling for computation
 
-acidification_saturation_horizon <-
-  m_grid_horizontal_coarse(acidification_saturation_horizon)
+# acidification_saturation_horizon <-
+#   m_grid_horizontal_coarse(acidification_saturation_horizon)
+# 
+# acidification_saturation_horizon <-
+#   acidification_saturation_horizon %>% 
+#   select(-c(lat,lon)) %>% 
+#   rename(lat = lat_grid, lon = lon_grid) %>% 
+#   group_by(lat,lon,tref,depth,mineral) %>%
+#   summarise(Omega = mean(Omega, na_rm = TRUE),
+#             n = n()) %>%
+#   ungroup() 
+# 
+# acidification_saturation_horizon <-
+#   acidification_saturation_horizon %>%
+#   filter(n == 25) %>%
+#   select(-n)
 
-acidification_saturation_horizon <-
-  acidification_saturation_horizon %>% 
-  select(-c(lat,lon)) %>% 
-  rename(lat = lat_grid, lon = lon_grid) %>% 
-  group_by(lat,lon,tref,depth,mineral) %>%
-  summarise(Omega = mean(Omega, na_rm = TRUE),
-            n = n()) %>%
-  ungroup() 
 
-acidification_saturation_horizon <-
-  acidification_saturation_horizon %>%
-  filter(n == 25) %>%
-  select(-n)
-
-
-# acidification_saturation_horizon %>%
-#   # distinct(lat, lon, tref, mineral) %>% 
-#   group_by(tref, mineral) %>% 
-#   summarise(n()) %>% 
-#   ungroup()
+acidification_saturation_horizon %>%
+  # distinct(lat, lon, tref, mineral) %>%
+  group_by(tref, mineral) %>%
+  summarise(n()) %>%
+  ungroup()
 
 bathymetry <-
   acidification_saturation_horizon %>%
@@ -1372,7 +1372,7 @@ bathymetry <-
 bathymetry %>% 
   ggplot(aes(lon, lat, fill = depth)) +
   geom_tile() +
-  scale_fill_viridis_b() +
+  scale_fill_viridis_c(direction = -1) +
   coord_quickmap() +
   facet_grid(mineral ~ tref)
 
@@ -1481,11 +1481,24 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
      saturation_horizon_shallow,
      bathymetry_fill)
   
+  if (exists("acidification_saturation_horizon_levels")) {
+    acidification_saturation_horizon_levels <-
+      bind_rows(acidification_saturation_horizon_levels,
+                saturation_horizon)
+  }
+  
+  if (!exists("acidification_saturation_horizon_levels")) {
+    acidification_saturation_horizon_levels <- saturation_horizon
+  }
+  
+  
+  # calculate volume of supersaturated waters
+  
   saturation_volume <- inner_join(saturation_horizon,
                                   basinmask)
   
   saturation_volume <- saturation_volume %>% 
-    mutate(volume = depth * area * 25) %>% 
+    mutate(volume = depth * area) %>% 
     group_by(tref, mineral, basin) %>% 
     summarise(volume = sum(volume, na.rm = TRUE)) %>% 
     ungroup()
@@ -1501,15 +1514,7 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
                                  saturation_volume_global) %>%
     mutate(sat_level = i_sat_level)
   
-  if (exists("acidification_saturation_horizon_levels")) {
-    acidification_saturation_horizon_levels <-
-      bind_rows(acidification_saturation_horizon_levels, saturation_horizon)
-  }
-  
-  if (!exists("acidification_saturation_horizon_levels")) {
-    acidification_saturation_horizon_levels <- saturation_horizon
-  }
-  
+
   if (exists("acidification_volume")) {
     acidification_volume <-
       bind_rows(acidification_volume, saturation_volume)
@@ -1519,9 +1524,53 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
     acidification_volume <- saturation_volume
   }
   
+  # calculate profiles of saturated area fraction
+  
+  saturation_profile <-
+    inner_join(acidification_saturation_horizon,
+               basinmask) %>%
+    mutate(saturated = if_else(Omega >= i_sat_level,
+                               "super",
+                               "under")) %>%
+    group_by(tref, basin, depth, mineral, saturated) %>%
+    summarise(area = sum(area)) %>%
+    ungroup() %>%
+    group_by(tref, basin, depth, mineral) %>%
+    mutate(area_fraction = 100 * area / sum(area)) %>%
+    ungroup()
+  
+  saturation_profile_global <-
+    inner_join(acidification_saturation_horizon,
+               basinmask) %>%
+    mutate(saturated = if_else(Omega >= i_sat_level,
+                               "super",
+                               "under")) %>%
+    group_by(tref, depth, mineral, saturated) %>%
+    summarise(area = sum(area)) %>%
+    ungroup() %>%
+    group_by(tref, depth, mineral) %>%
+    mutate(area_fraction = 100 * area / sum(area)) %>%
+    ungroup() %>%
+    mutate(basin = "Global")
+  
+  saturation_profile <- bind_rows(saturation_profile,
+                                  saturation_profile_global) %>%
+    mutate(sat_level = i_sat_level)
+  
+  if (exists("acidification_area_profile")) {
+    acidification_area_profile <-
+      bind_rows(acidification_area_profile, saturation_profile)
+  }
+  
+  if (!exists("acidification_area_profile")) {
+    acidification_area_profile <- saturation_profile
+  }
+  
+  rm(saturation_profile, saturation_profile_global)
+ 
+  
 }
 
-# rm(acidification_volume, acidification_saturation_horizon_levels)
 
 pdf(
   here::here("output/maps_saturation_horizon_absolute_state.pdf"),
@@ -1570,6 +1619,7 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         period = paste(first(tref), "-", tref)
       ) %>%
       ungroup() %>%
+      filter(tref != 1800) %>% 
       drop_na() %>%
       select(lon, lat, period, mineral, delta_depth) %>%
       p_map_mdim_robinson(
@@ -1608,6 +1658,7 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         period = paste(lag(tref), "-", tref)
       ) %>%
       ungroup() %>%
+      filter(tref != 1800) %>% 
       drop_na() %>%
       select(lon, lat, period, mineral, delta_depth) %>%
       p_map_mdim_robinson(
@@ -1657,13 +1708,38 @@ acidification_volume <-
 full_join(acidification_volume,
           ocean_volume)
 
+acidification_volume_back <-
+  acidification_volume
 
-acidification_volume <- acidification_volume %>% 
-  mutate(volume_sat = 100 * volume / volume_total)
+acidification_volume <-
+  acidification_volume %>%
+  arrange(tref) %>%
+  group_by(mineral, basin, sat_level) %>%
+  mutate(
+    volume_loss = 
+      volume - lag(volume, default = first(volume)),
+    volume_loss_relative_to_preind = 
+      100 * volume_loss / first(volume),
+    volume_loss_cumulative = 
+      volume - first(volume),
+    volume_loss_cumulative_relative_to_preind = 
+      100 * volume_loss_cumulative / first(volume),
+    volume_relative_to_ocean = 100 * volume / volume_total,
+    volume_loss_relative_to_ocean = 100 * volume_loss / volume_total,
+    volume_loss_cumulative_relative_to_ocean = 100 * volume_loss_cumulative / volume_total,
+  ) %>%
+  ungroup()
+
+acidification_volume <-
+  acidification_volume %>%
+  select(-volume_total) %>% 
+  pivot_longer(contains("volume"),
+               names_to = "estimate",
+               values_to = "value")
 
 
 pdf(
-  here::here("output/relative_saturation_volumes_absolute.pdf"),
+  here::here("output/saturation_volumes.pdf"),
   width = 10,
   height = 8
 )
@@ -1672,82 +1748,28 @@ print(
   acidification_volume %>%
     mutate(sat_level = as.factor(sat_level),
            tref = as.factor(tref)) %>%
-    ggplot(aes(sat_level, volume_sat, fill = tref)) +
-    geom_hline(yintercept = 0,
-               col = "grey20") +
-    geom_col(position = position_dodge(),
-             col = "grey20") +
-    scale_fill_viridis_d() +
-    labs(x = "Saturation threshold",
-         y = "Saturated ocean volume (%)") +
-    facet_nested_wrap(vars(basin,mineral))
-  
+    group_by(estimate) %>%
+    group_split() %>%
+    # head(1) %>%
+    map(
+      ~ ggplot(data = .x,
+               aes(sat_level, value, fill = tref)) +
+        labs(title = .x$estimate,
+             x = "Saturation threshold") +
+        geom_col(position = "dodge") +
+        scale_fill_viridis_d() +
+        facet_nested_wrap(vars(basin, mineral))
+    )
 )
 
 dev.off()
 
 
-pdf(
-  here::here("output/relative_saturation_volumes_total_changes.pdf"),
-  width = 10,
-  height = 8
-)
-
-print(
-  acidification_volume %>%
-    mutate(sat_level = as.factor(sat_level),
-           tref = as.factor(tref)) %>%
-    arrange(tref) %>% 
-    group_by(basin, mineral, sat_level) %>% 
-    mutate(volume_sat_rel = 100 * volume_sat / first(volume_sat)) %>% 
-    ungroup() %>% 
-    filter(tref != 1800) %>% 
-    ggplot(aes(sat_level, volume_sat_rel, fill = tref)) +
-    geom_hline(yintercept = 0,
-               col = "grey20") +
-    geom_col(position = position_dodge(),
-             col = "grey20") +
-    scale_fill_viridis_d() +
-    labs(x = "Saturation threshold",
-         y = "Saturated ocean volume\nrelative to 1800 (%)") +
-    facet_nested_wrap(vars(basin,mineral))
-  
-)
-
-dev.off()
-
-pdf(
-  here::here("output/relative_saturation_volumes_changes.pdf"),
-  width = 10,
-  height = 8
-)
-
-print(
-  acidification_volume %>%
-    mutate(sat_level = as.factor(sat_level),
-           tref = as.factor(tref)) %>%
-    arrange(tref) %>% 
-    group_by(basin, mineral, sat_level) %>% 
-    mutate(volume_sat_rel = 100*(volume_sat - lag(volume_sat)) / lag(volume_sat)) %>% 
-    ungroup() %>% 
-    filter(tref != 1800) %>% 
-    ggplot(aes(sat_level, volume_sat_rel, fill = tref)) +
-    geom_hline(yintercept = 0,
-               col = "grey20") +
-    geom_col(position = position_dodge(),
-             col = "grey20") +
-    scale_fill_viridis_d() +
-    labs(x = "Saturation threshold",
-         y = "Loss of saturated ocean volume\nrelative to previous tref (%)") +
-    facet_nested_wrap(vars(basin,mineral))
-  
-)
-
-dev.off()
 
 rm(acidification_saturation_horizon,
    acidification_saturation_horizon_levels,
-   acidification_volume)
+   acidification_volume,
+   acidification_area_profile)
 
 ```
 
@@ -3337,6 +3359,96 @@ ggplot() +
   facet_grid(basin ~ variable, scales = "free_x")
 
 dev.off()
+
+DIC_dCant_temp_profiles %>%
+  filter(variable == "tco2",
+         basin == "Global",
+         temperature == "climatology") %>%
+  pivot_wider(names_from = driver,
+              values_from = delta_interval) %>% 
+  ggplot(aes(y = depth)) +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path(aes(x = dCant, col = "dCant"), linewidth = 2) +
+  geom_path(aes(x = DIC, col = "DIC"), linewidth = 2) +
+  annotate(
+    "text", label = "Anthropogenic\nDIC",
+    x = 11.5, y = 200, colour = "#555555"
+  ) +
+  annotate(
+    "text", label = "Total\nDIC",
+    x = 4.5, y = 1000, colour = "#4477AA"
+  ) +
+  scale_color_manual(values = c("#555555", "#4477AA")) +
+  scale_fill_manual(values = c("#228833", "#EE6677")) +
+  labs(y = "Depth (m)",
+       x = expression(Delta*DIC~(µmol~kg^{-1}~decade^{-1}))) +
+  coord_cartesian(expand = 0) +
+  scale_y_reverse(breaks = seq(0, 5000, 250)) +
+  scale_x_continuous(limits = c(0,13),
+                     breaks = seq(0,20,2),
+                     position = "top") +
+  theme_classic() +
+  theme(legend.position = "none")
+
+ggsave(  here::here("output/profiles_MOBO-DIC_vs_eMLR_no_fill.jpg"),
+  width = 5,
+  height = 5,
+  dpi = 600)
+
+
+DIC_dCant_temp_profiles %>%
+  filter(variable == "tco2",
+         basin == "Global",
+         temperature == "climatology") %>%
+  pivot_wider(names_from = driver,
+              values_from = delta_interval) %>% 
+  ggplot(aes(y = depth)) +
+  geom_vline(xintercept = 0, col = "grey") +
+  stat_difference(aes(xmin = dCant, xmax = DIC), alpha = 0.3,
+                  levels = c("Cnat gain", "Cnat loss")) +
+  geom_path(aes(x = dCant, col = "dCant"), linewidth = 2) +
+  geom_path(aes(x = DIC, col = "DIC"), linewidth = 2) +
+  annotate(
+    "text", label = "Anthropogenic\nDIC",
+    x = 11.5, y = 200, colour = "#555555"
+  ) +
+  annotate(
+    "text", label = "Total\nDIC",
+    x = 4.5, y = 1000, colour = "#4477AA"
+  ) +
+  annotate(
+    "text", label = "Natural\nDIC loss",
+    x = 4, y = 100, colour = "#EE6677"
+  ) +
+  annotate(
+    "segment", x = 5, xend = 9, y = 100, yend = 100, colour = "#EE6677"
+  ) +
+  annotate(
+    "text", label = "Natural\nDIC gain",
+    x = 2, y = 500, colour = "#228833"
+  ) +
+  annotate(
+    "segment", x = 3, xend = 5, y = 500, yend = 500, colour = "#228833"
+  ) +
+  scale_color_manual(values = c("#555555", "#4477AA")) +
+  scale_fill_manual(values = c("#228833", "#EE6677")) +
+  labs(y = "Depth (m)",
+       x = expression(Delta*DIC~(µmol~kg^{-1}~decade^{-1}))) +
+  coord_cartesian(expand = 0) +
+  scale_y_reverse(breaks = seq(0, 5000, 250)) +
+  scale_x_continuous(limits = c(0,13),
+                     breaks = seq(0,20,2),
+                     position = "top") +
+  theme_classic() +
+  theme(legend.position = "none")
+
+ggsave(  here::here("output/profiles_MOBO-DIC_vs_eMLR.jpg"),
+  width = 5,
+  height = 5,
+  dpi = 600)
+
+#>      blue       red     green    yellow      cyan    purple      grey 
+#> "#4477AA" "#EE6677" "#228833" "#CCBB44" "#66CCEE" "#AA3377" "#BBBBBB" 
 
 rm(DIC_dCant_temp_profiles)
 
