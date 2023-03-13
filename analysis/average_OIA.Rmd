@@ -163,7 +163,7 @@ OIA_variables <-
   names() %>% 
   str_remove("_delta_total")
 
-OIA_variables <- OIA_variables[-c(3,7)]
+OIA_variables <- OIA_variables[-c(3,4,6,7)]
 
 ```
 
@@ -899,7 +899,7 @@ pdf(
 # loop over OIA variables
 # print DIC_dCant_temp sections
 
-for (i_var in OIA_variables[-8]) {
+for (i_var in OIA_variables[-6]) {
   # i_var <- OIA_variables[4]
   
   # subset OIA variable
@@ -1069,7 +1069,7 @@ pdf(
 # loop over OIA variables
 # print DIC_dCant_temp sections
 
-for (i_var in OIA_variables[-8]) {
+for (i_var in OIA_variables[-6]) {
   # i_var <- OIA_variables[4]
   
   # subset OIA variable
@@ -1606,7 +1606,7 @@ pdf(
 # loop over OIA variables
 # print incremental sections
 
-for (i_var in OIA_variables[-8]) {
+for (i_var in OIA_variables[-6]) {
   # i_var <- OIA_variables[1]
   
   # subset OIA variable
@@ -1651,6 +1651,65 @@ for (i_var in OIA_variables[-8]) {
 }
 
 dev.off()
+
+
+
+i_var <- "tco2"
+
+i_acidification_depth_layer_total <-
+  acidification_depth_layer_total %>%
+  filter(variable == i_var) %>%
+  select(lon, lat, depth, tref, delta_total)
+
+breaks <- c(-Inf, seq(0, 80, 10), Inf)
+
+i_acidification_depth_layer_total %>%
+  p_map_mdim_robinson(
+    dim_col = "tref",
+    dim_row = "depth",
+    var = "delta_total",
+    legend_title = expression(Delta*C[ant]~(µmol~kg^{-1})),
+    breaks = breaks
+  )
+
+ggsave(
+  here::here(
+    "output/publication/maps_depth_layer_dCant_total_changes.png"
+  ),
+  width = 12,
+  height = 6,
+  dpi = 600
+)
+
+OIA_variables
+
+i_var <- "H_free"
+
+i_acidification_depth_layer_total <-
+  acidification_depth_layer_total %>%
+  filter(variable == i_var) %>%
+  select(lon, lat, depth, tref, delta_total)
+
+breaks <- c(-Inf, seq(0, 0.003, 0.0003), Inf)
+
+i_acidification_depth_layer_total %>%
+  p_map_mdim_robinson(
+    dim_col = "tref",
+    dim_row = "depth",
+    var = "delta_total",
+    legend_title = expression(Delta*H[free]^"+"~(µmol~kg^{-1})),
+    breaks = breaks
+  )
+
+ggsave(
+  here::here(
+    "output/publication/maps_depth_layer_total_changes_hydrogen_ion.png"
+  ),
+  width = 12,
+  height = 6,
+  dpi = 600
+)
+
 
 rm(acidification_depth_layer_total,
    acidification_depth_layer,
@@ -3238,7 +3297,7 @@ pdf(
 # loop over OIA variables
 # print incremental sections
 
-for (i_var in OIA_variables[-8]) {
+for (i_var in OIA_variables[-6]) {
   # i_var <- OIA_variables[1]
   
   # subset OIA variable
@@ -4147,7 +4206,7 @@ acidification_profiles %>%
          depth,
          # MLR_basins,
          # Version_ID_group,
-         all_of(OIA_variables[-8])) %>%
+         all_of(OIA_variables[-6])) %>%
   pivot_longer(-c(tref:depth),
                names_to = "variable",
                values_to = "total") %>%
