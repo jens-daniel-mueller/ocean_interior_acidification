@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">09 March, 2023</h4>
+<h4 class="date">13 March, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-09
+<strong>Last updated:</strong> 2023-03-13
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree9900bf4062a749e9999b0de5eb461486eb88153atargetblank9900bf4a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree3bebfa067eeb1820a3e9d33e1a5158f1ea15fc47targetblank3bebfa0a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/9900bf4062a749e9999b0de5eb461486eb88153a" target="_blank">9900bf4</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/3bebfa067eeb1820a3e9d33e1a5158f1ea15fc47" target="_blank">3bebfa0</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree9900bf4062a749e9999b0de5eb461486eb88153atargetblank9900bf4a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree3bebfa067eeb1820a3e9d33e1a5158f1ea15fc47targetblank3bebfa0a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/9900bf4062a749e9999b0de5eb461486eb88153a" target="_blank">9900bf4</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/3bebfa067eeb1820a3e9d33e1a5158f1ea15fc47" target="_blank">3bebfa0</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -634,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/3bebfa067eeb1820a3e9d33e1a5158f1ea15fc47/analysis/average_OIA.Rmd" target="_blank">3bebfa0</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-13
+</td>
+<td>
+added surface DIC estimates, and sensitivity studies
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/b5fc2779d83098d356def221b288bfe02b0e12fc/docs/average_OIA.html" target="_blank">b5fc277</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-09
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1378,14 +1412,7 @@ OIA_variables &lt;-
   names() %&gt;% 
   str_remove(&quot;_delta_total&quot;)
 
-OIA_variables &lt;- OIA_variables[-c(3,7)]
-
-# read_csv(paste0(path_OIA, &quot;OIA_all.csv&quot;))
-
-# acidification_trend %&gt;%
-#   filter(Version_ID_group == &quot;Standard case&quot;,
-#          MLR_basins == &quot;3&quot;) %&gt;%
-#   write_csv(paste0(path_OIA, &quot;OIA_standard_case.csv&quot;))</code></pre>
+OIA_variables &lt;- OIA_variables[-c(3,7)]</code></pre>
 </div>
 <div id="temperature-driver" class="section level2">
 <h2>Temperature driver</h2>
@@ -1417,7 +1444,7 @@ dCant_trend &lt;-
     dCant_temp_trend_depth_grid
   )
 
-temp_trend &lt;-
+temperature_trend &lt;-
   inner_join(
     temperature_trend %&gt;%
       filter(tref %in% c(2004, 2014)) %&gt;%
@@ -1430,16 +1457,17 @@ temp_trend &lt;-
 dCant_temp_trend &lt;-
   bind_rows(dCant_trend %&gt;%
               mutate(driver = &quot;dCant&quot;),
-            temp_trend %&gt;%
+            temperature_trend %&gt;%
               mutate(driver = &quot;dCant + temp&quot;))
 
 rm(temperature_trend,
    dCant_trend,
-   temp_trend,
    dCant_temp_trend_depth_grid)</code></pre>
 </div>
 <div id="dic-driver" class="section level2">
 <h2>DIC driver</h2>
+<div id="interior-mobo-dic" class="section level3">
+<h3>Interior (MOBO-DIC)</h3>
 <pre class="r"><code>DIC_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_DIC_3.csv&quot;))
 
@@ -1454,7 +1482,7 @@ DIC_temperature_trend &lt;- DIC_temperature_trend %&gt;%
 
 # create joined coordinate grid
 
-DIC_dCant_temp_trend_depth_grid &lt;-
+dCant_DIC_temp_trend_depth_grid &lt;-
   inner_join(
     DIC_trend %&gt;%
       filter(tref %in% c(2004, 2014)) %&gt;%
@@ -1464,9 +1492,9 @@ DIC_dCant_temp_trend_depth_grid &lt;-
       distinct(lon, lat, depth, tref)
   )
 
-DIC_dCant_temp_trend_depth_grid &lt;-
+dCant_DIC_temp_trend_depth_grid &lt;-
   inner_join(
-    DIC_dCant_temp_trend_depth_grid,
+    dCant_DIC_temp_trend_depth_grid,
     dCant_temp_trend %&gt;%
       filter(tref %in% c(2004, 2014)) %&gt;%
       distinct(lon, lat, depth, tref)
@@ -1479,7 +1507,7 @@ DIC_trend &lt;-
     DIC_trend %&gt;%
       filter(tref %in% c(2014)) %&gt;%
       select(lon, lat, depth, tref, basin_AIP, contains(&quot;delta_interval&quot;)),
-    DIC_dCant_temp_trend_depth_grid
+    dCant_DIC_temp_trend_depth_grid
   )
 
 DIC_temperature_trend &lt;-
@@ -1487,7 +1515,7 @@ DIC_temperature_trend &lt;-
     DIC_temperature_trend %&gt;%
       filter(tref %in% c(2014)) %&gt;%
       select(lon, lat, depth, tref, basin_AIP, contains(&quot;delta_interval&quot;)),
-    DIC_dCant_temp_trend_depth_grid
+    dCant_DIC_temp_trend_depth_grid
   )
 
 dCant_temp_trend_temporary &lt;-
@@ -1503,12 +1531,12 @@ dCant_temp_trend_temporary &lt;-
         basin_AIP,
         contains(&quot;delta_interval&quot;)
       ),
-    DIC_dCant_temp_trend_depth_grid
+    dCant_DIC_temp_trend_depth_grid
   )
 
 # join relevant data sets
 
-DIC_dCant_temp_trend &lt;-
+dCant_DIC_temp_trend &lt;-
   bind_rows(
     DIC_trend %&gt;%
       mutate(driver = &quot;DIC&quot;),
@@ -1521,8 +1549,59 @@ rm(
   DIC_trend,
   DIC_temperature_trend,
   dCant_temp_trend_temporary,
-  DIC_dCant_temp_trend_depth_grid
+  dCant_DIC_temp_trend_depth_grid
 )</code></pre>
+</div>
+<div id="surface-oceansoda" class="section level3">
+<h3>Surface (OceanSODA)</h3>
+<pre class="r"><code>DIC_surface_trend &lt;-
+  read_csv(paste0(path_OIA, &quot;OIA_OceanSODA DIC_3.csv&quot;))
+
+DIC_surface_trend &lt;- DIC_surface_trend %&gt;%
+  select(-c(MLR_basins, Version_ID_group))
+
+# create joined coordinate grid
+
+dCant_DIC_surface_trend_depth_grid &lt;-
+  inner_join(
+    acidification_trend %&gt;%
+      filter(tref %in% c(2004, 2014)) %&gt;%
+      distinct(lon, lat, depth, tref),
+    DIC_surface_trend %&gt;%
+      filter(tref %in% c(2004, 2014)) %&gt;%
+      distinct(lon, lat, depth, tref)
+  )
+
+# reduce data to joined coordinate grid
+
+dCant_trend &lt;-
+  inner_join(
+    acidification_trend %&gt;%
+      filter(tref %in% c(2004, 2014)) %&gt;%
+      select(lon, lat, depth, tref, basin_AIP, contains(&quot;delta_interval&quot;)),
+    dCant_DIC_surface_trend_depth_grid
+  )
+
+DIC_surface_trend &lt;-
+  inner_join(
+    DIC_surface_trend %&gt;%
+      filter(tref %in% c(2004, 2014)) %&gt;%
+      select(lon, lat, depth, tref, basin_AIP, contains(&quot;delta_interval&quot;)),
+    dCant_DIC_surface_trend_depth_grid
+  )
+
+# join relevant data sets
+
+dCant_DIC_surface_trend &lt;-
+  bind_rows(dCant_trend %&gt;%
+              mutate(driver = &quot;dCant&quot;),
+            DIC_surface_trend %&gt;%
+              mutate(driver = &quot;DIC surface&quot;))
+
+rm(DIC_surface_trend,
+   dCant_trend,
+   dCant_DIC_surface_trend_depth_grid)</code></pre>
+</div>
 </div>
 <div id="buffer-changes" class="section level2">
 <h2>Buffer changes</h2>
@@ -1546,6 +1625,86 @@ buffer_variables &lt;-
   select(contains(&quot;delta_total&quot;)) %&gt;%
   names() %&gt;%
   str_remove(&quot;_delta_total&quot;)</code></pre>
+</div>
+<div id="time-series-stations" class="section level2">
+<h2>Time series stations</h2>
+<pre class="r"><code>col_names &lt;-
+  names(read_csv(
+    paste0(path_OIA, &quot;input_data/TS_product_consistent.csv&quot;),
+    n_max = 0
+  ))
+
+TS_product_consistent &lt;-
+  read_csv(
+    paste0(path_OIA, &quot;input_data/TS_product_consistent.csv&quot;),
+    col_names = col_names,
+    skip = 2
+  )
+
+rm(col_names)
+
+TS_product_consistent &lt;- TS_product_consistent %&gt;% 
+  select(station = TimeSeriesStation,
+         station_nr = STNNBR,
+         date = DATE,
+         lat = LATITUDE,
+         lon = LONGITUDE,
+         depth = CTDPRS,
+         tco2 = TCARBN)
+
+TS_product_consistent &lt;- TS_product_consistent %&gt;% 
+  mutate(lon = if_else(lon &lt; 20, lon + 360, lon))
+
+TS_product_consistent &lt;- TS_product_consistent %&gt;% 
+  filter(tco2 != -999)
+
+TS_product_consistent %&gt;% 
+  count(station) %&gt;% 
+  arrange(-n)</code></pre>
+<pre><code># A tibble: 12 × 2
+   station         n
+   &lt;chr&gt;       &lt;int&gt;
+ 1 ALOHA        5911
+ 2 OWSM         2053
+ 3 IcelandSea   1824
+ 4 KNOT         1609
+ 5 IrmingerSea  1477
+ 6 K2           1175
+ 7 DYFAMED      1130
+ 8 CVOO          346
+ 9 Munida        220
+10 RADCOR_2       95
+11 RADCOR_4       60
+12 RADCOR_3       35</code></pre>
+<pre class="r"><code>TS_product_consistent %&gt;% 
+  distinct(station, lon, lat) %&gt;% 
+  ggplot(aes(lon, lat, col = station)) +
+  geom_point() +
+  coord_quickmap()</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_time_series_stations-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(lubridate)
+
+TS_product_consistent &lt;-
+TS_product_consistent %&gt;% 
+  mutate(date = as.Date(as.character(date), &quot;%Y%m%d&quot;),
+         year = year(date))
+
+TS_product_consistent %&gt;% 
+  filter(station == &quot;ALOHA&quot;,
+         depth &lt; 10) %&gt;% 
+  ggplot(aes(date, tco2)) +
+  geom_point() +
+  geom_path()</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_time_series_stations-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>TS_product_consistent %&gt;% 
+  filter(station == &quot;ALOHA&quot;,
+         depth &lt; 2000) %&gt;% 
+  ggplot(aes(tco2, depth, col = date)) +
+  geom_point() +
+  scale_color_viridis_c(trans = &quot;date&quot;) +
+  scale_y_reverse()</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_time_series_stations-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>rm(TS_product_consistent)</code></pre>
 </div>
 </div>
 <div id="uncertainty-determination" class="section level1">
@@ -1732,12 +1891,137 @@ basinmask &lt;- basinmask %&gt;%
 biome_mask &lt;- biome_mask %&gt;% 
     mutate(area = earth_surf(lat, lon))</code></pre>
 </div>
-<div id="oia" class="section level1">
-<h1>OIA</h1>
-<div id="depth-layer-maps" class="section level2">
-<h2>Depth layer maps</h2>
-<div id="computation" class="section level3">
-<h3>Computation</h3>
+<div id="general-consideration" class="section level1">
+<h1>General consideration</h1>
+<pre class="r"><code>sensitivity &lt;-
+  expand_grid(
+    pco2 = seq(100, 1000, 100),
+    temp = seq(0, 30, 5)
+  )
+
+sensitivity &lt;- sensitivity %&gt;%
+  mutate(carb(
+    flag = 24,
+    var1 = pco2,
+    var2 = 2300 * 1e-6,
+    T = temp,
+    pHscale = &quot;F&quot;
+  )) %&gt;%
+  select(
+    temp,
+    pco2,
+    DIC,
+    CO3,
+    pH,
+    HCO3
+  )
+
+sensitivity_DIC &lt;- sensitivity %&gt;%
+  select(temp, pco2, tco2_start = DIC) %&gt;% 
+  mutate(carb(
+    flag = 15,
+    var1 = 2300 * 1e-6,
+    var2 = tco2_start + 10 * 1e-6,
+    T = temp,
+    pHscale = &quot;F&quot;
+  )) %&gt;%
+  select(
+    temp,
+    pco2,
+    CO3,
+    pH,
+    HCO3
+  )
+
+sensitivity_temp &lt;- sensitivity %&gt;%
+  select(temp, pco2, tco2_start = DIC) %&gt;% 
+  mutate(carb(
+    flag = 15,
+    var1 = 2300 * 1e-6,
+    var2 = tco2_start,
+    T = temp + 1,
+    pHscale = &quot;F&quot;
+  )) %&gt;%
+  select(
+    temp,
+    pco2,
+    CO3,
+    pH,
+    HCO3
+  )
+
+sensitivity_all &lt;-
+  bind_rows(
+    sensitivity %&gt;% mutate(case = &quot;start&quot;) %&gt;% select(-DIC),
+    sensitivity_DIC %&gt;% mutate(case = &quot;+10DIC&quot;),
+    sensitivity_temp %&gt;%  mutate(case = &quot;+1temp&quot;)
+  )
+
+sensitivity_all &lt;- sensitivity_all %&gt;% 
+  arrange(desc(case)) %&gt;% 
+  mutate(H = 1e6 * 10^-pH,
+         HCO3 = HCO3 * 1e6,
+         CO3 = CO3 * 1e6,
+         SIR = HCO3 / H
+         ) %&gt;% 
+  pivot_longer(c(CO3, pH, HCO3, H, SIR),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;value&quot;) %&gt;% 
+  group_by(temp, pco2, variable) %&gt;% 
+  mutate(delta_relative = 100 * (value - first(value)) / first(value)) %&gt;% 
+  ungroup() %&gt;% 
+  filter(case != &quot;start&quot;)
+
+
+sensitivity_all %&gt;% 
+  mutate(pco2 = as.factor(pco2)) %&gt;% 
+  ggplot(aes(temp, delta_relative, col = pco2)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(case~variable, scales = &quot;free&quot;, ncol = 5)</code></pre>
+<p><img src="figure/average_OIA.Rmd/acidification_parameter_sensitivity-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sensitivity_all %&gt;% 
+  mutate(temp = as.factor(temp)) %&gt;% 
+  ggplot(aes(pco2, delta_relative, col = temp)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(case~variable, scales = &quot;free&quot;, ncol = 5)</code></pre>
+<p><img src="figure/average_OIA.Rmd/acidification_parameter_sensitivity-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sensitivity_all %&gt;% 
+  select(-value) %&gt;% 
+  pivot_wider(names_from = case,
+              values_from = delta_relative) %&gt;% 
+  mutate(temp_per_DIC =  `+1temp` / `+10DIC`) %&gt;% 
+  mutate(temp = as.factor(temp)) %&gt;% 
+  ggplot(aes(pco2, temp_per_DIC, col = temp)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(.~variable, ncol = 5)</code></pre>
+<p><img src="figure/average_OIA.Rmd/acidification_parameter_sensitivity-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>sensitivity_all %&gt;% 
+  select(-value) %&gt;% 
+  pivot_wider(names_from = case,
+              values_from = delta_relative) %&gt;% 
+  mutate(temp_per_DIC =  `+1temp` / `+10DIC`) %&gt;% 
+  mutate(pco2 = as.factor(pco2)) %&gt;% 
+  ggplot(aes(temp, temp_per_DIC, col = pco2)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(.~variable, ncol = 5)</code></pre>
+<p><img src="figure/average_OIA.Rmd/acidification_parameter_sensitivity-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>rm(sensitivity,
+   sensitivity_all,
+   sensitivity_DIC,
+   sensitivity_temp)</code></pre>
+</div>
+<div id="depth-layer-maps" class="section level1">
+<h1>Depth layer maps</h1>
+<div id="computation" class="section level2">
+<h2>Computation</h2>
 <pre class="r"><code>m_depth_layer &lt;- function(df) {
   
   df &lt;- df %&gt;%
@@ -1772,7 +2056,15 @@ acidification_depth_layer_dCant_temp &lt;- dCant_temp_trend %&gt;%
   unnest(layer) %&gt;% 
   ungroup()
 
-acidification_depth_layer_DIC_dCant_temp &lt;- DIC_dCant_temp_trend %&gt;%
+acidification_depth_layer_DIC_dCant_temp &lt;- dCant_DIC_temp_trend %&gt;%
+  group_by(driver) %&gt;%
+  nest() %&gt;%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(layer) %&gt;% 
+  ungroup()
+
+acidification_depth_layer_dCant_DIC_surface &lt;- dCant_DIC_surface_trend %&gt;%
   group_by(driver) %&gt;%
   nest() %&gt;%
   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %&gt;%
@@ -1781,11 +2073,10 @@ acidification_depth_layer_DIC_dCant_temp &lt;- DIC_dCant_temp_trend %&gt;%
   ungroup()
 
 climatology_depth_layer &lt;- m_depth_layer(climatology)</code></pre>
-</div>
 <div id="incremental-changes" class="section level3">
 <h3>Incremental changes</h3>
-<div id="dic-dcant-temp" class="section level4">
-<h4>DIC + dCant (+ temp)</h4>
+<div id="dcant-dic-interior" class="section level4">
+<h4>dCant + DIC (interior)</h4>
 <p>Note: temperature influence was not considered for maps</p>
 <pre class="r"><code># subset DIC_dCant_temp change sections
 
@@ -1805,7 +2096,7 @@ acidification_depth_layer_DIC_dCant_temp &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/maps_depth_layer_DIC_dCant_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_depth_layer_dCant_DIC_changes.pdf&quot;),
   width = 14,
   height = 10
 )
@@ -1937,6 +2228,172 @@ dev.off()</code></pre>
    p_depth_layer_DIC,
    p_depth_layer_driver)</code></pre>
 </div>
+<div id="dcant-dic-surface" class="section level4">
+<h4>dCant + DIC (surface)</h4>
+<p>Note: temperature influence was not considered for maps</p>
+<pre class="r"><code># subset DIC_dCant_temp change sections
+
+acidification_depth_layer_dCant_DIC_surface &lt;-
+  acidification_depth_layer_dCant_DIC_surface %&gt;%
+  filter(driver %in% c(&quot;dCant&quot;, &quot;DIC surface&quot;)) %&gt;% 
+  select(driver:tref,
+         contains(&quot;_delta_interval&quot;))
+
+acidification_depth_layer_dCant_DIC_surface &lt;-
+  acidification_depth_layer_dCant_DIC_surface %&gt;%
+  pivot_longer(contains(&quot;_delta_interval&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_interval&quot;) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_interval&quot;))
+
+depth_layer_low &lt;- acidification_depth_layer_dCant_DIC_surface %&gt;% 
+  distinct(depth) %&gt;% 
+  arrange(depth) %&gt;% 
+  head(1) %&gt;% 
+  pull()
+
+acidification_depth_layer_dCant_DIC_surface &lt;-
+  acidification_depth_layer_dCant_DIC_surface %&gt;%
+  filter(depth == depth_layer_low)
+
+rm(depth_layer_low)
+
+
+# create pdf document
+
+pdf(
+  here::here(&quot;output/all_variables/maps_depth_layer_dCant_DIC_surface_changes.pdf&quot;),
+  width = 14,
+  height = 4
+)
+
+# loop over OIA variables
+# print DIC_dCant_temp sections
+
+for (i_var in OIA_variables[-8]) {
+  # i_var &lt;- OIA_variables[4]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_dCant_DIC_surface &lt;-
+    acidification_depth_layer_dCant_DIC_surface %&gt;%
+    filter(variable == i_var) %&gt;% 
+    select(lon, lat, depth, tref, driver, delta_interval)
+
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_acidification_depth_layer_dCant_DIC_surface %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high &lt;- i_acidification_depth_layer_dCant_DIC_surface %&gt;%
+    filter(!is.na(delta_interval)) %&gt;%
+    pull(delta_interval) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+  
+  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  # create maps with absolute values
+  
+  p_depth_layer_dCant &lt;-
+  i_acidification_depth_layer_dCant_DIC_surface %&gt;%
+    filter(driver == &quot;dCant&quot;) %&gt;% 
+    p_map_mdim_robinson(
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      var = &quot;delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005,
+    ) &amp;
+    labs(title = &quot;Driver: dCant&quot;)
+  
+  p_depth_layer_DIC &lt;-
+  i_acidification_depth_layer_dCant_DIC_surface %&gt;%
+    filter(driver == &quot;DIC surface&quot;) %&gt;% 
+    p_map_mdim_robinson(
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      var = &quot;delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005,
+    ) &amp;
+    labs(title = &quot;Driver: DIC surface&quot;)
+      
+  
+  i_delta_acidification_depth_layer_driver &lt;-
+    i_acidification_depth_layer_dCant_DIC_surface %&gt;%
+    arrange(lon, lat, depth) %&gt;%
+    drop_na() %&gt;%
+    pivot_wider(names_from = driver,
+                values_from = delta_interval) %&gt;%
+    mutate(delta_delta_interval = `dCant` - `DIC surface`) %&gt;%
+    select(lon, lat, depth, tref, delta_delta_interval)
+  
+  
+  low &lt;- i_delta_acidification_depth_layer_driver %&gt;%
+    filter(!is.na(delta_delta_interval)) %&gt;%
+    pull(delta_delta_interval) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high &lt;- i_delta_acidification_depth_layer_driver %&gt;%
+    filter(!is.na(delta_delta_interval)) %&gt;%
+    pull(delta_delta_interval) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+  
+  high_low &lt;- max(abs(c(low,high)))
+  
+  if (high_low != 0) {
+    breaks_divergent_driver &lt;-
+      c(-Inf,
+        seq(-high_low, high_low, length.out = break_numbers),
+        Inf)
+  } else {
+    breaks_divergent_driver &lt;-
+      c(-Inf, 0, Inf)
+  }
+  
+  p_depth_layer_driver &lt;-
+    i_delta_acidification_depth_layer_driver %&gt;% 
+    p_map_mdim_robinson(
+      dim_col = &quot;depth&quot;,
+      dim_row = &quot;tref&quot;,
+      col = &quot;divergent&quot;,
+      var = &quot;delta_delta_interval&quot;,
+      legend_title = i_var,
+      breaks = breaks_divergent_driver,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005
+    ) &amp;
+    labs(title = &quot;Driver difference: dCant - DIC surface&quot;)
+  
+  print(
+    wrap_plots(
+      p_depth_layer_dCant,
+      p_depth_layer_DIC,
+      p_depth_layer_driver,
+      ncol = 3
+    )
+  )
+  
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>rm(acidification_depth_layer_dCant_DIC_surface,
+   i_acidification_depth_layer_dCant_DIC_surface,
+   i_delta_acidification_depth_layer_driver,
+   high, low,
+   breaks_divergent_driver,
+   p_depth_layer_dCant,
+   p_depth_layer_DIC,
+   p_depth_layer_driver)</code></pre>
+</div>
 <div id="dcant-temp" class="section level4">
 <h4>dCant + temp</h4>
 <pre class="r"><code># subset dCant_temp change sections
@@ -1956,7 +2413,7 @@ acidification_depth_layer_dCant_temp &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/maps_depth_layer_dCant_temp_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_depth_layer_dCant_temp_changes.pdf&quot;),
   width = 20,
   height = 6
 )
@@ -2191,7 +2648,7 @@ acidification_depth_layer_incremental &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/maps_depth_layer_incremental_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_depth_layer_incremental_changes.pdf&quot;),
   width = 14,
   height = 7
 )
@@ -2333,7 +2790,7 @@ acidification_depth_layer_total &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/maps_depth_layer_dCant_total_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_depth_layer_dCant_total_changes.pdf&quot;),
   width = 14,
   height = 5
 )
@@ -2434,7 +2891,7 @@ climatology_depth_layer %&gt;%
 <pre class="r"><code># create pdf document
 
 pdf(
-  here::here(&quot;output/maps_depth_layer_climatology.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_depth_layer_climatology.pdf&quot;),
   width = 14,
   height = 4
 )
@@ -2577,6 +3034,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/b5fc2779d83098d356def221b288bfe02b0e12fc/docs/figure/average_OIA.Rmd/compute_saturation_horizon_maps-1.png" target="_blank">b5fc277</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-09
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/2facf75f7a83e9161c5eb95fdcc5f2b759be9ae6/docs/figure/average_OIA.Rmd/compute_saturation_horizon_maps-1.png" target="_blank">2facf75</a>
@@ -2793,7 +3261,7 @@ jens-daniel-mueller
 [1] TRUE
 [1] TRUE</code></pre>
 <pre class="r"><code>pdf(
-  here::here(&quot;output/maps_saturation_horizon_absolute_state.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_saturation_horizon_absolute_state.pdf&quot;),
   width = 10,
   height = 8
 )
@@ -2820,7 +3288,7 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 <pre class="r"><code>pdf(
-  here::here(&quot;output/maps_saturation_horizon_total_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_saturation_horizon_total_changes.pdf&quot;),
   width = 10,
   height = 6
 )
@@ -2859,7 +3327,7 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 <pre class="r"><code>pdf(
-  here::here(&quot;output/maps_saturation_horizon_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_saturation_horizon_changes.pdf&quot;),
   width = 10,
   height = 6
 )
@@ -2960,7 +3428,7 @@ acidification_volume &lt;-
 
 
 pdf(
-  here::here(&quot;output/saturation_volumes.pdf&quot;),
+  here::here(&quot;output/all_variables/saturation_volumes.pdf&quot;),
   width = 10,
   height = 8
 )
@@ -3046,7 +3514,7 @@ print(
 # create pdf document
 
 pdf(
-  here::here(&quot;output/zonal_mean_sections_dCant_temp_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/zonal_mean_sections_dCant_temp_changes.pdf&quot;),
   width = 20,
   height = 6
 )
@@ -3217,7 +3685,7 @@ acidification_zonal_incremental &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/zonal_mean_sections_incremental_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/zonal_mean_sections_incremental_changes.pdf&quot;),
   width = 12,
   height = 8
 )
@@ -3361,7 +3829,7 @@ acidification_zonal_total &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/zonal_mean_sections_total_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/zonal_mean_sections_total_changes.pdf&quot;),
   width = 10,
   height = 8
 )
@@ -3472,7 +3940,7 @@ acidification_zonal_buffer_total &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/zonal_mean_sections_total_changes_buffer.pdf&quot;),
+  here::here(&quot;output/all_variables/zonal_mean_sections_total_changes_buffer.pdf&quot;),
   width = 10,
   height = 8
 )
@@ -3582,7 +4050,7 @@ acidification_zonal_absolute &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/zonal_mean_sections_absolute_state.pdf&quot;),
+  here::here(&quot;output/all_variables/zonal_mean_sections_absolute_state.pdf&quot;),
   width = 8,
   height = 8
 )
@@ -3689,7 +4157,7 @@ acidification_zonal_buffer_absolute &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/zonal_mean_sections_absolute_state_buffer.pdf&quot;),
+  here::here(&quot;output/all_variables/zonal_mean_sections_absolute_state_buffer.pdf&quot;),
   width = 8,
   height = 8
 )
@@ -3845,7 +4313,7 @@ acidification_global_section_incremental &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/global_sections_incremental_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/global_sections_incremental_changes.pdf&quot;),
   width = 10,
   height = 12
 )
@@ -3978,7 +4446,7 @@ acidification_global_section_total &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/global_sections_total_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/global_sections_total_changes.pdf&quot;),
   width = 10,
   height = 12
 )
@@ -4095,7 +4563,7 @@ acidification_global_section_absolute &lt;-
 # create pdf document
 
 pdf(
-  here::here(&quot;output/global_sections_absolute_state.pdf&quot;),
+  here::here(&quot;output/all_variables/global_sections_absolute_state.pdf&quot;),
   width = 10,
   height = 16
 )
@@ -4335,7 +4803,7 @@ dCant_temp_profiles &lt;- dCant_temp_profiles %&gt;%
 
 DIC_dCant_temp_profiles &lt;-
   full_join(basinmask,
-            DIC_dCant_temp_trend)
+            dCant_DIC_temp_trend)
 
 # scale values to surface area
 
@@ -4475,7 +4943,7 @@ DIC_dCant_temp_profiles &lt;- DIC_dCant_temp_profiles %&gt;%
 # create pdf document
 
 pdf(
-  here::here(&quot;output/profiles_DIC_dCant_temp_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/profiles_DIC_dCant_temp_changes.pdf&quot;),
   width = 14,
   height = 12
 )
@@ -4530,7 +4998,44 @@ dev.off()</code></pre>
   theme_classic() +
   theme(legend.position = &quot;none&quot;)</code></pre>
 <p><img src="figure/average_OIA.Rmd/profiles_DIC_dCant_temp_change-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>ggsave(  here::here(&quot;output/profiles_MOBO-DIC_vs_eMLR_no_fill.jpg&quot;),
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-profiles_DIC_dCant_temp_change-1">
+Past versions of profiles_DIC_dCant_temp_change-1.png
+</button>
+</p>
+<div id="fig-profiles_DIC_dCant_temp_change-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/b5fc2779d83098d356def221b288bfe02b0e12fc/docs/figure/average_OIA.Rmd/profiles_DIC_dCant_temp_change-1.png" target="_blank">b5fc277</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>ggsave(  here::here(&quot;output/all_variables/profiles_MOBO-DIC_vs_eMLR_no_fill.jpg&quot;),
   width = 5,
   height = 5,
   dpi = 600)
@@ -4582,7 +5087,44 @@ DIC_dCant_temp_profiles %&gt;%
   theme_classic() +
   theme(legend.position = &quot;none&quot;)</code></pre>
 <p><img src="figure/average_OIA.Rmd/profiles_DIC_dCant_temp_change-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>ggsave(  here::here(&quot;output/profiles_MOBO-DIC_vs_eMLR.jpg&quot;),
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-profiles_DIC_dCant_temp_change-2">
+Past versions of profiles_DIC_dCant_temp_change-2.png
+</button>
+</p>
+<div id="fig-profiles_DIC_dCant_temp_change-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/b5fc2779d83098d356def221b288bfe02b0e12fc/docs/figure/average_OIA.Rmd/profiles_DIC_dCant_temp_change-2.png" target="_blank">b5fc277</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-09
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>ggsave(  here::here(&quot;output/all_variables/profiles_MOBO-DIC_vs_eMLR.jpg&quot;),
   width = 5,
   height = 5,
   dpi = 600)
@@ -4613,7 +5155,7 @@ dCant_temp_profiles %&gt;%
 # create pdf document
 
 pdf(
-  here::here(&quot;output/profiles_dCant_temp_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/profiles_dCant_temp_changes.pdf&quot;),
   width = 14,
   height = 8
 )
@@ -4648,7 +5190,7 @@ dev.off()</code></pre>
 <pre class="r"><code># create pdf document
 
 pdf(
-  here::here(&quot;output/profiles_incremental_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/profiles_incremental_changes.pdf&quot;),
   width = 14,
   height = 8
 )
@@ -4691,7 +5233,7 @@ dev.off()</code></pre>
 <pre class="r"><code># create pdf document
 
 pdf(
-  here::here(&quot;output/profiles_total_changes.pdf&quot;),
+  here::here(&quot;output/all_variables/profiles_total_changes.pdf&quot;),
   width = 14,
   height = 8
 )
@@ -4785,7 +5327,7 @@ dev.off()</code></pre>
 <pre class="r"><code># create pdf document
 
 pdf(
-  here::here(&quot;output/profiles_total_changes_buffer.pdf&quot;),
+  here::here(&quot;output/all_variables/profiles_total_changes_buffer.pdf&quot;),
   width = 10,
   height = 8
 )
@@ -4827,7 +5369,7 @@ dev.off()</code></pre>
 <pre class="r"><code># create pdf document
 
 pdf(
-  here::here(&quot;output/profiles_absolute_state.pdf&quot;),
+  here::here(&quot;output/all_variables/profiles_absolute_state.pdf&quot;),
   width = 14,
   height = 8
 )
@@ -4864,7 +5406,7 @@ dev.off()</code></pre>
 <pre class="r"><code># create pdf document
 
 pdf(
-  here::here(&quot;output/profiles_absolute_state_buffer.pdf&quot;),
+  here::here(&quot;output/all_variables/profiles_absolute_state_buffer.pdf&quot;),
   width = 10,
   height = 8
 )
@@ -4947,55 +5489,53 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] seacarb_3.3.1       SolveSAPHE_2.1.0    oce_1.7-10         
- [4] gsw_1.1-1           stars_0.6-0         abind_1.4-5        
- [7] ggpattern_1.0.1     ggh4x_0.2.3         khroma_1.9.0       
-[10] kableExtra_1.3.4    ggdist_3.2.0        ggalluvial_0.12.3  
-[13] terra_1.6-41        sf_1.0-9            rnaturalearth_0.1.0
-[16] geomtextpath_0.1.1  colorspace_2.0-3    marelac_2.1.10     
-[19] shape_1.4.6         ggforce_0.4.1       metR_0.13.0        
-[22] scico_1.3.1         patchwork_1.1.2     collapse_1.8.9     
-[25] forcats_0.5.2       stringr_1.4.1       dplyr_1.0.10       
-[28] purrr_0.3.5         readr_2.1.3         tidyr_1.2.1        
-[31] tibble_3.1.8        ggplot2_3.4.0       tidyverse_1.3.2    
-[34] workflowr_1.7.0    
+ [1] lubridate_1.9.0     timechange_0.1.1    seacarb_3.3.1      
+ [4] SolveSAPHE_2.1.0    oce_1.7-10          gsw_1.1-1          
+ [7] stars_0.6-0         abind_1.4-5         ggh4x_0.2.3        
+[10] khroma_1.9.0        terra_1.6-41        sf_1.0-9           
+[13] rnaturalearth_0.1.0 geomtextpath_0.1.1  colorspace_2.0-3   
+[16] marelac_2.1.10      shape_1.4.6         ggforce_0.4.1      
+[19] metR_0.13.0         scico_1.3.1         patchwork_1.1.2    
+[22] collapse_1.8.9      forcats_0.5.2       stringr_1.4.1      
+[25] dplyr_1.0.10        purrr_0.3.5         readr_2.1.3        
+[28] tidyr_1.2.1         tibble_3.1.8        ggplot2_3.4.0      
+[31] tidyverse_1.3.2     workflowr_1.7.0    
 
 loaded via a namespace (and not attached):
-  [1] readxl_1.4.1            backports_1.4.1         systemfonts_1.0.4      
-  [4] lwgeom_0.2-10           sp_1.5-1                digest_0.6.30          
-  [7] htmltools_0.5.3         ncmeta_0.3.5            fansi_1.0.3            
- [10] magrittr_2.0.3          checkmate_2.1.0         memoise_2.0.1          
- [13] googlesheets4_1.0.1     tzdb_0.3.0              modelr_0.1.10          
- [16] vroom_1.6.0             svglite_2.1.0           timechange_0.1.1       
- [19] rvest_1.0.3             textshaping_0.3.6       haven_2.5.1            
- [22] xfun_0.35               callr_3.7.3             crayon_1.5.2           
- [25] jsonlite_1.8.3          glue_1.6.2              polyclip_1.10-4        
- [28] gtable_0.3.1            gargle_1.2.1            webshot_0.5.4          
- [31] distributional_0.3.1    scales_1.2.1            DBI_1.1.3              
- [34] Rcpp_1.0.9              isoband_0.2.6           viridisLite_0.4.1      
- [37] units_0.8-0             bit_4.0.5               proxy_0.4-27           
- [40] httr_1.4.4              RColorBrewer_1.1-3      ellipsis_0.3.2         
- [43] pkgconfig_2.0.3         farver_2.1.1            sass_0.4.4             
- [46] dbplyr_2.2.1            utf8_1.2.2              here_1.0.1             
- [49] tidyselect_1.2.0        labeling_0.4.2          rlang_1.0.6            
- [52] later_1.3.0             munsell_0.5.0           cellranger_1.1.0       
- [55] tools_4.2.2             cachem_1.0.6            cli_3.4.1              
- [58] generics_0.1.3          broom_1.0.1             evaluate_0.18          
- [61] fastmap_1.1.0           yaml_2.3.6              ragg_1.2.4             
- [64] processx_3.8.0          knitr_1.41              bit64_4.0.5            
- [67] fs_1.5.2                RNetCDF_2.6-1           whisker_0.4            
- [70] xml2_1.3.3              compiler_4.2.2          rstudioapi_0.14        
- [73] e1071_1.7-12            reprex_2.0.2            tweenr_2.0.2           
- [76] bslib_0.4.1             stringi_1.7.8           highr_0.9              
- [79] ps_1.7.2                lattice_0.20-45         classInt_0.4-8         
- [82] vctrs_0.5.1             pillar_1.8.1            lifecycle_1.0.3        
- [85] jquerylib_0.1.4         data.table_1.14.6       httpuv_1.6.6           
- [88] R6_2.5.1                promises_1.2.0.1        KernSmooth_2.23-20     
- [91] codetools_0.2-18        MASS_7.3-58.1           assertthat_0.2.1       
- [94] rprojroot_2.0.3         withr_2.5.0             parallel_4.2.2         
- [97] hms_1.1.2               grid_4.2.2              rnaturalearthdata_0.1.0
-[100] class_7.3-20            rmarkdown_2.18          googledrive_2.0.0      
-[103] git2r_0.30.1            getPass_0.2-2           lubridate_1.9.0        </code></pre>
+  [1] googledrive_2.0.0       ellipsis_0.3.2          class_7.3-20           
+  [4] rprojroot_2.0.3         fs_1.5.2                rstudioapi_0.14        
+  [7] proxy_0.4-27            farver_2.1.1            bit64_4.0.5            
+ [10] fansi_1.0.3             xml2_1.3.3              codetools_0.2-18       
+ [13] cachem_1.0.6            knitr_1.41              polyclip_1.10-4        
+ [16] jsonlite_1.8.3          broom_1.0.1             dbplyr_2.2.1           
+ [19] compiler_4.2.2          httr_1.4.4              backports_1.4.1        
+ [22] assertthat_0.2.1        fastmap_1.1.0           gargle_1.2.1           
+ [25] cli_3.4.1               later_1.3.0             tweenr_2.0.2           
+ [28] htmltools_0.5.3         tools_4.2.2             rnaturalearthdata_0.1.0
+ [31] gtable_0.3.1            glue_1.6.2              Rcpp_1.0.9             
+ [34] RNetCDF_2.6-1           cellranger_1.1.0        jquerylib_0.1.4        
+ [37] vctrs_0.5.1             lwgeom_0.2-10           xfun_0.35              
+ [40] ps_1.7.2                rvest_1.0.3             ncmeta_0.3.5           
+ [43] lifecycle_1.0.3         googlesheets4_1.0.1     getPass_0.2-2          
+ [46] MASS_7.3-58.1           scales_1.2.1            vroom_1.6.0            
+ [49] ragg_1.2.4              hms_1.1.2               promises_1.2.0.1       
+ [52] parallel_4.2.2          RColorBrewer_1.1-3      yaml_2.3.6             
+ [55] memoise_2.0.1           sass_0.4.4              stringi_1.7.8          
+ [58] highr_0.9               e1071_1.7-12            checkmate_2.1.0        
+ [61] rlang_1.0.6             pkgconfig_2.0.3         systemfonts_1.0.4      
+ [64] evaluate_0.18           lattice_0.20-45         labeling_0.4.2         
+ [67] bit_4.0.5               processx_3.8.0          tidyselect_1.2.0       
+ [70] here_1.0.1              magrittr_2.0.3          R6_2.5.1               
+ [73] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
+ [76] haven_2.5.1             whisker_0.4             withr_2.5.0            
+ [79] units_0.8-0             sp_1.5-1                modelr_0.1.10          
+ [82] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
+ [85] tzdb_0.3.0              rmarkdown_2.18          isoband_0.2.6          
+ [88] grid_4.2.2              readxl_1.4.1            data.table_1.14.6      
+ [91] callr_3.7.3             git2r_0.30.1            reprex_2.0.2           
+ [94] digest_0.6.30           classInt_0.4-8          httpuv_1.6.6           
+ [97] textshaping_0.3.6       munsell_0.5.0           viridisLite_0.4.1      
+[100] bslib_0.4.1            </code></pre>
 </div>
 </div>
 
