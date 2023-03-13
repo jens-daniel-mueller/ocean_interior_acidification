@@ -17,13 +17,8 @@ editor_options:
 
 ```{r load_libraries_specific, include = FALSE}
 library(patchwork)
-library(ggalluvial)
-library(marelac)
-library(ggdist)
-library(kableExtra)
 library(khroma)
 library(ggh4x)
-library(ggpattern)
 library(colorspace)
 library(stars)
 library(seacarb)
@@ -170,14 +165,6 @@ OIA_variables <-
 
 OIA_variables <- OIA_variables[-c(3,7)]
 
-# read_csv(paste0(path_OIA, "OIA_all.csv"))
-
-# acidification_trend %>%
-#   filter(Version_ID_group == "Standard case",
-#          MLR_basins == "3") %>%
-#   write_csv(paste0(path_OIA, "OIA_standard_case.csv"))
-
-
 ```
 
 ## Temperature driver
@@ -212,7 +199,7 @@ dCant_trend <-
     dCant_temp_trend_depth_grid
   )
 
-temp_trend <-
+temperature_trend <-
   inner_join(
     temperature_trend %>%
       filter(tref %in% c(2004, 2014)) %>%
@@ -225,20 +212,20 @@ temp_trend <-
 dCant_temp_trend <-
   bind_rows(dCant_trend %>%
               mutate(driver = "dCant"),
-            temp_trend %>%
+            temperature_trend %>%
               mutate(driver = "dCant + temp"))
 
 rm(temperature_trend,
    dCant_trend,
-   temp_trend,
    dCant_temp_trend_depth_grid)
 
 ```
 
 ## DIC driver
 
-```{r read_OIA_DIC_driven}
+### Interior (MOBO-DIC)
 
+```{r read_OIA_DIC_driven_interior}
 
 DIC_trend <-
   read_csv(paste0(path_OIA, "OIA_DIC_3.csv"))
@@ -254,7 +241,7 @@ DIC_temperature_trend <- DIC_temperature_trend %>%
 
 # create joined coordinate grid
 
-DIC_dCant_temp_trend_depth_grid <-
+dCant_DIC_temp_trend_depth_grid <-
   inner_join(
     DIC_trend %>%
       filter(tref %in% c(2004, 2014)) %>%
@@ -264,9 +251,9 @@ DIC_dCant_temp_trend_depth_grid <-
       distinct(lon, lat, depth, tref)
   )
 
-DIC_dCant_temp_trend_depth_grid <-
+dCant_DIC_temp_trend_depth_grid <-
   inner_join(
-    DIC_dCant_temp_trend_depth_grid,
+    dCant_DIC_temp_trend_depth_grid,
     dCant_temp_trend %>%
       filter(tref %in% c(2004, 2014)) %>%
       distinct(lon, lat, depth, tref)
@@ -279,7 +266,7 @@ DIC_trend <-
     DIC_trend %>%
       filter(tref %in% c(2014)) %>%
       select(lon, lat, depth, tref, basin_AIP, contains("delta_interval")),
-    DIC_dCant_temp_trend_depth_grid
+    dCant_DIC_temp_trend_depth_grid
   )
 
 DIC_temperature_trend <-
@@ -287,7 +274,7 @@ DIC_temperature_trend <-
     DIC_temperature_trend %>%
       filter(tref %in% c(2014)) %>%
       select(lon, lat, depth, tref, basin_AIP, contains("delta_interval")),
-    DIC_dCant_temp_trend_depth_grid
+    dCant_DIC_temp_trend_depth_grid
   )
 
 dCant_temp_trend_temporary <-
@@ -303,12 +290,12 @@ dCant_temp_trend_temporary <-
         basin_AIP,
         contains("delta_interval")
       ),
-    DIC_dCant_temp_trend_depth_grid
+    dCant_DIC_temp_trend_depth_grid
   )
 
 # join relevant data sets
 
-DIC_dCant_temp_trend <-
+dCant_DIC_temp_trend <-
   bind_rows(
     DIC_trend %>%
       mutate(driver = "DIC"),
@@ -321,9 +308,63 @@ rm(
   DIC_trend,
   DIC_temperature_trend,
   dCant_temp_trend_temporary,
-  DIC_dCant_temp_trend_depth_grid
+  dCant_DIC_temp_trend_depth_grid
 )
 
+
+```
+
+### Surface (OceanSODA)
+
+```{r read_OIA_DIC_driven_surface}
+
+DIC_surface_trend <-
+  read_csv(paste0(path_OIA, "OIA_OceanSODA DIC_3.csv"))
+
+DIC_surface_trend <- DIC_surface_trend %>%
+  select(-c(MLR_basins, Version_ID_group))
+
+# create joined coordinate grid
+
+dCant_DIC_surface_trend_depth_grid <-
+  inner_join(
+    acidification_trend %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      distinct(lon, lat, depth, tref),
+    DIC_surface_trend %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      distinct(lon, lat, depth, tref)
+  )
+
+# reduce data to joined coordinate grid
+
+dCant_trend <-
+  inner_join(
+    acidification_trend %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      select(lon, lat, depth, tref, basin_AIP, contains("delta_interval")),
+    dCant_DIC_surface_trend_depth_grid
+  )
+
+DIC_surface_trend <-
+  inner_join(
+    DIC_surface_trend %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      select(lon, lat, depth, tref, basin_AIP, contains("delta_interval")),
+    dCant_DIC_surface_trend_depth_grid
+  )
+
+# join relevant data sets
+
+dCant_DIC_surface_trend <-
+  bind_rows(dCant_trend %>%
+              mutate(driver = "dCant"),
+            DIC_surface_trend %>%
+              mutate(driver = "DIC surface"))
+
+rm(DIC_surface_trend,
+   dCant_trend,
+   dCant_DIC_surface_trend_depth_grid)
 
 ```
 
@@ -353,6 +394,79 @@ buffer_variables <-
   str_remove("_delta_total")
 
 ```
+
+## Time series stations
+
+```{r read_time_series_stations}
+
+
+col_names <-
+  names(read_csv(
+    paste0(path_OIA, "input_data/TS_product_consistent.csv"),
+    n_max = 0
+  ))
+
+TS_product_consistent <-
+  read_csv(
+    paste0(path_OIA, "input_data/TS_product_consistent.csv"),
+    col_names = col_names,
+    skip = 2
+  )
+
+rm(col_names)
+
+TS_product_consistent <- TS_product_consistent %>% 
+  select(station = TimeSeriesStation,
+         station_nr = STNNBR,
+         date = DATE,
+         lat = LATITUDE,
+         lon = LONGITUDE,
+         depth = CTDPRS,
+         tco2 = TCARBN)
+
+TS_product_consistent <- TS_product_consistent %>% 
+  mutate(lon = if_else(lon < 20, lon + 360, lon))
+
+TS_product_consistent <- TS_product_consistent %>% 
+  filter(tco2 != -999)
+
+TS_product_consistent %>% 
+  count(station) %>% 
+  arrange(-n)
+
+
+TS_product_consistent %>% 
+  distinct(station, lon, lat) %>% 
+  ggplot(aes(lon, lat, col = station)) +
+  geom_point() +
+  coord_quickmap()
+
+library(lubridate)
+
+TS_product_consistent <-
+TS_product_consistent %>% 
+  mutate(date = as.Date(as.character(date), "%Y%m%d"),
+         year = year(date))
+
+TS_product_consistent %>% 
+  filter(station == "ALOHA",
+         depth < 10) %>% 
+  ggplot(aes(date, tco2)) +
+  geom_point() +
+  geom_path()
+
+TS_product_consistent %>% 
+  filter(station == "ALOHA",
+         depth < 2000) %>% 
+  ggplot(aes(tco2, depth, col = date)) +
+  geom_point() +
+  scale_color_viridis_c(trans = "date") +
+  scale_y_reverse()
+
+rm(TS_product_consistent)
+
+```
+
 
 
 # Uncertainty determination
@@ -557,13 +671,143 @@ biome_mask <- biome_mask %>%
 ```
 
 
+# General consideration
+
+```{r acidification_parameter_sensitivity}
+
+sensitivity <-
+  expand_grid(
+    pco2 = seq(100, 1000, 100),
+    temp = seq(0, 30, 5)
+  )
+
+sensitivity <- sensitivity %>%
+  mutate(carb(
+    flag = 24,
+    var1 = pco2,
+    var2 = 2300 * 1e-6,
+    T = temp,
+    pHscale = "F"
+  )) %>%
+  select(
+    temp,
+    pco2,
+    DIC,
+    CO3,
+    pH,
+    HCO3
+  )
+
+sensitivity_DIC <- sensitivity %>%
+  select(temp, pco2, tco2_start = DIC) %>% 
+  mutate(carb(
+    flag = 15,
+    var1 = 2300 * 1e-6,
+    var2 = tco2_start + 10 * 1e-6,
+    T = temp,
+    pHscale = "F"
+  )) %>%
+  select(
+    temp,
+    pco2,
+    CO3,
+    pH,
+    HCO3
+  )
+
+sensitivity_temp <- sensitivity %>%
+  select(temp, pco2, tco2_start = DIC) %>% 
+  mutate(carb(
+    flag = 15,
+    var1 = 2300 * 1e-6,
+    var2 = tco2_start,
+    T = temp + 1,
+    pHscale = "F"
+  )) %>%
+  select(
+    temp,
+    pco2,
+    CO3,
+    pH,
+    HCO3
+  )
+
+sensitivity_all <-
+  bind_rows(
+    sensitivity %>% mutate(case = "start") %>% select(-DIC),
+    sensitivity_DIC %>% mutate(case = "+10DIC"),
+    sensitivity_temp %>%  mutate(case = "+1temp")
+  )
+
+sensitivity_all <- sensitivity_all %>% 
+  arrange(desc(case)) %>% 
+  mutate(H = 1e6 * 10^-pH,
+         HCO3 = HCO3 * 1e6,
+         CO3 = CO3 * 1e6,
+         SIR = HCO3 / H
+         ) %>% 
+  pivot_longer(c(CO3, pH, HCO3, H, SIR),
+               names_to = "variable",
+               values_to = "value") %>% 
+  group_by(temp, pco2, variable) %>% 
+  mutate(delta_relative = 100 * (value - first(value)) / first(value)) %>% 
+  ungroup() %>% 
+  filter(case != "start")
 
 
-# OIA
+sensitivity_all %>% 
+  mutate(pco2 = as.factor(pco2)) %>% 
+  ggplot(aes(temp, delta_relative, col = pco2)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(case~variable, scales = "free", ncol = 5)
 
-## Depth layer maps
+sensitivity_all %>% 
+  mutate(temp = as.factor(temp)) %>% 
+  ggplot(aes(pco2, delta_relative, col = temp)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(case~variable, scales = "free", ncol = 5)
 
-### Computation
+sensitivity_all %>% 
+  select(-value) %>% 
+  pivot_wider(names_from = case,
+              values_from = delta_relative) %>% 
+  mutate(temp_per_DIC =  `+1temp` / `+10DIC`) %>% 
+  mutate(temp = as.factor(temp)) %>% 
+  ggplot(aes(pco2, temp_per_DIC, col = temp)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(.~variable, ncol = 5)
+
+sensitivity_all %>% 
+  select(-value) %>% 
+  pivot_wider(names_from = case,
+              values_from = delta_relative) %>% 
+  mutate(temp_per_DIC =  `+1temp` / `+10DIC`) %>% 
+  mutate(pco2 = as.factor(pco2)) %>% 
+  ggplot(aes(temp, temp_per_DIC, col = pco2)) +
+  geom_point() +
+  geom_path() +
+  scale_color_viridis_d() +
+  facet_nested_wrap(.~variable, ncol = 5)
+
+rm(sensitivity,
+   sensitivity_all,
+   sensitivity_DIC,
+   sensitivity_temp)
+
+
+```
+
+
+
+# Depth layer maps
+
+## Computation
 
 ```{r compute_layered_maps}
 
@@ -601,7 +845,15 @@ acidification_depth_layer_dCant_temp <- dCant_temp_trend %>%
   unnest(layer) %>% 
   ungroup()
 
-acidification_depth_layer_DIC_dCant_temp <- DIC_dCant_temp_trend %>%
+acidification_depth_layer_DIC_dCant_temp <- dCant_DIC_temp_trend %>%
+  group_by(driver) %>%
+  nest() %>%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
+  select(-data) %>%
+  unnest(layer) %>% 
+  ungroup()
+
+acidification_depth_layer_dCant_DIC_surface <- dCant_DIC_surface_trend %>%
   group_by(driver) %>%
   nest() %>%
   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
@@ -615,11 +867,11 @@ climatology_depth_layer <- m_depth_layer(climatology)
 
 ### Incremental changes
 
-#### DIC + dCant (+ temp)
+#### dCant + DIC (interior)
 
 Note: temperature influence was not considered for maps
 
-```{r depth_layer_incremental_change_DIC_dCant_temp}
+```{r depth_layer_incremental_change_dCant_DIC_interior}
 
 # subset DIC_dCant_temp change sections
 
@@ -639,7 +891,7 @@ acidification_depth_layer_DIC_dCant_temp <-
 # create pdf document
 
 pdf(
-  here::here("output/maps_depth_layer_DIC_dCant_changes.pdf"),
+  here::here("output/all_variables/maps_depth_layer_dCant_DIC_changes.pdf"),
   width = 14,
   height = 10
 )
@@ -772,6 +1024,176 @@ rm(acidification_depth_layer_DIC_dCant_temp,
 
 ```
 
+#### dCant + DIC (surface)
+
+Note: temperature influence was not considered for maps
+
+```{r depth_layer_incremental_change_dCant_DIC_surface}
+
+# subset DIC_dCant_temp change sections
+
+acidification_depth_layer_dCant_DIC_surface <-
+  acidification_depth_layer_dCant_DIC_surface %>%
+  filter(driver %in% c("dCant", "DIC surface")) %>% 
+  select(driver:tref,
+         contains("_delta_interval"))
+
+acidification_depth_layer_dCant_DIC_surface <-
+  acidification_depth_layer_dCant_DIC_surface %>%
+  pivot_longer(contains("_delta_interval"),
+               names_to = "variable",
+               values_to = "delta_interval") %>%
+  mutate(variable = str_remove(variable, "_delta_interval"))
+
+depth_layer_low <- acidification_depth_layer_dCant_DIC_surface %>% 
+  distinct(depth) %>% 
+  arrange(depth) %>% 
+  head(1) %>% 
+  pull()
+
+acidification_depth_layer_dCant_DIC_surface <-
+  acidification_depth_layer_dCant_DIC_surface %>%
+  filter(depth == depth_layer_low)
+
+rm(depth_layer_low)
+
+
+# create pdf document
+
+pdf(
+  here::here("output/all_variables/maps_depth_layer_dCant_DIC_surface_changes.pdf"),
+  width = 14,
+  height = 4
+)
+
+# loop over OIA variables
+# print DIC_dCant_temp sections
+
+for (i_var in OIA_variables[-8]) {
+  # i_var <- OIA_variables[4]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_dCant_DIC_surface <-
+    acidification_depth_layer_dCant_DIC_surface %>%
+    filter(variable == i_var) %>% 
+    select(lon, lat, depth, tref, driver, delta_interval)
+
+  # determine endpoints and breaks of color scale
+  
+  low <- i_acidification_depth_layer_dCant_DIC_surface %>%
+    filter(!is.na(delta_interval)) %>%
+    pull(delta_interval) %>%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high <- i_acidification_depth_layer_dCant_DIC_surface %>%
+    filter(!is.na(delta_interval)) %>%
+    pull(delta_interval) %>%
+    quantile(c(quantile_high), names = FALSE)
+  
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  # create maps with absolute values
+  
+  p_depth_layer_dCant <-
+  i_acidification_depth_layer_dCant_DIC_surface %>%
+    filter(driver == "dCant") %>% 
+    p_map_mdim_robinson(
+      dim_col = "depth",
+      dim_row = "tref",
+      var = "delta_interval",
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005,
+    ) &
+    labs(title = "Driver: dCant")
+  
+  p_depth_layer_DIC <-
+  i_acidification_depth_layer_dCant_DIC_surface %>%
+    filter(driver == "DIC surface") %>% 
+    p_map_mdim_robinson(
+      dim_col = "depth",
+      dim_row = "tref",
+      var = "delta_interval",
+      legend_title = i_var,
+      breaks = breaks,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005,
+    ) &
+    labs(title = "Driver: DIC surface")
+      
+  
+  i_delta_acidification_depth_layer_driver <-
+    i_acidification_depth_layer_dCant_DIC_surface %>%
+    arrange(lon, lat, depth) %>%
+    drop_na() %>%
+    pivot_wider(names_from = driver,
+                values_from = delta_interval) %>%
+    mutate(delta_delta_interval = `dCant` - `DIC surface`) %>%
+    select(lon, lat, depth, tref, delta_delta_interval)
+  
+  
+  low <- i_delta_acidification_depth_layer_driver %>%
+    filter(!is.na(delta_delta_interval)) %>%
+    pull(delta_delta_interval) %>%
+    quantile(c(quantile_low), names = FALSE)
+  
+  high <- i_delta_acidification_depth_layer_driver %>%
+    filter(!is.na(delta_delta_interval)) %>%
+    pull(delta_delta_interval) %>%
+    quantile(c(quantile_high), names = FALSE)
+  
+  high_low <- max(abs(c(low,high)))
+  
+  if (high_low != 0) {
+    breaks_divergent_driver <-
+      c(-Inf,
+        seq(-high_low, high_low, length.out = break_numbers),
+        Inf)
+  } else {
+    breaks_divergent_driver <-
+      c(-Inf, 0, Inf)
+  }
+  
+  p_depth_layer_driver <-
+    i_delta_acidification_depth_layer_driver %>% 
+    p_map_mdim_robinson(
+      dim_col = "depth",
+      dim_row = "tref",
+      col = "divergent",
+      var = "delta_delta_interval",
+      legend_title = i_var,
+      breaks = breaks_divergent_driver,
+      dot_size_single = 0.2,
+      dot_size_double = 0.005
+    ) &
+    labs(title = "Driver difference: dCant - DIC surface")
+  
+  print(
+    wrap_plots(
+      p_depth_layer_dCant,
+      p_depth_layer_DIC,
+      p_depth_layer_driver,
+      ncol = 3
+    )
+  )
+  
+}
+
+dev.off()
+
+rm(acidification_depth_layer_dCant_DIC_surface,
+   i_acidification_depth_layer_dCant_DIC_surface,
+   i_delta_acidification_depth_layer_driver,
+   high, low,
+   breaks_divergent_driver,
+   p_depth_layer_dCant,
+   p_depth_layer_DIC,
+   p_depth_layer_driver)
+
+```
+
 #### dCant + temp
 
 ```{r depth_layer_incremental_change_dCant_temp}
@@ -793,7 +1215,7 @@ acidification_depth_layer_dCant_temp <-
 # create pdf document
 
 pdf(
-  here::here("output/maps_depth_layer_dCant_temp_changes.pdf"),
+  here::here("output/all_variables/maps_depth_layer_dCant_temp_changes.pdf"),
   width = 20,
   height = 6
 )
@@ -1031,7 +1453,7 @@ acidification_depth_layer_incremental <-
 # create pdf document
 
 pdf(
-  here::here("output/maps_depth_layer_incremental_changes.pdf"),
+  here::here("output/all_variables/maps_depth_layer_incremental_changes.pdf"),
   width = 14,
   height = 7
 )
@@ -1176,7 +1598,7 @@ acidification_depth_layer_total <-
 # create pdf document
 
 pdf(
-  here::here("output/maps_depth_layer_dCant_total_changes.pdf"),
+  here::here("output/all_variables/maps_depth_layer_dCant_total_changes.pdf"),
   width = 14,
   height = 5
 )
@@ -1262,7 +1684,7 @@ climatology_depth_layer %>%
 # create pdf document
 
 pdf(
-  here::here("output/maps_depth_layer_climatology.pdf"),
+  here::here("output/all_variables/maps_depth_layer_climatology.pdf"),
   width = 14,
   height = 4
 )
@@ -1573,7 +1995,7 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
 
 
 pdf(
-  here::here("output/maps_saturation_horizon_absolute_state.pdf"),
+  here::here("output/all_variables/maps_saturation_horizon_absolute_state.pdf"),
   width = 10,
   height = 8
 )
@@ -1599,7 +2021,7 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
 dev.off()
 
 pdf(
-  here::here("output/maps_saturation_horizon_total_changes.pdf"),
+  here::here("output/all_variables/maps_saturation_horizon_total_changes.pdf"),
   width = 10,
   height = 6
 )
@@ -1638,7 +2060,7 @@ dev.off()
 
 
 pdf(
-  here::here("output/maps_saturation_horizon_changes.pdf"),
+  here::here("output/all_variables/maps_saturation_horizon_changes.pdf"),
   width = 10,
   height = 6
 )
@@ -1739,7 +2161,7 @@ acidification_volume <-
 
 
 pdf(
-  here::here("output/saturation_volumes.pdf"),
+  here::here("output/all_variables/saturation_volumes.pdf"),
   width = 10,
   height = 8
 )
@@ -1839,7 +2261,7 @@ acidification_zonal_dCant_temp <-
 # create pdf document
 
 pdf(
-  here::here("output/zonal_mean_sections_dCant_temp_changes.pdf"),
+  here::here("output/all_variables/zonal_mean_sections_dCant_temp_changes.pdf"),
   width = 20,
   height = 6
 )
@@ -2013,7 +2435,7 @@ acidification_zonal_incremental <-
 # create pdf document
 
 pdf(
-  here::here("output/zonal_mean_sections_incremental_changes.pdf"),
+  here::here("output/all_variables/zonal_mean_sections_incremental_changes.pdf"),
   width = 12,
   height = 8
 )
@@ -2161,7 +2583,7 @@ acidification_zonal_total <-
 # create pdf document
 
 pdf(
-  here::here("output/zonal_mean_sections_total_changes.pdf"),
+  here::here("output/all_variables/zonal_mean_sections_total_changes.pdf"),
   width = 10,
   height = 8
 )
@@ -2278,7 +2700,7 @@ acidification_zonal_buffer_total <-
 # create pdf document
 
 pdf(
-  here::here("output/zonal_mean_sections_total_changes_buffer.pdf"),
+  here::here("output/all_variables/zonal_mean_sections_total_changes_buffer.pdf"),
   width = 10,
   height = 8
 )
@@ -2392,7 +2814,7 @@ acidification_zonal_absolute <-
 # create pdf document
 
 pdf(
-  here::here("output/zonal_mean_sections_absolute_state.pdf"),
+  here::here("output/all_variables/zonal_mean_sections_absolute_state.pdf"),
   width = 8,
   height = 8
 )
@@ -2505,7 +2927,7 @@ acidification_zonal_buffer_absolute <-
 # create pdf document
 
 pdf(
-  here::here("output/zonal_mean_sections_absolute_state_buffer.pdf"),
+  here::here("output/all_variables/zonal_mean_sections_absolute_state_buffer.pdf"),
   width = 8,
   height = 8
 )
@@ -2670,7 +3092,7 @@ acidification_global_section_incremental <-
 # create pdf document
 
 pdf(
-  here::here("output/global_sections_incremental_changes.pdf"),
+  here::here("output/all_variables/global_sections_incremental_changes.pdf"),
   width = 10,
   height = 12
 )
@@ -2808,7 +3230,7 @@ acidification_global_section_total <-
 # create pdf document
 
 pdf(
-  here::here("output/global_sections_total_changes.pdf"),
+  here::here("output/all_variables/global_sections_total_changes.pdf"),
   width = 10,
   height = 12
 )
@@ -2928,7 +3350,7 @@ acidification_global_section_absolute <-
 # create pdf document
 
 pdf(
-  here::here("output/global_sections_absolute_state.pdf"),
+  here::here("output/all_variables/global_sections_absolute_state.pdf"),
   width = 10,
   height = 16
 )
@@ -3185,7 +3607,7 @@ dCant_temp_profiles <- dCant_temp_profiles %>%
 
 DIC_dCant_temp_profiles <-
   full_join(basinmask,
-            DIC_dCant_temp_trend)
+            dCant_DIC_temp_trend)
 
 # scale values to surface area
 
@@ -3336,7 +3758,7 @@ DIC_dCant_temp_profiles <- DIC_dCant_temp_profiles %>%
 # create pdf document
 
 pdf(
-  here::here("output/profiles_DIC_dCant_temp_changes.pdf"),
+  here::here("output/all_variables/profiles_DIC_dCant_temp_changes.pdf"),
   width = 14,
   height = 12
 )
@@ -3390,7 +3812,7 @@ DIC_dCant_temp_profiles %>%
   theme_classic() +
   theme(legend.position = "none")
 
-ggsave(  here::here("output/profiles_MOBO-DIC_vs_eMLR_no_fill.jpg"),
+ggsave(  here::here("output/all_variables/profiles_MOBO-DIC_vs_eMLR_no_fill.jpg"),
   width = 5,
   height = 5,
   dpi = 600)
@@ -3442,7 +3864,7 @@ DIC_dCant_temp_profiles %>%
   theme_classic() +
   theme(legend.position = "none")
 
-ggsave(  here::here("output/profiles_MOBO-DIC_vs_eMLR.jpg"),
+ggsave(  here::here("output/all_variables/profiles_MOBO-DIC_vs_eMLR.jpg"),
   width = 5,
   height = 5,
   dpi = 600)
@@ -3480,7 +3902,7 @@ dCant_temp_profiles %>%
 # create pdf document
 
 pdf(
-  here::here("output/profiles_dCant_temp_changes.pdf"),
+  here::here("output/all_variables/profiles_dCant_temp_changes.pdf"),
   width = 14,
   height = 8
 )
@@ -3520,7 +3942,7 @@ rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 # create pdf document
 
 pdf(
-  here::here("output/profiles_incremental_changes.pdf"),
+  here::here("output/all_variables/profiles_incremental_changes.pdf"),
   width = 14,
   height = 8
 )
@@ -3569,7 +3991,7 @@ dev.off()
 # create pdf document
 
 pdf(
-  here::here("output/profiles_total_changes.pdf"),
+  here::here("output/all_variables/profiles_total_changes.pdf"),
   width = 14,
   height = 8
 )
@@ -3669,7 +4091,7 @@ dev.off()
 # create pdf document
 
 pdf(
-  here::here("output/profiles_total_changes_buffer.pdf"),
+  here::here("output/all_variables/profiles_total_changes_buffer.pdf"),
   width = 10,
   height = 8
 )
@@ -3714,7 +4136,7 @@ dev.off()
 # create pdf document
 
 pdf(
-  here::here("output/profiles_absolute_state.pdf"),
+  here::here("output/all_variables/profiles_absolute_state.pdf"),
   width = 14,
   height = 8
 )
@@ -3758,7 +4180,7 @@ dev.off()
 # create pdf document
 
 pdf(
-  here::here("output/profiles_absolute_state_buffer.pdf"),
+  here::here("output/all_variables/profiles_absolute_state_buffer.pdf"),
   width = 10,
   height = 8
 )
