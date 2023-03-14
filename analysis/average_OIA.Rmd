@@ -109,10 +109,15 @@ biome_mask <- biome_mask %>%
   select(-value)
 
 biome_mask %>%
-  ggplot(aes(lon, lat, fill = biome)) +
-  geom_raster() +
-  coord_quickmap(expand = 0) +
-  facet_wrap(~ region)
+  group_split(region) %>%
+  head(2) %>% 
+  map(
+    ~ ggplot(data = .x,
+             aes(lon, lat, fill = biome)) +
+      geom_raster() +
+      coord_quickmap(expand = 0) +
+      facet_wrap( ~ region)
+  )
 
 
 ```
@@ -132,6 +137,7 @@ all_files <- list.files(path_OIA) %>%
 
 ## 2002 climatology
 
+### OIA variables
 
 ```{r climatology_2002_Lauvset}
 
@@ -141,6 +147,17 @@ climatology <-
 
 climatology <- climatology %>%
   select(-c(MLR_basins, Version_ID_group))
+
+```
+
+
+### buffer variables
+
+```{r climatology_2002_Lauvset_buffer}
+
+
+climatology_buffer <-
+  read_csv(paste0(path_OIA, "buffer_DIC_climatology_none.csv"))
 
 ```
 
@@ -861,13 +878,15 @@ acidification_depth_layer_dCant_DIC_surface <- dCant_DIC_surface_trend %>%
   unnest(layer) %>% 
   ungroup()
 
+climatology_buffer_depth_layer <- m_depth_layer(climatology_buffer)
+
 climatology_depth_layer <- m_depth_layer(climatology)
 
 ```
 
-### Incremental changes
+## Incremental changes
 
-#### dCant + DIC (interior)
+### dCant + DIC (interior)
 
 Note: temperature influence was not considered for maps
 
@@ -1024,7 +1043,7 @@ rm(acidification_depth_layer_DIC_dCant_temp,
 
 ```
 
-#### dCant + DIC (surface)
+### dCant + DIC (surface)
 
 Note: temperature influence was not considered for maps
 
@@ -1194,7 +1213,7 @@ rm(acidification_depth_layer_dCant_DIC_surface,
 
 ```
 
-#### dCant + temp
+### dCant + temp
 
 ```{r depth_layer_incremental_change_dCant_temp}
 
@@ -1399,7 +1418,7 @@ rm(acidification_depth_layer_dCant_temp,
 
 ```
 
-#### dCant
+### dCant
 
 ```{r depth_layer_incremental_change, eval=FALSE}
 
@@ -1574,7 +1593,7 @@ rm(acidification_depth_layer_incremental,
 
 ```
 
-### Total changes
+## Total changes
 
 ```{r depth_layer_total_change}
 
@@ -1720,7 +1739,9 @@ rm(acidification_depth_layer_total,
 
 
 
-### Climatology
+## Climatology
+
+### OIA variables
 
 ```{r depth_layer_climatology}
 
@@ -1799,8 +1820,89 @@ rm(climatology_depth_layer,
 
 ```
 
+### buffer variables
 
-## Saturation horizon maps
+```{r depth_layer_climatology_buffer}
+
+# subset total change sections
+
+climatology_buffer_depth_layer <-
+  climatology_buffer_depth_layer %>%
+  select(-contains("_delta"))
+
+
+climatology_buffer_depth_layer <-
+  climatology_buffer_depth_layer %>%
+  pivot_longer(-c(lat:tref),
+               names_to = "variable",
+               values_to = "value")
+
+buffer_variables <- climatology_buffer_depth_layer %>% 
+  distinct(variable) %>% 
+  pull
+
+# create pdf document
+
+pdf(
+  here::here("output/all_variables/maps_depth_layer_climatology_buffer.pdf"),
+  width = 14,
+  height = 4
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in buffer_variables) {
+  # i_var <- OIA_variables[1]
+  
+  # subset OIA variable
+  
+  i_climatology_buffer_depth_layer <-
+    climatology_buffer_depth_layer %>%
+    filter(variable == i_var) %>%
+    select(lon, lat, depth, tref, value)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_climatology_buffer_depth_layer %>%
+    filter(!is.na(value)) %>%
+    pull(value) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_climatology_buffer_depth_layer %>%
+    filter(!is.na(value)) %>%
+    pull(value) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  p_climatology <-
+  i_climatology_buffer_depth_layer %>%
+    p_map_mdim_robinson(
+      dim_col = "depth",
+      dim_row = "tref",
+      var = "value",
+      legend_title = i_var,
+      breaks = breaks
+    )
+  
+  print(
+  p_climatology
+  )
+  
+}
+
+dev.off()
+
+rm(climatology_buffer_depth_layer,
+   i_climatology_buffer_depth_layer,
+   p_climatology,
+   low, high)
+
+```
+
+
+# Saturation horizon maps
 
 ```{r compute_saturation_horizon_maps}
 
@@ -2255,9 +2357,9 @@ rm(acidification_saturation_horizon,
 ```
 
 
-## Zonal sections
+# Zonal sections
 
-### Computation
+## Computation
 
 
 ```{r compute_zonal_mean_sections}
@@ -2303,9 +2405,9 @@ acidification_zonal_buffer <- buffer_trend %>%
 ```
 
 
-### Incremental changes
+## Incremental changes
 
-#### dCant + Temperature
+### dCant + Temperature
 
 ```{r zonal_dcant_temp_change}
 
@@ -2438,7 +2540,7 @@ rm(acidification_zonal_dCant_temp)
 
 ```
 
-#### dCant
+### dCant
 
 ```{r zonal_incremental_change, eval=FALSE}
 
@@ -2615,7 +2717,7 @@ rm(acidification_zonal_incremental,
 
 ```
 
-### Total changes
+## Total changes
 
 
 ```{r zonal_total_change}
@@ -2851,7 +2953,7 @@ rm(acidification_zonal_buffer_total,
 ```
 
 
-### Absolute state
+## Absolute state
 
 ```{r zonal_absolute_state}
 
@@ -3080,9 +3182,9 @@ rm(acidification_zonal_buffer_absolute,
 
 
 
-## Global sections
+# Global sections
 
-### Computation
+## Computation
 
 ```{r compute_global_sections}
 
@@ -3096,7 +3198,7 @@ acidification_global_section <- acidification_trend %>%
 
 ```
 
-### Incremental changes
+## Incremental changes
 
 ```{r global_section_incremental_change, eval=FALSE}
 
@@ -3259,7 +3361,7 @@ rm(acidification_global_section_incremental,
 
 ```
 
-### Total changes
+## Total changes
 
 
 ```{r global_section_total_change}
@@ -3383,7 +3485,7 @@ rm(acidification_global_section_total,
 
 ```
 
-### Absolute state
+## Absolute state
 
 ```{r global_section_absolute_state}
 
@@ -3523,9 +3625,9 @@ rm(acidification_global_section_absolute,
 
 
 
-## Profiles
+# Profiles
 
-### Computation
+## Computation
 
 ```{r compute_mean_profiles_total_acidification}
 
@@ -3590,6 +3692,56 @@ acidification_profiles <- acidification_profiles %>%
   )
 
 acidification_profiles <- acidification_profiles %>%
+  mutate(tref = as.factor(tref))
+
+```
+
+```{r compute_mean_profiles_total_acidification_biomes}
+
+# join with 3D acidification fields
+
+acidification_profiles_biomes <-
+  full_join(biome_mask,
+            acidification_trend %>%
+              select(-c(basin_AIP, contains("temp")))) %>%
+  drop_na() %>%
+  relocate(tref)
+
+# scale values to surface area
+
+acidification_profiles_biomes <- acidification_profiles_biomes %>% 
+  mutate(across(gamma:H_free_delta_interval,
+                ~ . * area))
+
+# calculate regional means
+
+acidification_profiles_biomes_regional <- acidification_profiles_biomes %>%
+  group_by(tref, region, biome, depth) %>%
+  summarise(across(gamma:H_free_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# calculate global means
+
+acidification_profiles_biomes_global <- acidification_profiles_biomes %>%
+  mutate(region = "Global",
+         biome = "Global") %>% 
+  group_by(tref, region, biome, depth) %>%
+  summarise(across(gamma:H_free_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# join global and regional profiles
+  
+acidification_profiles_biomes <-
+  bind_rows(acidification_profiles_biomes_global,
+            acidification_profiles_biomes_regional)
+  
+rm(acidification_profiles_biomes_regional,
+   acidification_profiles_biomes_global)
+
+
+acidification_profiles_biomes <- acidification_profiles_biomes %>%
   mutate(tref = as.factor(tref))
 
 ```
@@ -3789,9 +3941,57 @@ buffer_profiles <- buffer_profiles %>%
 
 ```
 
-### Incremental changes
+```{r compute_mean_profiles_buffer_biome}
 
-#### DIC + dCant + Temperature
+
+# join with 3D acidification fields
+
+buffer_profiles_biome <-
+  full_join(biome_mask,
+            buffer_trend %>% select(-basin_AIP))
+
+# scale values to surface area
+
+buffer_profiles_biome <- buffer_profiles_biome %>% 
+  mutate(across(gammaDIC:tco2_talk_ratio_delta_interval,
+                ~ . * area))
+
+# calculate regional means
+
+buffer_profiles_biome_regional <- buffer_profiles_biome %>%
+  group_by(tref, region, biome, depth) %>%
+  summarise(across(gammaDIC:tco2_talk_ratio_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# calculate global means
+
+buffer_profiles_biome_global <- buffer_profiles_biome %>%
+  mutate(region = "Global",
+         biome = "Global") %>% 
+  group_by(tref, region, biome, depth) %>%
+  summarise(across(gammaDIC:tco2_talk_ratio_delta_interval,
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+# join global and regional profiles
+  
+buffer_profiles_biome <-
+  bind_rows(buffer_profiles_biome_global,
+            buffer_profiles_biome_regional)
+  
+rm(buffer_profiles_biome_regional,
+   buffer_profiles_biome_global)
+
+
+buffer_profiles_biome <- buffer_profiles_biome %>%
+  mutate(tref = as.factor(tref))
+
+```
+
+## Incremental changes
+
+### DIC + dCant + Temperature
 
 ```{r profiles_DIC_dCant_temp_change}
 
@@ -3937,7 +4137,7 @@ rm(DIC_dCant_temp_profiles)
 ```
 
 
-#### dCant + Temperature
+### dCant + Temperature
 
 ```{r profiles_dCant_temp_change}
 
@@ -3994,7 +4194,7 @@ rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 ```
 
 
-#### dCant
+### dCant
 
 ```{r profiles_incremental_change, eval=FALSE}
 
@@ -4042,7 +4242,7 @@ dev.off()
 ```
 
 
-### Total changes
+## Total changes
 
 
 ```{r profiles_total_change}
@@ -4080,6 +4280,40 @@ acidification_profiles %>%
   theme(legend.title = element_blank(),
         axis.title.x = element_blank()) +
   facet_grid(basin ~ variable, scales = "free_x")
+
+
+dev.off()
+
+pdf(
+  here::here("output/all_variables/profiles_total_changes_color.pdf"),
+  width = 14,
+  height = 6
+)
+
+acidification_profiles %>%
+  select(tref,
+         basin,
+         depth,
+         contains("_delta_total")) %>%
+  pivot_longer(contains("_delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  filter(tref != 1800,
+         depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_total")) %>% 
+  ggplot(aes(
+    delta_total,
+    depth,
+    col = basin)) +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path() +
+  labs(y = "Depth (m)",
+       title = "Total change since 1800")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(tref ~ variable, scales = "free_x")
 
 
 
@@ -4145,6 +4379,89 @@ dev.off()
 ```
 
 
+
+```{r profiles_total_change_biome}
+
+# create pdf document
+
+pdf(
+  here::here("output/all_variables/profiles_total_changes_biome.pdf"),
+  width = 14,
+  height = 20
+)
+
+acidification_profiles_biomes %>%
+  select(tref,
+         region,
+         biome,
+         depth,
+         contains("_delta_total")) %>%
+  pivot_longer(contains("_delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  filter(tref != 1800,
+         depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_total")) %>% 
+  ggplot(aes(
+    delta_total,
+    depth,
+    col = tref)) +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path() +
+  scale_color_brewer(palette = "YlGnBu") +
+  labs(y = "Depth (m)",
+       title = "Total change since 1800")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(biome ~ variable, scales = "free_x")
+
+dev.off()
+
+# create pdf document
+
+pdf(
+  here::here("output/all_variables/profiles_total_changes_biome_color.pdf"),
+  width = 14,
+  height = 6
+)
+
+
+acidification_profiles_biomes %>%
+  select(tref,
+         region,
+         biome,
+         depth,
+         contains("_delta_total")) %>%
+  pivot_longer(contains("_delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  filter(tref != 1800,
+         depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_total")) %>% 
+  ggplot(aes(
+    delta_total,
+    depth,
+    col = biome)) +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path() +
+  labs(y = "Depth (m)",
+       title = "Total change since 1800")+
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(tref ~ variable, scales = "free_x")
+
+
+
+dev.off()
+
+
+```
+
+
 ```{r profiles_total_change_buffer}
 
 # create pdf document
@@ -4187,7 +4504,7 @@ dev.off()
 
 ```
 
-### Absolute state
+## Absolute state
 
 ```{r profiles_absolute_state}
 
@@ -4231,6 +4548,7 @@ dev.off()
 
 ```
 
+## buffer
 
 
 ```{r profiles_absolute_state_buffer}
@@ -4276,7 +4594,82 @@ dev.off()
 
 
 
-# Write ouput
+```{r profiles_absolute_state_buffer_biome}
+
+
+# create pdf document
+
+pdf(
+  here::here("output/all_variables/profiles_absolute_state_buffer_biome.pdf"),
+  width = 10,
+  height = 20
+)
+
+buffer_profiles_biome %>%
+  select(tref,
+         region,
+         biome,
+         depth,
+         gammaDIC:R,
+         tco2_talk_ratio) %>%
+  pivot_longer(-c(tref:depth),
+               names_to = "variable",
+               values_to = "total") %>%
+  filter(depth <= 3000) %>%
+  ggplot(aes(
+    total,
+    depth,
+    col = tref
+  )) +
+  geom_path() +
+  scale_color_brewer(palette = "YlGnBu") +
+  labs(y = "Depth (m)",
+       title = "Absolute state at reference years")+
+  scale_y_reverse() +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(biome ~ variable, scales = "free_x")
+
+dev.off()
+
+pdf(
+  here::here("output/all_variables/profiles_absolute_state_buffer_biome_color.pdf"),
+  width = 10,
+  height = 8
+)
+
+buffer_profiles_biome %>%
+  select(tref,
+         region,
+         biome,
+         depth,
+         gammaDIC:R,
+         tco2_talk_ratio) %>%
+  pivot_longer(-c(tref:depth),
+               names_to = "variable",
+               values_to = "total") %>%
+  filter(depth <= 3000) %>%
+  ggplot(aes(
+    total,
+    depth,
+    col = biome
+  )) +
+  geom_path() +
+  labs(y = "Depth (m)",
+       title = "Absolute state at reference years")+
+  scale_y_reverse() +
+  theme(legend.title = element_blank(),
+        axis.title.x = element_blank()) +
+  facet_grid(tref ~ variable, scales = "free_x")
+
+dev.off()
+
+
+```
+
+
+
+Write ouput
 
 ```{r write_output_files, eval=FALSE}
 
