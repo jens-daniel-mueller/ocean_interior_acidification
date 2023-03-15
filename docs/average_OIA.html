@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">14 March, 2023</h4>
+<h4 class="date">16 March, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-14
+<strong>Last updated:</strong> 2023-03-16
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreee3738e22a5eeb287b1d760c24394053e479cc827targetblanke3738e2a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef80b0df2b695bd09dcd09eba1b5a6e5858cff098targetblankf80b0dfa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/e3738e22a5eeb287b1d760c24394053e479cc827" target="_blank">e3738e2</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f80b0df2b695bd09dcd09eba1b5a6e5858cff098" target="_blank">f80b0df</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreee3738e22a5eeb287b1d760c24394053e479cc827targetblanke3738e2a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef80b0df2b695bd09dcd09eba1b5a6e5858cff098targetblankf80b0dfa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/e3738e22a5eeb287b1d760c24394053e479cc827" target="_blank">e3738e2</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f80b0df2b695bd09dcd09eba1b5a6e5858cff098" target="_blank">f80b0df</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -586,9 +586,6 @@ Ignored files:
 Untracked files:
     Untracked:  code/Workflowr_project_managment.R
     Untracked:  code/start_job.R
-
-Unstaged changes:
-    Modified:   analysis/compute_OIA.Rmd
 
 </code></pre>
 <p>
@@ -634,6 +631,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f80b0df2b695bd09dcd09eba1b5a6e5858cff098/analysis/average_OIA.Rmd" target="_blank">f80b0df</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-16
+</td>
+<td>
+biome analysis updated
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/f8d1f8c006a5e9f7c6c809c6d266e16e279569dd/docs/average_OIA.html" target="_blank">f8d1f8c</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1353,9 +1384,32 @@ lon_lim &lt;- ext(bbox_graticules_trans)[c(1,2)]*1.005
 #   )</code></pre>
 <div id="libraries" class="section level1">
 <h1>Libraries</h1>
+</div>
+<div id="read-data" class="section level1">
+<h1>Read data</h1>
+<pre class="r"><code># only path_observations needs to be changed to model
+path_observations &lt;-
+  paste0(path_root, &quot;/observations/&quot;)
+
+path_preprocessing    &lt;-
+  paste0(path_observations, &quot;preprocessing/&quot;)
+
+path_preprocessing_model    &lt;-
+  paste0(path_root, &quot;/model/preprocessing/&quot;)
+
+path_reccap2 &lt;-
+  &quot;/nfs/kryo/work/updata/reccap2/&quot;
+
+path_out &lt;-   paste0(path_observations, &quot;output_publication/&quot;)
+path_OIA &lt;-   &quot;/nfs/kryo/work/jenmueller/ocean_interior_acidification/&quot;</code></pre>
+<div id="basin-mask" class="section level2">
+<h2>Basin mask</h2>
 <pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
   filter(MLR_basins == &quot;5&quot;) %&gt;% 
   select(lon, lat, basin)</code></pre>
+</div>
+<div id="biome-mask" class="section level2">
+<h2>Biome mask</h2>
 <pre class="r"><code>biome_mask &lt;-
   read_ncdf(paste(path_reccap2, &quot;RECCAP2_region_masks_all_v20220620.nc&quot;, sep = &quot;&quot;)) %&gt;%
   as_tibble()
@@ -1371,10 +1425,7 @@ biome_mask &lt;- biome_mask %&gt;%
 biome_mask &lt;- biome_mask %&gt;%
   filter(value != 0)
 
-# biome_mask &lt;- biome_mask %&gt;%
-#   mutate(biome = paste(region, value, sep = &quot;_&quot;)) %&gt;% 
-#   select(lon, lat, biome)
-
+# assign biome label and select biomes
 
 biome_mask &lt;- biome_mask  %&gt;% 
   mutate(biome = case_when(
@@ -1383,41 +1434,35 @@ biome_mask &lt;- biome_mask  %&gt;%
     region == &quot;atlantic&quot; &amp; value == &quot;3&quot; ~ &quot;NA-STPS&quot;,
     region == &quot;atlantic&quot; &amp; value == &quot;4&quot; ~ &quot;AEQU&quot;,
     region == &quot;atlantic&quot; &amp; value == &quot;5&quot; ~ &quot;SA-STPS&quot;,
-    region == &quot;atlantic&quot; &amp; value == &quot;6&quot; ~ &quot;MED&quot;,
+    # region == &quot;atlantic&quot; &amp; value == &quot;6&quot; ~ &quot;MED&quot;,
     region == &quot;pacific&quot; &amp; value == &quot;1&quot; ~ &quot;NP-SPSS&quot;,
-    region == &quot;pacific&quot; &amp; value == &quot;2&quot; ~ &quot;NP-STSS&quot;,
+    # region == &quot;pacific&quot; &amp; value == &quot;2&quot; ~ &quot;NP-STSS&quot;,
     region == &quot;pacific&quot; &amp; value == &quot;3&quot; ~ &quot;NP-STPS&quot;,
-    region == &quot;pacific&quot; &amp; value == &quot;4&quot; ~ &quot;PEQU-E&quot;,
-    region == &quot;pacific&quot; &amp; value == &quot;5&quot; ~ &quot;PEQU-W&quot;,
+    # region == &quot;pacific&quot; &amp; value == &quot;4&quot; ~ &quot;PEQU-W&quot;,
+    region == &quot;pacific&quot; &amp; value == &quot;5&quot; ~ &quot;PEQU-E&quot;,
     region == &quot;pacific&quot; &amp; value == &quot;6&quot; ~ &quot;SP-STSS&quot;,
     region == &quot;indian&quot; &amp; value == &quot;1&quot; ~ &quot;Arabian Sea&quot;,
     region == &quot;indian&quot; &amp; value == &quot;2&quot; ~ &quot;Bay of Bengal&quot;,
     region == &quot;indian&quot; &amp; value == &quot;3&quot; ~ &quot;Equatorial Indian&quot;,
     region == &quot;indian&quot; &amp; value == &quot;4&quot; ~ &quot;Southern Indian&quot;,
-    region == &quot;arctic&quot; &amp; value == &quot;1&quot; ~ &quot;ARCTIC-ICE&quot;,
-    region == &quot;arctic&quot; &amp; value == &quot;2&quot; ~ &quot;NP-ICE&quot;,
-    region == &quot;arctic&quot; &amp; value == &quot;3&quot; ~ &quot;NA-ICE&quot;,
-    region == &quot;arctic&quot; &amp; value == &quot;4&quot; ~ &quot;Barents&quot;,
+    # region == &quot;arctic&quot; &amp; value == &quot;1&quot; ~ &quot;ARCTIC-ICE&quot;,
+    # region == &quot;arctic&quot; &amp; value == &quot;2&quot; ~ &quot;NP-ICE&quot;,
+    # region == &quot;arctic&quot; &amp; value == &quot;3&quot; ~ &quot;NA-ICE&quot;,
+    # region == &quot;arctic&quot; &amp; value == &quot;4&quot; ~ &quot;Barents&quot;,
     region == &quot;southern&quot; &amp; value == &quot;1&quot; ~ &quot;STSS&quot;,
     region == &quot;southern&quot; &amp; value == &quot;2&quot; ~ &quot;SPSS&quot;,
-    region == &quot;southern&quot; &amp; value == &quot;3&quot; ~ &quot;ICE&quot;,
+    # region == &quot;southern&quot; &amp; value == &quot;3&quot; ~ &quot;ICE&quot;,
     TRUE ~ &quot;other&quot;
   ))
 
 biome_mask &lt;- biome_mask %&gt;% 
+  filter(biome != &quot;other&quot;) %&gt;% 
   select(-value)
 
 biome_mask %&gt;%
-  group_split(region) %&gt;%
-  head(2) %&gt;% 
-  map(
-    ~ ggplot(data = .x,
-             aes(lon, lat, fill = biome)) +
-      geom_raster() +
-      coord_quickmap(expand = 0) +
-      facet_wrap( ~ region)
-  )</code></pre>
-<pre><code>[[1]]</code></pre>
+  ggplot(aes(lon, lat, fill = biome)) +
+  geom_raster() +
+  coord_quickmap(expand = 0)</code></pre>
 <p><img src="figure/average_OIA.Rmd/read_biome_mask-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_biome_mask-1">
@@ -1443,6 +1488,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f8d1f8c006a5e9f7c6c809c6d266e16e279569dd/docs/figure/average_OIA.Rmd/read_biome_mask-1.png" target="_blank">f8d1f8c</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-14
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/2facf75f7a83e9161c5eb95fdcc5f2b759be9ae6/docs/figure/average_OIA.Rmd/read_biome_mask-1.png" target="_blank">2facf75</a>
 </td>
 <td>
@@ -1456,12 +1512,69 @@ jens-daniel-mueller
 </table>
 </div>
 </div>
+<pre class="r"><code>biome_mask %&gt;%
+  group_split(region) %&gt;%
+  # head(4) %&gt;%
+  map(
+    ~ ggplot() +
+      geom_raster(data = biome_mask %&gt;% distinct(lon, lat),
+                  aes(lon, lat),
+                  fill = &quot;grey80&quot;) +
+      geom_raster(data = .x,
+                  aes(lon, lat, fill = biome)) +
+      scale_fill_vibrant() +
+      coord_quickmap(expand = 0, ylim = c(-78,65)) +
+      facet_wrap( ~ region)
+  )</code></pre>
+<pre><code>[[1]]</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_biome_mask-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_biome_mask-2">
+Past versions of read_biome_mask-2.png
+</button>
+</p>
+<div id="fig-read_biome_mask-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f8d1f8c006a5e9f7c6c809c6d266e16e279569dd/docs/figure/average_OIA.Rmd/read_biome_mask-2.png" target="_blank">f8d1f8c</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre><code>
 [[2]]</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_biome_mask-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/average_OIA.Rmd/read_biome_mask-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>
+[[3]]</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_biome_mask-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre><code>
+[[4]]</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_biome_mask-5.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
-<div id="read-data" class="section level1">
-<h1>Read data</h1>
 <div id="list-of-files" class="section level2">
 <h2>List of files</h2>
 <pre class="r"><code>all_files &lt;- list.files(path_OIA) %&gt;% 
@@ -1479,28 +1592,39 @@ climatology &lt;- climatology %&gt;%
 </div>
 <div id="buffer-variables" class="section level3">
 <h3>buffer variables</h3>
-<pre class="r"><code>climatology_buffer &lt;-
+<pre class="r"><code>buffer_climatology &lt;-
   read_csv(paste0(path_OIA, &quot;buffer_DIC_climatology_none.csv&quot;))</code></pre>
 </div>
 </div>
-<div id="dcant" class="section level2">
-<h2>dCant</h2>
+<div id="acidification-estimates" class="section level2">
+<h2>Acidification estimates</h2>
+<div id="dcant-driver" class="section level3">
+<h3>dCant driver</h3>
 <pre class="r"><code>acidification_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_Standard case_3.csv&quot;))
 
 acidification_trend &lt;- acidification_trend %&gt;% 
+  select(-c(MLR_basins, Version_ID_group))</code></pre>
+<div id="buffer-trends" class="section level4">
+<h4>Buffer trends</h4>
+<pre class="r"><code>buffer_trend &lt;-
+  read_csv(paste0(path_OIA, &quot;buffer_Standard case_3.csv&quot;))
+
+buffer_trend &lt;- buffer_trend %&gt;%
   select(-c(MLR_basins, Version_ID_group))
 
-OIA_variables &lt;- 
-  acidification_trend %&gt;%
-  select(contains(&quot;delta_total&quot;)) %&gt;% 
-  names() %&gt;% 
-  str_remove(&quot;_delta_total&quot;)
+# merge tco2-talk-ratio into buffer variables
 
-OIA_variables &lt;- OIA_variables[-c(3,4,6,7)]</code></pre>
+buffer_trend &lt;-
+  full_join(
+    buffer_trend,
+    acidification_trend %&gt;% select(lon, lat, depth, tref, basin_AIP,
+                                   contains(&quot;tco2_talk&quot;))
+  )</code></pre>
 </div>
-<div id="temperature-driver" class="section level2">
-<h2>Temperature driver</h2>
+</div>
+<div id="temperature-driver" class="section level3">
+<h3>Temperature driver</h3>
 <pre class="r"><code>temperature_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_dCant + temp_3.csv&quot;))
 
@@ -1549,10 +1673,10 @@ rm(temperature_trend,
    dCant_trend,
    dCant_temp_trend_depth_grid)</code></pre>
 </div>
-<div id="dic-driver" class="section level2">
-<h2>DIC driver</h2>
-<div id="interior-mobo-dic" class="section level3">
-<h3>Interior (MOBO-DIC)</h3>
+<div id="dic-driver" class="section level3">
+<h3>DIC driver</h3>
+<div id="interior-mobo-dic" class="section level4">
+<h4>Interior (MOBO-DIC)</h4>
 <pre class="r"><code>DIC_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_DIC_3.csv&quot;))
 
@@ -1637,8 +1761,8 @@ rm(
   dCant_DIC_temp_trend_depth_grid
 )</code></pre>
 </div>
-<div id="surface-oceansoda" class="section level3">
-<h3>Surface (OceanSODA)</h3>
+<div id="surface-oceansoda" class="section level4">
+<h4>Surface (OceanSODA)</h4>
 <pre class="r"><code>DIC_surface_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_OceanSODA DIC_3.csv&quot;))
 
@@ -1688,28 +1812,6 @@ rm(DIC_surface_trend,
    dCant_DIC_surface_trend_depth_grid)</code></pre>
 </div>
 </div>
-<div id="buffer-changes" class="section level2">
-<h2>Buffer changes</h2>
-<pre class="r"><code>buffer_trend &lt;-
-  read_csv(paste0(path_OIA, &quot;buffer_Standard case_3.csv&quot;))
-
-buffer_trend &lt;- buffer_trend %&gt;%
-  select(-c(MLR_basins, Version_ID_group))
-
-# merge tco2-talk-ratio into buffer variables
-
-buffer_trend &lt;-
-  full_join(
-    buffer_trend,
-    acidification_trend %&gt;% select(lon, lat, depth, tref, basin_AIP,
-                                   contains(&quot;tco2_talk&quot;))
-  )
-
-buffer_variables &lt;-
-  buffer_trend %&gt;%
-  select(contains(&quot;delta_total&quot;)) %&gt;%
-  names() %&gt;%
-  str_remove(&quot;_delta_total&quot;)</code></pre>
 </div>
 <div id="time-series-stations" class="section level2">
 <h2>Time series stations</h2>
@@ -1745,66 +1847,16 @@ TS_product_consistent &lt;- TS_product_consistent %&gt;%
 
 TS_product_consistent %&gt;% 
   count(station) %&gt;% 
-  arrange(-n)</code></pre>
-<pre><code># A tibble: 12 × 2
-   station         n
-   &lt;chr&gt;       &lt;int&gt;
- 1 ALOHA        5911
- 2 OWSM         2053
- 3 IcelandSea   1824
- 4 KNOT         1609
- 5 IrmingerSea  1477
- 6 K2           1175
- 7 DYFAMED      1130
- 8 CVOO          346
- 9 Munida        220
-10 RADCOR_2       95
-11 RADCOR_4       60
-12 RADCOR_3       35</code></pre>
-<pre class="r"><code>TS_product_consistent %&gt;% 
+  arrange(-n)
+
+
+TS_product_consistent %&gt;% 
   distinct(station, lon, lat) %&gt;% 
   ggplot(aes(lon, lat, col = station)) +
   geom_point() +
-  coord_quickmap()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-1">
-Past versions of read_time_series_stations-1.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba34d33b2d35466ae8b36369e47d2a008fcc0370/docs/figure/average_OIA.Rmd/read_time_series_stations-1.png" target="_blank">ba34d33</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-13
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>library(lubridate)
+  coord_quickmap()
+
+library(lubridate)
 
 TS_product_consistent &lt;-
 TS_product_consistent %&gt;% 
@@ -1816,91 +1868,38 @@ TS_product_consistent %&gt;%
          depth &lt; 10) %&gt;% 
   ggplot(aes(date, tco2)) +
   geom_point() +
-  geom_path()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-2">
-Past versions of read_time_series_stations-2.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba34d33b2d35466ae8b36369e47d2a008fcc0370/docs/figure/average_OIA.Rmd/read_time_series_stations-2.png" target="_blank">ba34d33</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-13
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>TS_product_consistent %&gt;% 
+  geom_path()
+
+TS_product_consistent %&gt;% 
   filter(station == &quot;ALOHA&quot;,
          depth &lt; 2000) %&gt;% 
   ggplot(aes(tco2, depth, col = date)) +
   geom_point() +
   scale_color_viridis_c(trans = &quot;date&quot;) +
-  scale_y_reverse()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-3">
-Past versions of read_time_series_stations-3.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba34d33b2d35466ae8b36369e47d2a008fcc0370/docs/figure/average_OIA.Rmd/read_time_series_stations-3.png" target="_blank">ba34d33</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-13
-</td>
-</tr>
-</tbody>
-</table>
+  scale_y_reverse()
+
+rm(TS_product_consistent)</code></pre>
 </div>
 </div>
-<pre class="r"><code>rm(TS_product_consistent)</code></pre>
+<div id="define-key-variables" class="section level1">
+<h1>Define key variables</h1>
+<div id="oia" class="section level2">
+<h2>OIA</h2>
+<pre class="r"><code>OIA_variables &lt;- 
+  acidification_trend %&gt;%
+  select(contains(&quot;delta_total&quot;)) %&gt;% 
+  names() %&gt;% 
+  str_remove(&quot;_delta_total&quot;)
+
+OIA_variables &lt;- OIA_variables[-c(3,4,6,7)]</code></pre>
+</div>
+<div id="buffer" class="section level2">
+<h2>buffer</h2>
+<pre class="r"><code>buffer_variables &lt;-
+  buffer_trend %&gt;%
+  select(contains(&quot;delta_total&quot;)) %&gt;%
+  names() %&gt;%
+  str_remove(&quot;_delta_total&quot;)</code></pre>
 </div>
 </div>
 <div id="uncertainty-determination" class="section level1">
@@ -2416,7 +2415,7 @@ acidification_depth_layer_dCant_DIC_surface &lt;- dCant_DIC_surface_trend %&gt;%
   unnest(layer) %&gt;% 
   ungroup()
 
-climatology_buffer_depth_layer &lt;- m_depth_layer(climatology_buffer)
+buffer_climatology_depth_layer &lt;- m_depth_layer(buffer_climatology)
 
 climatology_depth_layer &lt;- m_depth_layer(climatology)</code></pre>
 </div>
@@ -2741,8 +2740,8 @@ dev.off()</code></pre>
    p_depth_layer_DIC,
    p_depth_layer_driver)</code></pre>
 </div>
-<div id="dcant-temp" class="section level3">
-<h3>dCant + temp</h3>
+<div id="dcant-temperature" class="section level3">
+<h3>dCant + Temperature</h3>
 <pre class="r"><code># subset dCant_temp change sections
 
 acidification_depth_layer_dCant_temp &lt;-
@@ -2943,7 +2942,7 @@ dev.off()</code></pre>
    p_depth_layer_decadal,
    p_depth_layer_driver)</code></pre>
 </div>
-<div id="dcant-1" class="section level3">
+<div id="dcant" class="section level3">
 <h3>dCant</h3>
 <pre class="r"><code># subset incremental change sections
 
@@ -3431,25 +3430,25 @@ dev.off()</code></pre>
 <h3>buffer variables</h3>
 <pre class="r"><code># subset total change sections
 
-climatology_buffer_depth_layer &lt;-
-  climatology_buffer_depth_layer %&gt;%
+buffer_climatology_depth_layer &lt;-
+  buffer_climatology_depth_layer %&gt;%
   select(-contains(&quot;_delta&quot;))
 
 
-climatology_buffer_depth_layer &lt;-
-  climatology_buffer_depth_layer %&gt;%
+buffer_climatology_depth_layer &lt;-
+  buffer_climatology_depth_layer %&gt;%
   pivot_longer(-c(lat:tref),
                names_to = &quot;variable&quot;,
                values_to = &quot;value&quot;)
 
-buffer_variables &lt;- climatology_buffer_depth_layer %&gt;% 
+buffer_variables &lt;- buffer_climatology_depth_layer %&gt;% 
   distinct(variable) %&gt;% 
   pull
 
 # create pdf document
 
 pdf(
-  here::here(&quot;output/all_variables/maps_depth_layer_climatology_buffer.pdf&quot;),
+  here::here(&quot;output/all_variables/maps_depth_layer_buffer_climatology.pdf&quot;),
   width = 14,
   height = 4
 )
@@ -3462,19 +3461,19 @@ for (i_var in buffer_variables) {
   
   # subset OIA variable
   
-  i_climatology_buffer_depth_layer &lt;-
-    climatology_buffer_depth_layer %&gt;%
+  i_buffer_climatology_depth_layer &lt;-
+    buffer_climatology_depth_layer %&gt;%
     filter(variable == i_var) %&gt;%
     select(lon, lat, depth, tref, value)
   
   # determine endpoints and breaks of color scale
   
-  low &lt;- i_climatology_buffer_depth_layer %&gt;%
+  low &lt;- i_buffer_climatology_depth_layer %&gt;%
     filter(!is.na(value)) %&gt;%
     pull(value) %&gt;%
     quantile(c(quantile_low), names = FALSE)
 
-  high &lt;- i_climatology_buffer_depth_layer %&gt;%
+  high &lt;- i_buffer_climatology_depth_layer %&gt;%
     filter(!is.na(value)) %&gt;%
     pull(value) %&gt;%
     quantile(c(quantile_high), names = FALSE)
@@ -3482,7 +3481,7 @@ for (i_var in buffer_variables) {
   breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
   
   p_climatology &lt;-
-  i_climatology_buffer_depth_layer %&gt;%
+  i_buffer_climatology_depth_layer %&gt;%
     p_map_mdim_robinson(
       dim_col = &quot;depth&quot;,
       dim_row = &quot;tref&quot;,
@@ -3500,8 +3499,8 @@ for (i_var in buffer_variables) {
 dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
-<pre class="r"><code>rm(climatology_buffer_depth_layer,
-   i_climatology_buffer_depth_layer,
+<pre class="r"><code>rm(buffer_climatology_depth_layer,
+   i_buffer_climatology_depth_layer,
    p_climatology,
    low, high)</code></pre>
 </div>
@@ -4061,7 +4060,7 @@ print(
 </div>
 <div id="incremental-changes-1" class="section level2">
 <h2>Incremental changes</h2>
-<div id="dcant-temperature" class="section level3">
+<div id="dcant-temperature-1" class="section level3">
 <h3>dCant + Temperature</h3>
 <pre class="r"><code>acidification_zonal_dCant_temp &lt;-
   acidification_zonal_dCant_temp %&gt;%
@@ -4191,7 +4190,7 @@ dev.off()</code></pre>
   2 </code></pre>
 <pre class="r"><code>rm(acidification_zonal_dCant_temp)</code></pre>
 </div>
-<div id="dcant-2" class="section level3">
+<div id="dcant-1" class="section level3">
 <h3>dCant</h3>
 <pre class="r"><code># subset incremental change sections
 
@@ -5781,7 +5780,7 @@ jens-daniel-mueller
 
 rm(DIC_dCant_temp_profiles)</code></pre>
 </div>
-<div id="dcant-temperature-1" class="section level3">
+<div id="dcant-temperature-2" class="section level3">
 <h3>dCant + Temperature</h3>
 <pre class="r"><code>dCant_temp_profiles &lt;-
   dCant_temp_profiles %&gt;%
@@ -5832,7 +5831,7 @@ dev.off()</code></pre>
   2 </code></pre>
 <pre class="r"><code>rm(dCant_temp_profiles, dCant_temp_profiles_min_max)</code></pre>
 </div>
-<div id="dcant-3" class="section level3">
+<div id="dcant-2" class="section level3">
 <h3>dCant</h3>
 <pre class="r"><code># create pdf document
 
@@ -5877,6 +5876,8 @@ dev.off()</code></pre>
 </div>
 <div id="total-changes-3" class="section level2">
 <h2>Total changes</h2>
+<div id="basins" class="section level3">
+<h3>Basins</h3>
 <pre class="r"><code># create pdf document
 
 pdf(
@@ -6006,6 +6007,9 @@ dev.off()</code></pre>
 #   theme(legend.title = element_blank(),
 #         axis.title.x = element_blank()) +
 #   facet_grid(basin ~ variable, scales = &quot;free_x&quot;)</code></pre>
+</div>
+<div id="biomes" class="section level3">
+<h3>Biomes</h3>
 <pre class="r"><code># create pdf document
 
 pdf(
@@ -6124,6 +6128,7 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 </div>
+</div>
 <div id="absolute-state-2" class="section level2">
 <h2>Absolute state</h2>
 <pre class="r"><code># create pdf document
@@ -6164,8 +6169,10 @@ dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
 </div>
-<div id="buffer" class="section level2">
-<h2>buffer</h2>
+<div id="buffer-1" class="section level2">
+<h2>Buffer</h2>
+<div id="basins-1" class="section level3">
+<h3>Basins</h3>
 <pre class="r"><code># create pdf document
 
 pdf(
@@ -6202,6 +6209,9 @@ buffer_profiles %&gt;%
 dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
+</div>
+<div id="biomes-1" class="section level3">
+<h3>Biomes</h3>
 <pre class="r"><code># create pdf document
 
 pdf(
@@ -6317,53 +6327,53 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] lubridate_1.9.0     timechange_0.1.1    seacarb_3.3.1      
- [4] SolveSAPHE_2.1.0    oce_1.7-10          gsw_1.1-1          
- [7] stars_0.6-0         abind_1.4-5         ggh4x_0.2.3        
-[10] khroma_1.9.0        terra_1.6-41        sf_1.0-9           
-[13] rnaturalearth_0.1.0 geomtextpath_0.1.1  colorspace_2.0-3   
-[16] marelac_2.1.10      shape_1.4.6         ggforce_0.4.1      
-[19] metR_0.13.0         scico_1.3.1         patchwork_1.1.2    
-[22] collapse_1.8.9      forcats_0.5.2       stringr_1.4.1      
-[25] dplyr_1.0.10        purrr_0.3.5         readr_2.1.3        
-[28] tidyr_1.2.1         tibble_3.1.8        ggplot2_3.4.0      
-[31] tidyverse_1.3.2     workflowr_1.7.0    
+ [1] seacarb_3.3.1       SolveSAPHE_2.1.0    oce_1.7-10         
+ [4] gsw_1.1-1           stars_0.6-0         abind_1.4-5        
+ [7] ggh4x_0.2.3         khroma_1.9.0        terra_1.6-41       
+[10] sf_1.0-9            rnaturalearth_0.1.0 geomtextpath_0.1.1 
+[13] colorspace_2.0-3    marelac_2.1.10      shape_1.4.6        
+[16] ggforce_0.4.1       metR_0.13.0         scico_1.3.1        
+[19] patchwork_1.1.2     collapse_1.8.9      forcats_0.5.2      
+[22] stringr_1.4.1       dplyr_1.0.10        purrr_0.3.5        
+[25] readr_2.1.3         tidyr_1.2.1         tibble_3.1.8       
+[28] ggplot2_3.4.0       tidyverse_1.3.2     workflowr_1.7.0    
 
 loaded via a namespace (and not attached):
   [1] googledrive_2.0.0       ellipsis_0.3.2          class_7.3-20           
   [4] rprojroot_2.0.3         fs_1.5.2                rstudioapi_0.14        
   [7] proxy_0.4-27            farver_2.1.1            bit64_4.0.5            
- [10] fansi_1.0.3             xml2_1.3.3              codetools_0.2-18       
- [13] cachem_1.0.6            knitr_1.41              polyclip_1.10-4        
- [16] jsonlite_1.8.3          broom_1.0.1             dbplyr_2.2.1           
- [19] compiler_4.2.2          httr_1.4.4              backports_1.4.1        
- [22] assertthat_0.2.1        fastmap_1.1.0           gargle_1.2.1           
- [25] cli_3.4.1               later_1.3.0             tweenr_2.0.2           
- [28] htmltools_0.5.3         tools_4.2.2             rnaturalearthdata_0.1.0
- [31] gtable_0.3.1            glue_1.6.2              Rcpp_1.0.9             
- [34] RNetCDF_2.6-1           cellranger_1.1.0        jquerylib_0.1.4        
- [37] vctrs_0.5.1             lwgeom_0.2-10           xfun_0.35              
- [40] ps_1.7.2                rvest_1.0.3             ncmeta_0.3.5           
- [43] lifecycle_1.0.3         googlesheets4_1.0.1     getPass_0.2-2          
- [46] MASS_7.3-58.1           scales_1.2.1            vroom_1.6.0            
- [49] ragg_1.2.4              hms_1.1.2               promises_1.2.0.1       
- [52] parallel_4.2.2          RColorBrewer_1.1-3      yaml_2.3.6             
- [55] memoise_2.0.1           sass_0.4.4              stringi_1.7.8          
- [58] highr_0.9               e1071_1.7-12            checkmate_2.1.0        
- [61] rlang_1.0.6             pkgconfig_2.0.3         systemfonts_1.0.4      
- [64] evaluate_0.18           lattice_0.20-45         labeling_0.4.2         
- [67] bit_4.0.5               processx_3.8.0          tidyselect_1.2.0       
- [70] here_1.0.1              magrittr_2.0.3          R6_2.5.1               
- [73] generics_0.1.3          DBI_1.1.3               pillar_1.8.1           
- [76] haven_2.5.1             whisker_0.4             withr_2.5.0            
- [79] units_0.8-0             sp_1.5-1                modelr_0.1.10          
- [82] crayon_1.5.2            KernSmooth_2.23-20      utf8_1.2.2             
- [85] tzdb_0.3.0              rmarkdown_2.18          isoband_0.2.6          
- [88] grid_4.2.2              readxl_1.4.1            data.table_1.14.6      
- [91] callr_3.7.3             git2r_0.30.1            reprex_2.0.2           
- [94] digest_0.6.30           classInt_0.4-8          httpuv_1.6.6           
- [97] textshaping_0.3.6       munsell_0.5.0           viridisLite_0.4.1      
-[100] bslib_0.4.1            </code></pre>
+ [10] fansi_1.0.3             lubridate_1.9.0         xml2_1.3.3             
+ [13] codetools_0.2-18        cachem_1.0.6            knitr_1.41             
+ [16] polyclip_1.10-4         jsonlite_1.8.3          broom_1.0.1            
+ [19] dbplyr_2.2.1            compiler_4.2.2          httr_1.4.4             
+ [22] backports_1.4.1         assertthat_0.2.1        fastmap_1.1.0          
+ [25] gargle_1.2.1            cli_3.4.1               later_1.3.0            
+ [28] tweenr_2.0.2            htmltools_0.5.3         tools_4.2.2            
+ [31] rnaturalearthdata_0.1.0 gtable_0.3.1            glue_1.6.2             
+ [34] Rcpp_1.0.9              RNetCDF_2.6-1           cellranger_1.1.0       
+ [37] jquerylib_0.1.4         vctrs_0.5.1             lwgeom_0.2-10          
+ [40] xfun_0.35               ps_1.7.2                rvest_1.0.3            
+ [43] ncmeta_0.3.5            timechange_0.1.1        lifecycle_1.0.3        
+ [46] googlesheets4_1.0.1     getPass_0.2-2           MASS_7.3-58.1          
+ [49] scales_1.2.1            vroom_1.6.0             ragg_1.2.4             
+ [52] hms_1.1.2               promises_1.2.0.1        parallel_4.2.2         
+ [55] RColorBrewer_1.1-3      yaml_2.3.6              memoise_2.0.1          
+ [58] sass_0.4.4              stringi_1.7.8           highr_0.9              
+ [61] e1071_1.7-12            checkmate_2.1.0         rlang_1.0.6            
+ [64] pkgconfig_2.0.3         systemfonts_1.0.4       evaluate_0.18          
+ [67] lattice_0.20-45         labeling_0.4.2          bit_4.0.5              
+ [70] processx_3.8.0          tidyselect_1.2.0        here_1.0.1             
+ [73] magrittr_2.0.3          R6_2.5.1                generics_0.1.3         
+ [76] DBI_1.1.3               pillar_1.8.1            haven_2.5.1            
+ [79] whisker_0.4             withr_2.5.0             units_0.8-0            
+ [82] sp_1.5-1                modelr_0.1.10           crayon_1.5.2           
+ [85] KernSmooth_2.23-20      utf8_1.2.2              tzdb_0.3.0             
+ [88] rmarkdown_2.18          isoband_0.2.6           grid_4.2.2             
+ [91] readxl_1.4.1            data.table_1.14.6       callr_3.7.3            
+ [94] git2r_0.30.1            reprex_2.0.2            digest_0.6.30          
+ [97] classInt_0.4-8          httpuv_1.6.6            textshaping_0.3.6      
+[100] munsell_0.5.0           viridisLite_0.4.1       bslib_0.4.1            </code></pre>
+</div>
 </div>
 </div>
 </div>
