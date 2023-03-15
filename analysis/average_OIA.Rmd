@@ -25,7 +25,9 @@ library(seacarb)
 ```
 
 
-```{r define_paths_to_access_eMLR_files, include = FALSE}
+# Read data
+
+```{r define_paths_to_access_eMLR_files}
 
 # only path_observations needs to be changed to model
 path_observations <-
@@ -46,6 +48,7 @@ path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 
 ```
 
+## Basin mask
 
 ```{r select_basinmask_5}
 
@@ -54,6 +57,8 @@ basinmask <- basinmask %>%
   select(lon, lat, basin)
 
 ```
+
+## Biome mask
 
 ```{r read_biome_mask}
 
@@ -72,10 +77,7 @@ biome_mask <- biome_mask %>%
 biome_mask <- biome_mask %>%
   filter(value != 0)
 
-# biome_mask <- biome_mask %>%
-#   mutate(biome = paste(region, value, sep = "_")) %>% 
-#   select(lon, lat, biome)
-
+# assign biome label and select biomes
 
 biome_mask <- biome_mask  %>% 
   mutate(biome = case_when(
@@ -84,38 +86,49 @@ biome_mask <- biome_mask  %>%
     region == "atlantic" & value == "3" ~ "NA-STPS",
     region == "atlantic" & value == "4" ~ "AEQU",
     region == "atlantic" & value == "5" ~ "SA-STPS",
-    region == "atlantic" & value == "6" ~ "MED",
+    # region == "atlantic" & value == "6" ~ "MED",
     region == "pacific" & value == "1" ~ "NP-SPSS",
-    region == "pacific" & value == "2" ~ "NP-STSS",
+    # region == "pacific" & value == "2" ~ "NP-STSS",
     region == "pacific" & value == "3" ~ "NP-STPS",
-    region == "pacific" & value == "4" ~ "PEQU-E",
-    region == "pacific" & value == "5" ~ "PEQU-W",
+    # region == "pacific" & value == "4" ~ "PEQU-W",
+    region == "pacific" & value == "5" ~ "PEQU-E",
     region == "pacific" & value == "6" ~ "SP-STSS",
     region == "indian" & value == "1" ~ "Arabian Sea",
     region == "indian" & value == "2" ~ "Bay of Bengal",
     region == "indian" & value == "3" ~ "Equatorial Indian",
     region == "indian" & value == "4" ~ "Southern Indian",
-    region == "arctic" & value == "1" ~ "ARCTIC-ICE",
-    region == "arctic" & value == "2" ~ "NP-ICE",
-    region == "arctic" & value == "3" ~ "NA-ICE",
-    region == "arctic" & value == "4" ~ "Barents",
+    # region == "arctic" & value == "1" ~ "ARCTIC-ICE",
+    # region == "arctic" & value == "2" ~ "NP-ICE",
+    # region == "arctic" & value == "3" ~ "NA-ICE",
+    # region == "arctic" & value == "4" ~ "Barents",
     region == "southern" & value == "1" ~ "STSS",
     region == "southern" & value == "2" ~ "SPSS",
-    region == "southern" & value == "3" ~ "ICE",
+    # region == "southern" & value == "3" ~ "ICE",
     TRUE ~ "other"
   ))
 
 biome_mask <- biome_mask %>% 
+  filter(biome != "other") %>% 
   select(-value)
 
 biome_mask %>%
+  ggplot(aes(lon, lat, fill = biome)) +
+  geom_raster() +
+  coord_quickmap(expand = 0)
+
+
+biome_mask %>%
   group_split(region) %>%
-  head(2) %>% 
+  # head(4) %>%
   map(
-    ~ ggplot(data = .x,
-             aes(lon, lat, fill = biome)) +
-      geom_raster() +
-      coord_quickmap(expand = 0) +
+    ~ ggplot() +
+      geom_raster(data = biome_mask %>% distinct(lon, lat),
+                  aes(lon, lat),
+                  fill = "grey80") +
+      geom_raster(data = .x,
+                  aes(lon, lat, fill = biome)) +
+      scale_fill_vibrant() +
+      coord_quickmap(expand = 0, ylim = c(-78,65)) +
       facet_wrap( ~ region)
   )
 
@@ -123,8 +136,6 @@ biome_mask %>%
 ```
 
 
-
-# Read data
 
 ## List of files
 
@@ -153,20 +164,18 @@ climatology <- climatology %>%
 
 ### buffer variables
 
-```{r climatology_2002_Lauvset_buffer}
+```{r buffer_climatology_2002_Lauvset}
 
-
-climatology_buffer <-
+buffer_climatology <-
   read_csv(paste0(path_OIA, "buffer_DIC_climatology_none.csv"))
 
 ```
 
+## Acidification estimates
 
-
-## dCant
+### dCant driver
 
 ```{r read_OIA_data}
-
 
 acidification_trend <-
   read_csv(paste0(path_OIA, "OIA_Standard case_3.csv"))
@@ -174,17 +183,32 @@ acidification_trend <-
 acidification_trend <- acidification_trend %>% 
   select(-c(MLR_basins, Version_ID_group))
 
-OIA_variables <- 
-  acidification_trend %>%
-  select(contains("delta_total")) %>% 
-  names() %>% 
-  str_remove("_delta_total")
+```
 
-OIA_variables <- OIA_variables[-c(3,4,6,7)]
+
+#### Buffer trends
+
+```{r read_buffer_changes}
+
+buffer_trend <-
+  read_csv(paste0(path_OIA, "buffer_Standard case_3.csv"))
+
+buffer_trend <- buffer_trend %>%
+  select(-c(MLR_basins, Version_ID_group))
+
+# merge tco2-talk-ratio into buffer variables
+
+buffer_trend <-
+  full_join(
+    buffer_trend,
+    acidification_trend %>% select(lon, lat, depth, tref, basin_AIP,
+                                   contains("tco2_talk"))
+  )
 
 ```
 
-## Temperature driver
+
+### Temperature driver
 
 ```{r read_OIA_temperature_driven}
 
@@ -238,9 +262,9 @@ rm(temperature_trend,
 
 ```
 
-## DIC driver
+### DIC driver
 
-### Interior (MOBO-DIC)
+#### Interior (MOBO-DIC)
 
 ```{r read_OIA_DIC_driven_interior}
 
@@ -331,7 +355,7 @@ rm(
 
 ```
 
-### Surface (OceanSODA)
+#### Surface (OceanSODA)
 
 ```{r read_OIA_DIC_driven_surface}
 
@@ -385,36 +409,9 @@ rm(DIC_surface_trend,
 
 ```
 
-## Buffer changes
-
-```{r read_buffer_changes}
-
-buffer_trend <-
-  read_csv(paste0(path_OIA, "buffer_Standard case_3.csv"))
-
-buffer_trend <- buffer_trend %>%
-  select(-c(MLR_basins, Version_ID_group))
-
-# merge tco2-talk-ratio into buffer variables
-
-buffer_trend <-
-  full_join(
-    buffer_trend,
-    acidification_trend %>% select(lon, lat, depth, tref, basin_AIP,
-                                   contains("tco2_talk"))
-  )
-
-buffer_variables <-
-  buffer_trend %>%
-  select(contains("delta_total")) %>%
-  names() %>%
-  str_remove("_delta_total")
-
-```
-
 ## Time series stations
 
-```{r read_time_series_stations}
+```{r read_time_series_stations, eval=FALSE}
 
 
 col_names <-
@@ -484,6 +481,34 @@ rm(TS_product_consistent)
 
 ```
 
+# Define key variables
+
+## OIA
+
+```{r OIA_variables}
+
+OIA_variables <- 
+  acidification_trend %>%
+  select(contains("delta_total")) %>% 
+  names() %>% 
+  str_remove("_delta_total")
+
+OIA_variables <- OIA_variables[-c(3,4,6,7)]
+
+
+```
+
+## buffer
+
+```{r buffer_variables}
+
+buffer_variables <-
+  buffer_trend %>%
+  select(contains("delta_total")) %>%
+  names() %>%
+  str_remove("_delta_total")
+
+```
 
 
 # Uncertainty determination
@@ -878,7 +903,7 @@ acidification_depth_layer_dCant_DIC_surface <- dCant_DIC_surface_trend %>%
   unnest(layer) %>% 
   ungroup()
 
-climatology_buffer_depth_layer <- m_depth_layer(climatology_buffer)
+buffer_climatology_depth_layer <- m_depth_layer(buffer_climatology)
 
 climatology_depth_layer <- m_depth_layer(climatology)
 
@@ -1213,7 +1238,7 @@ rm(acidification_depth_layer_dCant_DIC_surface,
 
 ```
 
-### dCant + temp
+### dCant + Temperature
 
 ```{r depth_layer_incremental_change_dCant_temp}
 
@@ -1822,29 +1847,29 @@ rm(climatology_depth_layer,
 
 ### buffer variables
 
-```{r depth_layer_climatology_buffer}
+```{r depth_layer_buffer_climatology}
 
 # subset total change sections
 
-climatology_buffer_depth_layer <-
-  climatology_buffer_depth_layer %>%
+buffer_climatology_depth_layer <-
+  buffer_climatology_depth_layer %>%
   select(-contains("_delta"))
 
 
-climatology_buffer_depth_layer <-
-  climatology_buffer_depth_layer %>%
+buffer_climatology_depth_layer <-
+  buffer_climatology_depth_layer %>%
   pivot_longer(-c(lat:tref),
                names_to = "variable",
                values_to = "value")
 
-buffer_variables <- climatology_buffer_depth_layer %>% 
+buffer_variables <- buffer_climatology_depth_layer %>% 
   distinct(variable) %>% 
   pull
 
 # create pdf document
 
 pdf(
-  here::here("output/all_variables/maps_depth_layer_climatology_buffer.pdf"),
+  here::here("output/all_variables/maps_depth_layer_buffer_climatology.pdf"),
   width = 14,
   height = 4
 )
@@ -1857,19 +1882,19 @@ for (i_var in buffer_variables) {
   
   # subset OIA variable
   
-  i_climatology_buffer_depth_layer <-
-    climatology_buffer_depth_layer %>%
+  i_buffer_climatology_depth_layer <-
+    buffer_climatology_depth_layer %>%
     filter(variable == i_var) %>%
     select(lon, lat, depth, tref, value)
   
   # determine endpoints and breaks of color scale
   
-  low <- i_climatology_buffer_depth_layer %>%
+  low <- i_buffer_climatology_depth_layer %>%
     filter(!is.na(value)) %>%
     pull(value) %>%
     quantile(c(quantile_low), names = FALSE)
 
-  high <- i_climatology_buffer_depth_layer %>%
+  high <- i_buffer_climatology_depth_layer %>%
     filter(!is.na(value)) %>%
     pull(value) %>%
     quantile(c(quantile_high), names = FALSE)
@@ -1877,7 +1902,7 @@ for (i_var in buffer_variables) {
   breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
   
   p_climatology <-
-  i_climatology_buffer_depth_layer %>%
+  i_buffer_climatology_depth_layer %>%
     p_map_mdim_robinson(
       dim_col = "depth",
       dim_row = "tref",
@@ -1894,8 +1919,8 @@ for (i_var in buffer_variables) {
 
 dev.off()
 
-rm(climatology_buffer_depth_layer,
-   i_climatology_buffer_depth_layer,
+rm(buffer_climatology_depth_layer,
+   i_buffer_climatology_depth_layer,
    p_climatology,
    low, high)
 
@@ -4244,6 +4269,7 @@ dev.off()
 
 ## Total changes
 
+### Basins
 
 ```{r profiles_total_change}
 
@@ -4378,6 +4404,7 @@ dev.off()
 
 ```
 
+### Biomes
 
 
 ```{r profiles_total_change_biome}
@@ -4548,8 +4575,9 @@ dev.off()
 
 ```
 
-## buffer
+## Buffer
 
+### Basins
 
 ```{r profiles_absolute_state_buffer}
 
@@ -4592,6 +4620,7 @@ dev.off()
 
 ```
 
+### Biomes
 
 
 ```{r profiles_absolute_state_buffer_biome}
