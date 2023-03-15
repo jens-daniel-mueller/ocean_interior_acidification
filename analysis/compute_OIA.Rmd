@@ -680,27 +680,38 @@ gc()
 
 ```
 
+# Set-up computation
 
+```{r set_up}
 
-
-# Compute acidification trends
-
-```{r compute_acidification_trends}
-
+# table with cases to loop over
 cases <- DIC %>%
   distinct(Version_ID_group, MLR_basins)
 
-cases <- cases %>% 
-  filter(MLR_basins == "none")
+# cases <- cases %>% 
+#   filter(MLR_basins == "none")
 
 # cases <- cases %>% 
 #   filter(MLR_basins == "3") %>% 
 #   slice(-c(2:6))
 
+
+
+# definition of functions to compute incremental and total differences
+
 calc_delta_total <- function(x)
   (x - first(x))
+
 calc_delta_interval <- function(x)
   (x - lag(x, default = first(x)))
+
+```
+
+
+
+# Compute acidification trends
+
+```{r compute_acidification_trends, eval=FALSE}
 
 for (i in 1:nrow(cases)) {
   # i <- 1
@@ -798,7 +809,9 @@ for (i in 1:nrow(cases)) {
 
 # Compute buffer factors
 
-```{r compute_buffer_factors}
+## direct approach
+
+```{r compute_buffer_factors_direct, eval=FALSE}
 
 for (i in 1:nrow(cases)) {
   # i <- 1
@@ -876,6 +889,110 @@ for (i in 1:nrow(cases)) {
 
 ```
 
+## incremental DIC increase
+
+```{r compute_buffer_factors_DIC_increase}
+
+cases <- cases %>% 
+  filter(Version_ID_group == "Standard case",
+         MLR_basins == "3")
+
+for (i in 1:nrow(cases)) {
+  # i <- 1
+  
+  i_Version_ID_group <-  cases[i, ]$Version_ID_group
+  i_MLR_basins <-  cases[i, ]$MLR_basins
+  
+  i_DIC <- DIC %>%
+    filter(Version_ID_group == i_Version_ID_group,
+           MLR_basins == i_MLR_basins)
+  
+  i_DIC <- i_DIC %>% 
+    mutate(tco2 = tco2 + 5)
+  
+  
+  acidification <- i_DIC %>%
+    # filter(lon == 190.5,
+    #        lat == 0.5,
+    #        depth == 0) %>%
+    mutate(
+      sir(
+        flag = 15,
+        var1 = talk * 1e-6,
+        var2 = tco2 * 1e-6,
+        S = sal,
+        T = temp,
+        P = depth / 10,
+        Pt = phosphate * 1e-6,
+        Sit = silicate * 1e-6,
+        k1k2 = "s20",
+        kf = "dg",
+        pHscale = "T"
+      )
+    )
+  
+  rm(i_DIC)
+  gc()
+  
+  acidification <- acidification %>%
+    select(
+      -c(
+        flag,
+        S,
+        T,
+        Patm,
+        P,
+        CO2,
+        contains("fCO2"),
+        contains("_t"),
+        contains("_sws"),
+        pH_free,
+        HCO3,
+        pCO2pot,
+        pCO2,
+        DIC,
+        ALK
+      )
+    )
+  
+  acidification <- acidification %>%
+    mutate(
+      CO3 = CO3 * 1e6,
+      tco2_talk_ratio = tco2 / talk
+    )
+  
+  acidification_trend <- acidification %>%
+    arrange(tref) %>%
+    group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+    mutate(across(
+      .cols = c(
+        tco2,
+        pH,
+        pCO2insitu,
+        CO3,
+        OmegaAragonite,
+        OmegaCalcite,
+        tco2_talk_ratio,
+        SIR,
+        H_free,
+        temp
+      ),
+      .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+    )) %>%
+    ungroup()
+  
+  rm(acidification)
+  gc()
+  
+  acidification_trend %>%
+    write_csv(paste0(path_OIA,"OIA_",i_Version_ID_group,"_",i_MLR_basins,"_DIC_addition.csv"))
+  
+  rm(acidification_trend)
+  gc()
+  
+}
+
+```
 
 
 ```{r write_output_files_stars, eval=FALSE}
