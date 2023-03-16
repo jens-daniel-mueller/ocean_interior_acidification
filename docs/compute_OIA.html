@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA computation</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">03 March, 2023</h4>
+<h4 class="date">15 March, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-03
+<strong>Last updated:</strong> 2023-03-15
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree61000c95833b25eb6b0aa6b423719f798662d85etargetblank61000c9a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree183442c67562e11e8af7daab65b6a591a227502ctargetblank183442ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/61000c95833b25eb6b0aa6b423719f798662d85e" target="_blank">61000c9</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/183442c67562e11e8af7daab65b6a591a227502c" target="_blank">183442c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree61000c95833b25eb6b0aa6b423719f798662d85etargetblank61000c9a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree183442c67562e11e8af7daab65b6a591a227502ctargetblank183442ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/61000c95833b25eb6b0aa6b423719f798662d85e" target="_blank">61000c9</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/183442c67562e11e8af7daab65b6a591a227502c" target="_blank">183442c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -586,6 +586,9 @@ Ignored files:
 Untracked files:
     Untracked:  code/Workflowr_project_managment.R
     Untracked:  code/start_job.R
+
+Unstaged changes:
+    Modified:   analysis/average_OIA.Rmd
 
 </code></pre>
 <p>
@@ -631,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/183442c67562e11e8af7daab65b6a591a227502c/analysis/compute_OIA.Rmd" target="_blank">183442c</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-15
+</td>
+<td>
+add buffer calculation with incremental DIC addition
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/769556ddbc630c3ba5884e7b9177976c89fb40f7/docs/compute_OIA.html" target="_blank">769556d</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-03
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2203,8 +2240,8 @@ jens-daniel-mueller
 </div>
 <pre class="r"><code>gc()</code></pre>
 <pre><code>            used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells   3099000  165.6    8790509   469.5   13211357   705.6
-Vcells 188147975 1435.5 3279398922 25019.9 4098097580 31266.1</code></pre>
+Ncells   3099385  165.6   11555393   617.2   14444241   771.5
+Vcells 188149502 1435.5 3279400680 25019.9 4098099107 31266.1</code></pre>
 </div>
 </div>
 <div id="join-data" class="section level1">
@@ -2454,28 +2491,36 @@ rm(DIC_DIC, mobo_dic_clim)
 
 gc()</code></pre>
 <pre><code>            used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells   3117768  166.6   10003055   534.3   15629772   834.8
-Vcells 657190835 5014.0 2098815311 16012.7 4098097580 31266.1</code></pre>
+Ncells   3118153  166.6   13497418   720.9   21089715  1126.4
+Vcells 657192362 5014.0 2098816436 16012.7 4098099107 31266.1</code></pre>
 </div>
 </div>
-<div id="compute-acidification-trends" class="section level1">
-<h1>Compute acidification trends</h1>
-<pre class="r"><code>cases &lt;- DIC %&gt;%
+<div id="set-up-computation" class="section level1">
+<h1>Set-up computation</h1>
+<pre class="r"><code># table with cases to loop over
+cases &lt;- DIC %&gt;%
   distinct(Version_ID_group, MLR_basins)
 
-cases &lt;- cases %&gt;% 
-  filter(MLR_basins == &quot;none&quot;)
+# cases &lt;- cases %&gt;% 
+#   filter(MLR_basins == &quot;none&quot;)
 
 # cases &lt;- cases %&gt;% 
 #   filter(MLR_basins == &quot;3&quot;) %&gt;% 
 #   slice(-c(2:6))
 
+
+
+# definition of functions to compute incremental and total differences
+
 calc_delta_total &lt;- function(x)
   (x - first(x))
-calc_delta_interval &lt;- function(x)
-  (x - lag(x, default = first(x)))
 
-for (i in 1:nrow(cases)) {
+calc_delta_interval &lt;- function(x)
+  (x - lag(x, default = first(x)))</code></pre>
+</div>
+<div id="compute-acidification-trends" class="section level1">
+<h1>Compute acidification trends</h1>
+<pre class="r"><code>for (i in 1:nrow(cases)) {
   # i &lt;- 1
   
   i_Version_ID_group &lt;-  cases[i, ]$Version_ID_group
@@ -2569,6 +2614,8 @@ for (i in 1:nrow(cases)) {
 </div>
 <div id="compute-buffer-factors" class="section level1">
 <h1>Compute buffer factors</h1>
+<div id="direct-approach" class="section level2">
+<h2>direct approach</h2>
 <pre class="r"><code>for (i in 1:nrow(cases)) {
   # i &lt;- 1
   
@@ -2638,6 +2685,107 @@ for (i in 1:nrow(cases)) {
     write_csv(paste0(path_OIA,&quot;buffer_&quot;,i_Version_ID_group,&quot;_&quot;,i_MLR_basins,&quot;.csv&quot;))
   
   rm(buffer_trend)
+  gc()
+  
+}</code></pre>
+</div>
+<div id="incremental-dic-increase" class="section level2">
+<h2>incremental DIC increase</h2>
+<pre class="r"><code>cases &lt;- cases %&gt;% 
+  filter(Version_ID_group == &quot;Standard case&quot;,
+         MLR_basins == &quot;3&quot;)
+
+for (i in 1:nrow(cases)) {
+  # i &lt;- 1
+  
+  i_Version_ID_group &lt;-  cases[i, ]$Version_ID_group
+  i_MLR_basins &lt;-  cases[i, ]$MLR_basins
+  
+  i_DIC &lt;- DIC %&gt;%
+    filter(Version_ID_group == i_Version_ID_group,
+           MLR_basins == i_MLR_basins)
+  
+  i_DIC &lt;- i_DIC %&gt;% 
+    mutate(tco2 = tco2 + 5)
+  
+  
+  acidification &lt;- i_DIC %&gt;%
+    # filter(lon == 190.5,
+    #        lat == 0.5,
+    #        depth == 0) %&gt;%
+    mutate(
+      sir(
+        flag = 15,
+        var1 = talk * 1e-6,
+        var2 = tco2 * 1e-6,
+        S = sal,
+        T = temp,
+        P = depth / 10,
+        Pt = phosphate * 1e-6,
+        Sit = silicate * 1e-6,
+        k1k2 = &quot;s20&quot;,
+        kf = &quot;dg&quot;,
+        pHscale = &quot;T&quot;
+      )
+    )
+  
+  rm(i_DIC)
+  gc()
+  
+  acidification &lt;- acidification %&gt;%
+    select(
+      -c(
+        flag,
+        S,
+        T,
+        Patm,
+        P,
+        CO2,
+        contains(&quot;fCO2&quot;),
+        contains(&quot;_t&quot;),
+        contains(&quot;_sws&quot;),
+        pH_free,
+        HCO3,
+        pCO2pot,
+        pCO2,
+        DIC,
+        ALK
+      )
+    )
+  
+  acidification &lt;- acidification %&gt;%
+    mutate(
+      CO3 = CO3 * 1e6,
+      tco2_talk_ratio = tco2 / talk
+    )
+  
+  acidification_trend &lt;- acidification %&gt;%
+    arrange(tref) %&gt;%
+    group_by(lat, lon, depth, Version_ID_group, MLR_basins) %&gt;%
+    mutate(across(
+      .cols = c(
+        tco2,
+        pH,
+        pCO2insitu,
+        CO3,
+        OmegaAragonite,
+        OmegaCalcite,
+        tco2_talk_ratio,
+        SIR,
+        H_free,
+        temp
+      ),
+      .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
+    )) %&gt;%
+    ungroup()
+  
+  rm(acidification)
+  gc()
+  
+  acidification_trend %&gt;%
+    write_csv(paste0(path_OIA,&quot;OIA_&quot;,i_Version_ID_group,&quot;_&quot;,i_MLR_basins,&quot;_DIC_addition.csv&quot;))
+  
+  rm(acidification_trend)
   gc()
   
 }</code></pre>
@@ -2779,6 +2927,7 @@ loaded via a namespace (and not attached):
  [94] reprex_2.0.2            digest_0.6.30           classInt_0.4-8         
  [97] httpuv_1.6.6            textshaping_0.3.6       munsell_0.5.0          
 [100] viridisLite_0.4.1       bslib_0.4.1            </code></pre>
+</div>
 </div>
 </div>
 
