@@ -186,9 +186,68 @@ acidification_trend <- acidification_trend %>%
 ```
 
 
+```{r OIA_variables}
+
+OIA_variables <- 
+  acidification_trend %>%
+  select(contains("delta_total")) %>% 
+  names() %>% 
+  str_remove("_delta_total")
+
+OIA_variables <- OIA_variables[-c(3,4,6,7)]
+
+
+```
+
 #### Buffer trends
 
-```{r read_buffer_changes}
+
+```{r read_buffer_changes_DIC_addition}
+
+buffer_trend <-
+  read_csv(paste0(path_OIA, "OIA_Standard case_3_DIC_addition.csv"))
+
+buffer_trend <- buffer_trend %>% 
+  select(-c(MLR_basins, Version_ID_group))
+
+buffer_trend_addition <-
+  full_join(
+    buffer_trend %>%
+      select(lon, lat, depth, tref, basin_AIP, contains(OIA_variables)) %>%
+      select(-c(contains("delta"), "tco2", "tco2_talk_ratio", "phosphate")) %>%
+      pivot_longer(pH:temp,
+                   names_to = "variable",
+                   values_to = "added"),
+    acidification_trend %>%
+      select(lon, lat, depth, tref, basin_AIP, contains(OIA_variables)) %>%
+      select(-c(contains("delta"), "tco2", "tco2_talk_ratio", "phosphate")) %>%
+      pivot_longer(pH:temp,
+                   names_to = "variable",
+                   values_to = "raw")
+  )
+
+rm(buffer_trend)
+
+
+buffer_trend_addition <-
+  buffer_trend_addition %>%
+  mutate(sensitivity = (added - raw) / 5)
+
+
+buffer_trend_addition <-
+  buffer_trend_addition %>%
+  select(-c(raw, added))
+
+buffer_variables_addition <-
+  buffer_trend_addition %>% 
+  distinct(variable) %>% 
+  pull
+
+```
+
+
+
+```{r read_buffer_changes_direct_estimates}
 
 buffer_trend <-
   read_csv(paste0(path_OIA, "buffer_Standard case_3.csv"))
@@ -482,21 +541,6 @@ rm(TS_product_consistent)
 ```
 
 # Define key variables
-
-## OIA
-
-```{r OIA_variables}
-
-OIA_variables <- 
-  acidification_trend %>%
-  select(contains("delta_total")) %>% 
-  names() %>% 
-  str_remove("_delta_total")
-
-OIA_variables <- OIA_variables[-c(3,4,6,7)]
-
-
-```
 
 ## buffer
 
@@ -897,6 +941,14 @@ acidification_depth_layer_DIC_dCant_temp <- dCant_DIC_temp_trend %>%
 
 acidification_depth_layer_dCant_DIC_surface <- dCant_DIC_surface_trend %>%
   group_by(driver) %>%
+  nest() %>%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
+  select(-data) %>%
+  unnest(layer) %>% 
+  ungroup()
+
+buffer_addition_depth_layer <- buffer_trend_addition %>%
+  group_by(variable) %>%
   nest() %>%
   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
   select(-data) %>%
@@ -1921,6 +1973,68 @@ dev.off()
 
 rm(buffer_climatology_depth_layer,
    i_buffer_climatology_depth_layer,
+   p_climatology,
+   low, high)
+
+```
+
+```{r depth_layer_buffer_addtion_climatology}
+
+# create pdf document
+
+pdf(
+  here::here("output/all_variables/maps_depth_layer_buffer_addition_climatology.pdf"),
+  width = 10,
+  height = 4
+)
+
+# loop over OIA variables
+# print incremental sections
+
+for (i_var in buffer_variables_addition[buffer_variables_addition != "temp"]) {
+  # i_var <- buffer_variables_addition[2]
+  
+  # subset OIA variable
+  
+  i_buffer_addition_depth_layer <-
+    buffer_addition_depth_layer %>%
+    filter(variable == i_var) %>%
+    select(lon, lat, depth, tref, sensitivity)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_buffer_addition_depth_layer %>%
+    filter(!is.na(sensitivity)) %>%
+    pull(sensitivity) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_buffer_addition_depth_layer %>%
+    filter(!is.na(sensitivity)) %>%
+    pull(sensitivity) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  p_climatology <-
+  i_buffer_addition_depth_layer %>%
+    p_map_mdim_robinson(
+      dim_col = "depth",
+      dim_row = "tref",
+      var = "sensitivity",
+      legend_title = i_var,
+      breaks = breaks
+    )
+  
+  print(
+  p_climatology
+  )
+  
+}
+
+dev.off()
+
+rm(buffer_addition_depth_layer,
+   i_buffer_addition_depth_layer,
    p_climatology,
    low, high)
 
