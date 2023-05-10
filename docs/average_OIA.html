@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">16 March, 2023</h4>
+<h4 class="date">10 May, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-03-16
+<strong>Last updated:</strong> 2023-05-10
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreebbf8eb3cf8575720ac8737f8520bc8e88a13dccdtargetblankbbf8eb3a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeafcac039e1552876e5773d2f2f494b8af87a67detargetblankafcac03a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/bbf8eb3cf8575720ac8737f8520bc8e88a13dccd" target="_blank">bbf8eb3</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/afcac039e1552876e5773d2f2f494b8af87a67de" target="_blank">afcac03</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreebbf8eb3cf8575720ac8737f8520bc8e88a13dccdtargetblankbbf8eb3a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeafcac039e1552876e5773d2f2f494b8af87a67detargetblankafcac03a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/bbf8eb3cf8575720ac8737f8520bc8e88a13dccd" target="_blank">bbf8eb3</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/afcac039e1552876e5773d2f2f494b8af87a67de" target="_blank">afcac03</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -631,6 +631,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/afcac039e1552876e5773d2f2f494b8af87a67de/analysis/average_OIA.Rmd" target="_blank">afcac03</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-05-10
+</td>
+<td>
+created succesive change maps
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/ac561a45cafea369c5ce7e9968e06b5260bb4652/docs/average_OIA.html" target="_blank">ac561a4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-03-16
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1366,10 +1400,14 @@ worldmap &lt;- ne_countries(scale = &#39;small&#39;,
 worldmap &lt;- worldmap %&gt;% st_break_antimeridian(lon_0 = center)
 worldmap_trans &lt;- st_transform(worldmap, crs = target_crs)
 
-# ggplot() +
-#   geom_sf(data = worldmap_trans)
-
-coastline &lt;- ne_coastline(scale = &#39;small&#39;, returnclass = &quot;sf&quot;)
+ggplot() +
+  geom_sf(data = worldmap_trans)</code></pre>
+<img src="figure/setup.Rmd/create_robinson_basemap_world_pacific_centered-1.png" width="672" style="display: block; margin: auto;" />
+<div class="alert alert-warning">
+<strong>Warning!</strong> The custom <code>fig.path</code> you set was
+ignored by workflowr.
+</div>
+<pre class="r"><code>coastline &lt;- ne_coastline(scale = &#39;small&#39;, returnclass = &quot;sf&quot;)
 coastline &lt;- st_break_antimeridian(coastline, lon_0 = 200)
 coastline_trans &lt;- st_transform(coastline, crs = target_crs)
 
@@ -1393,7 +1431,7 @@ bbox_graticules &lt;- st_graticule(
 )
 
 bbox_graticules_trans &lt;- st_transform(bbox_graticules, crs = target_crs)
-rm(worldmap, coastline, bbox, bbox_trans, bbox_graticules)
+rm(worldmap, coastline, bbox, bbox_trans)
 
 # ggplot() +
 #   geom_sf(data = worldmap_trans, fill = &quot;grey&quot;, col=&quot;grey&quot;) +
@@ -1415,7 +1453,40 @@ lon_lim &lt;- ext(bbox_graticules_trans)[c(1,2)]*1.005
 #     panel.border = element_blank(),
 #     axis.text = element_blank(),
 #     axis.ticks = element_blank()
-#   )</code></pre>
+#   )
+
+latitude_graticules &lt;- st_graticule(
+  x = bbox_graticules,
+  crs = st_crs(bbox_graticules),
+  datum = st_crs(bbox_graticules),
+  lon = c(20, 20.001),
+  lat = c(-60,-30,0,30,60),
+  ndiscr = 1e3,
+  margin = 0.001
+)
+
+latitude_graticules_trans &lt;- st_transform(latitude_graticules, crs = target_crs)
+
+latitude_labels &lt;- data.frame(lat_label = c(&quot;60°N&quot;,&quot;30°N&quot;,&quot;Eq.&quot;,&quot;30°S&quot;,&quot;60°S&quot;),
+                 lat = c(60,30,0,-30,-60)-4, lon = c(35)-c(0,2,4,2,0))
+
+latitude_labels &lt;- st_as_sf(x = latitude_labels,
+               coords = c(&quot;lon&quot;, &quot;lat&quot;),
+               crs = &quot;+proj=longlat&quot;)
+
+latitude_labels_trans &lt;- st_transform(latitude_labels, crs = target_crs)
+
+# ggplot() +
+#   geom_sf(data = worldmap_trans, fill = &quot;grey&quot;, col = &quot;grey&quot;) +
+#   geom_sf(data = coastline_trans) +
+#   geom_sf(data = bbox_graticules_trans) +
+#   geom_sf(data = latitude_graticules_trans,
+#           col = &quot;grey60&quot;,
+#           linewidth = 0.2) +
+#   geom_sf_text(data = latitude_labels_trans,
+#                aes(label = lat_label),
+#                size = 3,
+#                col = &quot;grey60&quot;)</code></pre>
 <div id="libraries" class="section level1">
 <h1>Libraries</h1>
 </div>
@@ -2687,8 +2758,8 @@ for (i_var in OIA_variables[-6]) {
   # create maps with absolute values
   
   p_depth_layer_dCant &lt;-
-  i_acidification_depth_layer_DIC_dCant_temp %&gt;%
-    filter(driver == &quot;dCant&quot;) %&gt;% 
+    i_acidification_depth_layer_DIC_dCant_temp %&gt;%
+    filter(driver == &quot;dCant&quot;) %&gt;%
     p_map_mdim_robinson(
       dim_col = &quot;depth&quot;,
       dim_row = &quot;tref&quot;,
@@ -2697,6 +2768,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver: dCant&quot;)
   
@@ -2711,6 +2783,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver: DIC&quot;)
       
@@ -2757,7 +2830,8 @@ for (i_var in OIA_variables[-6]) {
       legend_title = i_var,
       breaks = breaks_divergent_driver,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver difference: dCant - DIC&quot;)
   
@@ -2863,6 +2937,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver: dCant&quot;)
   
@@ -2877,6 +2952,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver: DIC surface&quot;)
       
@@ -2923,7 +2999,8 @@ for (i_var in OIA_variables[-6]) {
       legend_title = i_var,
       breaks = breaks_divergent_driver,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver difference: dCant - DIC surface&quot;)
   
@@ -3014,6 +3091,7 @@ for (i_var in OIA_variables) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver: dCant&quot;)
   
@@ -3028,6 +3106,7 @@ for (i_var in OIA_variables) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver: dCant + temp&quot;)
       
@@ -3074,7 +3153,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks_divergent_decadal,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Decadal difference&quot;)
   
@@ -3121,7 +3201,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks_divergent_driver,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     ) &amp;
     labs(title = &quot;Driver difference&quot;)
   
@@ -3264,7 +3345,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     )
       
   i_delta_acidification_depth_layer_incremental &lt;-
@@ -3303,7 +3385,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks_divergent,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = &quot;right&quot;
     )
   
   print(
@@ -3389,7 +3472,8 @@ for (i_var in OIA_variables[-6]) {
       dim_row = &quot;tref&quot;,
       var = &quot;delta_total&quot;,
       legend_title = i_var,
-      breaks = breaks
+      breaks = breaks,
+      legend_position = &quot;right&quot;
     )
   
   print(
@@ -3415,8 +3499,9 @@ i_acidification_depth_layer_total %&gt;%
     dim_col = &quot;tref&quot;,
     dim_row = &quot;depth&quot;,
     var = &quot;delta_total&quot;,
-    legend_title = expression(Delta*C[ant]~(µmol~kg^{-1})),
-    breaks = breaks
+    legend_title = &quot;ΔC&lt;sub&gt;ant&lt;/sub&gt;&lt;br&gt;(µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;,
+    breaks = breaks,
+    legend_position = &quot;right&quot;
   )</code></pre>
 <p><img src="figure/average_OIA.Rmd/depth_layer_total_change-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -3462,7 +3547,8 @@ jens-daniel-mueller
   ),
   width = 12,
   height = 6,
-  dpi = 600
+  dpi = 600,
+  bg = &quot;white&quot;
 )
 
 OIA_variables</code></pre>
@@ -3482,8 +3568,9 @@ i_acidification_depth_layer_total %&gt;%
     dim_col = &quot;tref&quot;,
     dim_row = &quot;depth&quot;,
     var = &quot;delta_total&quot;,
-    legend_title = expression(Delta*H[free]^&quot;+&quot;~(µmol~kg^{-1})),
-    breaks = breaks
+    legend_title = &quot;ΔH&lt;sup&gt;+&lt;/sup&gt;&lt;sub&gt;free&lt;/sub&gt;&lt;br&gt;(µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;,
+    breaks = breaks,
+    legend_position = &quot;right&quot;
   )</code></pre>
 <p><img src="figure/average_OIA.Rmd/depth_layer_total_change-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -3529,9 +3616,194 @@ jens-daniel-mueller
   ),
   width = 12,
   height = 6,
-  dpi = 600
+  dpi = 600,
+  bg = &quot;white&quot;
 )
 
+breaks_contour &lt;- seq(0,0.006,0.001)
+
+i_acidification_depth_layer_total %&gt;%
+  filter(depth == &quot;B: 100 - 500 m&quot;) %&gt;% 
+  mutate(tref = as.factor(tref)) %&gt;% 
+  ggplot(aes(lon, lat, z = delta_total)) +
+  geom_contour_filled(breaks = breaks_contour) +
+  geom_contour(breaks = breaks_contour, col = &quot;white&quot;) +
+  scale_fill_viridis_d() +
+  coord_quickmap() +
+  facet_grid(tref ~ .)</code></pre>
+<p><img src="figure/average_OIA.Rmd/depth_layer_total_change-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>breaks_contour &lt;- c(-Inf,0.001,0.002, Inf)
+
+i_acidification_depth_layer_total %&gt;%
+  filter(depth == &quot;B: 100 - 500 m&quot;) %&gt;% 
+  mutate(tref = as.factor(tref)) %&gt;% 
+  ggplot(aes(lon, lat, z = delta_total)) +
+  geom_contour_filled(data = . %&gt;% filter(tref == &quot;1994&quot;),
+                      breaks = breaks_contour) +
+  scale_fill_discrete_sequential() +
+  coord_quickmap()</code></pre>
+<p><img src="figure/average_OIA.Rmd/depth_layer_total_change-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>i_acidification_depth_layer_total %&gt;%
+  filter(depth == &quot;B: 100 - 500 m&quot;) %&gt;% 
+  mutate(tref = as.factor(tref)) %&gt;% 
+  ggplot(aes(lon, lat, z = delta_total, linetype = tref)) +
+  geom_contour(breaks = breaks_contour) +
+  coord_quickmap()</code></pre>
+<p><img src="figure/average_OIA.Rmd/depth_layer_total_change-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>world &lt;- ne_countries(scale = &quot;small&quot;, returnclass = &quot;sf&quot;)
+coastline &lt;- ne_coastline(scale = &quot;small&quot;, returnclass = &quot;sf&quot;)
+
+i_acidification_depth_layer_total %&gt;%
+  # filter(depth == &quot;B: 100 - 500 m&quot;) %&gt;% 
+  mutate(tref = as.factor(tref),
+         lon = if_else(lon &gt; 180, lon - 360, lon)) %&gt;% 
+  ggplot() +
+  geom_contour_filled(data = . %&gt;% filter(tref == &quot;1994&quot;),
+                      aes(lon, lat, z = delta_total),
+                      breaks = breaks_contour) +
+  geom_contour(breaks = breaks_contour,
+               aes(lon, lat, z = delta_total, col = tref)) +
+  scale_fill_discrete_sequential(
+    # palette = &quot;Light Gray&quot;,
+    palette = &quot;Dark Mint&quot;,
+    name = expression(atop(
+      Delta*H^{&quot;+&quot;}~1994,
+      (µmol~kg^{-1})))) +
+  scale_color_discrete_sequential(
+    palette = &quot;Reds&quot;,
+    name = expression(atop(
+      Delta*H^{&quot;+&quot;}~isoline,
+      progression))) +
+  scale_linetype_manual(values = c(3,2,1)) +
+  geom_sf(data = world, fill = &quot;grey80&quot;, col = &quot;grey80&quot;) +
+  coord_sf(expand = 0, ylim = c(-78,65)) +
+  theme_bw() +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank()) +
+  facet_wrap(~ depth, ncol = 2)</code></pre>
+<p><img src="figure/average_OIA.Rmd/depth_layer_total_change-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(
+    &quot;output/publication/maps_depth_layer_total_changes_hydrogen_ion_isolines.png&quot;
+  ),
+  width = 10,
+  height = 6,
+  dpi = 600,
+  bg = &quot;white&quot;
+)
+
+
+library(ggnewscale)
+
+i_acidification_depth_layer_total %&gt;%
+  # filter(depth == &quot;B: 100 - 500 m&quot;) %&gt;%
+  mutate(tref = as.factor(tref),
+         lon = if_else(lon &gt; 180, lon - 360, lon)) %&gt;%
+  ggplot() +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.000, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.000, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.000, Inf)
+  ) +
+  scale_fill_brewer(palette = &quot;Greens&quot;, name = &quot;&gt;0&quot;,
+                    guide = guide_legend(order = 4)) +
+  new_scale_fill() +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.001, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.001, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.001, Inf)
+  ) +
+  scale_fill_brewer(palette = &quot;Blues&quot;, name = &quot;&gt;0.001&quot;,
+                    guide = guide_legend(order = 3)) +
+  new_scale_fill() +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.002, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.002, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.002, Inf)
+  ) +
+  scale_fill_brewer(palette = &quot;Purples&quot;, name = &quot;&gt;0.002&quot;,
+                    guide = guide_legend(order = 2)) +
+  new_scale_fill() +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.003, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.003, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %&gt;% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.003, Inf)
+  ) +
+  scale_fill_brewer(palette = &quot;Reds&quot;, name = &quot;&gt;0.003&quot;,
+                                 limits = c(&quot;1994&quot;,&quot;2004&quot;,&quot;2014&quot;),
+                    guide = guide_legend(order = 1)) +
+  geom_sf(data = world, fill = &quot;grey80&quot;, col = &quot;grey80&quot;) +
+  coord_sf(expand = 0, ylim = c(-78,65)) +
+  theme_bw() +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank()) +
+  facet_wrap(~ depth, ncol = 2)</code></pre>
+<p><img src="figure/average_OIA.Rmd/depth_layer_total_change-7.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(
+    &quot;output/publication/maps_depth_layer_total_changes_hydrogen_ion_filled.png&quot;
+  ),
+  width = 10,
+  height = 6,
+  dpi = 600,
+  bg = &quot;white&quot;
+)
 
 rm(acidification_depth_layer_total,
    acidification_depth_layer,
@@ -6595,52 +6867,54 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] seacarb_3.3.1       SolveSAPHE_2.1.0    oce_1.7-10         
- [4] gsw_1.1-1           stars_0.6-0         abind_1.4-5        
- [7] ggh4x_0.2.3         khroma_1.9.0        terra_1.6-41       
-[10] sf_1.0-9            rnaturalearth_0.1.0 geomtextpath_0.1.1 
-[13] colorspace_2.0-3    marelac_2.1.10      shape_1.4.6        
-[16] ggforce_0.4.1       metR_0.13.0         scico_1.3.1        
-[19] patchwork_1.1.2     collapse_1.8.9      forcats_0.5.2      
-[22] stringr_1.4.1       dplyr_1.0.10        purrr_0.3.5        
-[25] readr_2.1.3         tidyr_1.2.1         tibble_3.1.8       
-[28] ggplot2_3.4.0       tidyverse_1.3.2     workflowr_1.7.0    
+ [1] ggnewscale_0.4.8    ggtext_0.1.2        seacarb_3.3.1      
+ [4] SolveSAPHE_2.1.0    oce_1.7-10          gsw_1.1-1          
+ [7] stars_0.6-0         abind_1.4-5         ggh4x_0.2.3        
+[10] khroma_1.9.0        terra_1.6-41        sf_1.0-9           
+[13] rnaturalearth_0.1.0 geomtextpath_0.1.1  colorspace_2.0-3   
+[16] marelac_2.1.10      shape_1.4.6         ggforce_0.4.1      
+[19] metR_0.13.0         scico_1.3.1         patchwork_1.1.2    
+[22] collapse_1.8.9      forcats_0.5.2       stringr_1.4.1      
+[25] dplyr_1.1.1         purrr_0.3.5         readr_2.1.3        
+[28] tidyr_1.2.1         tibble_3.2.1        ggplot2_3.4.0      
+[31] tidyverse_1.3.2     workflowr_1.7.0    
 
 loaded via a namespace (and not attached):
   [1] googledrive_2.0.0       ellipsis_0.3.2          class_7.3-20           
-  [4] rprojroot_2.0.3         fs_1.5.2                rstudioapi_0.14        
-  [7] proxy_0.4-27            farver_2.1.1            bit64_4.0.5            
- [10] fansi_1.0.3             lubridate_1.9.0         xml2_1.3.3             
- [13] codetools_0.2-18        cachem_1.0.6            knitr_1.41             
- [16] polyclip_1.10-4         jsonlite_1.8.3          broom_1.0.1            
- [19] dbplyr_2.2.1            compiler_4.2.2          httr_1.4.4             
- [22] backports_1.4.1         assertthat_0.2.1        fastmap_1.1.0          
- [25] gargle_1.2.1            cli_3.4.1               later_1.3.0            
- [28] tweenr_2.0.2            htmltools_0.5.3         tools_4.2.2            
- [31] rnaturalearthdata_0.1.0 gtable_0.3.1            glue_1.6.2             
- [34] Rcpp_1.0.9              RNetCDF_2.6-1           cellranger_1.1.0       
- [37] jquerylib_0.1.4         vctrs_0.5.1             lwgeom_0.2-10          
- [40] xfun_0.35               ps_1.7.2                rvest_1.0.3            
- [43] ncmeta_0.3.5            timechange_0.1.1        lifecycle_1.0.3        
- [46] googlesheets4_1.0.1     getPass_0.2-2           MASS_7.3-58.1          
- [49] scales_1.2.1            vroom_1.6.0             ragg_1.2.4             
- [52] hms_1.1.2               promises_1.2.0.1        parallel_4.2.2         
- [55] RColorBrewer_1.1-3      yaml_2.3.6              memoise_2.0.1          
- [58] sass_0.4.4              stringi_1.7.8           highr_0.9              
- [61] e1071_1.7-12            checkmate_2.1.0         rlang_1.0.6            
- [64] pkgconfig_2.0.3         systemfonts_1.0.4       evaluate_0.18          
- [67] lattice_0.20-45         labeling_0.4.2          bit_4.0.5              
- [70] processx_3.8.0          tidyselect_1.2.0        here_1.0.1             
- [73] magrittr_2.0.3          R6_2.5.1                generics_0.1.3         
- [76] DBI_1.1.3               pillar_1.8.1            haven_2.5.1            
- [79] whisker_0.4             withr_2.5.0             units_0.8-0            
- [82] sp_1.5-1                modelr_0.1.10           crayon_1.5.2           
- [85] KernSmooth_2.23-20      utf8_1.2.2              tzdb_0.3.0             
- [88] rmarkdown_2.18          isoband_0.2.6           grid_4.2.2             
- [91] readxl_1.4.1            data.table_1.14.6       callr_3.7.3            
- [94] git2r_0.30.1            reprex_2.0.2            digest_0.6.30          
- [97] classInt_0.4-8          httpuv_1.6.6            textshaping_0.3.6      
-[100] munsell_0.5.0           viridisLite_0.4.1       bslib_0.4.1            </code></pre>
+  [4] rprojroot_2.0.3         markdown_1.4            fs_1.5.2               
+  [7] gridtext_0.1.5          rstudioapi_0.14         proxy_0.4-27           
+ [10] farver_2.1.1            bit64_4.0.5             fansi_1.0.3            
+ [13] lubridate_1.9.0         xml2_1.3.3              codetools_0.2-18       
+ [16] cachem_1.0.6            knitr_1.41              polyclip_1.10-4        
+ [19] jsonlite_1.8.3          broom_1.0.1             dbplyr_2.2.1           
+ [22] compiler_4.2.2          httr_1.4.4              backports_1.4.1        
+ [25] assertthat_0.2.1        fastmap_1.1.0           gargle_1.2.1           
+ [28] cli_3.4.1               later_1.3.0             tweenr_2.0.2           
+ [31] htmltools_0.5.3         tools_4.2.2             rnaturalearthdata_0.1.0
+ [34] gtable_0.3.1            glue_1.6.2              Rcpp_1.0.9             
+ [37] RNetCDF_2.6-1           cellranger_1.1.0        jquerylib_0.1.4        
+ [40] vctrs_0.6.1             lwgeom_0.2-10           xfun_0.35              
+ [43] ps_1.7.2                rvest_1.0.3             ncmeta_0.3.5           
+ [46] timechange_0.1.1        lifecycle_1.0.3         googlesheets4_1.0.1    
+ [49] getPass_0.2-2           MASS_7.3-58.1           scales_1.2.1           
+ [52] vroom_1.6.0             ragg_1.2.4              hms_1.1.2              
+ [55] promises_1.2.0.1        parallel_4.2.2          RColorBrewer_1.1-3     
+ [58] yaml_2.3.6              memoise_2.0.1           sass_0.4.4             
+ [61] stringi_1.7.8           highr_0.9               e1071_1.7-12           
+ [64] checkmate_2.1.0         commonmark_1.8.1        rlang_1.1.0            
+ [67] pkgconfig_2.0.3         systemfonts_1.0.4       evaluate_0.18          
+ [70] lattice_0.20-45         labeling_0.4.2          bit_4.0.5              
+ [73] processx_3.8.0          tidyselect_1.2.0        here_1.0.1             
+ [76] magrittr_2.0.3          R6_2.5.1                generics_0.1.3         
+ [79] DBI_1.1.3               pillar_1.8.1            haven_2.5.1            
+ [82] whisker_0.4             withr_2.5.0             units_0.8-0            
+ [85] sp_1.5-1                modelr_0.1.10           crayon_1.5.2           
+ [88] KernSmooth_2.23-20      utf8_1.2.2              tzdb_0.3.0             
+ [91] rmarkdown_2.18          isoband_0.2.6           grid_4.2.2             
+ [94] readxl_1.4.1            data.table_1.14.6       callr_3.7.3            
+ [97] git2r_0.30.1            reprex_2.0.2            digest_0.6.30          
+[100] classInt_0.4-8          httpuv_1.6.6            textshaping_0.3.6      
+[103] munsell_0.5.0           viridisLite_0.4.1       bslib_0.4.1            </code></pre>
 </div>
 </div>
 </div>
