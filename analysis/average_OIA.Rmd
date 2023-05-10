@@ -22,6 +22,7 @@ library(ggh4x)
 library(colorspace)
 library(stars)
 library(seacarb)
+library(ggtext)
 ```
 
 
@@ -1022,8 +1023,8 @@ for (i_var in OIA_variables[-6]) {
   # create maps with absolute values
   
   p_depth_layer_dCant <-
-  i_acidification_depth_layer_DIC_dCant_temp %>%
-    filter(driver == "dCant") %>% 
+    i_acidification_depth_layer_DIC_dCant_temp %>%
+    filter(driver == "dCant") %>%
     p_map_mdim_robinson(
       dim_col = "depth",
       dim_row = "tref",
@@ -1032,6 +1033,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver: dCant")
   
@@ -1046,6 +1048,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver: DIC")
       
@@ -1092,7 +1095,8 @@ for (i_var in OIA_variables[-6]) {
       legend_title = i_var,
       breaks = breaks_divergent_driver,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver difference: dCant - DIC")
   
@@ -1202,6 +1206,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver: dCant")
   
@@ -1216,6 +1221,7 @@ for (i_var in OIA_variables[-6]) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver: DIC surface")
       
@@ -1262,7 +1268,8 @@ for (i_var in OIA_variables[-6]) {
       legend_title = i_var,
       breaks = breaks_divergent_driver,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver difference: dCant - DIC surface")
   
@@ -1356,6 +1363,7 @@ for (i_var in OIA_variables) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver: dCant")
   
@@ -1370,6 +1378,7 @@ for (i_var in OIA_variables) {
       breaks = breaks,
       dot_size_single = 0.2,
       dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver: dCant + temp")
       
@@ -1416,7 +1425,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks_divergent_decadal,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Decadal difference")
   
@@ -1463,7 +1473,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks_divergent_driver,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = "right"
     ) &
     labs(title = "Driver difference")
   
@@ -1609,7 +1620,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = "right"
     )
       
   i_delta_acidification_depth_layer_incremental <-
@@ -1648,7 +1660,8 @@ for (i_var in OIA_variables) {
       legend_title = i_var,
       breaks = breaks_divergent,
       dot_size_single = 0.2,
-      dot_size_double = 0.005
+      dot_size_double = 0.005,
+      legend_position = "right"
     )
   
   print(
@@ -1737,7 +1750,8 @@ for (i_var in OIA_variables[-6]) {
       dim_row = "tref",
       var = "delta_total",
       legend_title = i_var,
-      breaks = breaks
+      breaks = breaks,
+      legend_position = "right"
     )
   
   print(
@@ -1764,8 +1778,9 @@ i_acidification_depth_layer_total %>%
     dim_col = "tref",
     dim_row = "depth",
     var = "delta_total",
-    legend_title = expression(Delta*C[ant]~(µmol~kg^{-1})),
-    breaks = breaks
+    legend_title = "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)",
+    breaks = breaks,
+    legend_position = "right"
   )
 
 ggsave(
@@ -1774,7 +1789,8 @@ ggsave(
   ),
   width = 12,
   height = 6,
-  dpi = 600
+  dpi = 600,
+  bg = "white"
 )
 
 OIA_variables
@@ -1793,8 +1809,9 @@ i_acidification_depth_layer_total %>%
     dim_col = "tref",
     dim_row = "depth",
     var = "delta_total",
-    legend_title = expression(Delta*H[free]^"+"~(µmol~kg^{-1})),
-    breaks = breaks
+    legend_title = "ΔH<sup>+</sup><sub>free</sub><br>(µmol kg<sup>-1</sup>)",
+    breaks = breaks,
+    legend_position = "right"
   )
 
 ggsave(
@@ -1803,9 +1820,194 @@ ggsave(
   ),
   width = 12,
   height = 6,
-  dpi = 600
+  dpi = 600,
+  bg = "white"
 )
 
+breaks_contour <- seq(0,0.006,0.001)
+
+i_acidification_depth_layer_total %>%
+  filter(depth == "B: 100 - 500 m") %>% 
+  mutate(tref = as.factor(tref)) %>% 
+  ggplot(aes(lon, lat, z = delta_total)) +
+  geom_contour_filled(breaks = breaks_contour) +
+  geom_contour(breaks = breaks_contour, col = "white") +
+  scale_fill_viridis_d() +
+  coord_quickmap() +
+  facet_grid(tref ~ .)
+
+breaks_contour <- c(-Inf,0.001,0.002, Inf)
+
+i_acidification_depth_layer_total %>%
+  filter(depth == "B: 100 - 500 m") %>% 
+  mutate(tref = as.factor(tref)) %>% 
+  ggplot(aes(lon, lat, z = delta_total)) +
+  geom_contour_filled(data = . %>% filter(tref == "1994"),
+                      breaks = breaks_contour) +
+  scale_fill_discrete_sequential() +
+  coord_quickmap()
+
+i_acidification_depth_layer_total %>%
+  filter(depth == "B: 100 - 500 m") %>% 
+  mutate(tref = as.factor(tref)) %>% 
+  ggplot(aes(lon, lat, z = delta_total, linetype = tref)) +
+  geom_contour(breaks = breaks_contour) +
+  coord_quickmap()
+
+world <- ne_countries(scale = "small", returnclass = "sf")
+coastline <- ne_coastline(scale = "small", returnclass = "sf")
+
+i_acidification_depth_layer_total %>%
+  # filter(depth == "B: 100 - 500 m") %>% 
+  mutate(tref = as.factor(tref),
+         lon = if_else(lon > 180, lon - 360, lon)) %>% 
+  ggplot() +
+  geom_contour_filled(data = . %>% filter(tref == "1994"),
+                      aes(lon, lat, z = delta_total),
+                      breaks = breaks_contour) +
+  geom_contour(breaks = breaks_contour,
+               aes(lon, lat, z = delta_total, col = tref)) +
+  scale_fill_discrete_sequential(
+    # palette = "Light Gray",
+    palette = "Dark Mint",
+    name = expression(atop(
+      Delta*H^{"+"}~1994,
+      (µmol~kg^{-1})))) +
+  scale_color_discrete_sequential(
+    palette = "Reds",
+    name = expression(atop(
+      Delta*H^{"+"}~isoline,
+      progression))) +
+  scale_linetype_manual(values = c(3,2,1)) +
+  geom_sf(data = world, fill = "grey80", col = "grey80") +
+  coord_sf(expand = 0, ylim = c(-78,65)) +
+  theme_bw() +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank()) +
+  facet_wrap(~ depth, ncol = 2)
+
+ggsave(
+  here::here(
+    "output/publication/maps_depth_layer_total_changes_hydrogen_ion_isolines.png"
+  ),
+  width = 10,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
+
+library(ggnewscale)
+
+i_acidification_depth_layer_total %>%
+  # filter(depth == "B: 100 - 500 m") %>%
+  mutate(tref = as.factor(tref),
+         lon = if_else(lon > 180, lon - 360, lon)) %>%
+  ggplot() +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.000, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.000, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.000, Inf)
+  ) +
+  scale_fill_brewer(palette = "Greens", name = ">0",
+                    guide = guide_legend(order = 4)) +
+  new_scale_fill() +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.001, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.001, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.001, Inf)
+  ) +
+  scale_fill_brewer(palette = "Blues", name = ">0.001",
+                    guide = guide_legend(order = 3)) +
+  new_scale_fill() +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.002, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.002, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.002, Inf)
+  ) +
+  scale_fill_brewer(palette = "Purples", name = ">0.002",
+                    guide = guide_legend(order = 2)) +
+  new_scale_fill() +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2014),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.003, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 2004),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.003, Inf)
+  ) +
+  geom_contour_filled(
+    data = . %>% filter(tref == 1994),
+    aes(lon, lat,
+        z = delta_total, fill = tref),
+    breaks = c(0.003, Inf)
+  ) +
+  scale_fill_brewer(palette = "Reds", name = ">0.003",
+                                 limits = c("1994","2004","2014"),
+                    guide = guide_legend(order = 1)) +
+  geom_sf(data = world, fill = "grey80", col = "grey80") +
+  coord_sf(expand = 0, ylim = c(-78,65)) +
+  theme_bw() +
+  theme(axis.title = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank()) +
+  facet_wrap(~ depth, ncol = 2)
+
+ggsave(
+  here::here(
+    "output/publication/maps_depth_layer_total_changes_hydrogen_ion_filled.png"
+  ),
+  width = 10,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
 
 rm(acidification_depth_layer_total,
    acidification_depth_layer,
