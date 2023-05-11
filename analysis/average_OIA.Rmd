@@ -1704,19 +1704,8 @@ acidification_depth_layer_total <-
   mutate(variable = str_remove(variable, "_delta_total"))
 
 
-# create pdf document
-
-pdf(
-  here::here("output/all_variables/maps_depth_layer_dCant_total_changes.pdf"),
-  width = 14,
-  height = 5
-)
-
-# loop over OIA variables
-# print incremental sections
-
 for (i_var in OIA_variables[-6]) {
-  # i_var <- OIA_variables[1]
+  # i_var <- OIA_variables[2]
   
   # subset OIA variable
   
@@ -1725,104 +1714,81 @@ for (i_var in OIA_variables[-6]) {
     filter(variable == i_var) %>%
     select(lon, lat, depth, tref, delta_total)
   
-  # determine endpoints and breaks of color scale
-  
-  low <- i_acidification_depth_layer_total %>%
-    filter(!is.na(delta_total)) %>%
-    pull(delta_total) %>%
-    quantile(c(quantile_low), names = FALSE)
+  # # determine endpoints and breaks of color scale automatically
+  # 
+  # low <- i_acidification_depth_layer_total %>%
+  #   filter(!is.na(delta_total)) %>%
+  #   pull(delta_total) %>%
+  #   quantile(c(quantile_low), names = FALSE)
+  # 
+  # high <- i_acidification_depth_layer_total %>%
+  #   filter(!is.na(delta_total)) %>%
+  #   pull(delta_total) %>%
+  #   quantile(c(quantile_high), names = FALSE)
+  # 
+  # i_breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
 
-  high <- i_acidification_depth_layer_total %>%
-    filter(!is.na(delta_total)) %>%
-    pull(delta_total) %>%
-    quantile(c(quantile_high), names = FALSE)
+  if(i_var == "tco2"){
+    i_breaks <- c(-Inf, seq(0, 80, 10), Inf)
+    i_contour_level <- 50
+    i_legend_title <- "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)"
+  }
 
-  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
-  # breaks_sub <- breaks[seq(1, length(breaks), 3)]
+  if (i_var == "pH") {
+    i_breaks <- c(-Inf, seq(-0.12, 0, 0.02), Inf)
+    i_contour_level <- -0.08
+    i_legend_title <- "ΔpH<sub>T</sub>"
+  }
+
+  if (i_var == "OmegaAragonite") {
+    i_breaks <- c(-Inf, seq(-0.8, 0, 0.1), Inf)
+    i_contour_level <- -0.5
+    i_legend_title <- "ΔΩ<sub>arag</sub>"
+  }
+
+  if (i_var == "SIR") {
+    i_breaks <- c(-Inf, seq(-0.08, 0, 0.01), Inf)
+    i_contour_level <- -0.05
+    i_legend_title <- "ΔSIR"
+  }
+
+  if (i_var == "H_free") {
+    i_breaks <- c(-Inf, seq(0, 3, 0.5), Inf)
+    i_contour_level <- 2
+    i_legend_title <-
+      "ΔH<sup>+</sup><sub>free</sub><br>(nmol kg<sup>-1</sup>)"
+    i_acidification_depth_layer_total <-
+      acidification_depth_layer_total %>%
+      mutate(delta_total = delta_total * 1e3)
+  }
   
-  # df <- i_acidification_depth_layer_total
+  
   
   p_total_fill <-
   i_acidification_depth_layer_total %>%
     p_map_mdim_robinson(
       # df_uncertainty = i_acidification_depth_layer_uncertainty,
-      dim_col = "depth",
-      dim_row = "tref",
+      dim_row = "depth",
+      dim_col = "tref",
       var = "delta_total",
-      legend_title = i_var,
-      breaks = breaks,
+      contour_level = i_contour_level,
+      legend_title = i_legend_title,
+      breaks = i_breaks,
       legend_position = "right"
     )
   
-  print(
-  p_total_fill
+  ggsave(
+    here::here(
+      paste0("output/publication/maps_depth_layer_",i_var,"_total_changes.png")
+    ),
+    width = 12,
+    height = 6,
+    dpi = 600,
+    bg = "white"
   )
   
 }
 
-dev.off()
-
-
-
-i_var <- "tco2"
-
-i_acidification_depth_layer_total <-
-  acidification_depth_layer_total %>%
-  filter(variable == i_var) %>%
-  select(lon, lat, depth, tref, delta_total)
-
-breaks <- c(-Inf, seq(0, 80, 10), Inf)
-
-i_acidification_depth_layer_total %>%
-  p_map_mdim_robinson(
-    dim_col = "tref",
-    dim_row = "depth",
-    var = "delta_total",
-    legend_title = "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)",
-    breaks = breaks,
-    legend_position = "right"
-  )
-
-ggsave(
-  here::here(
-    "output/publication/maps_depth_layer_dCant_total_changes.png"
-  ),
-  width = 12,
-  height = 6,
-  dpi = 600,
-  bg = "white"
-)
-
-OIA_variables
-
-i_var <- "H_free"
-
-i_acidification_depth_layer_total <-
-  acidification_depth_layer_total %>%
-  filter(variable == i_var) %>%
-  select(lon, lat, depth, tref, delta_total)
-
-breaks <- c(-Inf, seq(0, 0.003, 0.0003), Inf)
-
-i_acidification_depth_layer_total %>%
-  p_map_mdim_robinson(
-    dim_col = "tref",
-    dim_row = "depth",
-    var = "delta_total",
-    legend_title = "ΔH<sup>+</sup><sub>free</sub><br>(µmol kg<sup>-1</sup>)",
-    breaks = breaks,
-    legend_position = "right"
-  )
-
-ggsave(
-  here::here(
-    "output/publication/maps_depth_layer_total_changes_hydrogen_ion.png"
-  ),
-  width = 12,
-  height = 6,
-  dpi = 600,
-  bg = "white"
-)
 
 breaks_contour <- seq(0,0.006,0.001)
 
