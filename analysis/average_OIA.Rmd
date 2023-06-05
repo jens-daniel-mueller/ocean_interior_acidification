@@ -611,6 +611,25 @@ x_axis_labels <-
     "temp" = "ΔT (°C)"
   )
 
+
+contours <-
+tibble(
+  contour =
+    c(
+      labels_breaks("tco2")$i_contour_level,
+      labels_breaks("pH")$i_contour_level,
+      labels_breaks("OmegaAragonite")$i_contour_level,
+      labels_breaks("SIR")$i_contour_level,
+      labels_breaks("H_free")$i_contour_level
+    ),
+  variable =
+    c("tco2",
+      "pH",
+      "OmegaAragonite",
+      "SIR",
+      "H_free")
+)
+
 ```
 
 
@@ -2217,6 +2236,50 @@ rm(buffer_addition_depth_layer,
    i_buffer_addition_depth_layer,
    p_climatology,
    low, high)
+
+```
+
+# Acidifcation volumes
+
+```{r acidification_volumes}
+
+acidification_volume <-
+  acidification_trend %>%
+  filter(tref != 1800) %>%
+  select(lon, lat, depth, tref, contains("delta_total")) %>%
+  pivot_longer(contains("delta_total"),
+               names_to = "variable",
+               values_to = "delta_total") %>%
+  mutate(variable = str_remove(variable, "_delta_total"))
+  
+acidification_volume <-
+  full_join(acidification_volume,
+            contours)
+
+acidifcation_horizons <-
+acidification_volume %>% 
+  filter(abs(delta_total) > abs(contour)) %>% 
+  group_by(lon, lat, tref, variable) %>% 
+  filter(depth == max(depth)) %>%
+  ungroup()
+
+acidifcation_horizons %>% 
+  ggplot(aes(lon, lat, fill = depth)) +
+  geom_tile() +
+  facet_grid(tref ~ variable) +
+  coord_quickmap()
+
+full_join(
+acidifcation_horizons,
+basinmask) %>% 
+  mutate(volume = depth * area) %>% 
+  group_by(tref, variable) %>% 
+  summarise(volume = sum(volume)) %>% 
+  ungroup() %>% 
+  ggplot(aes(tref, volume)) +
+  geom_point() +
+  geom_path() +
+  facet_wrap(~ variable, scales = "free_y")
 
 ```
 
