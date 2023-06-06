@@ -103,9 +103,9 @@ biome_mask <- biome_mask  %>%
     # region == "arctic" & value == "2" ~ "NP-ICE",
     # region == "arctic" & value == "3" ~ "NA-ICE",
     # region == "arctic" & value == "4" ~ "Barents",
-    region == "southern" & value == "1" ~ "STSS",
-    # region == "southern" & value == "2" ~ "SPSS",
-    # region == "southern" & value == "3" ~ "ICE",
+    region == "southern" & value == "1" ~ "SO-STSS",
+    # region == "southern" & value == "2" ~ "SO-SPSS",
+    # region == "southern" & value == "3" ~ "SO-ICE",
     TRUE ~ "other"
   ))
 
@@ -2243,43 +2243,270 @@ rm(buffer_addition_depth_layer,
 
 ```{r acidification_volumes}
 
-acidification_volume <-
+acidification_volume_raw <-
   acidification_trend %>%
-  filter(tref != 1800) %>%
+  filter(tref != 1800,
+         depth <= 3000) %>%
   select(lon, lat, depth, tref, contains("delta_total")) %>%
   pivot_longer(contains("delta_total"),
                names_to = "variable",
                values_to = "delta_total") %>%
   mutate(variable = str_remove(variable, "_delta_total"))
-  
-acidification_volume <-
-  full_join(acidification_volume,
-            contours)
 
-acidifcation_horizons <-
-acidification_volume %>% 
-  filter(abs(delta_total) > abs(contour)) %>% 
-  group_by(lon, lat, tref, variable) %>% 
-  filter(depth == max(depth)) %>%
+
+pdf(
+  here::here("output/all_variables/maps_acidification_horizons.pdf"),
+  width = 5,
+  height = 7
+)
+
+for (i_var in OIA_variables[-6]) {
+  
+  # i_var <- OIA_variables[2]
+  
+  contours <- labels_breaks(i_var)$i_breaks
+  contours <- contours[-c(1, length(contours))]
+  
+  i_acidification_volume_raw <- acidification_volume_raw %>% 
+    filter(variable == i_var)
+  
+  for (i_contour in contours) {
+    # i_contour <- contours[2]
+    
+    acidification_horizon <-
+      i_acidification_volume_raw %>%
+      filter(abs(delta_total) > abs(i_contour)) %>%
+      group_by(lon, lat, tref, variable) %>%
+      filter(depth == max(depth)) %>%
+      ungroup() %>% 
+      mutate(contour = i_contour)
+    
+    acidification_volume_global <- left_join(acidification_horizon,
+                                             basinmask) %>%
+      mutate(volume = depth * area,
+             basin = "Global") %>%
+      group_by(tref, variable, contour, basin) %>%
+      summarise(volume = sum(volume)) %>%
+      ungroup()
+    
+    acidification_volume_regional <- left_join(acidification_horizon,
+                                             basinmask) %>%
+      mutate(volume = depth * area) %>%
+      group_by(tref, variable, contour, basin) %>%
+      summarise(volume = sum(volume)) %>%
+      ungroup()
+    
+    acidification_volume <- bind_rows(
+      acidification_volume_global,
+      acidification_volume_regional
+    )
+    
+    rm(
+      acidification_volume_global,
+      acidification_volume_regional
+    )
+    
+    acidification_volume_biome <- left_join(acidification_horizon,
+                                             biome_mask) %>%
+      mutate(volume = depth * area) %>%
+      group_by(tref, variable, contour, biome) %>%
+      summarise(volume = sum(volume)) %>%
+      ungroup()
+    
+    if (exists("acidification_horizon_all")) {
+      acidification_horizon_all <-
+        bind_rows(acidification_horizon_all,
+                  acidification_horizon)
+    }
+    
+    if (!exists("acidification_horizon_all")) {
+      acidification_horizon_all <- acidification_horizon
+    }
+    
+    if (exists("acidification_volume_all")) {
+      acidification_volume_all <-
+        bind_rows(acidification_volume_all,
+                  acidification_volume)
+    }
+    
+    if (!exists("acidification_volume_all")) {
+      acidification_volume_all <- acidification_volume
+    }
+
+    if (exists("acidification_volume_biome_all")) {
+      acidification_volume_biome_all <-
+        bind_rows(acidification_volume_biome_all,
+                  acidification_volume_biome)
+    }
+    
+    if (!exists("acidification_volume_biome_all")) {
+      acidification_volume_biome_all <- acidification_volume_biome
+    }
+    
+    
+  }
+  
+  print(
+  acidification_horizon_all %>%
+    select(-delta_total) %>% 
+    p_map_mdim_robinson(
+      dim_col = "tref",
+      dim_row = "contour",
+      var = "depth",
+      breaks = seq(0,3000,200),
+      legend_position = "right"
+    ) +
+    labs(title = i_var))
+
+  rm(acidification_horizon_all)
+  
+}
+
+dev.off()
+
+
+ocean_bathymetry <- acidification_trend %>%
+  filter(depth <= 3000) %>% 
+  group_by(lat, lon) %>%
+  summarise(depth = max(depth)) %>%
   ungroup()
 
-acidifcation_horizons %>% 
-  ggplot(aes(lon, lat, fill = depth)) +
-  geom_tile() +
-  facet_grid(tref ~ variable) +
-  coord_quickmap()
+ocean_volume <- inner_join(ocean_bathymetry,
+                           basinmask)
 
-full_join(
-acidifcation_horizons,
-basinmask) %>% 
-  mutate(volume = depth * area) %>% 
-  group_by(tref, variable) %>% 
-  summarise(volume = sum(volume)) %>% 
-  ungroup() %>% 
-  ggplot(aes(tref, volume)) +
-  geom_point() +
+ocean_volume <- ocean_volume %>%
+  mutate(volume_total = depth * area) %>%
+  group_by(basin) %>%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
+  ungroup()
+
+ocean_volume_global <- ocean_volume %>%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
+  mutate(basin = "Global")
+
+
+ocean_volume <- bind_rows(
+  ocean_volume,
+  ocean_volume_global
+)
+
+ocean_volume_biome <- inner_join(ocean_bathymetry,
+                           biome_mask)
+
+ocean_volume_biome <- ocean_volume_biome %>%
+  mutate(volume_total = depth * area) %>%
+  group_by(biome) %>%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
+  ungroup()
+
+
+rm(ocean_volume_global)
+rm(ocean_bathymetry)
+
+
+full_join(ocean_volume,
+          acidification_volume_all) %>%
+  filter(contour != 0) %>%
+  mutate(contour = as.factor(contour)) %>%
+    mutate(
+    basin = str_replace(basin,
+                        "_",
+                        ". "),
+    basin = fct_relevel(
+      basin,
+      "Global",
+      "N. Pacific",
+      "N. Atlantic",
+      "Indian",
+      "S. Pacific",
+      "S. Atlantic"
+    )
+  ) %>% 
+  ggplot(aes(
+    tref,
+    100 * volume / volume_total,
+    group = contour,
+    label = contour
+  )) +
   geom_path() +
-  facet_wrap(~ variable, scales = "free_y")
+  geom_point(shape = 21, fill = "white") +
+  geom_text(
+    data = . %>%
+      filter(tref == 2014,
+             basin == "N. Atlantic") %>%
+      mutate(tref = tref + 1),
+    hjust = 0,
+    check_overlap = TRUE,
+    size = 2
+  ) +
+  scale_x_continuous(breaks = c(1994, 2004, 2014),
+                     limits = c(1994, 2019)) +
+  labs(y = "Acidified volume of top 3000m global ocean (%)") +
+  theme(
+    axis.title.x = element_blank(),
+    strip.text.y = element_markdown()
+  ) +
+  facet_grid(variable ~ basin,
+             labeller = labeller(variable = x_axis_labels))
+
+ggsave(
+  here::here(
+    "output/publication/acidification_volumes_region.png"
+  ),
+  width = 10,
+  height = 8,
+  dpi = 600,
+  bg = "white"
+)
+
+
+full_join(ocean_volume_biome,
+          acidification_volume_biome_all) %>%
+  filter(contour != 0,
+         !is.na(biome)) %>%
+  ggplot(aes(
+    tref,
+    100 * volume / volume_total,
+    group = contour,
+    label = contour
+  )) +
+  geom_path() +
+  geom_point(shape = 21, fill = "white") +
+  geom_text(
+    data = . %>%
+      filter(tref == 2014,
+             biome == "NA-SPSS") %>%
+      mutate(tref = tref + 1),
+    hjust = 0,
+    check_overlap = TRUE,
+    size = 2
+  ) +
+  scale_x_continuous(breaks = c(1994, 2004, 2014),
+                     limits = c(1994, 2019)) +
+  labs(y = "Acidified volume of top 3000m global ocean (%)") +
+  theme(
+    axis.title.x = element_blank(),
+    strip.text.y = element_markdown()
+  ) +
+  facet_grid(variable ~ biome,
+             labeller = labeller(variable = x_axis_labels))
+
+ggsave(
+  here::here(
+    "output/publication/acidification_volumes_biome.png"
+  ),
+  width = 10,
+  height = 8,
+  dpi = 600,
+  bg = "white"
+)
+
+
+
+
+rm(acidification_volume_all,
+   ocean_volume,
+   ocean_volume_biome)
 
 ```
 
