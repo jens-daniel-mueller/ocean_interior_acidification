@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">05 June, 2023</h4>
+<h4 class="date">06 June, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-06-05
+<strong>Last updated:</strong> 2023-06-06
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree6a5c0a6257c67965122771d76ca1289867a811betargetblank6a5c0a6a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree620dc78c8e8a391f605a032929556fe026aeea3etargetblank620dc78a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/6a5c0a6257c67965122771d76ca1289867a811be" target="_blank">6a5c0a6</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/620dc78c8e8a391f605a032929556fe026aeea3e" target="_blank">620dc78</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree6a5c0a6257c67965122771d76ca1289867a811betargetblank6a5c0a6a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree620dc78c8e8a391f605a032929556fe026aeea3etargetblank620dc78a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/6a5c0a6257c67965122771d76ca1289867a811be" target="_blank">6a5c0a6</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/620dc78c8e8a391f605a032929556fe026aeea3e" target="_blank">620dc78</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -631,6 +631,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/620dc78c8e8a391f605a032929556fe026aeea3e/analysis/average_OIA.Rmd" target="_blank">620dc78</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-06
+</td>
+<td>
+acidifcation volume analysis completed
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/be8e556782d9aa0f7d85f008f5d0719864fa56e3/docs/average_OIA.html" target="_blank">be8e556</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1656,9 +1690,9 @@ biome_mask &lt;- biome_mask  %&gt;%
     # region == &quot;arctic&quot; &amp; value == &quot;2&quot; ~ &quot;NP-ICE&quot;,
     # region == &quot;arctic&quot; &amp; value == &quot;3&quot; ~ &quot;NA-ICE&quot;,
     # region == &quot;arctic&quot; &amp; value == &quot;4&quot; ~ &quot;Barents&quot;,
-    region == &quot;southern&quot; &amp; value == &quot;1&quot; ~ &quot;STSS&quot;,
-    # region == &quot;southern&quot; &amp; value == &quot;2&quot; ~ &quot;SPSS&quot;,
-    # region == &quot;southern&quot; &amp; value == &quot;3&quot; ~ &quot;ICE&quot;,
+    region == &quot;southern&quot; &amp; value == &quot;1&quot; ~ &quot;SO-STSS&quot;,
+    # region == &quot;southern&quot; &amp; value == &quot;2&quot; ~ &quot;SO-SPSS&quot;,
+    # region == &quot;southern&quot; &amp; value == &quot;3&quot; ~ &quot;SO-ICE&quot;,
     TRUE ~ &quot;other&quot;
   ))
 
@@ -4185,44 +4219,344 @@ rm(buffer_addition_depth_layer,
 </div>
 <div id="acidifcation-volumes" class="section level1">
 <h1>Acidifcation volumes</h1>
-<pre class="r"><code>acidification_volume &lt;-
+<pre class="r"><code>acidification_volume_raw &lt;-
   acidification_trend %&gt;%
-  filter(tref != 1800) %&gt;%
+  filter(tref != 1800,
+         depth &lt;= 3000) %&gt;%
   select(lon, lat, depth, tref, contains(&quot;delta_total&quot;)) %&gt;%
   pivot_longer(contains(&quot;delta_total&quot;),
                names_to = &quot;variable&quot;,
                values_to = &quot;delta_total&quot;) %&gt;%
   mutate(variable = str_remove(variable, &quot;_delta_total&quot;))
-  
-acidification_volume &lt;-
-  full_join(acidification_volume,
-            contours)
 
-acidifcation_horizons &lt;-
-acidification_volume %&gt;% 
-  filter(abs(delta_total) &gt; abs(contour)) %&gt;% 
-  group_by(lon, lat, tref, variable) %&gt;% 
-  filter(depth == max(depth)) %&gt;%
+
+pdf(
+  here::here(&quot;output/all_variables/maps_acidification_horizons.pdf&quot;),
+  width = 5,
+  height = 7
+)
+
+for (i_var in OIA_variables[-6]) {
+  
+  # i_var &lt;- OIA_variables[2]
+  
+  contours &lt;- labels_breaks(i_var)$i_breaks
+  contours &lt;- contours[-c(1, length(contours))]
+  
+  i_acidification_volume_raw &lt;- acidification_volume_raw %&gt;% 
+    filter(variable == i_var)
+  
+  for (i_contour in contours) {
+    # i_contour &lt;- contours[2]
+    
+    acidification_horizon &lt;-
+      i_acidification_volume_raw %&gt;%
+      filter(abs(delta_total) &gt; abs(i_contour)) %&gt;%
+      group_by(lon, lat, tref, variable) %&gt;%
+      filter(depth == max(depth)) %&gt;%
+      ungroup() %&gt;% 
+      mutate(contour = i_contour)
+    
+    acidification_volume_global &lt;- left_join(acidification_horizon,
+                                             basinmask) %&gt;%
+      mutate(volume = depth * area,
+             basin = &quot;Global&quot;) %&gt;%
+      group_by(tref, variable, contour, basin) %&gt;%
+      summarise(volume = sum(volume)) %&gt;%
+      ungroup()
+    
+    acidification_volume_regional &lt;- left_join(acidification_horizon,
+                                             basinmask) %&gt;%
+      mutate(volume = depth * area) %&gt;%
+      group_by(tref, variable, contour, basin) %&gt;%
+      summarise(volume = sum(volume)) %&gt;%
+      ungroup()
+    
+    acidification_volume &lt;- bind_rows(
+      acidification_volume_global,
+      acidification_volume_regional
+    )
+    
+    rm(
+      acidification_volume_global,
+      acidification_volume_regional
+    )
+    
+    acidification_volume_biome &lt;- left_join(acidification_horizon,
+                                             biome_mask) %&gt;%
+      mutate(volume = depth * area) %&gt;%
+      group_by(tref, variable, contour, biome) %&gt;%
+      summarise(volume = sum(volume)) %&gt;%
+      ungroup()
+    
+    if (exists(&quot;acidification_horizon_all&quot;)) {
+      acidification_horizon_all &lt;-
+        bind_rows(acidification_horizon_all,
+                  acidification_horizon)
+    }
+    
+    if (!exists(&quot;acidification_horizon_all&quot;)) {
+      acidification_horizon_all &lt;- acidification_horizon
+    }
+    
+    if (exists(&quot;acidification_volume_all&quot;)) {
+      acidification_volume_all &lt;-
+        bind_rows(acidification_volume_all,
+                  acidification_volume)
+    }
+    
+    if (!exists(&quot;acidification_volume_all&quot;)) {
+      acidification_volume_all &lt;- acidification_volume
+    }
+
+    if (exists(&quot;acidification_volume_biome_all&quot;)) {
+      acidification_volume_biome_all &lt;-
+        bind_rows(acidification_volume_biome_all,
+                  acidification_volume_biome)
+    }
+    
+    if (!exists(&quot;acidification_volume_biome_all&quot;)) {
+      acidification_volume_biome_all &lt;- acidification_volume_biome
+    }
+    
+    
+  }
+  
+  print(
+  acidification_horizon_all %&gt;%
+    select(-delta_total) %&gt;% 
+    p_map_mdim_robinson(
+      dim_col = &quot;tref&quot;,
+      dim_row = &quot;contour&quot;,
+      var = &quot;depth&quot;,
+      breaks = seq(0,3000,200),
+      legend_position = &quot;right&quot;
+    ) +
+    labs(title = i_var))
+
+  rm(acidification_horizon_all)
+  
+}
+
+dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>ocean_bathymetry &lt;- acidification_trend %&gt;%
+  filter(depth &lt;= 3000) %&gt;% 
+  group_by(lat, lon) %&gt;%
+  summarise(depth = max(depth)) %&gt;%
   ungroup()
 
-acidifcation_horizons %&gt;% 
-  ggplot(aes(lon, lat, fill = depth)) +
-  geom_tile() +
-  facet_grid(tref ~ variable) +
-  coord_quickmap()</code></pre>
-<p><img src="figure/average_OIA.Rmd/acidification_volumes-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>full_join(
-acidifcation_horizons,
-basinmask) %&gt;% 
-  mutate(volume = depth * area) %&gt;% 
-  group_by(tref, variable) %&gt;% 
-  summarise(volume = sum(volume)) %&gt;% 
-  ungroup() %&gt;% 
-  ggplot(aes(tref, volume)) +
-  geom_point() +
+ocean_volume &lt;- inner_join(ocean_bathymetry,
+                           basinmask)
+
+ocean_volume &lt;- ocean_volume %&gt;%
+  mutate(volume_total = depth * area) %&gt;%
+  group_by(basin) %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  ungroup()
+
+ocean_volume_global &lt;- ocean_volume %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  mutate(basin = &quot;Global&quot;)
+
+
+ocean_volume &lt;- bind_rows(
+  ocean_volume,
+  ocean_volume_global
+)
+
+ocean_volume_biome &lt;- inner_join(ocean_bathymetry,
+                           biome_mask)
+
+ocean_volume_biome &lt;- ocean_volume_biome %&gt;%
+  mutate(volume_total = depth * area) %&gt;%
+  group_by(biome) %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  ungroup()
+
+
+rm(ocean_volume_global)
+rm(ocean_bathymetry)
+
+
+full_join(ocean_volume,
+          acidification_volume_all) %&gt;%
+  filter(contour != 0) %&gt;%
+  mutate(contour = as.factor(contour)) %&gt;%
+    mutate(
+    basin = str_replace(basin,
+                        &quot;_&quot;,
+                        &quot;. &quot;),
+    basin = fct_relevel(
+      basin,
+      &quot;Global&quot;,
+      &quot;N. Pacific&quot;,
+      &quot;N. Atlantic&quot;,
+      &quot;Indian&quot;,
+      &quot;S. Pacific&quot;,
+      &quot;S. Atlantic&quot;
+    )
+  ) %&gt;% 
+  ggplot(aes(
+    tref,
+    100 * volume / volume_total,
+    group = contour,
+    label = contour
+  )) +
   geom_path() +
-  facet_wrap(~ variable, scales = &quot;free_y&quot;)</code></pre>
+  geom_point(shape = 21, fill = &quot;white&quot;) +
+  geom_text(
+    data = . %&gt;%
+      filter(tref == 2014,
+             basin == &quot;N. Atlantic&quot;) %&gt;%
+      mutate(tref = tref + 1),
+    hjust = 0,
+    check_overlap = TRUE,
+    size = 2
+  ) +
+  scale_x_continuous(breaks = c(1994, 2004, 2014),
+                     limits = c(1994, 2019)) +
+  labs(y = &quot;Acidified volume of top 3000m global ocean (%)&quot;) +
+  theme(
+    axis.title.x = element_blank(),
+    strip.text.y = element_markdown()
+  ) +
+  facet_grid(variable ~ basin,
+             labeller = labeller(variable = x_axis_labels))</code></pre>
+<p><img src="figure/average_OIA.Rmd/acidification_volumes-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-acidification_volumes-1">
+Past versions of acidification_volumes-1.png
+</button>
+</p>
+<div id="fig-acidification_volumes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/be8e556782d9aa0f7d85f008f5d0719864fa56e3/docs/figure/average_OIA.Rmd/acidification_volumes-1.png" target="_blank">be8e556</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>ggsave(
+  here::here(
+    &quot;output/publication/acidification_volumes_region.png&quot;
+  ),
+  width = 10,
+  height = 8,
+  dpi = 600,
+  bg = &quot;white&quot;
+)
+
+
+full_join(ocean_volume_biome,
+          acidification_volume_biome_all) %&gt;%
+  filter(contour != 0,
+         !is.na(biome)) %&gt;%
+  ggplot(aes(
+    tref,
+    100 * volume / volume_total,
+    group = contour,
+    label = contour
+  )) +
+  geom_path() +
+  geom_point(shape = 21, fill = &quot;white&quot;) +
+  geom_text(
+    data = . %&gt;%
+      filter(tref == 2014,
+             biome == &quot;NA-SPSS&quot;) %&gt;%
+      mutate(tref = tref + 1),
+    hjust = 0,
+    check_overlap = TRUE,
+    size = 2
+  ) +
+  scale_x_continuous(breaks = c(1994, 2004, 2014),
+                     limits = c(1994, 2019)) +
+  labs(y = &quot;Acidified volume of top 3000m global ocean (%)&quot;) +
+  theme(
+    axis.title.x = element_blank(),
+    strip.text.y = element_markdown()
+  ) +
+  facet_grid(variable ~ biome,
+             labeller = labeller(variable = x_axis_labels))</code></pre>
 <p><img src="figure/average_OIA.Rmd/acidification_volumes-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-acidification_volumes-2">
+Past versions of acidification_volumes-2.png
+</button>
+</p>
+<div id="fig-acidification_volumes-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/be8e556782d9aa0f7d85f008f5d0719864fa56e3/docs/figure/average_OIA.Rmd/acidification_volumes-2.png" target="_blank">be8e556</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-05
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>ggsave(
+  here::here(
+    &quot;output/publication/acidification_volumes_biome.png&quot;
+  ),
+  width = 10,
+  height = 8,
+  dpi = 600,
+  bg = &quot;white&quot;
+)
+
+
+
+
+rm(acidification_volume_all,
+   ocean_volume,
+   ocean_volume_biome)</code></pre>
 </div>
 <div id="saturation-horizon-maps" class="section level1">
 <h1>Saturation horizon maps</h1>
