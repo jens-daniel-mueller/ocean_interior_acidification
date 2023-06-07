@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">06 June, 2023</h4>
+<h4 class="date">07 June, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-06-06
+<strong>Last updated:</strong> 2023-06-07
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree620dc78c8e8a391f605a032929556fe026aeea3etargetblank620dc78a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4db8941e8c5a4ec23d801e347df506c274e3b578targetblank4db8941a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/620dc78c8e8a391f605a032929556fe026aeea3e" target="_blank">620dc78</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4db8941e8c5a4ec23d801e347df506c274e3b578" target="_blank">4db8941</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree620dc78c8e8a391f605a032929556fe026aeea3etargetblank620dc78a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4db8941e8c5a4ec23d801e347df506c274e3b578targetblank4db8941a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/620dc78c8e8a391f605a032929556fe026aeea3e" target="_blank">620dc78</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4db8941e8c5a4ec23d801e347df506c274e3b578" target="_blank">4db8941</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -631,6 +631,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4db8941e8c5a4ec23d801e347df506c274e3b578/analysis/average_OIA.Rmd" target="_blank">4db8941</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-07
+</td>
+<td>
+all figures updated for publication
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/a8376b4fac163876ea91f131fa92ff11cdf85773/docs/average_OIA.html" target="_blank">a8376b4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1643,19 +1677,98 @@ path_reccap2 &lt;-
 
 path_out &lt;-   paste0(path_observations, &quot;output_publication/&quot;)
 path_OIA &lt;-   &quot;/nfs/kryo/work/jenmueller/ocean_interior_acidification/&quot;</code></pre>
-<div id="basin-mask" class="section level2">
-<h2>Basin mask</h2>
+<div id="basinmask" class="section level2">
+<h2>Basinmask</h2>
 <pre class="r"><code>basinmask &lt;- basinmask %&gt;% 
   filter(MLR_basins == &quot;5&quot;) %&gt;% 
-  select(lon, lat, basin)</code></pre>
+  select(lon, lat, basin)
+
+basinmask &lt;- basinmask %&gt;%
+  mutate(
+    basin = str_replace(basin,
+                        &quot;_&quot;,
+                        &quot;. &quot;),
+    basin = fct_relevel(
+      basin,
+      &quot;N. Pacific&quot;,
+      &quot;N. Atlantic&quot;,
+      &quot;Indian&quot;,
+      &quot;S. Pacific&quot;,
+      &quot;S. Atlantic&quot;
+    )
+  )
+
+basinmask_robin_raster &lt;- rast(basinmask %&gt;% 
+                                 mutate(dist = 1) %&gt;% 
+                                 pivot_wider(names_from = basin,
+                                            values_from = dist),
+                               crs = &quot;+proj=longlat&quot;)
+
+
+basinmask_robin_raster &lt;- project(basinmask_robin_raster, target_crs, method = &quot;near&quot;)
+
+basinmask_robin_tibble &lt;- basinmask_robin_raster %&gt;%
+  as.data.frame(xy = TRUE, na.rm = FALSE) %&gt;%
+  as_tibble() %&gt;%
+  rename(lon = x, lat = y) %&gt;%
+  pivot_longer(cols = -c(&quot;lon&quot;, &quot;lat&quot;),
+               names_to = &quot;basin&quot;,
+               values_to = &quot;dist&quot;) %&gt;%
+  drop_na() %&gt;% 
+  mutate(basin = as.character(basin))
+
+ggplot() +
+  geom_raster(
+    data = basinmask_robin_tibble,
+    aes(
+      x = lon,
+      y = lat,
+      fill = basin
+    )
+  ) +
+  geom_sf(data = worldmap_trans, fill = &quot;grey90&quot;, col = &quot;grey90&quot;) +
+  geom_sf(data = coastline_trans, linewidth = 0.3) +
+  geom_sf(data = bbox_graticules_trans, linewidth = 0.5) +
+  coord_sf(
+    crs = target_crs,
+    ylim = lat_lim,
+    xlim = lon_lim,
+    expand = FALSE
+  ) +
+  scale_fill_okabeito(reverse = TRUE)  +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.border = element_rect(colour = &quot;transparent&quot;),
+    strip.background = element_blank()
+  )</code></pre>
+<p><img src="figure/average_OIA.Rmd/select_basinmask_5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(
+    paste0(
+      &quot;output/publication/map_basinmask.png&quot;
+    )
+  ),
+  width = 10,
+  height = 3,
+  dpi = 600,
+  bg = &quot;white&quot;
+)
+
+
+# compute grid cell surface area
+
+basinmask &lt;- basinmask %&gt;% 
+    mutate(area = earth_surf(lat, lon))</code></pre>
 </div>
-<div id="biome-mask" class="section level2">
-<h2>Biome mask</h2>
-<pre class="r"><code>biome_mask &lt;-
+<div id="biomemask" class="section level2">
+<h2>Biomemask</h2>
+<pre class="r"><code>biomemask &lt;-
   read_ncdf(paste(path_reccap2, &quot;RECCAP2_region_masks_all_v20220620.nc&quot;, sep = &quot;&quot;)) %&gt;%
   as_tibble()
 
-biome_mask &lt;- biome_mask %&gt;%
+biomemask &lt;- biomemask %&gt;%
   filter(seamask == 1) %&gt;%
   select(lon, lat, atlantic:southern) %&gt;%
   pivot_longer(atlantic:southern,
@@ -1663,12 +1776,12 @@ biome_mask &lt;- biome_mask %&gt;%
                values_to = &quot;value&quot;) %&gt;%
   mutate(value = as.factor(value))
 
-biome_mask &lt;- biome_mask %&gt;%
+biomemask &lt;- biomemask %&gt;%
   filter(value != 0)
 
 # assign biome label and select biomes
 
-biome_mask &lt;- biome_mask  %&gt;% 
+biomemask &lt;- biomemask  %&gt;% 
   mutate(biome = case_when(
     region == &quot;atlantic&quot; &amp; value == &quot;1&quot; ~ &quot;NA-SPSS&quot;,
     # region == &quot;atlantic&quot; &amp; value == &quot;2&quot; ~ &quot;NA-STSS&quot;,
@@ -1696,270 +1809,80 @@ biome_mask &lt;- biome_mask  %&gt;%
     TRUE ~ &quot;other&quot;
   ))
 
-biome_mask &lt;- biome_mask %&gt;% 
+biomemask &lt;- biomemask %&gt;% 
   filter(biome != &quot;other&quot;) %&gt;% 
-  select(-value)
+  select(-c(value, region))
 
-biome_mask %&gt;%
-  ggplot(aes(lon, lat, fill = biome)) +
-  geom_raster() +
-  coord_quickmap(expand = 0)</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_biome_mask-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_biome_mask-1">
-Past versions of read_biome_mask-1.png
-</button>
-</p>
-<div id="fig-read_biome_mask-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/read_biome_mask-1.png" target="_blank">af60720</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-05
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/49bf7b2bdd07b29ba7f3ba9c67180cd4f35550c0/docs/figure/average_OIA.Rmd/read_biome_mask-1.png" target="_blank">49bf7b2</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-16
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f8d1f8c006a5e9f7c6c809c6d266e16e279569dd/docs/figure/average_OIA.Rmd/read_biome_mask-1.png" target="_blank">f8d1f8c</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-14
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/2facf75f7a83e9161c5eb95fdcc5f2b759be9ae6/docs/figure/average_OIA.Rmd/read_biome_mask-1.png" target="_blank">2facf75</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-06
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>biome_mask %&gt;%
-  group_split(region) %&gt;%
-  # head(4) %&gt;%
-  map(
-    ~ ggplot() +
-      geom_raster(data = biome_mask %&gt;% distinct(lon, lat),
-                  aes(lon, lat),
-                  fill = &quot;grey80&quot;) +
-      geom_raster(data = .x,
-                  aes(lon, lat, fill = biome)) +
-      scale_fill_vibrant() +
-      coord_quickmap(expand = 0, ylim = c(-78,65)) +
-      facet_wrap( ~ region)
+biomemask_robin_raster &lt;- rast(biomemask %&gt;% 
+                                 mutate(dist = 1) %&gt;% 
+                                 pivot_wider(names_from = biome,
+                                            values_from = dist),
+                               crs = &quot;+proj=longlat&quot;)
+
+
+biomemask_robin_raster &lt;- project(biomemask_robin_raster, target_crs, method = &quot;near&quot;)
+
+biomemask_robin_tibble &lt;- biomemask_robin_raster %&gt;%
+  as.data.frame(xy = TRUE, na.rm = FALSE) %&gt;%
+  as_tibble() %&gt;%
+  rename(lon = x, lat = y) %&gt;%
+  pivot_longer(cols = -c(&quot;lon&quot;, &quot;lat&quot;),
+               names_to = &quot;biome&quot;,
+               values_to = &quot;dist&quot;) %&gt;%
+  drop_na() %&gt;% 
+  mutate(biome = as.character(biome))
+
+ggplot() +
+  geom_raster(
+    data = biomemask_robin_tibble,
+    aes(
+      x = lon,
+      y = lat,
+      fill = biome
+    )
+  ) +
+  geom_sf(data = worldmap_trans, fill = &quot;grey90&quot;, col = &quot;grey90&quot;) +
+  geom_sf(data = coastline_trans, linewidth = 0.3) +
+  geom_sf(data = bbox_graticules_trans, linewidth = 0.5) +
+  coord_sf(
+    crs = target_crs,
+    ylim = lat_lim,
+    xlim = lon_lim,
+    expand = FALSE
+  ) +
+  scale_fill_okabeito(reverse = TRUE)  +
+  theme(
+    axis.title = element_blank(),
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    panel.border = element_rect(colour = &quot;transparent&quot;),
+    strip.background = element_blank()
   )</code></pre>
-<pre><code>[[1]]</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_biome_mask-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_biome_mask-2">
-Past versions of read_biome_mask-2.png
-</button>
-</p>
-<div id="fig-read_biome_mask-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/read_biome_mask-2.png" target="_blank">af60720</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-05
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/49bf7b2bdd07b29ba7f3ba9c67180cd4f35550c0/docs/figure/average_OIA.Rmd/read_biome_mask-2.png" target="_blank">49bf7b2</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-16
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f8d1f8c006a5e9f7c6c809c6d266e16e279569dd/docs/figure/average_OIA.Rmd/read_biome_mask-2.png" target="_blank">f8d1f8c</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-14
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>
-[[2]]</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_biome_mask-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_biome_mask-3">
-Past versions of read_biome_mask-3.png
-</button>
-</p>
-<div id="fig-read_biome_mask-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/read_biome_mask-3.png" target="_blank">af60720</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-05
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/49bf7b2bdd07b29ba7f3ba9c67180cd4f35550c0/docs/figure/average_OIA.Rmd/read_biome_mask-3.png" target="_blank">49bf7b2</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-16
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre><code>
-[[3]]</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_biome_mask-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_biome_mask-4">
-Past versions of read_biome_mask-4.png
-</button>
-</p>
-<div id="fig-read_biome_mask-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/read_biome_mask-4.png" target="_blank">af60720</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-05
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/49bf7b2bdd07b29ba7f3ba9c67180cd4f35550c0/docs/figure/average_OIA.Rmd/read_biome_mask-4.png" target="_blank">49bf7b2</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-16
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/average_OIA.Rmd/read_biomemask-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(
+    paste0(
+      &quot;output/publication/map_biomemask.png&quot;
+    )
+  ),
+  width = 10,
+  height = 3,
+  dpi = 600,
+  bg = &quot;white&quot;
+)
+
+# compute grid cell surface area
+
+biomemask &lt;- biomemask %&gt;% 
+    mutate(area = earth_surf(lat, lon))</code></pre>
 </div>
 <div id="list-of-files" class="section level2">
 <h2>List of files</h2>
 <pre class="r"><code>all_files &lt;- list.files(path_OIA) %&gt;% 
   str_subset(&quot;.csv&quot;)</code></pre>
 </div>
-<div id="climatology" class="section level2">
-<h2>2002 climatology</h2>
+<div id="climatologies" class="section level2">
+<h2>2002 climatologies</h2>
 <div id="oia-variables" class="section level3">
 <h3>OIA variables</h3>
 <pre class="r"><code>climatology &lt;-
@@ -1997,12 +1920,15 @@ acidification_trend &lt;- acidification_trend %&gt;%
 OIA_variables &lt;- OIA_variables[-c(3,4,6,7)]</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
-<pre class="r"><code>buffer_trend &lt;-
+<pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
+
+buffer_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_Standard case_3_DIC_addition.csv&quot;))
 
 buffer_trend &lt;- buffer_trend %&gt;% 
   select(-c(MLR_basins, Version_ID_group))
 
+# Join with standard OIA estimates
 buffer_trend_addition &lt;-
   full_join(
     buffer_trend %&gt;%
@@ -2021,11 +1947,10 @@ buffer_trend_addition &lt;-
 
 rm(buffer_trend)
 
-
+# compute OIA variable sensitivity to DIC addition
 buffer_trend_addition &lt;-
   buffer_trend_addition %&gt;%
   mutate(sensitivity = (added - raw) / 5)
-
 
 buffer_trend_addition &lt;-
   buffer_trend_addition %&gt;%
@@ -2048,7 +1973,19 @@ buffer_trend &lt;-
     buffer_trend,
     acidification_trend %&gt;% select(lon, lat, depth, tref, basin_AIP,
                                    contains(&quot;tco2_talk&quot;))
-  )</code></pre>
+  )
+
+buffer_trend &lt;- buffer_trend %&gt;% 
+  select(-contains(&quot;delta&quot;)) %&gt;% 
+  pivot_longer(-c(lon:tref, basin_AIP),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;sensitivity&quot;)
+
+
+buffer_variables &lt;-
+  buffer_trend %&gt;% 
+  distinct(variable) %&gt;% 
+  pull</code></pre>
 </div>
 </div>
 <div id="temperature-driver" class="section level3">
@@ -2309,10 +2246,52 @@ TS_product_consistent %&gt;%
 rm(TS_product_consistent)</code></pre>
 </div>
 </div>
+<div id="ocean-volume-grids" class="section level1">
+<h1>Ocean volume grids</h1>
+<pre class="r"><code>ocean_depth &lt;- 3000
+
+ocean_bathymetry &lt;- acidification_trend %&gt;%
+  filter(depth &lt;= ocean_depth) %&gt;% 
+  group_by(lat, lon) %&gt;%
+  summarise(depth = max(depth)) %&gt;%
+  ungroup()
+
+ocean_volume &lt;- inner_join(ocean_bathymetry,
+                           basinmask)
+
+ocean_volume &lt;- ocean_volume %&gt;%
+  mutate(volume_total = depth * area) %&gt;%
+  group_by(basin) %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  ungroup()
+
+ocean_volume_global &lt;- ocean_volume %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  mutate(basin = &quot;Global&quot;)
+
+
+ocean_volume &lt;- bind_rows(
+  ocean_volume,
+  ocean_volume_global
+)
+
+
+ocean_volume_biome &lt;- inner_join(ocean_bathymetry,
+                           biomemask)
+
+ocean_volume_biome &lt;- ocean_volume_biome %&gt;%
+  mutate(volume_total = depth * area) %&gt;%
+  group_by(biome) %&gt;%
+  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+  ungroup()
+
+
+rm(ocean_volume_global)
+rm(ocean_bathymetry)</code></pre>
+</div>
 <div id="define-labels-and-breaks" class="section level1">
 <h1>Define labels and breaks</h1>
 <pre class="r"><code>labels_breaks &lt;- function(i_var) {
-  
   if (i_var == &quot;tco2&quot;) {
     i_breaks &lt;- c(-Inf, seq(0, 80, 10), Inf)
     i_contour_level &lt;- 50
@@ -2344,28 +2323,188 @@ rm(TS_product_consistent)</code></pre>
       &quot;ΔH&lt;sup&gt;+&lt;/sup&gt;&lt;sub&gt;free&lt;/sub&gt;&lt;br&gt;(nmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
   }
   
-  all_labels_breaks &lt;- lst(
-    i_breaks,
-    i_contour_level,
-    i_legend_title
-  )
- 
+  if (i_var == &quot;temp&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-0.6, 0, 0.2), seq(0.2, 0.6, 0.2), Inf)
+    i_contour_level &lt;- 0
+    i_legend_title &lt;-
+      &quot;ΔT (°C)&quot;
+  }
+  
+  all_labels_breaks &lt;- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
   return(all_labels_breaks)
-   
+  
 }
 
 
 
 x_axis_scales &lt;-
-list(
-  variable == &quot;tco2&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;tco2&quot;)$i_breaks[c(TRUE, FALSE)]),
-  variable == &quot;pH&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;pH&quot;)$i_breaks[c(TRUE, FALSE)]),
-  variable == &quot;OmegaAragonite&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;OmegaAragonite&quot;)$i_breaks[c(TRUE, FALSE)]),
-  variable == &quot;SIR&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;SIR&quot;)$i_breaks[c(TRUE, FALSE)]),
-  variable == &quot;H_free&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;H_free&quot;)$i_breaks[c(TRUE, FALSE)])
-)
+  list(
+    variable == &quot;tco2&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;tco2&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;pH&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;pH&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;OmegaAragonite&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;OmegaAragonite&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;SIR&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;SIR&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;H_free&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;H_free&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;temp&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;temp&quot;)$i_breaks[c(TRUE, FALSE)])
+  )
 
 x_axis_labels &lt;-
+  c(
+    &quot;tco2&quot; = labels_breaks(&quot;tco2&quot;)$i_legend_title,
+    &quot;pH&quot; = labels_breaks(&quot;pH&quot;)$i_legend_title,
+    &quot;OmegaAragonite&quot; = labels_breaks(&quot;OmegaAragonite&quot;)$i_legend_title,
+    &quot;SIR&quot; = labels_breaks(&quot;SIR&quot;)$i_legend_title,
+    &quot;H_free&quot; = labels_breaks(&quot;H_free&quot;)$i_legend_title,
+    &quot;temp&quot; = labels_breaks(&quot;temp&quot;)$i_legend_title
+  )
+
+
+contours &lt;-
+  tibble(
+    contour =
+      c(
+        labels_breaks(&quot;tco2&quot;)$i_contour_level,
+        labels_breaks(&quot;pH&quot;)$i_contour_level,
+        labels_breaks(&quot;OmegaAragonite&quot;)$i_contour_level,
+        labels_breaks(&quot;SIR&quot;)$i_contour_level,
+        labels_breaks(&quot;H_free&quot;)$i_contour_level,
+        labels_breaks(&quot;temp&quot;)$i_contour_level
+      ),
+    variable =
+      c(&quot;tco2&quot;,
+        &quot;pH&quot;,
+        &quot;OmegaAragonite&quot;,
+        &quot;SIR&quot;,
+        &quot;H_free&quot;,
+        &quot;temp&quot;)
+  )</code></pre>
+<pre class="r"><code>buffer_variables_addition</code></pre>
+<pre><code>[1] &quot;pH&quot;             &quot;OmegaAragonite&quot; &quot;SIR&quot;            &quot;H_free&quot;        
+[5] &quot;temp&quot;          </code></pre>
+<pre class="r"><code>labels_breaks_buffer_variables_addition &lt;- function(i_var) {
+  if (i_var == &quot;pH&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-0.0033, -0.0015, 0.0003), Inf)
+    i_contour_level &lt;- -0.0027
+    i_legend_title &lt;- &quot;ΔpH/ΔDIC&lt;br&gt;(/ µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
+  }
+  
+  if (i_var == &quot;OmegaAragonite&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-0.011, -0.005, 0.001), Inf)
+    i_contour_level &lt;- -0.007
+    i_legend_title &lt;-
+      &quot;ΔΩ&lt;sub&gt;arag&lt;/sub&gt;/ΔDIC&lt;br&gt;(/ µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
+  }
+  
+  if (i_var == &quot;SIR&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-0.0017, -0.0007, 0.0002), Inf)
+    i_contour_level &lt;- -0.0009
+    i_legend_title &lt;- &quot;ΔSIR/ΔDIC&lt;br&gt;(/ µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
+  }
+  
+  if (i_var == &quot;H_free&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-4.3, -1, 0.55), Inf)
+    i_contour_level &lt;- -3.2
+    i_legend_title &lt;-
+      &quot;ΔH&lt;sup&gt;+&lt;/sup&gt;&lt;sub&gt;free&lt;/sub&gt;/ΔDIC&lt;br&gt;(nmol kg&lt;sup&gt;-1&lt;/sup&gt; / µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
+  }
+  
+  all_labels_breaks &lt;- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+
+x_axis_scales_buffer_variables_addition &lt;-
+  list(
+    variable == &quot;pH&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;pH&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;OmegaAragonite&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;OmegaAragonite&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;SIR&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;SIR&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;H_free&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;H_free&quot;)$i_breaks[c(TRUE, FALSE)])
+  )
+
+x_axis_labels_buffer_variables_addition &lt;-
+  c(
+    &quot;pH&quot; = labels_breaks_buffer_variables_addition(&quot;pH&quot;)$i_legend_title,
+    &quot;OmegaAragonite&quot; = labels_breaks_buffer_variables_addition(&quot;OmegaAragonite&quot;)$i_legend_title,
+    &quot;SIR&quot; = labels_breaks_buffer_variables_addition(&quot;SIR&quot;)$i_legend_title,
+    &quot;H_free&quot; = labels_breaks_buffer_variables_addition(&quot;H_free&quot;)$i_legend_title
+  )
+
+
+contours_buffer_variables_addition &lt;-
+  tibble(
+    contour =
+      c(
+        labels_breaks_buffer_variables_addition(&quot;pH&quot;)$i_contour_level,
+        labels_breaks_buffer_variables_addition(&quot;OmegaAragonite&quot;)$i_contour_level,
+        labels_breaks_buffer_variables_addition(&quot;SIR&quot;)$i_contour_level,
+        labels_breaks_buffer_variables_addition(&quot;H_free&quot;)$i_contour_level
+      ),
+    variable =
+      c(&quot;pH&quot;,
+        &quot;OmegaAragonite&quot;,
+        &quot;SIR&quot;,
+        &quot;H_free&quot;)
+  )</code></pre>
+<pre class="r"><code>buffer_variables
+
+labels_breaks_buffer_variables &lt;- function(i_var) {
+  if (i_var == &quot;gammaDIC&quot;) {
+    i_breaks &lt;- c(-Inf, seq(0, 80, 10), Inf)
+    i_contour_level &lt;- 50
+    i_legend_title &lt;- &quot;ΔC&lt;sub&gt;ant&lt;/sub&gt;&lt;br&gt;(µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
+  }
+  
+  if (i_var == &quot;betaDIC&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-0.12, 0, 0.02), Inf)
+    i_contour_level &lt;- -0.08
+    i_legend_title &lt;- &quot;ΔpH&lt;sub&gt;T&lt;/sub&gt;&quot;
+  }
+  
+  if (i_var == &quot;omegaDIC&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-0.8, 0, 0.1), Inf)
+    i_contour_level &lt;- -0.5
+    i_legend_title &lt;- &quot;ΔΩ&lt;sub&gt;arag&lt;/sub&gt;&quot;
+  }
+  
+  if (i_var == &quot;R&quot;) {
+    i_breaks &lt;- c(-Inf, seq(-0.08, 0, 0.01), Inf)
+    i_contour_level &lt;- -0.05
+    i_legend_title &lt;- &quot;ΔSIR&quot;
+  }
+  
+  if (i_var == &quot;tco2_talk_ratio&quot;) {
+    i_breaks &lt;- c(-Inf, seq(0, 3, 0.5), Inf)
+    i_contour_level &lt;- 2
+    i_legend_title &lt;-
+      &quot;ΔH&lt;sup&gt;+&lt;/sup&gt;&lt;sub&gt;free&lt;/sub&gt;&lt;br&gt;(nmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
+  }
+  
+  all_labels_breaks &lt;- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+
+
+x_axis_scales_buffer_variables &lt;-
+  list(
+    variable == &quot;tco2&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;tco2&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;pH&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;pH&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;OmegaAragonite&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;OmegaAragonite&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;SIR&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;SIR&quot;)$i_breaks[c(TRUE, FALSE)]),
+    variable == &quot;H_free&quot; ~ scale_x_continuous(breaks = labels_breaks(&quot;H_free&quot;)$i_breaks[c(TRUE, FALSE)])
+  )
+
+x_axis_labels_buffer_variables &lt;-
   c(
     &quot;tco2&quot; = labels_breaks(&quot;tco2&quot;)$i_legend_title,
     &quot;pH&quot; = labels_breaks(&quot;pH&quot;)$i_legend_title,
@@ -2376,31 +2515,23 @@ x_axis_labels &lt;-
   )
 
 
-contours &lt;-
-tibble(
-  contour =
-    c(
-      labels_breaks(&quot;tco2&quot;)$i_contour_level,
-      labels_breaks(&quot;pH&quot;)$i_contour_level,
-      labels_breaks(&quot;OmegaAragonite&quot;)$i_contour_level,
-      labels_breaks(&quot;SIR&quot;)$i_contour_level,
-      labels_breaks(&quot;H_free&quot;)$i_contour_level
-    ),
-  variable =
-    c(&quot;tco2&quot;,
-      &quot;pH&quot;,
-      &quot;OmegaAragonite&quot;,
-      &quot;SIR&quot;,
-      &quot;H_free&quot;)
-)</code></pre>
-</div>
-<div id="select-buffer-variables" class="section level1">
-<h1>Select buffer variables</h1>
-<pre class="r"><code>buffer_variables &lt;-
-  buffer_trend %&gt;%
-  select(contains(&quot;delta_total&quot;)) %&gt;%
-  names() %&gt;%
-  str_remove(&quot;_delta_total&quot;)</code></pre>
+contours_buffer_variables &lt;-
+  tibble(
+    contour =
+      c(
+        labels_breaks(&quot;tco2&quot;)$i_contour_level,
+        labels_breaks(&quot;pH&quot;)$i_contour_level,
+        labels_breaks(&quot;OmegaAragonite&quot;)$i_contour_level,
+        labels_breaks(&quot;SIR&quot;)$i_contour_level,
+        labels_breaks(&quot;H_free&quot;)$i_contour_level
+      ),
+    variable =
+      c(&quot;tco2&quot;,
+        &quot;pH&quot;,
+        &quot;OmegaAragonite&quot;,
+        &quot;SIR&quot;,
+        &quot;H_free&quot;)
+  )</code></pre>
 </div>
 <div id="uncertainty-determination" class="section level1">
 <h1>Uncertainty determination</h1>
@@ -2577,16 +2708,6 @@ quantile_low &lt;- 0.02
 break_numbers &lt;- 10
 
 three_year_colors &lt;- c(&quot;#f77f00&quot;, &quot;#d62828&quot;, &quot;#003049&quot;)</code></pre>
-</div>
-<div id="surface-area-mask" class="section level1">
-<h1>Surface area mask</h1>
-<pre class="r"><code># compute grid cell surface area
-
-basinmask &lt;- basinmask %&gt;% 
-    mutate(area = earth_surf(lat, lon))
-
-biome_mask &lt;- biome_mask %&gt;% 
-    mutate(area = earth_surf(lat, lon))</code></pre>
 </div>
 <div id="general-consideration" class="section level1">
 <h1>General consideration</h1>
@@ -2917,16 +3038,24 @@ acidification_depth_layer_dCant_temp &lt;- dCant_temp_trend %&gt;%
 #   unnest(layer) %&gt;% 
 #   ungroup()
 # 
-# buffer_addition_depth_layer &lt;- buffer_trend_addition %&gt;%
-#   group_by(variable) %&gt;%
-#   nest() %&gt;%
-#   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %&gt;%
-#   select(-data) %&gt;%
-#   unnest(layer) %&gt;% 
-#   ungroup()
-# 
+
+buffer_depth_layer &lt;- buffer_trend %&gt;%
+  group_by(variable) %&gt;%
+  nest() %&gt;%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(layer) %&gt;%
+  ungroup()
+
+buffer_addition_depth_layer &lt;- buffer_trend_addition %&gt;%
+  group_by(variable) %&gt;%
+  nest() %&gt;%
+  mutate(layer = map(.x = data, ~m_depth_layer(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(layer) %&gt;%
+  ungroup()
+
 # buffer_climatology_depth_layer &lt;- m_depth_layer(buffer_climatology)
-# 
 # climatology_depth_layer &lt;- m_depth_layer(climatology)</code></pre>
 </div>
 <div id="incremental-changes" class="section level2">
@@ -4003,8 +4132,67 @@ jens-daniel-mueller
 rm(acidification_depth_layer_total,
    acidification_depth_layer,
    i_acidification_depth_layer_total)</code></pre>
+<pre class="r"><code># subset total change sections
+
+acidification_depth_layer_total &lt;-
+  acidification_depth_layer_dCant_temp %&gt;%
+  select(driver:tref,
+         contains(&quot;_delta_total&quot;)) %&gt;%
+  filter(tref != 1800,
+         driver == &quot;dCant + temp&quot;) %&gt;% 
+  select(-driver)
+
+
+acidification_depth_layer_total &lt;-
+  acidification_depth_layer_total %&gt;%
+  pivot_longer(contains(&quot;_delta_total&quot;),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;delta_total&quot;) %&gt;%
+  mutate(variable = str_remove(variable, &quot;_delta_total&quot;))
+
+
+for (i_var in OIA_variables[6]) {
+  # i_var &lt;- OIA_variables[6]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_total &lt;-
+    acidification_depth_layer_total %&gt;%
+    filter(variable == i_var) %&gt;%
+    select(lon, lat, depth, tref, delta_total)
+  
+  all_labels_breaks &lt;- labels_breaks(i_var)
+  i_breaks        &lt;- unlist(all_labels_breaks[1])
+  i_contour_level &lt;- unlist(all_labels_breaks[2])
+  i_legend_title  &lt;- unlist(all_labels_breaks[3])
+  
+  i_acidification_depth_layer_total %&gt;%
+    p_map_mdim_robinson(
+      dim_row = &quot;depth&quot;,
+      dim_col = &quot;tref&quot;,
+      var = &quot;delta_total&quot;,
+      contour_level = i_contour_level,
+      col = &quot;divergent&quot;,
+      legend_title = i_legend_title,
+      breaks = i_breaks,
+      legend_position = &quot;right&quot;
+    )
+  
+  ggsave(
+    here::here(
+      paste0(&quot;output/publication/maps_depth_layer_&quot;,i_var,&quot;_total_changes.png&quot;)
+    ),
+    width = 9,
+    height = 6,
+    dpi = 600,
+    bg = &quot;white&quot;
+  )
+  
+}
+rm(acidification_depth_layer_total,
+   i_acidification_depth_layer_total)</code></pre>
 </div>
-<div id="climatology-1" class="section level2">
+<div id="climatology" class="section level2">
 <h2>Climatology</h2>
 <div id="oia-variables-1" class="section level3">
 <h3>OIA variables</h3>
@@ -4028,8 +4216,8 @@ climatology_depth_layer %&gt;%
 
 pdf(
   here::here(&quot;output/all_variables/maps_depth_layer_climatology.pdf&quot;),
-  width = 14,
-  height = 4
+  width = 5,
+  height = 8
 )
 
 # loop over OIA variables
@@ -4062,11 +4250,12 @@ for (i_var in OIA_variables) {
   p_climatology &lt;-
   i_climatology_depth_layer %&gt;%
     p_map_mdim_robinson(
-      dim_col = &quot;depth&quot;,
-      dim_row = &quot;tref&quot;,
+      dim_row = &quot;depth&quot;,
+      dim_col = &quot;tref&quot;,
       var = &quot;value&quot;,
       legend_title = i_var,
-      breaks = breaks
+      breaks = breaks,
+      legend_position = &quot;right&quot;
     )
   
   print(
@@ -4083,6 +4272,70 @@ rm(climatology_depth_layer,
 </div>
 <div id="buffer-variables-1" class="section level3">
 <h3>buffer variables</h3>
+<pre class="r"><code># loop over OIA variables
+# print incremental sections
+
+for (i_var in buffer_variables_addition[buffer_variables_addition != &quot;temp&quot;]) {
+  # i_var &lt;- buffer_variables_addition[4]
+  
+  # subset OIA variable
+  
+  i_buffer_addition_depth_layer &lt;-
+    buffer_addition_depth_layer %&gt;%
+    filter(variable == i_var) %&gt;%
+    select(lon, lat, depth, tref, sensitivity)
+  
+  # determine endpoints and breaks of color scale
+  
+  # low &lt;- i_buffer_addition_depth_layer %&gt;%
+  #   filter(!is.na(sensitivity)) %&gt;%
+  #   pull(sensitivity) %&gt;%
+  #   quantile(c(quantile_low), names = FALSE)
+  # 
+  # high &lt;- i_buffer_addition_depth_layer %&gt;%
+  #   filter(!is.na(sensitivity)) %&gt;%
+  #   pull(sensitivity) %&gt;%
+  #   quantile(c(quantile_high), names = FALSE)
+  # 
+  # breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  all_labels_breaks &lt;- labels_breaks_buffer_variables_addition(i_var)
+  i_breaks        &lt;- unlist(all_labels_breaks[1])
+  i_contour_level &lt;- unlist(all_labels_breaks[2])
+  i_legend_title  &lt;- unlist(all_labels_breaks[3])
+  
+  i_buffer_addition_depth_layer %&gt;%
+    p_map_mdim_robinson(
+      dim_row = &quot;depth&quot;,
+      dim_col = &quot;tref&quot;,
+      var = &quot;sensitivity&quot;,
+      contour_level = i_contour_level,
+      legend_title = i_legend_title,
+      breaks = i_breaks,
+      legend_position = &quot;right&quot;
+    )
+  
+  ggsave(
+    here::here(
+      paste0(
+        &quot;output/publication/maps_depth_layer_&quot;,
+        i_var,
+        &quot;_total_changes_buffer_additional.png&quot;
+      )
+    ),
+    width = 14,
+    height = 5,
+    dpi = 600,
+    bg = &quot;white&quot;
+  )
+  
+}
+
+
+rm(buffer_addition_depth_layer,
+   i_buffer_addition_depth_layer,
+   p_climatology,
+   low, high)</code></pre>
 <pre class="r"><code># subset total change sections
 
 buffer_climatology_depth_layer &lt;-
@@ -4104,8 +4357,8 @@ buffer_variables &lt;- buffer_climatology_depth_layer %&gt;%
 
 pdf(
   here::here(&quot;output/all_variables/maps_depth_layer_buffer_climatology.pdf&quot;),
-  width = 14,
-  height = 4
+  width = 5,
+  height = 8
 )
 
 # loop over OIA variables
@@ -4138,11 +4391,12 @@ for (i_var in buffer_variables) {
   p_climatology &lt;-
   i_buffer_climatology_depth_layer %&gt;%
     p_map_mdim_robinson(
-      dim_col = &quot;depth&quot;,
-      dim_row = &quot;tref&quot;,
+      dim_row = &quot;depth&quot;,
+      dim_col = &quot;tref&quot;,
       var = &quot;value&quot;,
       legend_title = i_var,
-      breaks = breaks
+      breaks = breaks,
+      legend_position = &quot;right&quot;
     )
   
   print(
@@ -4157,63 +4411,6 @@ rm(buffer_climatology_depth_layer,
    i_buffer_climatology_depth_layer,
    p_climatology,
    low, high)</code></pre>
-<pre class="r"><code># create pdf document
-
-pdf(
-  here::here(&quot;output/all_variables/maps_depth_layer_buffer_addition_climatology.pdf&quot;),
-  width = 10,
-  height = 4
-)
-
-# loop over OIA variables
-# print incremental sections
-
-for (i_var in buffer_variables_addition[buffer_variables_addition != &quot;temp&quot;]) {
-  # i_var &lt;- buffer_variables_addition[2]
-  
-  # subset OIA variable
-  
-  i_buffer_addition_depth_layer &lt;-
-    buffer_addition_depth_layer %&gt;%
-    filter(variable == i_var) %&gt;%
-    select(lon, lat, depth, tref, sensitivity)
-  
-  # determine endpoints and breaks of color scale
-  
-  low &lt;- i_buffer_addition_depth_layer %&gt;%
-    filter(!is.na(sensitivity)) %&gt;%
-    pull(sensitivity) %&gt;%
-    quantile(c(quantile_low), names = FALSE)
-
-  high &lt;- i_buffer_addition_depth_layer %&gt;%
-    filter(!is.na(sensitivity)) %&gt;%
-    pull(sensitivity) %&gt;%
-    quantile(c(quantile_high), names = FALSE)
-
-  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
-  
-  p_climatology &lt;-
-  i_buffer_addition_depth_layer %&gt;%
-    p_map_mdim_robinson(
-      dim_col = &quot;depth&quot;,
-      dim_row = &quot;tref&quot;,
-      var = &quot;sensitivity&quot;,
-      legend_title = i_var,
-      breaks = breaks
-    )
-  
-  print(
-  p_climatology
-  )
-  
-}
-
-dev.off()
-
-rm(buffer_addition_depth_layer,
-   i_buffer_addition_depth_layer,
-   p_climatology,
-   low, high)</code></pre>
 </div>
 </div>
 </div>
@@ -4222,7 +4419,7 @@ rm(buffer_addition_depth_layer,
 <pre class="r"><code>acidification_volume_raw &lt;-
   acidification_trend %&gt;%
   filter(tref != 1800,
-         depth &lt;= 3000) %&gt;%
+         depth &lt;= ocean_depth) %&gt;%
   select(lon, lat, depth, tref, contains(&quot;delta_total&quot;)) %&gt;%
   pivot_longer(contains(&quot;delta_total&quot;),
                names_to = &quot;variable&quot;,
@@ -4257,16 +4454,18 @@ for (i_var in OIA_variables[-6]) {
       ungroup() %&gt;% 
       mutate(contour = i_contour)
     
-    acidification_volume_global &lt;- left_join(acidification_horizon,
-                                             basinmask) %&gt;%
+    acidification_volume_global &lt;-
+      left_join(acidification_horizon,
+                basinmask) %&gt;%
       mutate(volume = depth * area,
              basin = &quot;Global&quot;) %&gt;%
       group_by(tref, variable, contour, basin) %&gt;%
       summarise(volume = sum(volume)) %&gt;%
       ungroup()
     
-    acidification_volume_regional &lt;- left_join(acidification_horizon,
-                                             basinmask) %&gt;%
+    acidification_volume_regional &lt;-
+      left_join(acidification_horizon,
+                basinmask) %&gt;%
       mutate(volume = depth * area) %&gt;%
       group_by(tref, variable, contour, basin) %&gt;%
       summarise(volume = sum(volume)) %&gt;%
@@ -4283,7 +4482,7 @@ for (i_var in OIA_variables[-6]) {
     )
     
     acidification_volume_biome &lt;- left_join(acidification_horizon,
-                                             biome_mask) %&gt;%
+                                             biomemask) %&gt;%
       mutate(volume = depth * area) %&gt;%
       group_by(tref, variable, contour, biome) %&gt;%
       summarise(volume = sum(volume)) %&gt;%
@@ -4341,63 +4540,10 @@ for (i_var in OIA_variables[-6]) {
 dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
-<pre class="r"><code>ocean_bathymetry &lt;- acidification_trend %&gt;%
-  filter(depth &lt;= 3000) %&gt;% 
-  group_by(lat, lon) %&gt;%
-  summarise(depth = max(depth)) %&gt;%
-  ungroup()
-
-ocean_volume &lt;- inner_join(ocean_bathymetry,
-                           basinmask)
-
-ocean_volume &lt;- ocean_volume %&gt;%
-  mutate(volume_total = depth * area) %&gt;%
-  group_by(basin) %&gt;%
-  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
-  ungroup()
-
-ocean_volume_global &lt;- ocean_volume %&gt;%
-  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
-  mutate(basin = &quot;Global&quot;)
-
-
-ocean_volume &lt;- bind_rows(
-  ocean_volume,
-  ocean_volume_global
-)
-
-ocean_volume_biome &lt;- inner_join(ocean_bathymetry,
-                           biome_mask)
-
-ocean_volume_biome &lt;- ocean_volume_biome %&gt;%
-  mutate(volume_total = depth * area) %&gt;%
-  group_by(biome) %&gt;%
-  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
-  ungroup()
-
-
-rm(ocean_volume_global)
-rm(ocean_bathymetry)
-
-
-full_join(ocean_volume,
+<pre class="r"><code>full_join(ocean_volume,
           acidification_volume_all) %&gt;%
   filter(contour != 0) %&gt;%
   mutate(contour = as.factor(contour)) %&gt;%
-    mutate(
-    basin = str_replace(basin,
-                        &quot;_&quot;,
-                        &quot;. &quot;),
-    basin = fct_relevel(
-      basin,
-      &quot;Global&quot;,
-      &quot;N. Pacific&quot;,
-      &quot;N. Atlantic&quot;,
-      &quot;Indian&quot;,
-      &quot;S. Pacific&quot;,
-      &quot;S. Atlantic&quot;
-    )
-  ) %&gt;% 
   ggplot(aes(
     tref,
     100 * volume / volume_total,
@@ -4449,6 +4595,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/a8376b4fac163876ea91f131fa92ff11cdf85773/docs/figure/average_OIA.Rmd/acidification_volumes-1.png" target="_blank">a8376b4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/be8e556782d9aa0f7d85f008f5d0719864fa56e3/docs/figure/average_OIA.Rmd/acidification_volumes-1.png" target="_blank">be8e556</a>
 </td>
 <td>
@@ -4464,7 +4621,7 @@ jens-daniel-mueller
 </div>
 <pre class="r"><code>ggsave(
   here::here(
-    &quot;output/publication/acidification_volumes_region.png&quot;
+    &quot;output/publication/acidification_volumes.png&quot;
   ),
   width = 10,
   height = 8,
@@ -4528,6 +4685,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/a8376b4fac163876ea91f131fa92ff11cdf85773/docs/figure/average_OIA.Rmd/acidification_volumes-2.png" target="_blank">a8376b4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-06
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/be8e556782d9aa0f7d85f008f5d0719864fa56e3/docs/figure/average_OIA.Rmd/acidification_volumes-2.png" target="_blank">be8e556</a>
 </td>
 <td>
@@ -4553,10 +4721,12 @@ jens-daniel-mueller
 
 
 
-
 rm(acidification_volume_all,
-   ocean_volume,
-   ocean_volume_biome)</code></pre>
+   acidification_volume,
+   acidification_volume_biome_all,
+   acidification_volume_biome,
+   acidification_volume_raw,
+   acidification_horizon)</code></pre>
 </div>
 <div id="saturation-horizon-maps" class="section level1">
 <h1>Saturation horizon maps</h1>
@@ -4818,6 +4988,31 @@ jens-daniel-mueller
     acidification_volume &lt;- saturation_volume
   }
   
+  
+  # calculate volume of supersaturated waters
+  
+  saturation_volume_biome &lt;- inner_join(saturation_horizon,
+                                  biomemask)
+  
+  saturation_volume_biome &lt;- saturation_volume_biome %&gt;% 
+    mutate(volume = depth * area) %&gt;% 
+    group_by(tref, mineral, biome) %&gt;% 
+    summarise(volume = sum(volume, na.rm = TRUE)) %&gt;% 
+    ungroup()
+  
+  saturation_volume_biome &lt;- saturation_volume_biome %&gt;% 
+    mutate(sat_level = i_sat_level)
+  
+
+  if (exists(&quot;acidification_volume_biome&quot;)) {
+    acidification_volume_biome &lt;-
+      bind_rows(acidification_volume_biome, saturation_volume_biome)
+  }
+  
+  if (!exists(&quot;acidification_volume_biome&quot;)) {
+    acidification_volume_biome &lt;- saturation_volume_biome
+  }
+  
   # calculate profiles of saturated area fraction
   
   saturation_profile &lt;-
@@ -4863,6 +5058,36 @@ jens-daniel-mueller
   rm(saturation_profile, saturation_profile_global)
  
   
+  # calculate profiles of saturated area fraction
+  
+  saturation_profile_biome &lt;-
+    inner_join(acidification_saturation_horizon,
+               biomemask) %&gt;%
+    mutate(saturated = if_else(Omega &gt;= i_sat_level,
+                               &quot;super&quot;,
+                               &quot;under&quot;)) %&gt;%
+    group_by(tref, biome, depth, mineral, saturated) %&gt;%
+    summarise(area = sum(area)) %&gt;%
+    ungroup() %&gt;%
+    group_by(tref, biome, depth, mineral) %&gt;%
+    mutate(area_fraction = 100 * area / sum(area)) %&gt;%
+    ungroup()
+  
+ saturation_profile_biome &lt;- saturation_profile_biome %&gt;% 
+    mutate(sat_level = i_sat_level)
+  
+  if (exists(&quot;acidification_area_profile_biome&quot;)) {
+    acidification_area_profile_biome &lt;-
+      bind_rows(acidification_area_profile_biome, saturation_profile_biome)
+  }
+  
+  if (!exists(&quot;acidification_area_profile_biome&quot;)) {
+    acidification_area_profile_biome &lt;- saturation_profile_biome
+  }
+  
+  rm(saturation_profile_biome)
+ 
+  
 }</code></pre>
 <pre><code>[1] TRUE
 [1] TRUE
@@ -4872,7 +5097,7 @@ jens-daniel-mueller
 [1] TRUE</code></pre>
 <pre class="r"><code>pdf(
   here::here(&quot;output/all_variables/maps_saturation_horizon_absolute_state.pdf&quot;),
-  width = 10,
+  width = 12,
   height = 8
 )
 
@@ -4887,10 +5112,10 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
       dim_row = &quot;tref&quot;,
       dim_col = &quot;mineral&quot;,
       var = &quot;depth&quot;,
-      legend_title = &quot;Saturation\nhorizon\n(m)&quot;,
-      breaks = seq(0, 6000, 500)
-    ) +
-    labs(title = paste(&quot;Saturation threshold:&quot;,i_sat_level))
+      legend_title = paste0(&quot;Omega=&quot;,i_sat_level,&quot; horizon (m)&quot;),
+      legend_position = &quot;right&quot;,
+      breaks = seq(0, 6000, 1000)
+    )
   )
 }
 
@@ -4899,7 +5124,7 @@ dev.off()</code></pre>
   2 </code></pre>
 <pre class="r"><code>pdf(
   here::here(&quot;output/all_variables/maps_saturation_horizon_total_changes.pdf&quot;),
-  width = 10,
+  width = 12,
   height = 6
 )
 
@@ -4926,10 +5151,10 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         dim_col = &quot;mineral&quot;,
         col = &quot;div&quot;,
         var = &quot;delta_depth&quot;,
-        legend_title = &quot;Change\nsaturation\nhorizon\n(m)&quot;,
+        legend_title = paste0(&quot;Change Omega=&quot;,i_sat_level,&quot; horizon (m)&quot;),
+        legend_position = &quot;right&quot;,
         breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
-      ) +
-      labs(title = paste(&quot;Saturation threshold:&quot;, i_sat_level))
+      )
   )
 }
 
@@ -4938,7 +5163,7 @@ dev.off()</code></pre>
   2 </code></pre>
 <pre class="r"><code>pdf(
   here::here(&quot;output/all_variables/maps_saturation_horizon_changes.pdf&quot;),
-  width = 10,
+  width = 12,
   height = 6
 )
 
@@ -4965,7 +5190,8 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         dim_col = &quot;mineral&quot;,
         col = &quot;div&quot;,
         var = &quot;delta_depth&quot;,
-        legend_title = &quot;Change\nsaturation\nhorizon\n(m)&quot;,
+        legend_title = paste0(&quot;Change Omega=&quot;,i_sat_level,&quot; horizon (m)&quot;),
+        legend_position = &quot;right&quot;,
         breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       ) +
       labs(title = paste(&quot;Saturation threshold:&quot;, i_sat_level))
@@ -4975,57 +5201,57 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
 dev.off()</code></pre>
 <pre><code>png 
   2 </code></pre>
-<pre class="r"><code>ocean_bathymetry &lt;- acidification_trend %&gt;%
-  group_by(lat, lon) %&gt;%
-  summarise(depth = max(depth)) %&gt;%
-  ungroup()
+<pre class="r"><code># 
+# 
+# ocean_bathymetry &lt;- acidification_trend %&gt;%
+#   group_by(lat, lon) %&gt;%
+#   summarise(depth = max(depth)) %&gt;%
+#   ungroup()
+# 
+# ocean_volume &lt;- inner_join(ocean_bathymetry,
+#                            basinmask)
+# 
+# rm(ocean_bathymetry)
+# 
+# ocean_volume &lt;- ocean_volume %&gt;%
+#   mutate(volume_total = depth * area) %&gt;%
+#   group_by(basin) %&gt;%
+#   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+#   ungroup()
+# 
+# ocean_volume_global &lt;- ocean_volume %&gt;%
+#   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
+#   mutate(basin = &quot;Global&quot;)
+# 
+# 
+# ocean_volume &lt;- bind_rows(
+#   ocean_volume,
+#   ocean_volume_global
+# )
+# 
+# rm(ocean_volume_global)
 
-ocean_volume &lt;- inner_join(ocean_bathymetry,
-                           basinmask)
-
-rm(ocean_bathymetry)
-
-ocean_volume &lt;- ocean_volume %&gt;%
-  mutate(volume_total = depth * area) %&gt;%
-  group_by(basin) %&gt;%
-  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
-  ungroup()
-
-ocean_volume_global &lt;- ocean_volume %&gt;%
-  summarise(volume_total = sum(volume_total, na.rm = TRUE)) %&gt;%
-  mutate(basin = &quot;Global&quot;)
-
-
-ocean_volume &lt;- bind_rows(
-  ocean_volume,
-  ocean_volume_global
-)
-
-rm(ocean_volume_global)
 
 acidification_volume &lt;-
-full_join(acidification_volume,
-          ocean_volume)
-
-acidification_volume_back &lt;-
-  acidification_volume
+  full_join(acidification_volume,
+            ocean_volume)
 
 acidification_volume &lt;-
   acidification_volume %&gt;%
   arrange(tref) %&gt;%
   group_by(mineral, basin, sat_level) %&gt;%
   mutate(
-    volume_loss = 
+    volume_loss =
       volume - lag(volume, default = first(volume)),
-    volume_loss_relative_to_preind = 
+    volume_loss_relative_to_preind_volume =
       100 * volume_loss / first(volume),
-    volume_loss_cumulative = 
+    volume_loss_cumulative =
       volume - first(volume),
-    volume_loss_cumulative_relative_to_preind = 
+    volume_loss_cumulative_relative_to_preind_volume =
       100 * volume_loss_cumulative / first(volume),
-    volume_relative_to_ocean = 100 * volume / volume_total,
-    volume_loss_relative_to_ocean = 100 * volume_loss / volume_total,
-    volume_loss_cumulative_relative_to_ocean = 100 * volume_loss_cumulative / volume_total,
+    volume_relative_to_total_volume = 100 * volume / volume_total,
+    volume_loss_relative_to_total_volume = 100 * volume_loss / volume_total,
+    volume_loss_cumulative_relative_to_total_volume = 100 * volume_loss_cumulative / volume_total,
   ) %&gt;%
   ungroup()
 
@@ -5058,6 +5284,77 @@ print(
         geom_col(position = &quot;dodge&quot;) +
         scale_fill_viridis_d() +
         facet_nested_wrap(vars(basin, mineral))
+    )
+)</code></pre>
+<pre><code>[[1]]</code></pre>
+<pre><code>
+[[2]]</code></pre>
+<pre><code>
+[[3]]</code></pre>
+<pre><code>
+[[4]]</code></pre>
+<pre><code>
+[[5]]</code></pre>
+<pre><code>
+[[6]]</code></pre>
+<pre><code>
+[[7]]</code></pre>
+<pre><code>
+[[8]]</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>acidification_volume_biome &lt;-
+  full_join(acidification_volume_biome,
+            ocean_volume_biome)
+
+acidification_volume_biome &lt;-
+  acidification_volume_biome %&gt;%
+  arrange(tref) %&gt;%
+  group_by(mineral, biome, sat_level) %&gt;%
+  mutate(
+    volume_loss =
+      volume - lag(volume, default = first(volume)),
+    volume_loss_relative_to_preind_volume =
+      100 * volume_loss / first(volume),
+    volume_loss_cumulative =
+      volume - first(volume),
+    volume_loss_cumulative_relative_to_preind_volume =
+      100 * volume_loss_cumulative / first(volume),
+    volume_relative_to_total_volume = 100 * volume / volume_total,
+    volume_loss_relative_to_total_volume = 100 * volume_loss / volume_total,
+    volume_loss_cumulative_relative_to_total_volume = 100 * volume_loss_cumulative / volume_total,
+  ) %&gt;%
+  ungroup()
+
+acidification_volume_biome &lt;-
+  acidification_volume_biome %&gt;%
+  select(-volume_total) %&gt;% 
+  pivot_longer(contains(&quot;volume&quot;),
+               names_to = &quot;estimate&quot;,
+               values_to = &quot;value&quot;)
+
+pdf(
+  here::here(&quot;output/all_variables/saturation_volumes_biomes.pdf&quot;),
+  width = 10,
+  height = 8
+)
+
+print(
+  acidification_volume_biome %&gt;%
+    mutate(sat_level = as.factor(sat_level),
+           tref = as.factor(tref)) %&gt;%
+    group_by(estimate) %&gt;%
+    group_split() %&gt;%
+    # head(1) %&gt;%
+    map(
+      ~ ggplot(data = .x,
+               aes(sat_level, value, fill = tref)) +
+        labs(y = .x$estimate,
+             x = &quot;Saturation threshold&quot;) +
+        geom_col(position = &quot;dodge&quot;) +
+        scale_fill_viridis_d() +
+        facet_nested_wrap(vars(biome, mineral))
     )
 )</code></pre>
 <pre><code>[[1]]</code></pre>
@@ -6041,9 +6338,6 @@ acidification_global_section_total &lt;-
 
 acidification_global_section_total &lt;-
   acidification_global_section_total %&gt;%
-  # filter(MLR_basins == MLR_basins_reference,
-  #        Version_ID_group == Version_ID_group_reference) %&gt;%
-  # select(-c(MLR_basins, Version_ID_group)) %&gt;%
   pivot_longer(contains(&quot;_delta_total&quot;),
                names_to = &quot;variable&quot;,
                values_to = &quot;delta_total&quot;) %&gt;%
@@ -6062,20 +6356,6 @@ for (i_var in OIA_variables[-6]) {
     acidification_global_section_total %&gt;%
     filter(variable == i_var,
            depth &lt;= 3000)
-  
-  # determine endpoints and breaks of color scale
-  # 
-  # low &lt;- i_acidification_global_section_total %&gt;%
-  #   filter(!is.na(delta_total)) %&gt;%
-  #   pull(delta_total) %&gt;%
-  #   quantile(c(quantile_low), names = FALSE)
-  # 
-  # high &lt;- i_acidification_global_section_total %&gt;%
-  #   filter(!is.na(delta_total)) %&gt;%
-  #   pull(delta_total) %&gt;%
-  #   quantile(c(quantile_high), names = FALSE)
-  # 
-  # breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
   
   all_labels_breaks &lt;- labels_breaks(i_var)
   i_breaks        &lt;- unlist(all_labels_breaks[1])
@@ -6528,30 +6808,12 @@ rm(acidification_profiles_regional,
    acidification_profiles_global)
 
 
-# rename basins
-
-acidification_profiles &lt;- acidification_profiles %&gt;%
-  mutate(
-    basin = str_replace(basin,
-                        &quot;_&quot;,
-                        &quot;. &quot;),
-    basin = fct_relevel(
-      basin,
-      &quot;Global&quot;,
-      &quot;N. Pacific&quot;,
-      &quot;N. Atlantic&quot;,
-      &quot;Indian&quot;,
-      &quot;S. Pacific&quot;,
-      &quot;S. Atlantic&quot;
-    )
-  )
-
 acidification_profiles &lt;- acidification_profiles %&gt;%
   mutate(tref = as.factor(tref))</code></pre>
 <pre class="r"><code># join with 3D acidification fields
 
 acidification_profiles_biomes &lt;-
-  full_join(biome_mask,
+  full_join(biomemask,
             acidification_trend %&gt;%
               select(-c(basin_AIP, contains(&quot;temp&quot;)))) %&gt;%
   drop_na() %&gt;%
@@ -6566,7 +6828,7 @@ acidification_profiles_biomes &lt;- acidification_profiles_biomes %&gt;%
 # calculate regional means
 
 acidification_profiles_biomes_regional &lt;- acidification_profiles_biomes %&gt;%
-  group_by(tref, region, biome, depth) %&gt;%
+  group_by(tref, biome, depth) %&gt;%
   summarise(across(gamma:H_free_delta_interval,
                    ~ sum(.) / sum(area))) %&gt;%
   ungroup()
@@ -6576,7 +6838,7 @@ acidification_profiles_biomes_regional &lt;- acidification_profiles_biomes %&gt;
 acidification_profiles_biomes_global &lt;- acidification_profiles_biomes %&gt;%
   mutate(region = &quot;Global&quot;,
          biome = &quot;Global&quot;) %&gt;% 
-  group_by(tref, region, biome, depth) %&gt;%
+  group_by(tref, biome, depth) %&gt;%
   summarise(across(gamma:H_free_delta_interval,
                    ~ sum(.) / sum(area))) %&gt;%
   ungroup()
@@ -6652,22 +6914,22 @@ rm(dCant_temp_profiles_temp_contribution_regional,
 
 
 # rename basins
-
-dCant_temp_profiles_temp_contribution &lt;- dCant_temp_profiles_temp_contribution %&gt;%
-  mutate(
-    basin = str_replace(basin,
-                        &quot;_&quot;,
-                        &quot;. &quot;),
-    basin = fct_relevel(
-      basin,
-      &quot;Global&quot;,
-      &quot;N. Pacific&quot;,
-      &quot;N. Atlantic&quot;,
-      &quot;Indian&quot;,
-      &quot;S. Pacific&quot;,
-      &quot;S. Atlantic&quot;
-    )
-  )
+# 
+# dCant_temp_profiles_temp_contribution &lt;- dCant_temp_profiles_temp_contribution %&gt;%
+#   mutate(
+#     basin = str_replace(basin,
+#                         &quot;_&quot;,
+#                         &quot;. &quot;),
+#     basin = fct_relevel(
+#       basin,
+#       &quot;Global&quot;,
+#       &quot;N. Pacific&quot;,
+#       &quot;N. Atlantic&quot;,
+#       &quot;Indian&quot;,
+#       &quot;S. Pacific&quot;,
+#       &quot;S. Atlantic&quot;
+#     )
+#   )
 
 dCant_temp_profiles_temp_contribution &lt;- dCant_temp_profiles_temp_contribution %&gt;%
   mutate(tref = as.factor(tref))
@@ -6750,7 +7012,7 @@ jens-daniel-mueller
 <pre class="r"><code># join with 3D acidification fields
 
 dCant_temp_profiles_temp_contribution_biome &lt;-
-  full_join(biome_mask,
+  full_join(biomemask,
             dCant_temp_trend_temp_contribution)
 
 # scale values to surface area
@@ -6847,6 +7109,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/a8376b4fac163876ea91f131fa92ff11cdf85773/docs/figure/average_OIA.Rmd/compute_mean_profiles_temperature_trend_biomes-1.png" target="_blank">a8376b4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/compute_mean_profiles_temperature_trend_biomes-1.png" target="_blank">af60720</a>
@@ -6983,7 +7256,7 @@ buffer_profiles &lt;- buffer_profiles %&gt;%
 <pre class="r"><code># join with 3D acidification fields
 
 buffer_profiles_biome &lt;-
-  full_join(biome_mask,
+  full_join(biomemask,
             buffer_trend %&gt;% select(-basin_AIP))
 
 # scale values to surface area
@@ -7544,6 +7817,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/a8376b4fac163876ea91f131fa92ff11cdf85773/docs/figure/average_OIA.Rmd/profiles_total_change_biome-1.png" target="_blank">a8376b4</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-06
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/profiles_total_change_biome-1.png" target="_blank">af60720</a>
