@@ -339,6 +339,13 @@ buffer_trend <-
 buffer_trend <- buffer_trend %>% 
   select(-c(MLR_basins, Version_ID_group))
 
+buffer_trend <- buffer_trend %>%
+  mutate(
+    H_free = 1e3 * H_free,
+    H_free_delta_total = 1e3 * H_free_delta_total,
+    H_free_delta_interval = 1e3 * H_free_delta_interval
+  )
+
 # Join with standard OIA estimates
 buffer_trend_addition <-
   full_join(
@@ -417,6 +424,13 @@ temperature_trend <-
 temperature_trend <- temperature_trend %>%
   select(-c(MLR_basins, Version_ID_group))
 
+temperature_trend <- temperature_trend %>%
+  mutate(
+    H_free = 1e3 * H_free,
+    H_free_delta_total = 1e3 * H_free_delta_total,
+    H_free_delta_interval = 1e3 * H_free_delta_interval
+  )
+
 # create joined coordinate grid
 
 dCant_temp_trend_depth_grid <-
@@ -465,7 +479,7 @@ rm(temperature_trend,
 
 #### Interior (MOBO-DIC)
 
-```{r read_OIA_DIC_driven_interior, eval=FALSE}
+```{r read_OIA_DIC_driven_interior}
 
 DIC_trend <-
   read_csv(paste0(path_OIA, "OIA_DIC_3.csv"))
@@ -473,11 +487,25 @@ DIC_trend <-
 DIC_trend <- DIC_trend %>%
   select(-c(MLR_basins, Version_ID_group))
 
+DIC_trend <- DIC_trend %>%
+  mutate(
+    H_free = 1e3 * H_free,
+    H_free_delta_total = 1e3 * H_free_delta_total,
+    H_free_delta_interval = 1e3 * H_free_delta_interval
+  )
+
 DIC_temperature_trend <-
   read_csv(paste0(path_OIA, "OIA_DIC + temp_3.csv"))
 
 DIC_temperature_trend <- DIC_temperature_trend %>%
   select(-c(MLR_basins, Version_ID_group))
+
+DIC_temperature_trend <- DIC_temperature_trend %>%
+  mutate(
+    H_free = 1e3 * H_free,
+    H_free_delta_total = 1e3 * H_free_delta_total,
+    H_free_delta_interval = 1e3 * H_free_delta_interval
+  )
 
 # create joined coordinate grid
 
@@ -2179,8 +2207,8 @@ for (i_var in OIA_variables[-6]) {
     here::here(
       paste0("output/publication/maps_depth_layer_",i_var,"_total_changes.png")
     ),
-    width = 12,
-    height = 6,
+    width = 8,
+    height = 4,
     dpi = 600,
     bg = "white"
   )
@@ -2799,11 +2827,12 @@ full_join(ocean_volume,
       mutate(tref = tref + 1),
     hjust = 0,
     check_overlap = TRUE,
-    size = 2
+    size = 2,
+    col = "#CC3311"
   ) +
   scale_x_continuous(breaks = c(1994, 2004, 2014),
                      limits = c(1994, 2019)) +
-  labs(y = "Acidified volume of top 3000m global ocean (%)") +
+  labs(y = "Acidified volume ratio of top 3000m (%)") +
   theme(
     axis.title.x = element_blank(),
     strip.text.y = element_markdown()
@@ -2841,11 +2870,12 @@ full_join(ocean_volume_biome,
       mutate(tref = tref + 1),
     hjust = 0,
     check_overlap = TRUE,
-    size = 2
+    size = 2,
+    col = "#CC3311"
   ) +
   scale_x_continuous(breaks = c(1994, 2004, 2014),
                      limits = c(1994, 2019)) +
-  labs(y = "Acidified volume of top 3000m global ocean (%)") +
+  labs(y = "Acidified volume ratio of top 3000m (%)") +
   theme(
     axis.title.x = element_blank(),
     strip.text.y = element_markdown()
@@ -2892,26 +2922,6 @@ acidification_saturation_horizon <-
     names_prefix = "Omega",
     values_to = "Omega"
   )
-
-# downscaling for computation
-
-# acidification_saturation_horizon <-
-#   m_grid_horizontal_coarse(acidification_saturation_horizon)
-# 
-# acidification_saturation_horizon <-
-#   acidification_saturation_horizon %>% 
-#   select(-c(lat,lon)) %>% 
-#   rename(lat = lat_grid, lon = lon_grid) %>% 
-#   group_by(lat,lon,tref,depth,mineral) %>%
-#   summarise(Omega = mean(Omega, na_rm = TRUE),
-#             n = n()) %>%
-#   ungroup() 
-# 
-# acidification_saturation_horizon <-
-#   acidification_saturation_horizon %>%
-#   filter(n == 25) %>%
-#   select(-n)
-
 
 acidification_saturation_horizon %>%
   group_by(tref, mineral) %>%
@@ -3201,7 +3211,7 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
       var = "depth",
       legend_title = paste0("Omega=",i_sat_level," horizon (m)"),
       legend_position = "right",
-      breaks = seq(0, 6000, 1000)
+      breaks = seq(6000, 0, -500)
     )
   )
 }
@@ -3239,7 +3249,8 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         var = "delta_depth",
         legend_title = paste0("Change Omega=",i_sat_level," horizon (m)"),
         legend_position = "right",
-        breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
+        breaks = c(-Inf, seq(-300, 300, 50), Inf)
+        # breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       )
   )
 }
@@ -3248,7 +3259,7 @@ dev.off()
 
 
 pdf(
-  here::here("output/all_variables/maps_saturation_horizon_changes.pdf"),
+  here::here("output/all_variables/maps_saturation_horizon_incremental_changes.pdf"),
   width = 12,
   height = 6
 )
@@ -3278,42 +3289,14 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         var = "delta_depth",
         legend_title = paste0("Change Omega=",i_sat_level," horizon (m)"),
         legend_position = "right",
-        breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
+        breaks = c(-Inf, seq(-300, 300, 50), Inf)
+        # breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       ) +
       labs(title = paste("Saturation threshold:", i_sat_level))
   )
 }
 
 dev.off()
-# 
-# 
-# ocean_bathymetry <- acidification_trend %>%
-#   group_by(lat, lon) %>%
-#   summarise(depth = max(depth)) %>%
-#   ungroup()
-# 
-# ocean_volume <- inner_join(ocean_bathymetry,
-#                            basinmask)
-# 
-# rm(ocean_bathymetry)
-# 
-# ocean_volume <- ocean_volume %>%
-#   mutate(volume_total = depth * area) %>%
-#   group_by(basin) %>%
-#   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
-#   ungroup()
-# 
-# ocean_volume_global <- ocean_volume %>%
-#   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
-#   mutate(basin = "Global")
-# 
-# 
-# ocean_volume <- bind_rows(
-#   ocean_volume,
-#   ocean_volume_global
-# )
-# 
-# rm(ocean_volume_global)
 
 
 acidification_volume <-
@@ -3333,9 +3316,9 @@ acidification_volume <-
       volume - first(volume),
     volume_loss_cumulative_relative_to_preind_volume =
       100 * volume_loss_cumulative / first(volume),
-    volume_relative_to_total_volume = 100 * volume / volume_total,
-    volume_loss_relative_to_total_volume = 100 * volume_loss / volume_total,
-    volume_loss_cumulative_relative_to_total_volume = 100 * volume_loss_cumulative / volume_total,
+    volume_relative_to_3000m_volume = 100 * volume / volume_total,
+    volume_loss_relative_to_3000m_volume = 100 * volume_loss / volume_total,
+    volume_loss_cumulative_relative_to_3000m_volume = 100 * volume_loss_cumulative / volume_total,
   ) %>%
   ungroup()
 
@@ -3356,22 +3339,28 @@ pdf(
 print(
   acidification_volume %>%
     mutate(sat_level = as.factor(sat_level),
-           tref = as.factor(tref)) %>%
+           tref = as.factor(tref),
+           estimate = str_replace_all(estimate, "_", " ")) %>%
     group_by(estimate) %>%
     group_split() %>%
     # head(1) %>%
     map(
       ~ ggplot(data = .x,
                aes(sat_level, value, fill = tref)) +
-        labs(title = .x$estimate,
+        labs(y = .x$estimate,
              x = "Saturation threshold") +
         geom_col(position = "dodge") +
         scale_fill_viridis_d() +
+        theme(legend.title = element_blank()) +
         facet_nested_wrap(vars(basin, mineral))
     )
 )
 
 dev.off()
+
+# volume_relative_to_3000m_volume
+# volume_loss_cumulative_relative_to_preind_volume
+# volume_loss_cumulative_relative_to_3000m_volume
 
 
 acidification_volume_biome <-
@@ -3391,9 +3380,9 @@ acidification_volume_biome <-
       volume - first(volume),
     volume_loss_cumulative_relative_to_preind_volume =
       100 * volume_loss_cumulative / first(volume),
-    volume_relative_to_total_volume = 100 * volume / volume_total,
-    volume_loss_relative_to_total_volume = 100 * volume_loss / volume_total,
-    volume_loss_cumulative_relative_to_total_volume = 100 * volume_loss_cumulative / volume_total,
+    volume_relative_to_3000m_volume = 100 * volume / volume_total,
+    volume_loss_relative_to_3000m_volume = 100 * volume_loss / volume_total,
+    volume_loss_cumulative_relative_to_3000m_volume = 100 * volume_loss_cumulative / volume_total,
   ) %>%
   ungroup()
 
@@ -3413,7 +3402,8 @@ pdf(
 print(
   acidification_volume_biome %>%
     mutate(sat_level = as.factor(sat_level),
-           tref = as.factor(tref)) %>%
+           tref = as.factor(tref),
+           estimate = str_replace_all(estimate, "_", " ")) %>%
     group_by(estimate) %>%
     group_split() %>%
     # head(1) %>%
@@ -3424,6 +3414,7 @@ print(
              x = "Saturation threshold") +
         geom_col(position = "dodge") +
         scale_fill_viridis_d() +
+        theme(legend.title = element_blank()) +
         facet_nested_wrap(vars(biome, mineral))
     )
 )
@@ -4865,25 +4856,6 @@ dCant_temp_profiles_temp_contribution <-
 rm(dCant_temp_profiles_temp_contribution_regional,
    dCant_temp_profiles_temp_contribution_global)
 
-
-# rename basins
-# 
-# dCant_temp_profiles_temp_contribution <- dCant_temp_profiles_temp_contribution %>%
-#   mutate(
-#     basin = str_replace(basin,
-#                         "_",
-#                         ". "),
-#     basin = fct_relevel(
-#       basin,
-#       "Global",
-#       "N. Pacific",
-#       "N. Atlantic",
-#       "Indian",
-#       "S. Pacific",
-#       "S. Atlantic"
-#     )
-#   )
-
 dCant_temp_profiles_temp_contribution <- dCant_temp_profiles_temp_contribution %>%
   mutate(tref = as.factor(tref))
 
@@ -5008,7 +4980,7 @@ dCant_temp_profiles_temp_contribution_biome %>%
 
 ```
 
-```{r compute_mean_profiles_DIC_dCant_temperature_trend, eval=FALSE}
+```{r compute_mean_profiles_DIC_dCant_temperature_trend}
 
 
 # join with 3D acidification fields
@@ -5049,26 +5021,35 @@ DIC_dCant_temp_profiles <-
 rm(DIC_dCant_temp_profiles_regional,
    DIC_dCant_temp_profiles_global)
 
-
-# rename basins
-
 DIC_dCant_temp_profiles <- DIC_dCant_temp_profiles %>%
-  mutate(
-    basin = str_replace(basin,
-                        "_",
-                        ". "),
-    basin = fct_relevel(
-      basin,
-      "Global",
-      "N. Pacific",
-      "N. Atlantic",
-      "Indian",
-      "S. Pacific",
-      "S. Atlantic"
-    )
-  )
+  mutate(tref = as.factor(tref))
 
-DIC_dCant_temp_profiles <- DIC_dCant_temp_profiles %>%
+```
+
+```{r compute_mean_profiles_DIC_dCant_temperature_trend_biome}
+
+
+# join with 3D acidification fields
+
+DIC_dCant_temp_profiles_biome <-
+  full_join(biomemask,
+            dCant_DIC_temp_trend)
+
+# scale values to surface area
+
+DIC_dCant_temp_profiles_biome <- DIC_dCant_temp_profiles_biome %>% 
+  mutate(across(contains("_delta_interval"),
+                ~ . * area))
+
+# calculate regional means
+
+DIC_dCant_temp_profiles_biome <- DIC_dCant_temp_profiles_biome %>%
+  group_by(tref, biome, depth, driver) %>%
+  summarise(across(contains("_delta_interval"),
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+DIC_dCant_temp_profiles_biome <- DIC_dCant_temp_profiles_biome %>%
   mutate(tref = as.factor(tref))
 
 ```
@@ -5190,7 +5171,7 @@ buffer_profiles_biome <- buffer_profiles_biome %>%
 
 ### DIC + dCant + Temperature
 
-```{r profiles_DIC_dCant_temp_change, eval=FALSE}
+```{r profiles_DIC_dCant_temp_change}
 
 
 DIC_dCant_temp_profiles <-
@@ -5211,32 +5192,65 @@ DIC_dCant_temp_profiles <- DIC_dCant_temp_profiles %>%
     driver = if_else(str_detect(driver, "dCant"), "dCant", "DIC")
   )
 
-# create pdf document
 
-pdf(
-  here::here("output/all_variables/profiles_DIC_dCant_temp_changes.pdf"),
-  width = 14,
-  height = 12
+DIC_dCant_temp_profiles %>% 
+ ggplot() +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path(
+    data = . %>% filter(variable == "temp"),
+    aes(delta_interval,
+        depth,
+        linetype = temperature)
+  ) +
+  geom_path(
+    data = . %>% filter(variable != "temp"),
+    aes(delta_interval,
+        depth,
+        col = driver, 
+        linetype = temperature)
+  ) +
+  scale_color_brewer(palette = "Dark2",
+                     direction = -1,
+                     labels = c(expression(Delta * C[ant]),
+                                      expression(Delta * C[total]))) +
+  labs(y = "Depth (m)") +
+  theme(
+    # legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(
+    basin ~ variable,
+    scales = "free",
+    switch = "x",
+    labeller = labeller(variable = x_axis_labels)
+  ) +
+  facetted_pos_scales(y = rep(list(
+                        scale_y_continuous(trans = trans_reverser("sqrt"),
+                                           breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+                      ), 6))
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/publication/profiles_incremental_changes_Cnat_basin.png"
+    )
+  ),
+  width = 10,
+  height = 10,
+  dpi = 600,
+  bg = "white"
 )
 
-ggplot() +
-  geom_vline(xintercept = 0, col = "grey") +
-  geom_path(data = DIC_dCant_temp_profiles, aes(delta_interval,
-                                            depth,
-                                            col = driver,
-                                            linetype = temperature)) +
-  scale_color_brewer(palette = "Set1") +
-  labs(y = "Depth (m)",
-       title = "Decadal ocean interior acidification 2004 - 2014") +
-  scale_y_reverse(breaks = seq(0, 5000, 500)) +
-  # scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
-  # scale_y_continuous(trans = trans_reverser("sqrt"),
-  #                    breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
-  theme(axis.title.x = element_blank(),
-        axis.text.x = element_text(angle = 45, hjust=1)) +
-  facet_grid(basin ~ variable, scales = "free_x")
 
-dev.off()
+```
+
+
+```{r MOBO-DIC_vs_Cant_profiles}
+
 
 DIC_dCant_temp_profiles %>%
   filter(variable == "tco2",
@@ -5268,10 +5282,10 @@ DIC_dCant_temp_profiles %>%
   theme_classic() +
   theme(legend.position = "none")
 
-ggsave(  here::here("output/all_variables/profiles_MOBO-DIC_vs_eMLR_no_fill.jpg"),
-  width = 5,
-  height = 5,
-  dpi = 600)
+# ggsave(  here::here("output/all_variables/profiles_MOBO-DIC_vs_eMLR_no_fill.jpg"),
+#   width = 5,
+#   height = 5,
+#   dpi = 600)
 
 
 DIC_dCant_temp_profiles %>%
@@ -5329,7 +5343,6 @@ ggsave(  here::here("output/all_variables/profiles_MOBO-DIC_vs_eMLR.jpg"),
 #> "#4477AA" "#EE6677" "#228833" "#CCBB44" "#66CCEE" "#AA3377" "#BBBBBB" 
 
 rm(DIC_dCant_temp_profiles)
-
 
 ```
 
