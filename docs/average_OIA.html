@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeb796877f6c4d9e0f90d4f5e17a1a72bbab05f874targetblankb796877a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree212ca9d84914f053f45b809a6662fb043d870561targetblank212ca9da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/b796877f6c4d9e0f90d4f5e17a1a72bbab05f874" target="_blank">b796877</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/212ca9d84914f053f45b809a6662fb043d870561" target="_blank">212ca9d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeb796877f6c4d9e0f90d4f5e17a1a72bbab05f874targetblankb796877a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree212ca9d84914f053f45b809a6662fb043d870561targetblank212ca9da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/b796877f6c4d9e0f90d4f5e17a1a72bbab05f874" target="_blank">b796877</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/212ca9d84914f053f45b809a6662fb043d870561" target="_blank">212ca9d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -634,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/212ca9d84914f053f45b809a6662fb043d870561/analysis/average_OIA.Rmd" target="_blank">212ca9d</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+<td>
+updated saturation horizon plots
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/average_OIA.html" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2560,7 +2594,7 @@ contours &lt;-
   if (i_var == &quot;pH&quot;) {
     i_breaks &lt;- c(-Inf, seq(-0.0033, -0.0015, 0.0003), Inf)
     i_contour_level &lt;- -0.0027
-    i_legend_title &lt;- &quot;ΔpH/ΔDIC&lt;br&gt;(/ µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
+    i_legend_title &lt;- &quot;ΔpH&lt;sub&gt;T&lt;/sub&gt;/ΔDIC&lt;br&gt;(/ µmol kg&lt;sup&gt;-1&lt;/sup&gt;)&quot;
   }
   
   if (i_var == &quot;OmegaAragonite&quot;) {
@@ -2624,6 +2658,74 @@ contours_buffer_variables_addition &lt;-
         &quot;SIR&quot;,
         &quot;H_free&quot;)
   )</code></pre>
+<pre class="r"><code>labels_breaks_buffer_variables_addition_change &lt;- function(i_var) {
+  if (i_var == &quot;pH&quot;) {
+    i_breaks &lt;- c(-Inf, seq(0, 8, 2), Inf)
+    i_contour_level &lt;- 4
+    i_legend_title &lt;- &quot;Δ&lt;sub&gt;1900-2004&lt;/sub&gt;&lt;br&gt;ΔpH&lt;sub&gt;T&lt;/sub&gt;/ΔDIC&lt;br&gt;(%)&quot;
+  }
+  
+  if (i_var == &quot;OmegaAragonite&quot;) {
+    i_breaks &lt;- c(-Inf, seq(0,5,1), Inf)
+    i_contour_level &lt;- 2
+    i_legend_title &lt;-
+      &quot;Δ&lt;sub&gt;1900-2004&lt;/sub&gt;&lt;br&gt;ΔΩ&lt;sub&gt;arag&lt;/sub&gt;/ΔDIC&lt;br&gt;(%)&quot;
+  }
+  
+  if (i_var == &quot;SIR&quot;) {
+    i_breaks &lt;- c(-Inf, seq(0,5,1), Inf)
+    i_contour_level &lt;- 2
+    i_legend_title &lt;- &quot;Δ&lt;sub&gt;1900-2004&lt;/sub&gt;&lt;br&gt;ΔSIR/ΔDIC&lt;br&gt;(%)&quot;
+  }
+  
+  if (i_var == &quot;H_free&quot;) {
+    i_breaks &lt;- c(-Inf, seq(0,25,5), Inf)
+    i_contour_level &lt;- 10
+    i_legend_title &lt;-
+      &quot;Δ&lt;sub&gt;1900-2004&lt;/sub&gt;&lt;br&gt;ΔH&lt;sup&gt;+&lt;/sup&gt;&lt;sub&gt;free&lt;/sub&gt;/ΔDIC&lt;br&gt;(%)&quot;
+  }
+  
+  all_labels_breaks &lt;- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+# 
+# x_axis_scales_buffer_variables_addition &lt;-
+#   list(
+#     variable == &quot;pH&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;pH&quot;)$i_breaks[c(TRUE, FALSE)]),
+#     variable == &quot;OmegaAragonite&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;OmegaAragonite&quot;)$i_breaks[c(TRUE, FALSE)]),
+#     variable == &quot;SIR&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;SIR&quot;)$i_breaks[c(TRUE, FALSE)]),
+#     variable == &quot;H_free&quot; ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition(&quot;H_free&quot;)$i_breaks[c(TRUE, FALSE)])
+#   )
+# 
+# x_axis_labels_buffer_variables_addition &lt;-
+#   c(
+#     &quot;pH&quot; = labels_breaks_buffer_variables_addition(&quot;pH&quot;)$i_legend_title,
+#     &quot;OmegaAragonite&quot; = labels_breaks_buffer_variables_addition(&quot;OmegaAragonite&quot;)$i_legend_title,
+#     &quot;SIR&quot; = labels_breaks_buffer_variables_addition(&quot;SIR&quot;)$i_legend_title,
+#     &quot;H_free&quot; = labels_breaks_buffer_variables_addition(&quot;H_free&quot;)$i_legend_title
+#   )
+# 
+# 
+# contours_buffer_variables_addition &lt;-
+#   tibble(
+#     contour =
+#       c(
+#         labels_breaks_buffer_variables_addition(&quot;pH&quot;)$i_contour_level,
+#         labels_breaks_buffer_variables_addition(&quot;OmegaAragonite&quot;)$i_contour_level,
+#         labels_breaks_buffer_variables_addition(&quot;SIR&quot;)$i_contour_level,
+#         labels_breaks_buffer_variables_addition(&quot;H_free&quot;)$i_contour_level
+#       ),
+#     variable =
+#       c(&quot;pH&quot;,
+#         &quot;OmegaAragonite&quot;,
+#         &quot;SIR&quot;,
+#         &quot;H_free&quot;)
+#   )</code></pre>
 <pre class="r"><code>buffer_variables
 
 labels_breaks_buffer_variables &lt;- function(i_var) {
@@ -4055,6 +4157,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/depth_layer_total_change-1.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/depth_layer_total_change-1.png" target="_blank">af60720</a>
 </td>
 <td>
@@ -4171,6 +4284,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/depth_layer_total_change-2.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/depth_layer_total_change-2.png" target="_blank">af60720</a>
@@ -4354,6 +4478,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/depth_layer_total_change-3.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/af607202d355eb13697af06c64fcd72b84333db7/docs/figure/average_OIA.Rmd/depth_layer_total_change-3.png" target="_blank">af60720</a>
 </td>
 <td>
@@ -4398,6 +4533,87 @@ jens-daniel-mueller
   dpi = 600,
   bg = &quot;white&quot;
 )
+
+
+
+acidification_depth_layer_absolute &lt;-
+  acidification_depth_layer %&gt;%
+  select(lat:tref,
+         OIA_variables[-6]) %&gt;%
+  filter(tref == 2004)
+
+
+acidification_depth_layer_absolute &lt;-
+  acidification_depth_layer_absolute %&gt;%
+  pivot_longer(-c(lat:tref),
+               names_to = &quot;variable&quot;,
+               values_to = &quot;absolute&quot;)
+
+
+
+acidification_depth_layer_total_relative &lt;-
+  full_join(
+    acidification_depth_layer_total %&gt;%
+      filter(variable %in% OIA_variables[-6]),
+    acidification_depth_layer_absolute %&gt;% 
+      select(-tref)
+  )
+
+acidification_depth_layer_total_relative &lt;-
+acidification_depth_layer_total_relative %&gt;% 
+  mutate(delta_total_relative = 100 * delta_total / absolute)
+
+for (i_var in OIA_variables[-6]) {
+  # i_var &lt;- OIA_variables[2]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_total_relative &lt;-
+    acidification_depth_layer_total_relative %&gt;%
+    filter(variable == i_var) %&gt;%
+    select(lon, lat, depth, tref, delta_total_relative)
+  
+  # determine endpoints and breaks of color scale automatically
+
+  low &lt;- i_acidification_depth_layer_total_relative %&gt;%
+    filter(!is.na(delta_total_relative)) %&gt;%
+    pull(delta_total_relative) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+
+  high &lt;- i_acidification_depth_layer_total_relative %&gt;%
+    filter(!is.na(delta_total_relative)) %&gt;%
+    pull(delta_total_relative) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+
+  i_breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+
+  all_labels_breaks &lt;- labels_breaks(i_var)
+  # i_breaks        &lt;- unlist(all_labels_breaks[1])
+  # i_contour_level &lt;- unlist(all_labels_breaks[2])
+  i_legend_title  &lt;- unlist(all_labels_breaks[3])
+  
+  i_acidification_depth_layer_total_relative %&gt;%
+    p_map_mdim_robinson(
+      dim_row = &quot;depth&quot;,
+      dim_col = &quot;tref&quot;,
+      var = &quot;delta_total_relative&quot;,
+      # contour_level = i_contour_level,
+      legend_title = i_legend_title,
+      breaks = i_breaks,
+      legend_position = &quot;right&quot;
+    )
+  
+  ggsave(
+    here::here(
+      paste0(&quot;output/publication/maps_depth_layer_&quot;,i_var,&quot;_total_changes_relative.png&quot;)
+    ),
+    width = 10,
+    height = 4.5,
+    dpi = 600,
+    bg = &quot;white&quot;
+  )
+  
+}
 
 rm(acidification_depth_layer_total,
    acidification_depth_layer,
@@ -4624,6 +4840,44 @@ buffer_addition_depth_layer_relative %&gt;%
     legend_position = &quot;right&quot;
   )</code></pre>
 <p><img src="figure/average_OIA.Rmd/depth_layer_buffer_addition_climatology-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-depth_layer_buffer_addition_climatology-1">
+Past versions of depth_layer_buffer_addition_climatology-1.png
+</button>
+</p>
+<div id="fig-depth_layer_buffer_addition_climatology-1"
+class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/depth_layer_buffer_addition_climatology-1.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     paste0(
@@ -4636,6 +4890,62 @@ buffer_addition_depth_layer_relative %&gt;%
   bg = &quot;white&quot;
 )
 
+
+for (i_var in buffer_variables_addition[buffer_variables_addition != &quot;temp&quot;]) {
+  # i_var &lt;- buffer_variables_addition[4]
+  
+  # subset OIA variable
+  
+  i_buffer_addition_depth_layer_relative &lt;-
+    buffer_addition_depth_layer_relative %&gt;%
+    filter(variable == i_var) %&gt;%
+    select(lon, lat, depth, delta_sensitivity)
+  
+  # determine endpoints and breaks of color scale
+  
+  low &lt;- i_buffer_addition_depth_layer_relative %&gt;%
+    filter(!is.na(delta_sensitivity)) %&gt;%
+    pull(delta_sensitivity) %&gt;%
+    quantile(c(quantile_low), names = FALSE)
+
+  high &lt;- i_buffer_addition_depth_layer_relative %&gt;%
+    filter(!is.na(delta_sensitivity)) %&gt;%
+    pull(delta_sensitivity) %&gt;%
+    quantile(c(quantile_high), names = FALSE)
+
+  i_breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  all_labels_breaks &lt;- labels_breaks_buffer_variables_addition_change(i_var)
+  i_breaks        &lt;- unlist(all_labels_breaks[1])
+  i_contour_level &lt;- unlist(all_labels_breaks[2])
+  i_legend_title  &lt;- unlist(all_labels_breaks[3])
+  
+  i_buffer_addition_depth_layer_relative %&gt;%
+  p_map_mdim_robinson(
+    dim_row = &quot;depth&quot;,
+    # dim_col = &quot;variable&quot;,
+    var = &quot;delta_sensitivity&quot;,
+    legend_title = i_legend_title,
+    # contour_level = i_contour_level,
+    breaks = i_breaks,
+    legend_position = &quot;right&quot;
+  )
+  
+  ggsave(
+    here::here(
+      paste0(
+        &quot;output/publication/maps_depth_layer_&quot;,
+        i_var,
+        &quot;_total_changes_buffer_additional_relative.png&quot;
+      )
+    ),
+    width = 6,
+    height = 5,
+    dpi = 600,
+    bg = &quot;white&quot;
+  )
+  
+}
 
 rm(buffer_addition_depth_layer,
    i_buffer_addition_depth_layer,
@@ -4901,6 +5211,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/acidification_volumes-1.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/e421701e01f20013773dbebe8e2344cd5d4ccf9b/docs/figure/average_OIA.Rmd/acidification_volumes-1.png" target="_blank">e421701</a>
 </td>
 <td>
@@ -5010,6 +5331,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/acidification_volumes-2.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/e421701e01f20013773dbebe8e2344cd5d4ccf9b/docs/figure/average_OIA.Rmd/acidification_volumes-2.png" target="_blank">e421701</a>
 </td>
 <td>
@@ -5090,6 +5422,43 @@ full_join(ocean_volume_biome,
   facet_grid(variable ~ biome,
              labeller = labeller(variable = x_axis_labels))</code></pre>
 <p><img src="figure/average_OIA.Rmd/acidification_volumes-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-acidification_volumes-3">
+Past versions of acidification_volumes-3.png
+</button>
+</p>
+<div id="fig-acidification_volumes-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/acidification_volumes-3.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     &quot;output/publication/acidification_volumes_biome.png&quot;
@@ -5128,6 +5497,43 @@ full_join(ocean_volume_biome,
              labeller = labeller(variable = x_axis_labels)) +
   facetted_pos_scales(x = x_axis_scales)</code></pre>
 <p><img src="figure/average_OIA.Rmd/acidification_volumes-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-acidification_volumes-4">
+Past versions of acidification_volumes-4.png
+</button>
+</p>
+<div id="fig-acidification_volumes-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/acidification_volumes-4.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     &quot;output/publication/acidification_volume_changes_biomes.png&quot;
@@ -5493,13 +5899,9 @@ jens-daniel-mueller
 [1] TRUE
 [1] TRUE
 [1] TRUE</code></pre>
-<pre class="r"><code>pdf(
-  here::here(&quot;output/all_variables/maps_saturation_horizon_absolute_state.pdf&quot;),
-  width = 12,
-  height = 8
-)
-
-for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+<pre class="r"><code>for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  
+  # i_sat_level &lt;- unique(acidification_saturation_horizon_levels$sat_level)[1]
   
   print(
   acidification_saturation_horizon_levels %&gt;%
@@ -5510,38 +5912,40 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
       dim_row = &quot;tref&quot;,
       dim_col = &quot;mineral&quot;,
       var = &quot;depth&quot;,
-      legend_title = paste0(&quot;Omega=&quot;,i_sat_level,&quot; horizon (m)&quot;),
+      legend_title = paste0(&quot;Ω=&quot;,i_sat_level,&quot;&lt;br&gt;horizon&lt;br&gt;(m)&quot;),
       legend_position = &quot;right&quot;,
       breaks = seq(6000, 0, -500)
     )
   )
-}
-
-dev.off()</code></pre>
-<pre><code>png 
-  2 </code></pre>
-<pre class="r"><code>pdf(
-  here::here(&quot;output/all_variables/maps_saturation_horizon_total_changes.pdf&quot;),
-  width = 12,
-  height = 6
+  
+  ggsave(
+  here::here(
+    paste0(&quot;output/publication/maps_saturation_horizon_absolute_state_sat_level_&quot;,i_sat_level,&quot;.png&quot;)
+  ),
+  width = 6,
+  height = 6,
+  dpi = 600,
+  bg = &quot;white&quot;
 )
-
-
-for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  
+}</code></pre>
+<p><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-2.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-3.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-4.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-5.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-6.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-7.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  
   print(
     acidification_saturation_horizon_levels %&gt;%
       filter(sat_level == i_sat_level) %&gt;%
       select(-sat_level) %&gt;%
       arrange(tref) %&gt;%
       group_by(lat, lon, mineral) %&gt;%
-      mutate(n = n()) %&gt;% 
-      filter(n == 4) %&gt;% 
+      mutate(n = n()) %&gt;%
+      filter(n == 4) %&gt;%
       mutate(
         delta_depth = depth - first(depth),
         period = paste(first(tref), &quot;-&quot;, tref)
       ) %&gt;%
       ungroup() %&gt;%
-      filter(tref != 1800) %&gt;% 
+      filter(tref != 1800) %&gt;%
       drop_na() %&gt;%
       select(lon, lat, period, mineral, delta_depth) %&gt;%
       p_map_mdim_robinson(
@@ -5549,25 +5953,30 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         dim_col = &quot;mineral&quot;,
         col = &quot;div&quot;,
         var = &quot;delta_depth&quot;,
-        legend_title = paste0(&quot;Change Omega=&quot;,i_sat_level,&quot; horizon (m)&quot;),
+        legend_title = paste0(&quot;ΔΩ=&quot;, i_sat_level, &quot;&lt;br&gt;horizon&lt;br&gt;(m)&quot;),
         legend_position = &quot;right&quot;,
         breaks = c(-Inf, seq(-300, 300, 50), Inf)
-        # breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       )
   )
-}
-
-dev.off()</code></pre>
-<pre><code>png 
-  2 </code></pre>
-<pre class="r"><code>pdf(
-  here::here(&quot;output/all_variables/maps_saturation_horizon_incremental_changes.pdf&quot;),
-  width = 12,
-  height = 6
-)
-
-
-for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  
+  ggsave(
+    here::here(
+      paste0(
+        &quot;output/publication/maps_saturation_horizon_total_change_sat_level_&quot;,
+        i_sat_level,
+        &quot;.png&quot;
+      )
+    ),
+    width = 6,
+    height = 4,
+    dpi = 600,
+    bg = &quot;white&quot;
+  )
+  
+  
+}</code></pre>
+<p><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-8.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-9.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-10.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-11.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-12.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-13.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
   print(
     acidification_saturation_horizon_levels %&gt;%
       filter(sat_level == i_sat_level) %&gt;%
@@ -5589,18 +5998,29 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         dim_col = &quot;mineral&quot;,
         col = &quot;div&quot;,
         var = &quot;delta_depth&quot;,
-        legend_title = paste0(&quot;Change Omega=&quot;,i_sat_level,&quot; horizon (m)&quot;),
+        legend_title = paste0(&quot;ΔΩ=&quot;, i_sat_level, &quot;&lt;br&gt;horizon&lt;br&gt;(m)&quot;),
         legend_position = &quot;right&quot;,
         breaks = c(-Inf, seq(-300, 300, 50), Inf)
-        # breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       ) +
       labs(title = paste(&quot;Saturation threshold:&quot;, i_sat_level))
   )
-}
-
-dev.off()</code></pre>
-<pre><code>png 
-  2 </code></pre>
+  
+    
+  ggsave(
+    here::here(
+      paste0(
+        &quot;output/publication/maps_saturation_horizon_incremental_change_sat_level_&quot;,
+        i_sat_level,
+        &quot;.png&quot;
+      )
+    ),
+    width = 6,
+    height = 4,
+    dpi = 600,
+    bg = &quot;white&quot;
+  )
+}</code></pre>
+<p><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-14.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-15.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-16.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-17.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-18.png" width="672" style="display: block; margin: auto;" /><img src="figure/average_OIA.Rmd/compute_saturation_horizon_maps-19.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>acidification_volume &lt;-
   full_join(acidification_volume,
             ocean_volume)
@@ -6806,8 +7226,8 @@ for (i_var in OIA_variables[-6]) {
         &quot;_total_changes.png&quot;
       )
     ),
-    width = 8,
-    height = 10,
+    width = 6,
+    height = 8,
     dpi = 600,
     bg = &quot;white&quot;
   )
@@ -8320,6 +8740,43 @@ acidification_profiles_long_relative %&gt;%
   facet_grid(basin ~ variable,
              labeller = labeller(variable = x_axis_labels))</code></pre>
 <p><img src="figure/average_OIA.Rmd/profiles_total_change-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-profiles_total_change-2">
+Past versions of profiles_total_change-2.png
+</button>
+</p>
+<div id="fig-profiles_total_change-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/profiles_total_change-2.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     paste0(&quot;output/publication/profiles_total_changes_basin_relative.png&quot;)
@@ -8352,6 +8809,43 @@ acidification_profiles_long_relative %&gt;%
   facet_wrap( ~ variable,
               labeller = labeller(variable = x_axis_labels))</code></pre>
 <p><img src="figure/average_OIA.Rmd/profiles_total_change-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-profiles_total_change-3">
+Past versions of profiles_total_change-3.png
+</button>
+</p>
+<div id="fig-profiles_total_change-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7d2701f47e4713590509e65a1ac345375d8a6a8a/docs/figure/average_OIA.Rmd/profiles_total_change-3.png" target="_blank">7d2701f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-13
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     &quot;output/publication/acidification_rates_500m_relative.png&quot;
