@@ -2207,13 +2207,51 @@ for (i_var in OIA_variables[-6]) {
     here::here(
       paste0("output/publication/maps_depth_layer_",i_var,"_total_changes.png")
     ),
-    width = 8,
-    height = 4,
+    width = 10,
+    height = 4.5,
     dpi = 600,
     bg = "white"
   )
   
 }
+
+
+acidification_depth_layer_total_relative <-
+  acidification_depth_layer_total %>%
+  filter(tref %in% c(1994, 2014),
+         variable %in% OIA_variables[-6]) %>%
+  pivot_wider(names_from = tref,
+              values_from = delta_total) %>%
+  mutate(delta_total_relative = 100 * (`2014` - `1994`) / `1994`) %>%
+  select(lon, lat, depth, variable, delta_total_relative)
+
+i_breaks        <- c(-Inf, seq(0, 70, 10), Inf)
+i_contour_level <- 30
+i_legend_title  <- "Δ 1994 - 2014<br>(% of Δ 1800 - 1994)"
+
+acidification_depth_layer_total_relative %>%
+  p_map_mdim_robinson(
+    dim_row = "depth",
+    dim_col = "variable",
+    var = "delta_total_relative",
+    # contour_level = i_contour_level,
+    legend_title = i_legend_title,
+    breaks = i_breaks,
+    legend_position = "right"
+  )
+
+ggsave(
+  here::here(
+    paste0(
+      "output/publication/maps_depth_layer_all_var_total_changes_relative.png"
+    )
+  ),
+  width = 14,
+  height = 4.5,
+  dpi = 600,
+  bg = "white"
+)
+
 
 breaks_contour <- c(-Inf,1,2, Inf)
 
@@ -2428,7 +2466,7 @@ for (i_var in OIA_variables[6]) {
   
   ggsave(
     here::here(
-      paste0("output/publication/maps_depth_layer_",i_var,"_total_changes.png")
+      paste0("output/publication/maps_depth_layer_",i_var,"_total_changes_temp.png")
     ),
     width = 9,
     height = 6,
@@ -2590,6 +2628,41 @@ for (i_var in buffer_variables_addition[buffer_variables_addition != "temp"]) {
 }
 
 
+buffer_addition_depth_layer_relative <-
+  buffer_addition_depth_layer %>%
+  filter(variable %in% OIA_variables[-c(1,6)]) %>%
+  pivot_wider(names_from = tref,
+              values_from = sensitivity) %>%
+  mutate(`1900` = (`1800` + `1994`) / 2,
+         delta_sensitivity = abs(100 * (`2004` - `1900`) / `1900`)) %>%
+  select(lon, lat, depth, variable, delta_sensitivity)
+
+i_breaks        <- c(-Inf, seq(0, 24, 4), Inf)
+i_legend_title  <- "Sensitivity 2004<br>(% of ~1900)"
+
+buffer_addition_depth_layer_relative %>%
+  p_map_mdim_robinson(
+    dim_row = "depth",
+    dim_col = "variable",
+    var = "delta_sensitivity",
+    legend_title = i_legend_title,
+    breaks = i_breaks,
+    legend_position = "right"
+  )
+
+ggsave(
+  here::here(
+    paste0(
+      "output/publication/maps_depth_layer_all_var_total_changes_buffer_additional_relative.png"
+    )
+  ),
+  width = 14,
+  height = 4.5,
+  dpi = 600,
+  bg = "white"
+)
+
+
 rm(buffer_addition_depth_layer,
    i_buffer_addition_depth_layer,
    p_climatology,
@@ -2619,8 +2692,11 @@ buffer_variables <- buffer_climatology_depth_layer %>%
 
 # create pdf document
 
+
 pdf(
-  here::here("output/all_variables/maps_depth_layer_buffer_climatology.pdf"),
+  here::here(
+    "output/all_variables/maps_depth_layer_buffer_climatology.pdf"
+  ),
   width = 5,
   height = 8
 )
@@ -2644,16 +2720,16 @@ for (i_var in buffer_variables) {
     filter(!is.na(value)) %>%
     pull(value) %>%
     quantile(c(quantile_low), names = FALSE)
-
+  
   high <- i_buffer_climatology_depth_layer %>%
     filter(!is.na(value)) %>%
     pull(value) %>%
     quantile(c(quantile_high), names = FALSE)
-
+  
   breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
   
   p_climatology <-
-  i_buffer_climatology_depth_layer %>%
+    i_buffer_climatology_depth_layer %>%
     p_map_mdim_robinson(
       dim_row = "depth",
       dim_col = "tref",
@@ -2663,18 +2739,14 @@ for (i_var in buffer_variables) {
       legend_position = "right"
     )
   
-  print(
-  p_climatology
-  )
+  print(p_climatology)
   
 }
 
 dev.off()
 
 rm(buffer_climatology_depth_layer,
-   i_buffer_climatology_depth_layer,
-   p_climatology,
-   low, high)
+   i_buffer_climatology_depth_layer)
 
 ```
 
@@ -2693,7 +2765,6 @@ acidification_volume_raw <-
                values_to = "delta_total") %>%
   mutate(variable = str_remove(variable, "_delta_total"))
 
-
 pdf(
   here::here("output/all_variables/maps_acidification_horizons.pdf"),
   width = 5,
@@ -2704,14 +2775,14 @@ for (i_var in OIA_variables[-6]) {
   
   # i_var <- OIA_variables[2]
   
-  contours <- labels_breaks(i_var)$i_breaks
-  contours <- contours[-c(1, length(contours))]
+  i_contours <- labels_breaks(i_var)$i_breaks
+  i_contours <- i_contours[-c(1, length(i_contours))]
   
   i_acidification_volume_raw <- acidification_volume_raw %>% 
     filter(variable == i_var)
   
-  for (i_contour in contours) {
-    # i_contour <- contours[2]
+  for (i_contour in i_contours) {
+    # i_contour <- i_contours[2]
     
     acidification_horizon <-
       i_acidification_volume_raw %>%
@@ -2819,6 +2890,8 @@ full_join(ocean_volume,
     label = contour
   )) +
   geom_path() +
+  geom_path(data = . %>% filter(contour %in% (contours %>% pull(contour))),
+            col = "blue") +
   geom_point(shape = 21, fill = "white") +
   geom_text(
     data = . %>%
@@ -2850,6 +2923,45 @@ ggsave(
   bg = "white"
 )
 
+full_join(ocean_volume,
+          acidification_volume_all) %>%
+  filter(contour != 0) %>%
+  mutate(volume = 100 * volume / volume_total) %>%
+  pivot_wider(names_from = tref,
+              values_from = volume) %>% 
+  mutate(delta_volume = `2014` - `1994`) %>% 
+  filter(!is.na(delta_volume)) %>% 
+  # filter(basin == "Global",
+  #        variable == "pH") %>% 
+  ggplot(aes(
+    contour,
+    delta_volume,
+    col = basin
+  )) +
+  geom_path() +
+  geom_point(shape = 21, fill = "white") +
+  scale_color_okabeito() +
+  labs(y = "Acidified volume change 1994 - 2014 \n(% of top 3000m volume)",
+       x = "acidification threshold") +
+  theme(
+    strip.text.x = element_markdown(),
+    legend.position = c(0.8,0.25)
+  ) +
+  facet_wrap(~ variable,
+             scales = "free_x",
+             labeller = labeller(variable = x_axis_labels)) +
+  facetted_pos_scales(x = x_axis_scales)
+
+ggsave(
+  here::here(
+    "output/publication/acidification_volume_changes.png"
+  ),
+  width = 8,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
 
 full_join(ocean_volume_biome,
           acidification_volume_biome_all) %>%
@@ -2862,6 +2974,8 @@ full_join(ocean_volume_biome,
     label = contour
   )) +
   geom_path() +
+  geom_path(data = . %>% filter(contour %in% (contours %>% pull(contour))),
+            col = "blue")+
   geom_point(shape = 21, fill = "white") +
   geom_text(
     data = . %>%
@@ -2893,6 +3007,43 @@ ggsave(
   bg = "white"
 )
 
+full_join(ocean_volume_biome,
+          acidification_volume_biome_all) %>%
+  filter(contour != 0,
+         !is.na(biome)) %>%
+  mutate(volume = 100 * volume / volume_total) %>%
+  pivot_wider(names_from = tref,
+              values_from = volume) %>% 
+  mutate(delta_volume = `2014` - `1994`) %>% 
+  filter(!is.na(delta_volume)) %>% 
+  ggplot(aes(
+    contour,
+    delta_volume,
+    col = biome
+  )) +
+  geom_path() +
+  geom_point(shape = 21, fill = "white") +
+  scale_color_okabeito() +
+  labs(y = "Acidified volume change 1994 - 2014 \n(% of top 3000m volume)",
+       x = "acidification threshold") +
+  theme(
+    strip.text.x = element_markdown(),
+    legend.position = c(0.8,0.25)
+  ) +
+  facet_wrap(~ variable,
+             scales = "free_x",
+             labeller = labeller(variable = x_axis_labels)) +
+  facetted_pos_scales(x = x_axis_scales)
+
+ggsave(
+  here::here(
+    "output/publication/acidification_volume_changes_biomes.png"
+  ),
+  width = 8,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
 
 
 rm(acidification_volume_all,
@@ -5398,6 +5549,56 @@ ggplot() +
 
 dev.off()
 
+
+DIC_dCant_temp_profiles %>% 
+  filter(driver == "dCant") %>% 
+  rename(parameter = variable) %>% 
+  pivot_wider(names_from = temperature,
+              values_from = delta_interval) %>% 
+  mutate(temp_driver = 100 * (variable - climatology) / climatology) %>% 
+  ggplot() +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path(
+    data = . %>% filter(variable != "temp"),
+    aes(temp_driver,
+        depth,
+        col = driver)
+  ) +
+  # scale_color_brewer(palette = "Dark2",
+  #                    direction = -1,
+  #                    labels = c(expression(Delta * C[ant]),
+  #                                     expression(Delta * C[total]))) +
+  labs(y = "Depth (m)") +
+  theme(
+    # legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(
+    basin ~ parameter,
+    labeller = labeller(parameter = x_axis_labels)
+  ) +
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                                           breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/publication/profiles_incremental_changes_Cnat_basin.png"
+    )
+  ),
+  width = 10,
+  height = 10,
+  dpi = 600,
+  bg = "white"
+)
+
+
+
+
 rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 
 
@@ -5486,6 +5687,14 @@ acidification_profiles %>%
          depth <= 3000,
          variable %in% OIA_variables)
 
+acidification_profiles_long_relative <-
+  acidification_profiles_long %>%
+  arrange(tref) %>%
+  group_by(basin, depth, variable) %>%
+  mutate(delta_total_relative = 100 * (delta_total - first(delta_total)) / first(delta_total)) %>%
+  ungroup()
+
+
 acidification_profiles_long <-
 full_join(acidification_profiles_long,
           dCant_temp_profiles_temp_contribution_long) %>% 
@@ -5493,8 +5702,6 @@ full_join(acidification_profiles_long,
 
 acidification_profiles_long <- acidification_profiles_long %>% 
   mutate(delta_total_temp = delta_total + delta_interval_temp)
-
-
 
 
 acidification_profiles_long %>%
@@ -5548,7 +5755,78 @@ ggsave(
   dpi = 600,
   bg = "white"
 )
+  
+  
+acidification_profiles_long_relative %>%
+  ggplot() +
+  geom_path(aes(
+    delta_total_relative,
+    depth,
+    col = tref,
+    linetype = "dcant_only"
+  )) +
+  scale_color_manual(values = three_year_colors) +
+  scale_linetype_manual(values = c(1, 2),
+                        labels = c(expression(Delta * C[ant]),
+                                   expression(atop(Delta * C[ant] ~ "+", Temp)))) +
+  scale_y_reverse(breaks = seq(0, 10000, 500)) +
+  # scale_y_continuous(trans = trans_reverser("sqrt"),
+  #                    breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
+  coord_cartesian(xlim = c(0,100)) +
+  labs(y = "Depth (m)") +
+  theme_bw() +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(basin ~ variable,
+             labeller = labeller(variable = x_axis_labels))
 
+
+ggsave(
+  here::here(
+    paste0("output/publication/profiles_total_changes_basin_relative.png")
+  ),
+  width = 10,
+  height = 10,
+  dpi = 600,
+  bg = "white"
+)
+
+acidification_profiles_long_relative %>%
+  filter(depth <= 500) %>%
+  group_by(basin, variable, tref) %>%
+  summarise(delta_total_relative = mean(delta_total_relative)) %>%
+  ungroup() %>%
+  mutate(tref = as.numeric(as.character(tref))) %>%
+  arrange(tref) %>%
+  ggplot(aes(tref, delta_total_relative, col = basin)) +
+  geom_path() +
+  geom_point(shape = 21, fill = "white") +
+  scale_color_okabeito() +
+  scale_x_continuous(breaks = seq(1994, 2014, 10)) +
+  labs(y = "ΔOIA top 500m (% relative to 1994 OIA)") +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    strip.text.x = element_markdown(),
+        legend.position = c(0.8,0.25)
+  ) +
+  facet_wrap( ~ variable,
+              labeller = labeller(variable = x_axis_labels))
+
+ggsave(
+  here::here(
+    "output/publication/acidification_rates_500m_relative.png"
+  ),
+  width = 8,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
 
 # acidification_profiles_interval <-
 #   acidification_profiles %>%
