@@ -862,7 +862,7 @@ labels_breaks_buffer_variables_addition <- function(i_var) {
   if (i_var == "pH") {
     i_breaks <- c(-Inf, seq(-0.0033, -0.0015, 0.0003), Inf)
     i_contour_level <- -0.0027
-    i_legend_title <- "ΔpH/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
+    i_legend_title <- "ΔpH<sub>T</sub>/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
   }
   
   if (i_var == "OmegaAragonite") {
@@ -926,6 +926,81 @@ contours_buffer_variables_addition <-
         "SIR",
         "H_free")
   )
+
+```
+
+
+```{r define_labels_and_breaks_buffer_variables_addition_change}
+
+
+labels_breaks_buffer_variables_addition_change <- function(i_var) {
+  if (i_var == "pH") {
+    i_breaks <- c(-Inf, seq(0, 8, 2), Inf)
+    i_contour_level <- 4
+    i_legend_title <- "Δ<sub>1900-2004</sub><br>ΔpH<sub>T</sub>/ΔDIC<br>(%)"
+  }
+  
+  if (i_var == "OmegaAragonite") {
+    i_breaks <- c(-Inf, seq(0,5,1), Inf)
+    i_contour_level <- 2
+    i_legend_title <-
+      "Δ<sub>1900-2004</sub><br>ΔΩ<sub>arag</sub>/ΔDIC<br>(%)"
+  }
+  
+  if (i_var == "SIR") {
+    i_breaks <- c(-Inf, seq(0,5,1), Inf)
+    i_contour_level <- 2
+    i_legend_title <- "Δ<sub>1900-2004</sub><br>ΔSIR/ΔDIC<br>(%)"
+  }
+  
+  if (i_var == "H_free") {
+    i_breaks <- c(-Inf, seq(0,25,5), Inf)
+    i_contour_level <- 10
+    i_legend_title <-
+      "Δ<sub>1900-2004</sub><br>ΔH<sup>+</sup><sub>free</sub>/ΔDIC<br>(%)"
+  }
+  
+  all_labels_breaks <- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+# 
+# x_axis_scales_buffer_variables_addition <-
+#   list(
+#     variable == "pH" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("pH")$i_breaks[c(TRUE, FALSE)]),
+#     variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
+#     variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("SIR")$i_breaks[c(TRUE, FALSE)]),
+#     variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("H_free")$i_breaks[c(TRUE, FALSE)])
+#   )
+# 
+# x_axis_labels_buffer_variables_addition <-
+#   c(
+#     "pH" = labels_breaks_buffer_variables_addition("pH")$i_legend_title,
+#     "OmegaAragonite" = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_legend_title,
+#     "SIR" = labels_breaks_buffer_variables_addition("SIR")$i_legend_title,
+#     "H_free" = labels_breaks_buffer_variables_addition("H_free")$i_legend_title
+#   )
+# 
+# 
+# contours_buffer_variables_addition <-
+#   tibble(
+#     contour =
+#       c(
+#         labels_breaks_buffer_variables_addition("pH")$i_contour_level,
+#         labels_breaks_buffer_variables_addition("OmegaAragonite")$i_contour_level,
+#         labels_breaks_buffer_variables_addition("SIR")$i_contour_level,
+#         labels_breaks_buffer_variables_addition("H_free")$i_contour_level
+#       ),
+#     variable =
+#       c("pH",
+#         "OmegaAragonite",
+#         "SIR",
+#         "H_free")
+#   )
 
 ```
 
@@ -2409,6 +2484,87 @@ ggsave(
   bg = "white"
 )
 
+
+
+acidification_depth_layer_absolute <-
+  acidification_depth_layer %>%
+  select(lat:tref,
+         OIA_variables[-6]) %>%
+  filter(tref == 2004)
+
+
+acidification_depth_layer_absolute <-
+  acidification_depth_layer_absolute %>%
+  pivot_longer(-c(lat:tref),
+               names_to = "variable",
+               values_to = "absolute")
+
+
+
+acidification_depth_layer_total_relative <-
+  full_join(
+    acidification_depth_layer_total %>%
+      filter(variable %in% OIA_variables[-6]),
+    acidification_depth_layer_absolute %>% 
+      select(-tref)
+  )
+
+acidification_depth_layer_total_relative <-
+acidification_depth_layer_total_relative %>% 
+  mutate(delta_total_relative = 100 * delta_total / absolute)
+
+for (i_var in OIA_variables[-6]) {
+  # i_var <- OIA_variables[2]
+  
+  # subset OIA variable
+  
+  i_acidification_depth_layer_total_relative <-
+    acidification_depth_layer_total_relative %>%
+    filter(variable == i_var) %>%
+    select(lon, lat, depth, tref, delta_total_relative)
+  
+  # determine endpoints and breaks of color scale automatically
+
+  low <- i_acidification_depth_layer_total_relative %>%
+    filter(!is.na(delta_total_relative)) %>%
+    pull(delta_total_relative) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_acidification_depth_layer_total_relative %>%
+    filter(!is.na(delta_total_relative)) %>%
+    pull(delta_total_relative) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  i_breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+
+  all_labels_breaks <- labels_breaks(i_var)
+  # i_breaks        <- unlist(all_labels_breaks[1])
+  # i_contour_level <- unlist(all_labels_breaks[2])
+  i_legend_title  <- unlist(all_labels_breaks[3])
+  
+  i_acidification_depth_layer_total_relative %>%
+    p_map_mdim_robinson(
+      dim_row = "depth",
+      dim_col = "tref",
+      var = "delta_total_relative",
+      # contour_level = i_contour_level,
+      legend_title = i_legend_title,
+      breaks = i_breaks,
+      legend_position = "right"
+    )
+  
+  ggsave(
+    here::here(
+      paste0("output/publication/maps_depth_layer_",i_var,"_total_changes_relative.png")
+    ),
+    width = 10,
+    height = 4.5,
+    dpi = 600,
+    bg = "white"
+  )
+  
+}
+
 rm(acidification_depth_layer_total,
    acidification_depth_layer,
    i_acidification_depth_layer_total)
@@ -2662,6 +2818,62 @@ ggsave(
   bg = "white"
 )
 
+
+for (i_var in buffer_variables_addition[buffer_variables_addition != "temp"]) {
+  # i_var <- buffer_variables_addition[4]
+  
+  # subset OIA variable
+  
+  i_buffer_addition_depth_layer_relative <-
+    buffer_addition_depth_layer_relative %>%
+    filter(variable == i_var) %>%
+    select(lon, lat, depth, delta_sensitivity)
+  
+  # determine endpoints and breaks of color scale
+  
+  low <- i_buffer_addition_depth_layer_relative %>%
+    filter(!is.na(delta_sensitivity)) %>%
+    pull(delta_sensitivity) %>%
+    quantile(c(quantile_low), names = FALSE)
+
+  high <- i_buffer_addition_depth_layer_relative %>%
+    filter(!is.na(delta_sensitivity)) %>%
+    pull(delta_sensitivity) %>%
+    quantile(c(quantile_high), names = FALSE)
+
+  i_breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
+  
+  all_labels_breaks <- labels_breaks_buffer_variables_addition_change(i_var)
+  i_breaks        <- unlist(all_labels_breaks[1])
+  i_contour_level <- unlist(all_labels_breaks[2])
+  i_legend_title  <- unlist(all_labels_breaks[3])
+  
+  i_buffer_addition_depth_layer_relative %>%
+  p_map_mdim_robinson(
+    dim_row = "depth",
+    # dim_col = "variable",
+    var = "delta_sensitivity",
+    legend_title = i_legend_title,
+    # contour_level = i_contour_level,
+    breaks = i_breaks,
+    legend_position = "right"
+  )
+  
+  ggsave(
+    here::here(
+      paste0(
+        "output/publication/maps_depth_layer_",
+        i_var,
+        "_total_changes_buffer_additional_relative.png"
+      )
+    ),
+    width = 6,
+    height = 5,
+    dpi = 600,
+    bg = "white"
+  )
+  
+}
 
 rm(buffer_addition_depth_layer,
    i_buffer_addition_depth_layer,
@@ -3342,14 +3554,9 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
   
 }
 
-
-pdf(
-  here::here("output/all_variables/maps_saturation_horizon_absolute_state.pdf"),
-  width = 12,
-  height = 8
-)
-
 for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  
+  # i_sat_level <- unique(acidification_saturation_horizon_levels$sat_level)[1]
   
   print(
   acidification_saturation_horizon_levels %>%
@@ -3360,37 +3567,40 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
       dim_row = "tref",
       dim_col = "mineral",
       var = "depth",
-      legend_title = paste0("Omega=",i_sat_level," horizon (m)"),
+      legend_title = paste0("Ω=",i_sat_level,"<br>horizon<br>(m)"),
       legend_position = "right",
       breaks = seq(6000, 0, -500)
     )
   )
+  
+  ggsave(
+  here::here(
+    paste0("output/publication/maps_saturation_horizon_absolute_state_sat_level_",i_sat_level,".png")
+  ),
+  width = 6,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+  
 }
 
-dev.off()
-
-pdf(
-  here::here("output/all_variables/maps_saturation_horizon_total_changes.pdf"),
-  width = 12,
-  height = 6
-)
-
-
 for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
+  
   print(
     acidification_saturation_horizon_levels %>%
       filter(sat_level == i_sat_level) %>%
       select(-sat_level) %>%
       arrange(tref) %>%
       group_by(lat, lon, mineral) %>%
-      mutate(n = n()) %>% 
-      filter(n == 4) %>% 
+      mutate(n = n()) %>%
+      filter(n == 4) %>%
       mutate(
         delta_depth = depth - first(depth),
         period = paste(first(tref), "-", tref)
       ) %>%
       ungroup() %>%
-      filter(tref != 1800) %>% 
+      filter(tref != 1800) %>%
       drop_na() %>%
       select(lon, lat, period, mineral, delta_depth) %>%
       p_map_mdim_robinson(
@@ -3398,22 +3608,28 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         dim_col = "mineral",
         col = "div",
         var = "delta_depth",
-        legend_title = paste0("Change Omega=",i_sat_level," horizon (m)"),
+        legend_title = paste0("ΔΩ=", i_sat_level, "<br>horizon<br>(m)"),
         legend_position = "right",
         breaks = c(-Inf, seq(-300, 300, 50), Inf)
-        # breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       )
   )
+  
+  ggsave(
+    here::here(
+      paste0(
+        "output/publication/maps_saturation_horizon_total_change_sat_level_",
+        i_sat_level,
+        ".png"
+      )
+    ),
+    width = 6,
+    height = 4,
+    dpi = 600,
+    bg = "white"
+  )
+  
+  
 }
-
-dev.off()
-
-
-pdf(
-  here::here("output/all_variables/maps_saturation_horizon_incremental_changes.pdf"),
-  width = 12,
-  height = 6
-)
 
 
 for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
@@ -3438,16 +3654,29 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
         dim_col = "mineral",
         col = "div",
         var = "delta_depth",
-        legend_title = paste0("Change Omega=",i_sat_level," horizon (m)"),
+        legend_title = paste0("ΔΩ=", i_sat_level, "<br>horizon<br>(m)"),
         legend_position = "right",
         breaks = c(-Inf, seq(-300, 300, 50), Inf)
-        # breaks = c(-Inf, -500, -200, -100, -50, -20, 0, 20, 50, 100, 200, 500, Inf)
       ) +
       labs(title = paste("Saturation threshold:", i_sat_level))
   )
+  
+    
+  ggsave(
+    here::here(
+      paste0(
+        "output/publication/maps_saturation_horizon_incremental_change_sat_level_",
+        i_sat_level,
+        ".png"
+      )
+    ),
+    width = 6,
+    height = 4,
+    dpi = 600,
+    bg = "white"
+  )
 }
 
-dev.off()
 
 
 acidification_volume <-
@@ -4692,8 +4921,8 @@ for (i_var in OIA_variables[-6]) {
         "_total_changes.png"
       )
     ),
-    width = 8,
-    height = 10,
+    width = 6,
+    height = 8,
     dpi = 600,
     bg = "white"
   )
