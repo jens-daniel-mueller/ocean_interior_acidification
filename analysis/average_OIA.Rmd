@@ -640,23 +640,28 @@ rm(DIC_surface_trend,
 
 ```{r read_time_series_stations}
 
+library(lubridate)
+library(ggrepel)
+library(broom)
+
+path_ungrd_3d_ocn <- "/nfs/kryo/work/datasets/ungridded/interior/ocean"
 
 col_names <-
   names(read_csv(
-    paste0(path_OIA, "input_data/TS_product_consistent.csv"),
+    paste0(path_ungrd_3d_ocn, "/spots/TS_product.csv"),
     n_max = 0
   ))
 
-TS_product_consistent <-
+TS_product <-
   read_csv(
-    paste0(path_OIA, "input_data/TS_product_consistent.csv"),
+    paste0(path_ungrd_3d_ocn, "/spots/TS_product.csv"),
     col_names = col_names,
     skip = 2
   )
 
 rm(col_names)
 
-TS_product_consistent <- TS_product_consistent %>% 
+TS_product <- TS_product %>% 
   select(station = TimeSeriesStation,
          station_nr = STNNBR,
          date = DATE,
@@ -664,25 +669,26 @@ TS_product_consistent <- TS_product_consistent %>%
          lon = LONGITUDE,
          depth = CTDPRS,
          tco2 = TCARBN,
-         pH = PH_TOT)
+         pH = PH_TOT,
+         PO4 = PHSPHT,
+         talk = ALKALI,
+         temp = CTDTMP)
 
-TS_product_consistent <- TS_product_consistent %>% 
+TS_product <- TS_product %>% 
   mutate(lon = if_else(lon < 20, lon + 360, lon))
 
-TS_product_consistent <- TS_product_consistent %>% 
-  pivot_longer(c(tco2,pH)) %>% 
-  filter(value != -999,
-         )
+TS_product <- TS_product %>% 
+  pivot_longer(tco2:temp) %>% 
+  filter(value != -999)
 
 TS_product_stations <- 
-TS_product_consistent %>% 
+TS_product %>% 
   group_by(station) %>%
   summarise(lat = mean(lat),
             lon = mean(lon),
             n = n()) %>% 
   ungroup()
 
-library(ggrepel)
 
 map +
   geom_point(data = TS_product_stations,
@@ -695,21 +701,18 @@ map +
              label.padding = 0.2,
              min.segment.length = 0)
 
-
-library(lubridate)
-
-
-TS_product_consistent <-
-  TS_product_consistent %>%
+TS_product <-
+  TS_product %>%
   filter(station == "ALOHA")
 
-TS_product_consistent <-
-TS_product_consistent %>% 
+
+TS_product <-
+TS_product %>% 
   mutate(date = as.Date(as.character(date), "%Y%m%d"),
          year = year(date),
          month = month(date))
 
-TS_product_consistent %>% 
+TS_product %>% 
   arrange(depth) %>% 
   mutate(n_row = row_number()) %>% 
   ggplot(aes(n_row,depth)) +
@@ -717,15 +720,36 @@ TS_product_consistent %>%
   coord_cartesian(ylim = c(100,700)) +
   theme_bw()
 
-depth_limits <- c(0,10,30,60,85,125,175,300,450,550,650,900,1500,2500,3500,5000)
-depth_labels <- c(0,25,40,75,100,150,200,400,500,600,750,1000,2000,3000,4500)
 
-TS_product_consistent <-
-TS_product_consistent %>% 
+TS_product %>%
+  filter(between(depth,4450,4550)) %>% 
+  ggplot(aes(value, depth, col = year)) +
+  geom_point(alpha = 0.4) +
+  scale_color_viridis_c() +
+  scale_y_reverse() +
+  # scale_y_continuous(trans = trans_reverser("sqrt")) +
+  facet_wrap( ~ name, scales = "free_x") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
+
+depth_limits_shallow <- c(0,10, 20,30, 40,50, 70,80, 90,110, 145,155, 195,205, 340,360, 480,520)
+depth_labels_shallow <- c(5,NA, 25,NA, 45,NA, 75,NA, 100,NA, 150,NA,  200,NA,  350,NA,  500, NA) 
+
+depth_limits_deep <- c(550,650, 1010,1030, 1990,2010, 2990,3010, 4490,4510)
+depth_labels_deep <- c(600,NA,  1020, NA,  2000,NA,   3000,NA,   4500) 
+
+depth_limits <- c(depth_limits_shallow, depth_limits_deep)
+depth_labels <- c(depth_labels_shallow, depth_labels_deep)
+
+TS_product <-
+  TS_product %>%
   mutate(depth_int = cut(depth, depth_limits, depth_labels))
 
+rm(depth_limits_shallow, depth_limits_deep,
+   depth_labels_shallow, depth_labels_deep)
 
-TS_product_consistent %>% 
+
+TS_product %>% 
   arrange(depth) %>% 
   mutate(n_row = row_number()) %>% 
   ggplot(aes(n_row,depth,col=depth_int)) +
@@ -733,106 +757,121 @@ TS_product_consistent %>%
   theme_bw()
 
 
-TS_product_consistent %>%
-  ggplot(aes(value, depth, col = date)) +
-  geom_point() +
-  scale_color_viridis_c(trans = "date") +
-  scale_y_continuous(trans = trans_reverser("sqrt"),
-                     breaks = depth_limits) +
+TS_product %>%
+  ggplot(aes(value, depth, col = depth_int)) +
+  geom_point(alpha = 0.4) +
+  scale_y_continuous(trans = trans_reverser("sqrt")) +
   facet_wrap( ~ name, scales = "free_x") +
   theme_bw() +
   theme(panel.grid.minor = element_blank())
 
 
-  
+TS_product %>%
+  ggplot(aes(value, depth, col = date)) +
+  geom_point() +
+  scale_color_viridis_c(trans = "date") +
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = depth_labels) +
+  facet_wrap( ~ name, scales = "free_x") +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())
 
-TS_product_consistent %>%
+TS_product <-
+  TS_product %>%
+  mutate(depth_int = as.numeric(as.character(depth_int))) %>%
+  filter(!is.na(depth_int))
+
+
+TS_product %>% 
+  ggplot(aes(date, value, fill=depth_int-depth)) +
+  geom_point(shape = 21) +
+  scale_fill_continuous_divergingx() +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(depth_int ~ name,
+             scales = "free") +
+  theme_bw()
+
+library(broom)
+detrended <- TS_product %>%
+  nest(data = -c(depth_int, name)) %>%
+  mutate(
+    fit = map(data, ~ lm(value ~ date, data = .x)),
+    tidied = map(fit, tidy),
+    glanced = map(fit, glance),
+    augmented = map(fit, augment)
+  )
+
+detrended <-
+  detrended %>%
+  unnest(c(data, augmented), names_repair = "universal") %>% 
+  select(name, depth_int, date = date...5, year, month, value = value...9, value_detrended = .resid)
+
+detrended %>% 
+  ggplot(aes(date, value_detrended)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method = "lm", se = FALSE) +
+  facet_wrap(depth_int ~ name,
+             scales = "free") +
+  theme_bw()
+
+
+detrended %>%
   ggplot() +
-  geom_point(aes(month, value, col = date), alpha = 0.5) +
+  geom_point(aes(month, value_detrended, col = date), alpha = 0.5) +
   scale_color_viridis_c(trans = "date") +
   facet_wrap(depth_int ~ name, scales = "free_y")
 
-TS_product_season <-
-  TS_product_consistent %>% 
+detrended <-
+  detrended %>%
   group_by(name, month, depth_int) %>%
-  summarise(mean = mean(value),
-            median = median(value)) %>% 
+  mutate(mean = mean(value_detrended),
+         median = median(value_detrended)) %>%
   ungroup()
   
-
-
-TS_product_consistent %>%
+detrended %>%
   ggplot() +
-  geom_point(aes(month, value), alpha = 0.2) +
-  geom_path(data = TS_product_season,
-            aes(month, mean, col = "Monthly mean")) +
-  geom_point(
-    data = TS_product_season,
-    aes(month, mean, fill = "Monthly mean"),
-    shape = 21,
-    size = 2
-  ) +
-  geom_point(
-    data = TS_product_season,
-    aes(month, median, fill = "Monthly median"),
-    shape = 21,
-    size = 2
-  ) +
-  geom_path(data = TS_product_season,
-            aes(month, median, col = "Monthly median")) +
+  geom_point(aes(month, value_detrended), alpha = 0.2) +
+  geom_point(aes(month, mean, fill = "Monthly mean"),
+             shape = 21,
+             size = 2) +
+  geom_point(aes(month, median, fill = "Monthly median"),
+             shape = 21,
+             size = 2) +
   facet_wrap(depth_int ~ name, scales = "free_y")
 
 
+detrended <-
+  detrended %>%
+  mutate(value_deseason = value - mean)
 
-TS_product_deseason <-
-  full_join(TS_product_consistent,
-            TS_product_season)
-  
-TS_product_deseason <-
-TS_product_deseason %>% 
-  mutate(value_deseason = value - median)
-
-TS_product_consistent %>% 
-  ggplot(aes(date, value)) +
+detrended %>% 
+  ggplot(aes(date, value_deseason)) +
   geom_point() +
   geom_smooth(method = "lm", se = FALSE) +
   facet_wrap(depth_int ~ name,
              scales = "free") +
   theme_bw()
 
-TS_product_deseason %>% 
-  mutate(depth_distance = depth - as.numeric(as.character(depth_int))) %>% 
-  ggplot(aes(date, value_deseason, col = depth_distance)) +
-  geom_point() +
-  scale_color_berlin() +
-  geom_smooth(method = "lm", se = FALSE, col = "red") +
-  geom_smooth(se = FALSE) +
-  facet_wrap(depth_int ~ name,
-             scales = "free") +
-  theme_bw()
-
-
-
-TS_product_deseason %>%
-  ggplot(aes(value_deseason, depth, col = date)) +
+detrended %>%
+  ggplot(aes(value_deseason, depth_int, col = date)) +
   geom_point() +
   scale_color_viridis_c(trans = "date") +
   scale_y_continuous(trans = trans_reverser("sqrt"),
-                     breaks = depth_limits) +
+                     breaks = depth_labels) +
   facet_wrap( ~ name, scales = "free_x") +
   theme_bw() +
   theme(panel.grid.minor = element_blank())
 
 
-TS_product_deseason_annual <-
-  TS_product_deseason %>%
+detrended_annual <-
+  detrended %>%
   group_by(year, depth_int, name) %>%
   summarise(annual_mean_deseason = mean(value_deseason)) %>%
   ungroup() %>% 
   mutate(depth_int = as.numeric(as.character(depth_int)))
 
 
-TS_product_deseason_annual %>%
+detrended_annual %>%
   ggplot(aes(annual_mean_deseason, depth_int, col = year, group=year)) +
   geom_path() +
   geom_point() +
@@ -844,26 +883,25 @@ TS_product_deseason_annual %>%
   theme(panel.grid.minor = element_blank())
 
   
-TS_product_deseason_annual %>%
+detrended_annual %>%
   filter(name == "tco2") %>% 
   ggplot(aes(year, depth_int, z = annual_mean_deseason)) +
   geom_contour_filled() +
   scale_fill_viridis_d(name = "tco2") +
   scale_y_continuous(trans = trans_reverser("sqrt"),
-                     breaks = depth_limits) +
+                     breaks = depth_labels) +
   coord_cartesian(expand = 0)
   
-TS_product_deseason_annual %>%
+detrended_annual %>%
   filter(name == "pH") %>% 
   ggplot(aes(year, depth_int, z = annual_mean_deseason)) +
   geom_contour_filled() +
   scale_fill_viridis_d(name = "pH") +
   scale_y_continuous(trans = trans_reverser("sqrt"),
-                     breaks = depth_limits) +
+                     breaks = depth_labels) +
   coord_cartesian(expand = 0)
 
-library(broom)
-regressions <- TS_product_deseason %>%
+regressions <- detrended %>%
   nest(data = -c(depth_int, name)) %>%
   mutate(
     fit = map(data, ~ lm(value_deseason ~ year, data = .x)),
@@ -874,7 +912,6 @@ regressions <- TS_product_deseason %>%
 
 regressions %>%
   unnest(tidied) %>%
-  mutate(depth_int = as.numeric(as.character(depth_int))) %>%
   arrange(depth_int) %>% 
   filter(term == "year") %>% 
   ggplot(aes(estimate, depth_int)) +
@@ -885,18 +922,18 @@ regressions %>%
   geom_point() +
   scale_color_viridis_c() +
   scale_y_continuous(trans = trans_reverser("sqrt"),
-                     breaks = depth_limits) +
+                     breaks = depth_labels) +
   facet_wrap(~ name, scales = "free_x") +
   theme_bw() +
   theme(panel.grid.minor = element_blank())
 
 
 
-rm(TS_product_consistent,
-   TS_product_season,
+rm(TS_product,
    TS_product_stations,
-   TS_product_deseason,
-   TS_product_deseason_annual)
+   detrended,
+   detrended_annual,
+   detrended_season)
 
 ```
 
