@@ -385,7 +385,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">20 June, 2023</h4>
+<h4 class="date">28 June, 2023</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-06-20
+<strong>Last updated:</strong> 2023-06-28
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeaa37f6ad1b3015a0cf8498ac64ad509c1c45ef2etargetblankaa37f6aa">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8359e8b4c1f3d2715fa04c61192f2774d495493dtargetblank8359e8ba">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/aa37f6ad1b3015a0cf8498ac64ad509c1c45ef2e" target="_blank">aa37f6a</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8359e8b4c1f3d2715fa04c61192f2774d495493d" target="_blank">8359e8b</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeaa37f6ad1b3015a0cf8498ac64ad509c1c45ef2etargetblankaa37f6aa"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8359e8b4c1f3d2715fa04c61192f2774d495493dtargetblank8359e8ba"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/aa37f6ad1b3015a0cf8498ac64ad509c1c45ef2e" target="_blank">aa37f6a</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8359e8b4c1f3d2715fa04c61192f2774d495493d" target="_blank">8359e8b</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -634,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/8359e8b4c1f3d2715fa04c61192f2774d495493d/analysis/average_OIA.Rmd" target="_blank">8359e8b</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-28
+</td>
+<td>
+updated time series station analysis
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/17aa4ff021112e8918e60be12396d90a205ae6a3/docs/average_OIA.html" target="_blank">17aa4ff</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1848,6 +1882,8 @@ path_preprocessing_model    &lt;-
 path_reccap2 &lt;-
   &quot;/nfs/kryo/work/updata/reccap2/&quot;
 
+path_ungrd_3d_ocn &lt;- &quot;/nfs/kryo/work/datasets/ungridded/interior/ocean&quot;
+
 path_out &lt;-   paste0(path_observations, &quot;output_publication/&quot;)
 path_OIA &lt;-   &quot;/nfs/kryo/work/jenmueller/ocean_interior_acidification/&quot;</code></pre>
 <div id="basinmask" class="section level2">
@@ -2455,46 +2491,391 @@ rm(DIC_surface_trend,
 </div>
 <div id="time-series-stations" class="section level2">
 <h2>Time series stations</h2>
-<pre class="r"><code>library(lubridate)
-library(ggrepel)
-library(broom)
-
-path_ungrd_3d_ocn &lt;- &quot;/nfs/kryo/work/datasets/ungridded/interior/ocean&quot;
-
-col_names &lt;-
+<pre class="r"><code>col_names &lt;-
   names(read_csv(
-    paste0(path_ungrd_3d_ocn, &quot;/spots/TS_product.csv&quot;),
+    paste0(path_ungrd_3d_ocn, &quot;/spots/TS_product_20230619.csv&quot;),
     n_max = 0
   ))
 
 TS_product &lt;-
   read_csv(
-    paste0(path_ungrd_3d_ocn, &quot;/spots/TS_product.csv&quot;),
+    paste0(path_ungrd_3d_ocn, &quot;/spots/TS_product_20230619.csv&quot;),
     col_names = col_names,
     skip = 2
   )
 
 rm(col_names)
 
-TS_product &lt;- TS_product %&gt;% 
-  select(station = TimeSeriesStation,
-         station_nr = STNNBR,
-         date = DATE,
-         lat = LATITUDE,
-         lon = LONGITUDE,
-         depth = CTDPRS,
-         tco2 = TCARBN,
-         pH = PH_TOT,
-         PO4 = PHSPHT,
-         talk = ALKALI,
-         temp = CTDTMP)
+var_select &lt;-
+  c(&quot;CTDSAL&quot;,
+    &quot;CTDTMP&quot;,
+    &quot;TCARBN&quot;,
+    &quot;ALKALI&quot;,
+    # &quot;PH_TOT&quot;,
+    &quot;PHSPHT&quot;,
+    &quot;SILCAT&quot;)
+
+TS_product &lt;- TS_product %&gt;%
+  select(
+    station = TimeSeriesStation,
+    station_nr = STNNBR,
+    date = DATE,
+    lat = LATITUDE,
+    lon = LONGITUDE,
+    depth = CTDPRS,
+    all_of(contains(var_select))
+  ) %&gt;% 
+  select(-contains(c(&quot;_P&quot;, &quot;_A&quot;)))
+
+for (i_var in var_select) {
+  # i_var &lt;- &quot;CTDTMP&quot;
+  
+  i_TS_product &lt;- TS_product %&gt;%
+    select(station:depth,
+           all_of(contains(i_var)))
+  
+  i_TS_product &lt;- i_TS_product %&gt;%
+    filter(!!sym(i_var) != -999)
+
+  if (i_var != &quot;CTDTMP&quot; &amp; i_var != &quot;CTDSAL&quot;) {
+    i_TS_product &lt;- i_TS_product %&gt;%
+      filter(!!sym(paste0(i_var, &quot;_FLAG_W&quot;)) == 2,
+             !!sym(paste0(i_var, &quot;_BPf&quot;)) == 1)
+  }
+  
+  if (i_var == &quot;CTDSAL&quot;) {
+    i_TS_product &lt;- i_TS_product %&gt;%
+      filter(!!sym(paste0(i_var, &quot;_FLAG_W&quot;)) == 2)
+  }
+  
+  i_TS_product &lt;- i_TS_product %&gt;%
+    select(station:depth, all_of(i_var)) %&gt;% 
+    mutate(name = i_var) %&gt;% 
+    rename(value = all_of(i_var))
+  
+  
+  if (exists(&quot;TS_product_all&quot;)) {
+    TS_product_all &lt;-
+      bind_rows(TS_product_all,
+                i_TS_product)
+  }
+  
+  if (!exists(&quot;TS_product_all&quot;)) {
+    TS_product_all &lt;- i_TS_product
+  }
+  
+}
+
+TS_product &lt;- TS_product_all
+rm(i_var, i_TS_product, TS_product_all)
+
+TS_product &lt;- TS_product %&gt;%
+  mutate(
+    name = case_when(
+      name ==  &quot;CTDTMP&quot; ~ &quot;temp&quot;,
+      name ==  &quot;CTDSAL&quot; ~ &quot;sal&quot;,
+      name ==  &quot;TCARBN&quot; ~ &quot;tco2&quot;,
+      name ==  &quot;ALKALI&quot; ~ &quot;talk&quot;,
+      name ==  &quot;PH_TOT&quot; ~ &quot;pH&quot;,
+      name ==  &quot;PHSPHT&quot; ~ &quot;PO4&quot;,
+      name ==  &quot;SILCAT&quot; ~ &quot;Si&quot;
+    )
+  )
+
+TS_product %&gt;% 
+  distinct(name)</code></pre>
+<pre><code># A tibble: 6 × 1
+  name 
+  &lt;chr&gt;
+1 sal  
+2 temp 
+3 tco2 
+4 talk 
+5 PO4  
+6 Si   </code></pre>
+<pre class="r"><code>TS_product &lt;- TS_product %&gt;%
+  mutate(
+    date = as.Date(as.character(date), &quot;%Y%m%d&quot;),
+    year = year(date),
+    month = month(date)
+  )
 
 TS_product &lt;- TS_product %&gt;% 
   mutate(lon = if_else(lon &lt; 20, lon + 360, lon))
 
-TS_product &lt;- TS_product %&gt;% 
-  pivot_longer(tco2:temp) %&gt;% 
+ALOHA &lt;-
+  TS_product %&gt;%
+  filter(station == &quot;ALOHA&quot;)
+
+ALOHA %&gt;%
+  filter(between(depth,400,700)) %&gt;% 
+  ggplot(aes(value, depth, col = year)) +
+  geom_point(alpha = 0.4) +
+  scale_color_viridis_c() +
+  scale_y_reverse() +
+  # scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_SPOTS-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>depth_limits_shallow &lt;- c(0,10, 20,30, 40,50, 70,80, 90,110, 145,155, 195,205, 340,360, 480,520)
+depth_labels_shallow &lt;- c(5,NA, 25,NA, 45,NA, 75,NA, 100,NA, 150,NA,  200,NA,  350,NA,  500, NA) 
+
+depth_limits_deep &lt;- c(550,650, 1010,1030, 1990,2010, 2990,3010, 4490,4510)
+depth_labels_deep &lt;- c(600,NA,  1020, NA,  2000,NA,   3000,NA,   4500) 
+
+depth_limits &lt;- c(depth_limits_shallow, depth_limits_deep)
+depth_labels &lt;- c(depth_labels_shallow, depth_labels_deep)
+
+ALOHA &lt;-
+  ALOHA %&gt;%
+  mutate(depth_int = cut(depth, depth_limits, depth_labels))
+
+rm(depth_limits_shallow, depth_limits_deep,
+   depth_labels_shallow, depth_labels_deep)
+
+
+# ALOHA %&gt;% 
+#   filter(depth_int == 600,
+#          name == &quot;talk&quot;) %&gt;% 
+#   ggplot(aes(date, depth)) +
+#   geom_path() +
+#   geom_point()
+
+ALOHA %&gt;% 
+  arrange(depth) %&gt;% 
+  mutate(n_row = row_number()) %&gt;% 
+  ggplot(aes(n_row,depth,col=depth_int)) +
+  geom_point() + 
+  theme_bw()</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_SPOTS-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ALOHA %&gt;%
+  filter(between(depth,990,1510)) %&gt;% 
+  ggplot(aes(value, depth, col = depth_int, fill = year)) +
+  geom_point(alpha = 0.4, shape = 21) +
+  scale_y_reverse() +
+  scale_fill_viridis_c() +
+  # scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_SPOTS-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ALOHA %&gt;%
+  ggplot(aes(value, depth, col = date)) +
+  geom_point() +
+  scale_color_viridis_c(trans = &quot;date&quot;) +
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
+                     breaks = depth_labels) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_SPOTS-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ALOHA &lt;-
+  ALOHA %&gt;%
+  mutate(depth_int = as.numeric(as.character(depth_int)))
+
+ALOHA %&gt;%
+  ggplot(aes(value, depth)) +
+  geom_point(col = &quot;grey70&quot;) +
+  geom_point(data = . %&gt;% filter(!is.na(depth_int)),
+             aes(col = date)) +
+  scale_color_viridis_c(trans = &quot;date&quot;) +
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
+                     breaks = depth_labels) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  labs(title = &quot;Selected data&quot;) +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_SPOTS-5.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ALOHA %&gt;%
+  ggplot(aes(value, depth)) +
+  geom_point(col = &quot;grey70&quot;) +
+  geom_point(data = . %&gt;% filter(is.na(depth_int)),
+             aes(col = date)) +
+  scale_color_viridis_c(trans = &quot;date&quot;) +
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
+                     breaks = depth_labels) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  labs(title = &quot;Discarded data&quot;) +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_SPOTS-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ALOHA &lt;-
+  ALOHA %&gt;%
+  filter(!is.na(depth_int))
+
+rm(TS_product)</code></pre>
+<pre class="r"><code>col_names &lt;-
+  read_delim(
+    paste0(path_ungrd_3d_ocn, &quot;/bats/bats_bottle.txt&quot;),
+    delim = &quot;,&quot;,
+    skip = 58,
+    n_max = 0,
+    trim_ws = TRUE
+  ) %&gt;%
+  names()
+
+bats_bottle &lt;- read_delim(
+  paste0(path_ungrd_3d_ocn, &quot;/bats/bats_bottle.txt&quot;),
+  delim = &quot;\t&quot;,
+  col_names = col_names,
+  skip = 59,
+  trim_ws = TRUE)
+
+rm(col_names)
+
+bats_bottle &lt;- bats_bottle %&gt;% 
+  select(station_nr = Id,
+         date = yyyymmdd,
+         lat = latN,
+         lon = lonW,
+         depth = Depth,
+         temp = Temp,
+         sal = CTD_S,
+         tco2 = CO2,
+         talk = Alk,
+         PO4 = PO41,
+         Si = Si1,
+         QF) %&gt;% 
+  mutate(station = &quot;BATS&quot;)
+
+
+bats_bottle &lt;- bats_bottle %&gt;% 
+  filter(QF == 2) %&gt;% 
+  select(-QF)
+
+bats_bottle &lt;- bats_bottle %&gt;% 
+  pivot_longer(temp:Si) %&gt;% 
   filter(value != -999)
+
+bats_bottle &lt;-
+  bats_bottle %&gt;%
+  mutate(
+    date = as.Date(as.character(date), &quot;%Y%m%d&quot;),
+    year = year(date),
+    month = month(date)
+  )
+
+bats_bottle &lt;-
+  bats_bottle %&gt;%
+  mutate(lon = -lon,
+         lon = if_else(lon &lt; 20, lon + 360, lon))
+
+bats_bottle %&gt;%
+  filter(between(depth,0,750)) %&gt;% 
+  ggplot(aes(value, depth, col = year)) +
+  geom_point(alpha = 0.4) +
+  scale_color_viridis_c() +
+  scale_y_reverse() +
+  # scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_BATS-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>depth_limits_shallow &lt;- c(0,7.5,12.5, 17.5,22.5, 37.5,42.5, 57.5,62.5, 77.5,82.5, 97.5,102.5)
+depth_labels_shallow &lt;- c(3,10,NA,    20,NA,     40,NA,     60,NA,     80,NA,     100,NA) 
+
+depth_limits_mid &lt;- c(115,125, 135,145, 155,165, 190,210, 240,260, 290,310, 390,410)
+depth_labels_mid &lt;- c(120,NA,  140,NA,  160,NA,  200,NA,  250,NA,  300,NA,  400,NA) 
+
+depth_limits_deep_1000 &lt;- c(490,510, 590,610, 690,710, 790,810, 890,910, 990,1010)
+depth_labels_deep_1000 &lt;- c(500,NA,  600,NA,  700,NA,  800,NA,  800,NA,  1000,NA) 
+
+depth_limits_deep_2000 &lt;- c(1080,1120, 1180,1220, 1280,1320, 1380,1420, 1580,1620, 1780,1820, 1980,2020)
+depth_labels_deep_2000 &lt;- c(1100,NA,   1200,NA,   1300,NA,   1400,NA,   1600,NA,   1800,NA,   2000,NA) 
+
+depth_limits_deep_4000 &lt;- c(2180,2220, 2380,2420, 2580,2620, 2980,3020, 3380,3420, 3780,3820, 3980,4020)
+depth_labels_deep_4000 &lt;- c(2200,NA,   2400,NA,   2600,NA,   3000,NA,  3400,NA,   3800,NA,   4000,NA) 
+
+depth_limits_deep_5000 &lt;- c(4180,4220, 4490,4570)
+depth_labels_deep_5000 &lt;- c(4200,NA,   4520) 
+
+depth_limits &lt;-
+  c(
+    depth_limits_shallow,
+    depth_limits_mid,
+    depth_limits_deep_1000,
+    depth_limits_deep_2000,
+    depth_limits_deep_4000,
+    depth_limits_deep_5000
+  )
+
+depth_labels &lt;-
+  c(
+    depth_labels_shallow,
+    depth_labels_mid,
+    depth_labels_deep_1000,
+    depth_labels_deep_2000,
+    depth_labels_deep_4000,
+    depth_labels_deep_5000
+  )
+
+bats_bottle &lt;-
+  bats_bottle %&gt;%
+  mutate(depth_int = cut(depth, depth_limits, depth_labels))
+
+
+rm(
+  depth_limits_shallow,
+  depth_limits_mid,
+  depth_limits_deep_1000,
+  depth_limits_deep_2000,
+  depth_limits_deep_4000,
+  depth_limits_deep_5000
+)
+
+rm(
+  depth_labels_shallow,
+  depth_labels_mid,
+  depth_labels_deep_1000,
+  depth_labels_deep_2000,
+  depth_labels_deep_4000,
+  depth_labels_deep_5000
+)
+
+bats_bottle %&gt;%
+  filter(between(depth,0,100)) %&gt;% 
+  ggplot(aes(value, depth, col = depth_int)) +
+  geom_point(alpha = 0.4) +
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_BATS-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>bats_bottle %&gt;%
+  ggplot(aes(value, depth, col = date)) +
+  geom_point() +
+  scale_color_viridis_c(trans = &quot;date&quot;) +
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
+                     breaks = depth_labels) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
+  theme_bw() +
+  theme(panel.grid.minor = element_blank())</code></pre>
+<p><img src="figure/average_OIA.Rmd/read_BATS-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>bats_bottle &lt;-
+  bats_bottle %&gt;%
+  mutate(depth_int = as.numeric(as.character(depth_int))) %&gt;%
+  filter(!is.na(depth_int))</code></pre>
+<pre class="r"><code>TS_product &lt;-
+  bind_rows(ALOHA,
+            bats_bottle)
+
+bats_bottle %&gt;% 
+  filter(depth_int == 600, name == &quot;tco2&quot;) %&gt;% 
+  ggplot(aes(date, depth)) +
+  geom_point()</code></pre>
+<p><img src="figure/average_OIA.Rmd/trend_analysis_observations-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>TS_product &lt;- TS_product %&gt;%
+  group_by(across(-value)) %&gt;%
+  summarise(value = mean(value, na.rm = TRUE)) %&gt;%
+  ungroup() %&gt;%
+  pivot_wider(names_from = name,
+              values_from = value) %&gt;%
+  filter(!is.na(tco2),
+         !is.na(talk),
+         !is.na(sal),
+         !is.na(temp)) 
+
 
 TS_product_stations &lt;- 
 TS_product %&gt;% 
@@ -2503,7 +2884,6 @@ TS_product %&gt;%
             lon = mean(lon),
             n = n()) %&gt;% 
   ungroup()
-
 
 map +
   geom_point(data = TS_product_stations,
@@ -2514,423 +2894,176 @@ map +
              aes(lon, lat, label = station),
              size = 3,
              label.padding = 0.2,
-             min.segment.length = 0)</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-1">
-Past versions of read_time_series_stations-1.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-1.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/49bf7b2bdd07b29ba7f3ba9c67180cd4f35550c0/docs/figure/average_OIA.Rmd/read_time_series_stations-1.png" target="_blank">49bf7b2</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-16
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba34d33b2d35466ae8b36369e47d2a008fcc0370/docs/figure/average_OIA.Rmd/read_time_series_stations-1.png" target="_blank">ba34d33</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-13
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+             min.segment.length = 0) +
+  scale_size_area()</code></pre>
+<p><img src="figure/average_OIA.Rmd/trend_analysis_observations-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>TS_product &lt;-
   TS_product %&gt;%
-  filter(station == &quot;ALOHA&quot;)
-
-
-TS_product &lt;-
-TS_product %&gt;% 
-  mutate(date = as.Date(as.character(date), &quot;%Y%m%d&quot;),
-         year = year(date),
-         month = month(date))
-
-TS_product %&gt;% 
-  arrange(depth) %&gt;% 
-  mutate(n_row = row_number()) %&gt;% 
-  ggplot(aes(n_row,depth)) +
-  geom_point() + 
-  coord_cartesian(ylim = c(100,700)) +
-  theme_bw()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-2">
-Past versions of read_time_series_stations-2.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-2.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/49bf7b2bdd07b29ba7f3ba9c67180cd4f35550c0/docs/figure/average_OIA.Rmd/read_time_series_stations-2.png" target="_blank">49bf7b2</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-16
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba34d33b2d35466ae8b36369e47d2a008fcc0370/docs/figure/average_OIA.Rmd/read_time_series_stations-2.png" target="_blank">ba34d33</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-13
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>TS_product %&gt;%
-  filter(between(depth,4450,4550)) %&gt;% 
-  ggplot(aes(value, depth, col = year)) +
-  geom_point(alpha = 0.4) +
-  scale_color_viridis_c() +
-  scale_y_reverse() +
-  # scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
-  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-3">
-Past versions of read_time_series_stations-3.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-3.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/49bf7b2bdd07b29ba7f3ba9c67180cd4f35550c0/docs/figure/average_OIA.Rmd/read_time_series_stations-3.png" target="_blank">49bf7b2</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-16
-</td>
-</tr>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba34d33b2d35466ae8b36369e47d2a008fcc0370/docs/figure/average_OIA.Rmd/read_time_series_stations-3.png" target="_blank">ba34d33</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-03-13
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>depth_limits_shallow &lt;- c(0,10, 20,30, 40,50, 70,80, 90,110, 145,155, 195,205, 340,360, 480,520)
-depth_labels_shallow &lt;- c(5,NA, 25,NA, 45,NA, 75,NA, 100,NA, 150,NA,  200,NA,  350,NA,  500, NA) 
-
-depth_limits_deep &lt;- c(550,650, 1010,1030, 1990,2010, 2990,3010, 4490,4510)
-depth_labels_deep &lt;- c(600,NA,  1020, NA,  2000,NA,   3000,NA,   4500) 
-
-depth_limits &lt;- c(depth_limits_shallow, depth_limits_deep)
-depth_labels &lt;- c(depth_labels_shallow, depth_labels_deep)
+  # head(10) %&gt;%
+  mutate(
+    sir(
+      flag = 15,
+      var1 = talk * 1e-6,
+      var2 = tco2 * 1e-6,
+      S = sal,
+      T = temp,
+      P = depth / 10,
+      # Pt = phosphate * 1e-6,
+      # Sit = silicate * 1e-6,
+      k1k2 = &quot;s20&quot;,
+      kf = &quot;dg&quot;,
+      pHscale = &quot;T&quot;
+    )[c(6, 18, 20, 21)]
+  )
 
 TS_product &lt;-
   TS_product %&gt;%
-  mutate(depth_int = cut(depth, depth_limits, depth_labels))
+  mutate(H_free = 1e3 * H_free)
 
-rm(depth_limits_shallow, depth_limits_deep,
-   depth_labels_shallow, depth_labels_deep)
-
-
-TS_product %&gt;% 
-  arrange(depth) %&gt;% 
-  mutate(n_row = row_number()) %&gt;% 
-  ggplot(aes(n_row,depth,col=depth_int)) +
-  geom_point() + 
-  theme_bw()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-4.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-4">
-Past versions of read_time_series_stations-4.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-4" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-4.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>TS_product %&gt;%
-  ggplot(aes(value, depth, col = depth_int)) +
-  geom_point(alpha = 0.4) +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
-  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-5.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-5">
-Past versions of read_time_series_stations-5.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-5" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-5.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>TS_product %&gt;%
-  ggplot(aes(value, depth, col = date)) +
-  geom_point() +
-  scale_color_viridis_c(trans = &quot;date&quot;) +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = depth_labels) +
-  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-6.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-6">
-Past versions of read_time_series_stations-6.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-6" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-6.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>TS_product &lt;-
+TS_product &lt;-
   TS_product %&gt;%
-  mutate(depth_int = as.numeric(as.character(depth_int))) %&gt;%
-  filter(!is.na(depth_int))
+  pivot_longer(PO4:H_free)
 
 
-TS_product %&gt;% 
-  ggplot(aes(date, value, fill=depth_int-depth)) +
-  geom_point(shape = 21) +
-  scale_fill_continuous_divergingx() +
-  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
-  facet_wrap(depth_int ~ name,
-             scales = &quot;free&quot;) +
-  theme_bw()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-7.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-7">
-Past versions of read_time_series_stations-7.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-7" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-7.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>library(broom)
-detrended &lt;- TS_product %&gt;%
-  nest(data = -c(depth_int, name)) %&gt;%
+date_range &lt;-
+  c(min(TS_product$date),
+    max(TS_product$date))
+
+
+pdf(
+  here::here(&quot;output/all_variables/BATS_HOTS_time_series.pdf&quot;),
+  width = 14,
+  height = 8
+)
+
+TS_product %&gt;%
+  arrange(date) %&gt;% 
+  group_by(depth_int, station) %&gt;%
+  group_split() %&gt;%
+  # head(1) %&gt;%
+  map(
+    ~ ggplot(data = .x,
+             aes(date, value)) +
+      geom_path() +
+      geom_point(aes(fill = depth_int - depth),
+                 shape = 21,
+                 alpha = 0.5) +
+      labs(title = paste(.x$station, &quot;|&quot;, .x$depth_int,&quot;m&quot;)) +
+      scale_fill_continuous_divergingx(
+        name = &quot;Vertical distance\nfrom depth centre (m)&quot;
+      ) +
+      scale_x_date(limits = date_range) +
+      geom_smooth(method = &quot;lm&quot;, se = FALSE, col = &quot;black&quot;) +
+      # geom_smooth(se = FALSE, col = &quot;grey60&quot;) +
+      facet_wrap(. ~ name,
+                 scales = &quot;free&quot;,
+                 ncol = 3) +
+      theme(axis.title = element_blank(),
+            legend.position = c(0.6,0.1),
+            legend.direction = &quot;horizontal&quot;)
+  )</code></pre>
+<pre><code>[[1]]</code></pre>
+<pre><code>
+[[2]]</code></pre>
+<pre><code>
+[[3]]</code></pre>
+<pre><code>
+[[4]]</code></pre>
+<pre><code>
+[[5]]</code></pre>
+<pre><code>
+[[6]]</code></pre>
+<pre><code>
+[[7]]</code></pre>
+<pre><code>
+[[8]]</code></pre>
+<pre><code>
+[[9]]</code></pre>
+<pre><code>
+[[10]]</code></pre>
+<pre><code>
+[[11]]</code></pre>
+<pre><code>
+[[12]]</code></pre>
+<pre><code>
+[[13]]</code></pre>
+<pre><code>
+[[14]]</code></pre>
+<pre><code>
+[[15]]</code></pre>
+<pre><code>
+[[16]]</code></pre>
+<pre><code>
+[[17]]</code></pre>
+<pre><code>
+[[18]]</code></pre>
+<pre><code>
+[[19]]</code></pre>
+<pre><code>
+[[20]]</code></pre>
+<pre><code>
+[[21]]</code></pre>
+<pre><code>
+[[22]]</code></pre>
+<pre><code>
+[[23]]</code></pre>
+<pre><code>
+[[24]]</code></pre>
+<pre><code>
+[[25]]</code></pre>
+<pre><code>
+[[26]]</code></pre>
+<pre><code>
+[[27]]</code></pre>
+<pre><code>
+[[28]]</code></pre>
+<pre><code>
+[[29]]</code></pre>
+<pre><code>
+[[30]]</code></pre>
+<pre><code>
+[[31]]</code></pre>
+<pre><code>
+[[32]]</code></pre>
+<pre><code>
+[[33]]</code></pre>
+<pre><code>
+[[34]]</code></pre>
+<pre><code>
+[[35]]</code></pre>
+<pre><code>
+[[36]]</code></pre>
+<pre><code>
+[[37]]</code></pre>
+<pre><code>
+[[38]]</code></pre>
+<pre><code>
+[[39]]</code></pre>
+<pre><code>
+[[40]]</code></pre>
+<pre><code>
+[[41]]</code></pre>
+<pre><code>
+[[42]]</code></pre>
+<pre><code>
+[[43]]</code></pre>
+<pre><code>
+[[44]]</code></pre>
+<pre><code>
+[[45]]</code></pre>
+<pre><code>
+[[46]]</code></pre>
+<pre><code>
+[[47]]</code></pre>
+<pre><code>
+[[48]]</code></pre>
+<pre><code>
+[[49]]</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>detrended &lt;- TS_product %&gt;%
+  nest(data = -c(depth_int, station, name)) %&gt;%
   mutate(
     fit = map(data, ~ lm(value ~ date, data = .x)),
     tidied = map(fit, tidy),
@@ -2940,97 +3073,142 @@ detrended &lt;- TS_product %&gt;%
 
 detrended &lt;-
   detrended %&gt;%
-  unnest(c(data, augmented), names_repair = &quot;universal&quot;) %&gt;% 
-  select(name, depth_int, date = date...5, year, month, value = value...9, value_detrended = .resid)
+  unnest(augmented) %&gt;% 
+  select(station, name, depth_int, date, value, value_detrended = .resid)
 
-detrended %&gt;% 
-  ggplot(aes(date, value_detrended)) +
-  geom_point(alpha=0.4) +
-  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
-  facet_wrap(depth_int ~ name,
-             scales = &quot;free&quot;) +
-  theme_bw()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-8.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-8">
-Past versions of read_time_series_stations-8.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-8" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-8.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>detrended %&gt;%
-  ggplot() +
-  geom_point(aes(month, value_detrended, col = date), alpha = 0.5) +
-  scale_color_viridis_c(trans = &quot;date&quot;) +
-  facet_wrap(depth_int ~ name, scales = &quot;free_y&quot;)</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-9.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-9">
-Past versions of read_time_series_stations-9.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-9" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-9.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+detrended &lt;-
+  detrended %&gt;%
+  mutate(year = year(date),
+         month = month(date))
+
+detrended &lt;-
+  detrended %&gt;%
+  arrange(station, date)
+
+pdf(
+  here::here(&quot;output/all_variables/BATS_HOTS_time_series_detrended.pdf&quot;),
+  width = 14,
+  height = 8
+)
+
+detrended %&gt;%
+  group_by(depth_int, station) %&gt;%
+  group_split() %&gt;%
+  # head(1) %&gt;%
+  map(
+    ~ ggplot(data = .x,
+             aes(date, value_detrended)) +
+      geom_path() +
+      geom_point(shape = 21,
+                 fill = &quot;black&quot;,
+                 alpha = 0.2) +
+      labs(title = paste(.x$station, &quot;|&quot;, .x$depth_int,&quot;m&quot;)) +
+      # geom_smooth(se = FALSE, col = &quot;grey60&quot;) +
+      geom_smooth(method = &quot;lm&quot;, se = FALSE, col = &quot;black&quot;) +
+      facet_wrap(. ~ name,
+                 scales = &quot;free&quot;,
+                 ncol = 3)
+  )</code></pre>
+<pre><code>[[1]]</code></pre>
+<pre><code>
+[[2]]</code></pre>
+<pre><code>
+[[3]]</code></pre>
+<pre><code>
+[[4]]</code></pre>
+<pre><code>
+[[5]]</code></pre>
+<pre><code>
+[[6]]</code></pre>
+<pre><code>
+[[7]]</code></pre>
+<pre><code>
+[[8]]</code></pre>
+<pre><code>
+[[9]]</code></pre>
+<pre><code>
+[[10]]</code></pre>
+<pre><code>
+[[11]]</code></pre>
+<pre><code>
+[[12]]</code></pre>
+<pre><code>
+[[13]]</code></pre>
+<pre><code>
+[[14]]</code></pre>
+<pre><code>
+[[15]]</code></pre>
+<pre><code>
+[[16]]</code></pre>
+<pre><code>
+[[17]]</code></pre>
+<pre><code>
+[[18]]</code></pre>
+<pre><code>
+[[19]]</code></pre>
+<pre><code>
+[[20]]</code></pre>
+<pre><code>
+[[21]]</code></pre>
+<pre><code>
+[[22]]</code></pre>
+<pre><code>
+[[23]]</code></pre>
+<pre><code>
+[[24]]</code></pre>
+<pre><code>
+[[25]]</code></pre>
+<pre><code>
+[[26]]</code></pre>
+<pre><code>
+[[27]]</code></pre>
+<pre><code>
+[[28]]</code></pre>
+<pre><code>
+[[29]]</code></pre>
+<pre><code>
+[[30]]</code></pre>
+<pre><code>
+[[31]]</code></pre>
+<pre><code>
+[[32]]</code></pre>
+<pre><code>
+[[33]]</code></pre>
+<pre><code>
+[[34]]</code></pre>
+<pre><code>
+[[35]]</code></pre>
+<pre><code>
+[[36]]</code></pre>
+<pre><code>
+[[37]]</code></pre>
+<pre><code>
+[[38]]</code></pre>
+<pre><code>
+[[39]]</code></pre>
+<pre><code>
+[[40]]</code></pre>
+<pre><code>
+[[41]]</code></pre>
+<pre><code>
+[[42]]</code></pre>
+<pre><code>
+[[43]]</code></pre>
+<pre><code>
+[[44]]</code></pre>
+<pre><code>
+[[45]]</code></pre>
+<pre><code>
+[[46]]</code></pre>
+<pre><code>
+[[47]]</code></pre>
+<pre><code>
+[[48]]</code></pre>
+<pre><code>
+[[49]]</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
 <pre class="r"><code>detrended &lt;-
   detrended %&gt;%
   group_by(name, month, depth_int) %&gt;%
@@ -3038,226 +3216,504 @@ jens-daniel-mueller
          median = median(value_detrended)) %&gt;%
   ungroup()
   
+
+
+pdf(
+  here::here(&quot;output/all_variables/BATS_HOTS_detrended_monthly_climatology.pdf&quot;),
+  width = 14,
+  height = 8
+)
+
+
 detrended %&gt;%
-  ggplot() +
-  geom_point(aes(month, value_detrended), alpha = 0.2) +
-  geom_point(aes(month, mean, fill = &quot;Monthly mean&quot;),
-             shape = 21,
-             size = 2) +
-  geom_point(aes(month, median, fill = &quot;Monthly median&quot;),
-             shape = 21,
-             size = 2) +
-  facet_wrap(depth_int ~ name, scales = &quot;free_y&quot;)</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-10.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-10">
-Past versions of read_time_series_stations-10.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-10" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-10.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+  group_by(depth_int, station) %&gt;%
+  group_split() %&gt;%
+  # head(1) %&gt;%
+  map(
+    ~ ggplot(data = .x) +
+      # geom_path(aes(month, value_detrended, group = year), col=&quot;grey80&quot;) +
+      geom_point(aes(month, value_detrended), alpha = 0.2) +
+      geom_point(
+        aes(month, mean, fill = &quot;Monthly mean&quot;),
+        shape = 21,
+        size = 2
+      ) +
+      geom_point(
+        aes(month, median, fill = &quot;Monthly median&quot;),
+        shape = 21,
+        size = 2
+      ) +
+      labs(title = paste(.x$station, &quot;|&quot;, .x$depth_int, &quot;m&quot;)) +
+      scale_x_continuous(breaks = seq(1, 12, 3)) +
+      theme(legend.title = element_blank()) +
+      facet_wrap(~ name, scales = &quot;free_y&quot;, ncol = 3) +
+      theme(
+        legend.position = c(0.6, 0.1)
+      )
+  )</code></pre>
+<pre><code>[[1]]</code></pre>
+<pre><code>
+[[2]]</code></pre>
+<pre><code>
+[[3]]</code></pre>
+<pre><code>
+[[4]]</code></pre>
+<pre><code>
+[[5]]</code></pre>
+<pre><code>
+[[6]]</code></pre>
+<pre><code>
+[[7]]</code></pre>
+<pre><code>
+[[8]]</code></pre>
+<pre><code>
+[[9]]</code></pre>
+<pre><code>
+[[10]]</code></pre>
+<pre><code>
+[[11]]</code></pre>
+<pre><code>
+[[12]]</code></pre>
+<pre><code>
+[[13]]</code></pre>
+<pre><code>
+[[14]]</code></pre>
+<pre><code>
+[[15]]</code></pre>
+<pre><code>
+[[16]]</code></pre>
+<pre><code>
+[[17]]</code></pre>
+<pre><code>
+[[18]]</code></pre>
+<pre><code>
+[[19]]</code></pre>
+<pre><code>
+[[20]]</code></pre>
+<pre><code>
+[[21]]</code></pre>
+<pre><code>
+[[22]]</code></pre>
+<pre><code>
+[[23]]</code></pre>
+<pre><code>
+[[24]]</code></pre>
+<pre><code>
+[[25]]</code></pre>
+<pre><code>
+[[26]]</code></pre>
+<pre><code>
+[[27]]</code></pre>
+<pre><code>
+[[28]]</code></pre>
+<pre><code>
+[[29]]</code></pre>
+<pre><code>
+[[30]]</code></pre>
+<pre><code>
+[[31]]</code></pre>
+<pre><code>
+[[32]]</code></pre>
+<pre><code>
+[[33]]</code></pre>
+<pre><code>
+[[34]]</code></pre>
+<pre><code>
+[[35]]</code></pre>
+<pre><code>
+[[36]]</code></pre>
+<pre><code>
+[[37]]</code></pre>
+<pre><code>
+[[38]]</code></pre>
+<pre><code>
+[[39]]</code></pre>
+<pre><code>
+[[40]]</code></pre>
+<pre><code>
+[[41]]</code></pre>
+<pre><code>
+[[42]]</code></pre>
+<pre><code>
+[[43]]</code></pre>
+<pre><code>
+[[44]]</code></pre>
+<pre><code>
+[[45]]</code></pre>
+<pre><code>
+[[46]]</code></pre>
+<pre><code>
+[[47]]</code></pre>
+<pre><code>
+[[48]]</code></pre>
+<pre><code>
+[[49]]</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
 <pre class="r"><code>detrended &lt;-
   detrended %&gt;%
   mutate(value_deseason = value - mean)
 
-detrended %&gt;% 
-  ggplot(aes(date, value_deseason)) +
-  geom_point() +
-  geom_smooth(method = &quot;lm&quot;, se = FALSE) +
-  facet_wrap(depth_int ~ name,
-             scales = &quot;free&quot;) +
-  theme_bw()</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-11.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-11">
-Past versions of read_time_series_stations-11.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-11" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-11.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+
+
+pdf(
+  here::here(
+    &quot;output/all_variables/BATS_HOTS_time_series_deasonalized.pdf&quot;
+  ),
+  width = 14,
+  height = 8
+)
+
+
+detrended %&gt;%
+  group_by(depth_int, station) %&gt;%
+  group_split() %&gt;%
+  # head(1) %&gt;%
+  map(
+    ~ ggplot(data = .x) +
+      geom_path(aes(date, value,
+                    col = &quot;measured&quot;)) +
+      geom_point(
+        aes(date, value,
+            fill = &quot;measured&quot;),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_path(aes(date, value_deseason,
+                    col = &quot;deseasonalized&quot;)) +
+      geom_point(
+        aes(date, value_deseason,
+            fill = &quot;deseasonalized&quot;),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_smooth(
+        aes(date, value, col = &quot;measured&quot;),
+        method = &quot;lm&quot;,
+        se = FALSE
+      ) +
+      geom_smooth(
+        aes(date, value_deseason, col = &quot;deseasonalized&quot;),
+        method = &quot;lm&quot;,
+        se = FALSE
+      ) +
+      scale_color_manual(values = c(&quot;red&quot;, &quot;grey&quot;), name = &quot;&quot;) +
+      scale_fill_manual(values = c(&quot;red&quot;, &quot;grey&quot;), name = &quot;&quot;) +
+      labs(title = paste(.x$station, &quot;|&quot;, .x$depth_int, &quot;m&quot;)) +
+      facet_wrap(. ~ name,
+                 scales = &quot;free&quot;,
+                 ncol = 3) +
+      scale_x_date(limits = date_range) +
+      theme(
+        axis.title = element_blank(),
+        legend.title = element_blank(),
+        legend.position = c(0.6, 0.1)
+      )
+  )</code></pre>
+<pre><code>[[1]]</code></pre>
+<pre><code>
+[[2]]</code></pre>
+<pre><code>
+[[3]]</code></pre>
+<pre><code>
+[[4]]</code></pre>
+<pre><code>
+[[5]]</code></pre>
+<pre><code>
+[[6]]</code></pre>
+<pre><code>
+[[7]]</code></pre>
+<pre><code>
+[[8]]</code></pre>
+<pre><code>
+[[9]]</code></pre>
+<pre><code>
+[[10]]</code></pre>
+<pre><code>
+[[11]]</code></pre>
+<pre><code>
+[[12]]</code></pre>
+<pre><code>
+[[13]]</code></pre>
+<pre><code>
+[[14]]</code></pre>
+<pre><code>
+[[15]]</code></pre>
+<pre><code>
+[[16]]</code></pre>
+<pre><code>
+[[17]]</code></pre>
+<pre><code>
+[[18]]</code></pre>
+<pre><code>
+[[19]]</code></pre>
+<pre><code>
+[[20]]</code></pre>
+<pre><code>
+[[21]]</code></pre>
+<pre><code>
+[[22]]</code></pre>
+<pre><code>
+[[23]]</code></pre>
+<pre><code>
+[[24]]</code></pre>
+<pre><code>
+[[25]]</code></pre>
+<pre><code>
+[[26]]</code></pre>
+<pre><code>
+[[27]]</code></pre>
+<pre><code>
+[[28]]</code></pre>
+<pre><code>
+[[29]]</code></pre>
+<pre><code>
+[[30]]</code></pre>
+<pre><code>
+[[31]]</code></pre>
+<pre><code>
+[[32]]</code></pre>
+<pre><code>
+[[33]]</code></pre>
+<pre><code>
+[[34]]</code></pre>
+<pre><code>
+[[35]]</code></pre>
+<pre><code>
+[[36]]</code></pre>
+<pre><code>
+[[37]]</code></pre>
+<pre><code>
+[[38]]</code></pre>
+<pre><code>
+[[39]]</code></pre>
+<pre><code>
+[[40]]</code></pre>
+<pre><code>
+[[41]]</code></pre>
+<pre><code>
+[[42]]</code></pre>
+<pre><code>
+[[43]]</code></pre>
+<pre><code>
+[[44]]</code></pre>
+<pre><code>
+[[45]]</code></pre>
+<pre><code>
+[[46]]</code></pre>
+<pre><code>
+[[47]]</code></pre>
+<pre><code>
+[[48]]</code></pre>
+<pre><code>
+[[49]]</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
 <pre class="r"><code>detrended %&gt;%
   ggplot(aes(value_deseason, depth_int, col = date)) +
   geom_point() +
   scale_color_viridis_c(trans = &quot;date&quot;) +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = depth_labels) +
-  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-12.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-12">
-Past versions of read_time_series_stations-12.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-12" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-12.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  facet_grid(station ~ name, scales = &quot;free_x&quot;)</code></pre>
+<p><img src="figure/average_OIA.Rmd/trend_analysis_observations-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>detrended_annual &lt;-
   detrended %&gt;%
-  group_by(year, depth_int, name) %&gt;%
-  summarise(annual_mean_deseason = mean(value_deseason)) %&gt;%
+  group_by(station, year, depth_int, name) %&gt;%
+  summarise(value_deseason = mean(value_deseason)) %&gt;%
+  ungroup() %&gt;% 
+  mutate(depth_int = as.numeric(as.character(depth_int)))
+
+detrended &lt;-
+  detrended %&gt;%
+  group_by(station, year, depth_int, name) %&gt;%
+  mutate(value_deseason_annual = mean(value_deseason)) %&gt;%
   ungroup() %&gt;% 
   mutate(depth_int = as.numeric(as.character(depth_int)))
 
 
-detrended_annual %&gt;%
-  ggplot(aes(annual_mean_deseason, depth_int, col = year, group=year)) +
+
+pdf(
+  here::here(
+    &quot;output/all_variables/BATS_HOTS_time_series_deasonalized_annual.pdf&quot;
+  ),
+  width = 14,
+  height = 8
+)
+
+
+detrended %&gt;%
+  group_by(depth_int, station) %&gt;%
+  group_split() %&gt;%
+  # head(1) %&gt;%
+  map(
+    ~ ggplot(data = .x) +
+      geom_path(aes(date, value_deseason,
+                    col = &quot;deseasonalized&quot;)) +
+      geom_point(
+        aes(date, value_deseason,
+            fill = &quot;deseasonalized&quot;),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_path(aes(date, value_deseason_annual,
+                    col = &quot;deseasonalized annual mean&quot;)) +
+      geom_point(
+        aes(date, value_deseason_annual,
+            fill = &quot;deseasonalized annual mean&quot;),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_smooth(aes(date, value_deseason, col = &quot;deseasonalized&quot;),
+                  method = &quot;lm&quot;,
+                  se = FALSE)+
+      geom_smooth(
+        aes(date, value_deseason_annual, col = &quot;deseasonalized annual mean&quot;),
+        method = &quot;lm&quot;,
+        se = FALSE
+      ) +
+      scale_color_manual(values = c(&quot;grey&quot;, &quot;red&quot;), name = &quot;&quot;) +
+      scale_fill_manual(values = c(&quot;grey&quot;, &quot;red&quot;), name = &quot;&quot;) +
+      labs(title = paste(.x$station, &quot;|&quot;, .x$depth_int, &quot;m&quot;)) +
+      facet_wrap(. ~ name,
+                 scales = &quot;free&quot;,
+                 ncol = 3) +
+      scale_x_date(limits = date_range) +
+      theme(
+        axis.title = element_blank(),
+        legend.title = element_blank(),
+        legend.position = c(0.6, 0.1)
+      )
+  )</code></pre>
+<pre><code>[[1]]</code></pre>
+<pre><code>
+[[2]]</code></pre>
+<pre><code>
+[[3]]</code></pre>
+<pre><code>
+[[4]]</code></pre>
+<pre><code>
+[[5]]</code></pre>
+<pre><code>
+[[6]]</code></pre>
+<pre><code>
+[[7]]</code></pre>
+<pre><code>
+[[8]]</code></pre>
+<pre><code>
+[[9]]</code></pre>
+<pre><code>
+[[10]]</code></pre>
+<pre><code>
+[[11]]</code></pre>
+<pre><code>
+[[12]]</code></pre>
+<pre><code>
+[[13]]</code></pre>
+<pre><code>
+[[14]]</code></pre>
+<pre><code>
+[[15]]</code></pre>
+<pre><code>
+[[16]]</code></pre>
+<pre><code>
+[[17]]</code></pre>
+<pre><code>
+[[18]]</code></pre>
+<pre><code>
+[[19]]</code></pre>
+<pre><code>
+[[20]]</code></pre>
+<pre><code>
+[[21]]</code></pre>
+<pre><code>
+[[22]]</code></pre>
+<pre><code>
+[[23]]</code></pre>
+<pre><code>
+[[24]]</code></pre>
+<pre><code>
+[[25]]</code></pre>
+<pre><code>
+[[26]]</code></pre>
+<pre><code>
+[[27]]</code></pre>
+<pre><code>
+[[28]]</code></pre>
+<pre><code>
+[[29]]</code></pre>
+<pre><code>
+[[30]]</code></pre>
+<pre><code>
+[[31]]</code></pre>
+<pre><code>
+[[32]]</code></pre>
+<pre><code>
+[[33]]</code></pre>
+<pre><code>
+[[34]]</code></pre>
+<pre><code>
+[[35]]</code></pre>
+<pre><code>
+[[36]]</code></pre>
+<pre><code>
+[[37]]</code></pre>
+<pre><code>
+[[38]]</code></pre>
+<pre><code>
+[[39]]</code></pre>
+<pre><code>
+[[40]]</code></pre>
+<pre><code>
+[[41]]</code></pre>
+<pre><code>
+[[42]]</code></pre>
+<pre><code>
+[[43]]</code></pre>
+<pre><code>
+[[44]]</code></pre>
+<pre><code>
+[[45]]</code></pre>
+<pre><code>
+[[46]]</code></pre>
+<pre><code>
+[[47]]</code></pre>
+<pre><code>
+[[48]]</code></pre>
+<pre><code>
+[[49]]</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>png 
+  2 </code></pre>
+<pre class="r"><code>detrended_annual %&gt;%
+  ggplot(aes(value_deseason, depth_int, col = year, group=year)) +
   geom_path() +
   geom_point() +
   scale_color_viridis_c() +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = depth_limits) +
-  facet_wrap( ~ name, scales = &quot;free_x&quot;) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-13.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-read_time_series_stations-13">
-Past versions of read_time_series_stations-13.png
-</button>
-</p>
-<div id="fig-read_time_series_stations-13" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9334fe65a9c1ec4535677dbd342391382ed75631/docs/figure/average_OIA.Rmd/read_time_series_stations-13.png" target="_blank">9334fe6</a>
-</td>
-<td>
-jens-daniel-mueller
-</td>
-<td>
-2023-06-19
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  facet_grid(station ~ name, scales = &quot;free_x&quot;)</code></pre>
+<p><img src="figure/average_OIA.Rmd/trend_analysis_observations-4.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>detrended_annual %&gt;%
   filter(name == &quot;tco2&quot;) %&gt;% 
-  ggplot(aes(year, depth_int, z = annual_mean_deseason)) +
+  ggplot(aes(year, depth_int, z = value_deseason)) +
   geom_contour_filled() +
   scale_fill_viridis_d(name = &quot;tco2&quot;) +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = depth_labels) +
-  coord_cartesian(expand = 0)</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-14.png" width="672" style="display: block; margin: auto;" /></p>
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  coord_cartesian(expand = 0) +
+  facet_wrap(~ station)</code></pre>
+<p><img src="figure/average_OIA.Rmd/trend_analysis_observations-5.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>detrended_annual %&gt;%
   filter(name == &quot;pH&quot;) %&gt;% 
-  ggplot(aes(year, depth_int, z = annual_mean_deseason)) +
+  ggplot(aes(year, depth_int, z = value_deseason)) +
   geom_contour_filled() +
   scale_fill_viridis_d(name = &quot;pH&quot;) +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = depth_labels) +
-  coord_cartesian(expand = 0)</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-15.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>regressions &lt;- detrended %&gt;%
-  nest(data = -c(depth_int, name)) %&gt;%
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  coord_cartesian(expand = 0) +
+  facet_wrap(~ station)</code></pre>
+<p><img src="figure/average_OIA.Rmd/trend_analysis_observations-6.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>regressions &lt;- detrended_annual %&gt;%
+  nest(data = -c(station, depth_int, name)) %&gt;%
   mutate(
     fit = map(data, ~ lm(value_deseason ~ year, data = .x)),
     tidied = map(fit, tidy),
@@ -3265,28 +3721,41 @@ jens-daniel-mueller
     augmented = map(fit, augment)
   )
 
+TS_trends &lt;- 
 regressions %&gt;%
   unnest(tidied) %&gt;%
-  arrange(depth_int) %&gt;% 
-  filter(term == &quot;year&quot;) %&gt;% 
+  arrange(depth_int) %&gt;%
+  filter(term == &quot;year&quot;,
+         depth_int &lt;= 3000)
+
+
+
+TS_trends %&gt;%
   ggplot(aes(estimate, depth_int)) +
-  geom_ribbon(aes(xmin = estimate - std.error,
-                  xmax = estimate + std.error,
-                  fill = &quot;St. error&quot;)) +
-  geom_path() +
-  geom_point() +
-  scale_color_viridis_c() +
-  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                     breaks = depth_labels) +
-  facet_wrap(~ name, scales = &quot;free_x&quot;) +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())</code></pre>
-<p><img src="figure/average_OIA.Rmd/read_time_series_stations-16.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>rm(TS_product,
-   TS_product_stations,
-   detrended,
-   detrended_annual,
-   detrended_season)</code></pre>
+  geom_vline(xintercept = 0) +
+  geom_ribbon(aes(
+    xmin = estimate - std.error,
+    xmax = estimate + std.error,
+    fill = station
+  ),
+  alpha = 0.5) +
+  geom_path(aes(col = station)) +
+  scale_y_reverse(breaks = seq(0, 3000, 500)) +
+  scale_fill_brewer(palette = &quot;Dark2&quot;) +
+  scale_color_brewer(palette = &quot;Dark2&quot;) +
+  labs(y = &quot;Depth (m)&quot;,
+       x = &quot;Long term trend&quot;) +
+  # scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;)) +
+  coord_cartesian(expand = 0, ylim = c(3000, 0)) +
+  facet_wrap( ~ name, scales = &quot;free_x&quot;,
+              ncol = 3) +
+  theme(legend.position = c(0.6, 0.1))</code></pre>
+<p><img src="figure/average_OIA.Rmd/trend_analysis_observations-7.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(&quot;output/all_variables/BATS_HOTS_annual_mean_trend_profile.pdf&quot;),
+  width = 8,
+  height = 14
+)</code></pre>
 </div>
 </div>
 <div id="ocean-volume-grids" class="section level1">
@@ -5120,6 +5589,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/17aa4ff021112e8918e60be12396d90a205ae6a3/docs/figure/average_OIA.Rmd/depth_layer_total_change-2.png" target="_blank">17aa4ff</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-06-20
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/c75b30c7177ede1b73496c2485528207fb15ad3a/docs/figure/average_OIA.Rmd/depth_layer_total_change-2.png" target="_blank">c75b30c</a>
@@ -10832,7 +11312,7 @@ other attached packages:
  [4] timechange_0.1.1    ggnewscale_0.4.8    ggtext_0.1.2       
  [7] seacarb_3.3.1       SolveSAPHE_2.1.0    oce_1.7-10         
 [10] gsw_1.1-1           stars_0.6-0         abind_1.4-5        
-[13] ggh4x_0.2.3         khroma_1.9.0        terra_1.7-29       
+[13] ggh4x_0.2.3         khroma_1.9.0        terra_1.7-39       
 [16] sf_1.0-9            rnaturalearth_0.1.0 geomtextpath_0.1.1 
 [19] colorspace_2.0-3    marelac_2.1.10      shape_1.4.6        
 [22] ggforce_0.4.1       metR_0.13.0         scico_1.3.1        
