@@ -665,7 +665,7 @@ var_select <-
     "CTDTMP",
     "TCARBN",
     "ALKALI",
-    # "PH_TOT",
+    "PH_TOT",
     "PHSPHT",
     "SILCAT")
 
@@ -736,10 +736,6 @@ TS_product <- TS_product %>%
     )
   )
 
-TS_product %>% 
-  distinct(name)
-
-
 TS_product <- TS_product %>%
   mutate(
     date = as.Date(as.character(date), "%Y%m%d"),
@@ -750,9 +746,18 @@ TS_product <- TS_product %>%
 TS_product <- TS_product %>% 
   mutate(lon = if_else(lon < 20, lon + 360, lon))
 
+TS_product <- TS_product %>% 
+  mutate(depth = if_else(depth <= 0, 0.01, depth))
+
+
+```
+
+```{r subset_ALOHA_from_TS_product}
+
 ALOHA <-
   TS_product %>%
-  filter(station == "ALOHA")
+  filter(station == "ALOHA",
+         name != "pH")
 
 ALOHA %>%
   filter(between(depth,400,700)) %>% 
@@ -765,8 +770,8 @@ ALOHA %>%
   theme_bw() +
   theme(panel.grid.minor = element_blank())
 
-depth_limits_shallow <- c(0,10, 20,30, 40,50, 70,80, 90,110, 145,155, 195,205, 340,360, 480,520)
-depth_labels_shallow <- c(5,NA, 25,NA, 45,NA, 75,NA, 100,NA, 150,NA,  200,NA,  350,NA,  500, NA) 
+depth_limits_shallow <- c(0,10, 20,30, 40,50, 70,80, 90,110, 145,155, 195,205, 240,260, 340,360, 480,520)
+depth_labels_shallow <- c(5,NA, 25,NA, 45,NA, 75,NA, 100,NA, 150,NA,  200,NA,  250,NA,  350,NA,  500, NA) 
 
 depth_limits_deep <- c(550,650, 1010,1030, 1990,2010, 2990,3010, 4490,4510)
 depth_labels_deep <- c(600,NA,  1020, NA,  2000,NA,   3000,NA,   4500) 
@@ -776,86 +781,57 @@ depth_labels <- c(depth_labels_shallow, depth_labels_deep)
 
 ALOHA <-
   ALOHA %>%
-  mutate(depth_int = cut(depth, depth_limits, depth_labels))
+  mutate(depth_int = cut(depth, depth_limits, depth_labels),
+         depth_int = as.numeric(as.character(depth_int)))
 
 rm(depth_limits_shallow, depth_limits_deep,
    depth_labels_shallow, depth_labels_deep)
 
 
-# ALOHA %>% 
-#   filter(depth_int == 600,
-#          name == "talk") %>% 
-#   ggplot(aes(date, depth)) +
-#   geom_path() +
-#   geom_point()
-
-ALOHA %>% 
-  arrange(depth) %>% 
-  mutate(n_row = row_number()) %>% 
-  ggplot(aes(n_row,depth,col=depth_int)) +
-  geom_point() + 
-  theme_bw()
-
-
 ALOHA %>%
-  filter(between(depth,990,1510)) %>% 
-  ggplot(aes(value, depth, col = depth_int, fill = year)) +
-  geom_point(alpha = 0.4, shape = 21) +
-  scale_y_reverse() +
-  scale_fill_viridis_c() +
-  # scale_y_continuous(trans = trans_reverser("sqrt")) +
-  facet_wrap( ~ name, scales = "free_x") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())
-
-
-ALOHA %>%
-  ggplot(aes(value, depth, col = date)) +
-  geom_point() +
-  scale_color_viridis_c(trans = "date") +
+  ggplot(aes(value, depth, col = year)) +
+  geom_point(aes(col = year), size = 1, alpha = 0.5) +
+  scale_color_viridis_c() +
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = depth_labels) +
-  facet_wrap( ~ name, scales = "free_x") +
+  facet_wrap(~ name, scales = "free_x") +
   theme_bw() +
-  theme(panel.grid.minor = element_blank())
+  labs(y = "Depth (m)",
+       title = "ALOHA | all observations") +
+  coord_cartesian(expand = FALSE) +
+  theme(panel.grid.minor = element_blank(),
+        axis.title.x = element_blank())
 
-ALOHA <-
-  ALOHA %>%
-  mutate(depth_int = as.numeric(as.character(depth_int)))
 
 ALOHA %>%
+  filter(name == "tco2") %>%
+  mutate(selection = if_else(is.na(depth_int), "discarded", "used")) %>%
   ggplot(aes(value, depth)) +
-  geom_point(col = "grey70") +
-  geom_point(data = . %>% filter(!is.na(depth_int)),
-             aes(col = date)) +
-  scale_color_viridis_c(trans = "date") +
+  geom_point(aes(col = year), size = 1, alpha = 0.5) +
+  scale_color_viridis_c() +
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = depth_labels) +
-  facet_wrap( ~ name, scales = "free_x") +
+  facet_grid(~ selection, scales = "free_y") +
   theme_bw() +
-  labs(title = "Selected data") +
-  theme(panel.grid.minor = element_blank())
+  labs(y = "Depth (m)",
+       title = "ALOHA | DIC observations") +
+  coord_cartesian(expand = FALSE) +
+  theme(panel.grid.minor = element_blank(),
+        axis.title.x = element_blank())
 
-ALOHA %>%
-  ggplot(aes(value, depth)) +
-  geom_point(col = "grey70") +
-  geom_point(data = . %>% filter(is.na(depth_int)),
-             aes(col = date)) +
-  scale_color_viridis_c(trans = "date") +
-  scale_y_continuous(trans = trans_reverser("sqrt"),
-                     breaks = depth_labels) +
-  facet_wrap( ~ name, scales = "free_x") +
-  theme_bw() +
-  labs(title = "Discarded data") +
-  theme(panel.grid.minor = element_blank())
+ggsave(
+  here::here("output/all_variables/ALOHA_tco2_all_data_profiles.pdf"),
+  width = 8,
+  height = 8
+)
 
 ALOHA <-
   ALOHA %>%
   filter(!is.na(depth_int))
 
-rm(TS_product)
 
 ```
+
 
 ```{r read_BATS}
 
@@ -869,7 +845,7 @@ col_names <-
   ) %>%
   names()
 
-bats_bottle <- read_delim(
+BATS <- read_delim(
   paste0(path_ungrd_3d_ocn, "/bats/bats_bottle.txt"),
   delim = "\t",
   col_names = col_names,
@@ -878,7 +854,7 @@ bats_bottle <- read_delim(
 
 rm(col_names)
 
-bats_bottle <- bats_bottle %>% 
+BATS <- BATS %>% 
   select(station_nr = Id,
          date = yyyymmdd,
          lat = latN,
@@ -894,28 +870,28 @@ bats_bottle <- bats_bottle %>%
   mutate(station = "BATS")
 
 
-bats_bottle <- bats_bottle %>% 
+BATS <- BATS %>% 
   filter(QF == 2) %>% 
   select(-QF)
 
-bats_bottle <- bats_bottle %>% 
+BATS <- BATS %>% 
   pivot_longer(temp:Si) %>% 
   filter(value != -999)
 
-bats_bottle <-
-  bats_bottle %>%
+BATS <-
+  BATS %>%
   mutate(
     date = as.Date(as.character(date), "%Y%m%d"),
     year = year(date),
     month = month(date)
   )
 
-bats_bottle <-
-  bats_bottle %>%
+BATS <-
+  BATS %>%
   mutate(lon = -lon,
          lon = if_else(lon < 20, lon + 360, lon))
 
-bats_bottle %>%
+BATS %>%
   filter(between(depth,0,750)) %>% 
   ggplot(aes(value, depth, col = year)) +
   geom_point(alpha = 0.4) +
@@ -964,9 +940,10 @@ depth_labels <-
     depth_labels_deep_5000
   )
 
-bats_bottle <-
-  bats_bottle %>%
-  mutate(depth_int = cut(depth, depth_limits, depth_labels))
+BATS <-
+  BATS %>%
+  mutate(depth_int = cut(depth, depth_limits, depth_labels),
+         depth_int = as.numeric(as.character(depth_int)))
 
 
 rm(
@@ -987,55 +964,92 @@ rm(
   depth_labels_deep_5000
 )
 
-bats_bottle %>%
-  filter(between(depth,0,100)) %>% 
-  ggplot(aes(value, depth, col = depth_int)) +
-  geom_point(alpha = 0.4) +
-  scale_y_continuous(trans = trans_reverser("sqrt")) +
-  facet_wrap( ~ name, scales = "free_x") +
-  theme_bw() +
-  theme(panel.grid.minor = element_blank())
 
-
-bats_bottle %>%
-  ggplot(aes(value, depth, col = date)) +
-  geom_point() +
-  scale_color_viridis_c(trans = "date") +
+BATS %>%
+  ggplot(aes(value, depth, col = year)) +
+  geom_point(aes(col = year), size = 1, alpha = 0.5) +
+  scale_color_viridis_c() +
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = depth_labels) +
-  facet_wrap( ~ name, scales = "free_x") +
+  facet_wrap(~ name, scales = "free_x") +
   theme_bw() +
-  theme(panel.grid.minor = element_blank())
+  labs(y = "Depth (m)",
+       title = "BATS | all observations") +
+  coord_cartesian(expand = FALSE) +
+  theme(panel.grid.minor = element_blank(),
+        axis.title.x = element_blank())
 
-bats_bottle <-
-  bats_bottle %>%
-  mutate(depth_int = as.numeric(as.character(depth_int))) %>%
+
+BATS %>%
+  filter(name == "tco2") %>%
+  mutate(selection = if_else(is.na(depth_int), "discarded", "used")) %>%
+  ggplot(aes(value, depth)) +
+  geom_point(aes(col = year), size = 1, alpha = 0.5) +
+  scale_color_viridis_c() +
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = depth_labels) +
+  facet_grid(~ selection, scales = "free_y") +
+  theme_bw() +
+  labs(y = "Depth (m)",
+       title = "BATS | DIC observations") +
+  coord_cartesian(expand = FALSE) +
+  theme(panel.grid.minor = element_blank(),
+        axis.title.x = element_blank())
+
+ggsave(
+  here::here("output/all_variables/BATS_tco2_all_data_profiles.pdf"),
+  width = 8,
+  height = 8
+)
+
+
+TS_product <-
+  bind_rows(TS_product,
+            BATS %>% select(-depth_int))
+
+BATS <-
+  BATS %>%
   filter(!is.na(depth_int))
 
 ```
 
-```{r trend_analysis_observations}
+```{r TS_product_incl_BATS}
 
+TS_product_gridded <-
+  TS_product %>%
+  filter(name %in% c("tco2", "talk", "pH"),
+         # station %in% c(),
+         depth <= 3000) %>%
+  mutate(depth_int = cut(
+    depth,
+    seq(0, 1e4, 500),
+    labels = paste(seq(0, 9500, 500),seq(500, 10000, 500), sep = "-"),
+    include.lowest = TRUE
+  ))
 
-TS_product <-
-  bind_rows(ALOHA,
-            bats_bottle)
+stations_deep <- TS_product_gridded %>% 
+  filter(depth_int == "500-1000") %>%
+  distinct(station) %>% 
+  pull()
 
-bats_bottle %>% 
-  filter(depth_int == 600, name == "tco2") %>% 
-  ggplot(aes(date, depth)) +
-  geom_point()
+TS_product_gridded %>% 
+  filter(station %in% stations_deep) %>% 
+  count(depth_int, year, name, station) %>% 
+  ggplot(aes(year, n, col = name)) +
+  geom_path() +
+  geom_point(size = 0.5) +
+  labs(y = "Nr observations (yr-1)") +
+  scale_x_continuous(breaks = c(2000,2020)) +
+  facet_grid(depth_int ~ station,
+             scales = "free_y")
 
-TS_product <- TS_product %>%
-  group_by(across(-value)) %>%
-  summarise(value = mean(value, na.rm = TRUE)) %>%
-  ungroup() %>%
-  pivot_wider(names_from = name,
-              values_from = value) %>%
-  filter(!is.na(tco2),
-         !is.na(talk),
-         !is.na(sal),
-         !is.na(temp)) 
+ggsave(
+  here::here("output/all_variables/BATS_ALOHA_other_stations_data_availability.pdf"),
+  width = 14,
+  height = 8
+)
+
+rm(stations_deep, TS_product_gridded)
 
 
 TS_product_stations <- 
@@ -1056,7 +1070,37 @@ map +
              size = 3,
              label.padding = 0.2,
              min.segment.length = 0) +
-  scale_size_area()
+  scale_size_area() +
+  theme(axis.ticks = element_blank(),
+        axis.text = element_blank())
+
+ggsave(
+  here::here("output/all_variables/BATS_ALOHA_other_stations_map.pdf"),
+  width = 14,
+  height = 8
+)
+
+rm(TS_product_stations)
+
+```
+
+
+```{r trend_analysis_observations}
+
+TS_product <-
+  bind_rows(ALOHA,
+            BATS)
+
+TS_product <- TS_product %>%
+  group_by(across(-value)) %>%
+  summarise(value = mean(value, na.rm = TRUE)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = name,
+              values_from = value) %>%
+  filter(!is.na(tco2),
+         !is.na(talk),
+         !is.na(sal),
+         !is.na(temp)) 
 
 TS_product <-
   TS_product %>%
@@ -1085,46 +1129,44 @@ TS_product <-
   TS_product %>%
   pivot_longer(PO4:H_free)
 
-
 date_range <-
   c(min(TS_product$date),
     max(TS_product$date))
 
-
-pdf(
-  here::here("output/all_variables/BATS_HOTS_time_series.pdf"),
-  width = 14,
-  height = 8
-)
-
-TS_product %>%
-  arrange(date) %>% 
-  group_by(depth_int, station) %>%
-  group_split() %>%
-  # head(1) %>%
-  map(
-    ~ ggplot(data = .x,
-             aes(date, value)) +
-      geom_path() +
-      geom_point(aes(fill = depth_int - depth),
-                 shape = 21,
-                 alpha = 0.5) +
-      labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
-      scale_fill_continuous_divergingx(
-        name = "Vertical distance\nfrom depth centre (m)"
-      ) +
-      scale_x_date(limits = date_range) +
-      geom_smooth(method = "lm", se = FALSE, col = "black") +
-      # geom_smooth(se = FALSE, col = "grey60") +
-      facet_wrap(. ~ name,
-                 scales = "free",
-                 ncol = 3) +
-      theme(axis.title = element_blank(),
-            legend.position = c(0.6,0.1),
-            legend.direction = "horizontal")
-  )
-
-dev.off()
+# pdf(
+#   here::here("output/all_variables/BATS_ALOHA_time_series.pdf"),
+#   width = 14,
+#   height = 8
+# )
+# 
+# TS_product %>%
+#   arrange(date) %>% 
+#   group_by(depth_int, station) %>%
+#   group_split() %>%
+#   # head(1) %>%
+#   map(
+#     ~ ggplot(data = .x,
+#              aes(date, value)) +
+#       geom_path() +
+#       geom_point(aes(fill = depth_int - depth),
+#                  shape = 21,
+#                  alpha = 0.5) +
+#       labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
+#       scale_fill_continuous_divergingx(
+#         name = "Vertical distance\nfrom depth centre (m)"
+#       ) +
+#       scale_x_date(limits = date_range) +
+#       geom_smooth(method = "lm", se = FALSE, col = "black") +
+#       # geom_smooth(se = FALSE, col = "grey60") +
+#       facet_wrap(. ~ name,
+#                  scales = "free",
+#                  ncol = 3) +
+#       theme(axis.title = element_blank(),
+#             legend.position = c(0.6,0.1),
+#             legend.direction = "horizontal")
+#   )
+# 
+# dev.off()
 
 detrended <- TS_product %>%
   nest(data = -c(depth_int, station, name)) %>%
@@ -1149,32 +1191,32 @@ detrended <-
   detrended %>%
   arrange(station, date)
 
-pdf(
-  here::here("output/all_variables/BATS_HOTS_time_series_detrended.pdf"),
-  width = 14,
-  height = 8
-)
-
-detrended %>%
-  group_by(depth_int, station) %>%
-  group_split() %>%
-  # head(1) %>%
-  map(
-    ~ ggplot(data = .x,
-             aes(date, value_detrended)) +
-      geom_path() +
-      geom_point(shape = 21,
-                 fill = "black",
-                 alpha = 0.2) +
-      labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
-      # geom_smooth(se = FALSE, col = "grey60") +
-      geom_smooth(method = "lm", se = FALSE, col = "black") +
-      facet_wrap(. ~ name,
-                 scales = "free",
-                 ncol = 3)
-  )
-
-dev.off()
+# pdf(
+#   here::here("output/all_variables/BATS_ALOHA_time_series_detrended.pdf"),
+#   width = 14,
+#   height = 8
+# )
+# 
+# detrended %>%
+#   group_by(depth_int, station) %>%
+#   group_split() %>%
+#   # head(1) %>%
+#   map(
+#     ~ ggplot(data = .x,
+#              aes(date, value_detrended)) +
+#       geom_path() +
+#       geom_point(shape = 21,
+#                  fill = "black",
+#                  alpha = 0.2) +
+#       labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
+#       # geom_smooth(se = FALSE, col = "grey60") +
+#       geom_smooth(method = "lm", se = FALSE, col = "black") +
+#       facet_wrap(. ~ name,
+#                  scales = "free",
+#                  ncol = 3)
+#   )
+# 
+# dev.off()
 
 
 detrended <-
@@ -1186,41 +1228,41 @@ detrended <-
   
 
 
-pdf(
-  here::here("output/all_variables/BATS_HOTS_detrended_monthly_climatology.pdf"),
-  width = 14,
-  height = 8
-)
-
-
-detrended %>%
-  group_by(depth_int, station) %>%
-  group_split() %>%
-  # head(1) %>%
-  map(
-    ~ ggplot(data = .x) +
-      # geom_path(aes(month, value_detrended, group = year), col="grey80") +
-      geom_point(aes(month, value_detrended), alpha = 0.2) +
-      geom_point(
-        aes(month, mean, fill = "Monthly mean"),
-        shape = 21,
-        size = 2
-      ) +
-      geom_point(
-        aes(month, median, fill = "Monthly median"),
-        shape = 21,
-        size = 2
-      ) +
-      labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
-      scale_x_continuous(breaks = seq(1, 12, 3)) +
-      theme(legend.title = element_blank()) +
-      facet_wrap(~ name, scales = "free_y", ncol = 3) +
-      theme(
-        legend.position = c(0.6, 0.1)
-      )
-  )
-
-dev.off()
+# pdf(
+#   here::here("output/all_variables/BATS_ALOHA_detrended_monthly_climatology.pdf"),
+#   width = 14,
+#   height = 8
+# )
+# 
+# 
+# detrended %>%
+#   group_by(depth_int, station) %>%
+#   group_split() %>%
+#   # head(1) %>%
+#   map(
+#     ~ ggplot(data = .x) +
+#       # geom_path(aes(month, value_detrended, group = year), col="grey80") +
+#       geom_point(aes(month, value_detrended), alpha = 0.2) +
+#       geom_point(
+#         aes(month, mean, fill = "Monthly mean"),
+#         shape = 21,
+#         size = 2
+#       ) +
+#       geom_point(
+#         aes(month, median, fill = "Monthly median"),
+#         shape = 21,
+#         size = 2
+#       ) +
+#       labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
+#       scale_x_continuous(breaks = seq(1, 12, 3)) +
+#       theme(legend.title = element_blank()) +
+#       facet_wrap(~ name, scales = "free_y", ncol = 3) +
+#       theme(
+#         legend.position = c(0.6, 0.1)
+#       )
+#   )
+# 
+# dev.off()
 
 
 detrended <-
@@ -1229,62 +1271,62 @@ detrended <-
 
 
 
-pdf(
-  here::here(
-    "output/all_variables/BATS_HOTS_time_series_deasonalized.pdf"
-  ),
-  width = 14,
-  height = 8
-)
-
-
-detrended %>%
-  group_by(depth_int, station) %>%
-  group_split() %>%
-  # head(1) %>%
-  map(
-    ~ ggplot(data = .x) +
-      geom_path(aes(date, value,
-                    col = "measured")) +
-      geom_point(
-        aes(date, value,
-            fill = "measured"),
-        shape = 21,
-        alpha = 0.2
-      ) +
-      geom_path(aes(date, value_deseason,
-                    col = "deseasonalized")) +
-      geom_point(
-        aes(date, value_deseason,
-            fill = "deseasonalized"),
-        shape = 21,
-        alpha = 0.2
-      ) +
-      geom_smooth(
-        aes(date, value, col = "measured"),
-        method = "lm",
-        se = FALSE
-      ) +
-      geom_smooth(
-        aes(date, value_deseason, col = "deseasonalized"),
-        method = "lm",
-        se = FALSE
-      ) +
-      scale_color_manual(values = c("red", "grey"), name = "") +
-      scale_fill_manual(values = c("red", "grey"), name = "") +
-      labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
-      facet_wrap(. ~ name,
-                 scales = "free",
-                 ncol = 3) +
-      scale_x_date(limits = date_range) +
-      theme(
-        axis.title = element_blank(),
-        legend.title = element_blank(),
-        legend.position = c(0.6, 0.1)
-      )
-  )
-
-dev.off()
+# pdf(
+#   here::here(
+#     "output/all_variables/BATS_ALOHA_time_series_deasonalized.pdf"
+#   ),
+#   width = 14,
+#   height = 8
+# )
+# 
+# 
+# detrended %>%
+#   group_by(depth_int, station) %>%
+#   group_split() %>%
+#   # head(1) %>%
+#   map(
+#     ~ ggplot(data = .x) +
+#       geom_path(aes(date, value,
+#                     col = "measured")) +
+#       geom_point(
+#         aes(date, value,
+#             fill = "measured"),
+#         shape = 21,
+#         alpha = 0.2
+#       ) +
+#       geom_path(aes(date, value_deseason,
+#                     col = "deseasonalized")) +
+#       geom_point(
+#         aes(date, value_deseason,
+#             fill = "deseasonalized"),
+#         shape = 21,
+#         alpha = 0.2
+#       ) +
+#       geom_smooth(
+#         aes(date, value, col = "measured"),
+#         method = "lm",
+#         se = FALSE
+#       ) +
+#       geom_smooth(
+#         aes(date, value_deseason, col = "deseasonalized"),
+#         method = "lm",
+#         se = FALSE
+#       ) +
+#       scale_color_manual(values = c("red", "grey"), name = "") +
+#       scale_fill_manual(values = c("red", "grey"), name = "") +
+#       labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
+#       facet_wrap(. ~ name,
+#                  scales = "free",
+#                  ncol = 3) +
+#       scale_x_date(limits = date_range) +
+#       theme(
+#         axis.title = element_blank(),
+#         legend.title = element_blank(),
+#         legend.position = c(0.6, 0.1)
+#       )
+#   )
+# 
+# dev.off()
 
 
 detrended %>%
@@ -1310,60 +1352,60 @@ detrended <-
 
 
 
-pdf(
-  here::here(
-    "output/all_variables/BATS_HOTS_time_series_deasonalized_annual.pdf"
-  ),
-  width = 14,
-  height = 8
-)
-
-
-detrended %>%
-  group_by(depth_int, station) %>%
-  group_split() %>%
-  # head(1) %>%
-  map(
-    ~ ggplot(data = .x) +
-      geom_path(aes(date, value_deseason,
-                    col = "deseasonalized")) +
-      geom_point(
-        aes(date, value_deseason,
-            fill = "deseasonalized"),
-        shape = 21,
-        alpha = 0.2
-      ) +
-      geom_path(aes(date, value_deseason_annual,
-                    col = "deseasonalized annual mean")) +
-      geom_point(
-        aes(date, value_deseason_annual,
-            fill = "deseasonalized annual mean"),
-        shape = 21,
-        alpha = 0.2
-      ) +
-      geom_smooth(aes(date, value_deseason, col = "deseasonalized"),
-                  method = "lm",
-                  se = FALSE)+
-      geom_smooth(
-        aes(date, value_deseason_annual, col = "deseasonalized annual mean"),
-        method = "lm",
-        se = FALSE
-      ) +
-      scale_color_manual(values = c("grey", "red"), name = "") +
-      scale_fill_manual(values = c("grey", "red"), name = "") +
-      labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
-      facet_wrap(. ~ name,
-                 scales = "free",
-                 ncol = 3) +
-      scale_x_date(limits = date_range) +
-      theme(
-        axis.title = element_blank(),
-        legend.title = element_blank(),
-        legend.position = c(0.6, 0.1)
-      )
-  )
-
-dev.off()
+# pdf(
+#   here::here(
+#     "output/all_variables/BATS_ALOHA_time_series_deasonalized_annual.pdf"
+#   ),
+#   width = 14,
+#   height = 8
+# )
+# 
+# 
+# detrended %>%
+#   group_by(depth_int, station) %>%
+#   group_split() %>%
+#   # head(1) %>%
+#   map(
+#     ~ ggplot(data = .x) +
+#       geom_path(aes(date, value_deseason,
+#                     col = "deseasonalized")) +
+#       geom_point(
+#         aes(date, value_deseason,
+#             fill = "deseasonalized"),
+#         shape = 21,
+#         alpha = 0.2
+#       ) +
+#       geom_path(aes(date, value_deseason_annual,
+#                     col = "deseasonalized annual mean")) +
+#       geom_point(
+#         aes(date, value_deseason_annual,
+#             fill = "deseasonalized annual mean"),
+#         shape = 21,
+#         alpha = 0.2
+#       ) +
+#       geom_smooth(aes(date, value_deseason, col = "deseasonalized"),
+#                   method = "lm",
+#                   se = FALSE)+
+#       geom_smooth(
+#         aes(date, value_deseason_annual, col = "deseasonalized annual mean"),
+#         method = "lm",
+#         se = FALSE
+#       ) +
+#       scale_color_manual(values = c("grey", "red"), name = "") +
+#       scale_fill_manual(values = c("grey", "red"), name = "") +
+#       labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
+#       facet_wrap(. ~ name,
+#                  scales = "free",
+#                  ncol = 3) +
+#       scale_x_date(limits = date_range) +
+#       theme(
+#         axis.title = element_blank(),
+#         legend.title = element_blank(),
+#         legend.position = c(0.6, 0.1)
+#       )
+#   )
+# 
+# dev.off()
 
 
 detrended_annual %>%
@@ -1392,7 +1434,7 @@ detrended_annual %>%
   coord_cartesian(expand = 0) +
   facet_wrap(~ station)
 
-regressions <- detrended_annual %>%
+regressions <- detrended %>%
   nest(data = -c(station, depth_int, name)) %>%
   mutate(
     fit = map(data, ~ lm(value_deseason ~ year, data = .x)),
@@ -1432,7 +1474,7 @@ TS_trends %>%
   theme(legend.position = c(0.6, 0.1))
 
 ggsave(
-  here::here("output/all_variables/BATS_HOTS_annual_mean_trend_profile.pdf"),
+  here::here("output/all_variables/BATS_ALOHA_annual_mean_trend_profile.pdf"),
   width = 8,
   height = 14
 )
@@ -1825,6 +1867,19 @@ contours_buffer_variables <-
 
 
 
+# Color scale settings
+
+```{r set_color_range_quantiles}
+
+quantile_high <- 0.98
+quantile_low <- 0.02
+
+break_numbers <- 10
+
+three_year_colors <- c("#f77f00", "#d62828", "#003049")
+
+```
+ 
 
 # Uncertainty determination
 
@@ -2002,19 +2057,6 @@ return(df_out)
 ```
 
 
-# Color scale settings
-
-```{r set_color_range_quantiles}
-
-quantile_high <- 0.98
-quantile_low <- 0.02
-
-break_numbers <- 10
-
-three_year_colors <- c("#f77f00", "#d62828", "#003049")
-
-```
- 
 
 # General consideration
 
@@ -5810,6 +5852,7 @@ rm(acidification_global_section_absolute,
 
 ## Computation
 
+
 ```{r compute_mean_profiles_total_acidification}
 
 # join with 3D acidification fields
@@ -5906,6 +5949,103 @@ rm(acidification_profiles_biomes_regional,
 
 acidification_profiles_biomes <- acidification_profiles_biomes %>%
   mutate(tref = as.factor(tref))
+
+```
+
+```{r compute_mean_profiles_total_acidification_stations}
+
+lat_lon_radius <- 3
+
+TS_product_stations <-
+  TS_product %>%
+  group_by(station) %>%
+  summarise(lat_centre = mean(lat),
+            lon_centre = mean(lon)) %>%
+  ungroup() %>%
+  mutate(
+    lat_south = case_when(station == "BATS" ~ lat_centre - lat_lon_radius,
+                          station == "ALOHA" ~ lat_centre),
+    lat_north = case_when(station == "BATS" ~ lat_centre,
+                          station == "ALOHA" ~ lat_centre + lat_lon_radius),
+    lon_east = case_when(station == "BATS" ~ lon_centre - lat_lon_radius / 2,
+                         station == "ALOHA" ~ lon_centre),
+    lon_west = case_when(station == "BATS" ~ lon_centre + lat_lon_radius / 2,
+                         station == "ALOHA" ~ lon_centre + lat_lon_radius)
+    )
+
+
+
+for (i_station in unique(TS_product_stations$station)) {
+  # i_station <- unique(TS_product_stations$station)[1]
+  
+  i_TS_product_stations <- TS_product_stations %>%
+    filter(station == i_station)
+  
+  acidification_profiles_station <-
+    cross_join(i_TS_product_stations,
+               acidification_trend %>%
+                 select(-c(basin_AIP, contains("temp"))))
+  
+  
+  acidification_profiles_station <-
+    acidification_profiles_station %>%
+    filter(
+      between(lat, lat_south, lat_north),
+      between(lon, lon_east, lon_west)
+    ) %>%
+    select(-contains("centre"))
+  
+  if (exists("acidification_profiles_station_all")) {
+    acidification_profiles_station_all <-
+      bind_rows(
+        acidification_profiles_station_all,
+        acidification_profiles_station
+      )
+  }
+  
+  if (!exists("acidification_profiles_station_all")) {
+    acidification_profiles_station_all <-
+      acidification_profiles_station
+  }
+  
+}
+
+acidification_profiles_station <-
+  acidification_profiles_station_all
+rm(acidification_profiles_station_all)
+
+map +
+  geom_tile(data = acidification_profiles_station %>%
+              group_by(station, lat, lon) %>% 
+              summarise(depth = max(depth)) %>% 
+              ungroup(),
+            aes(lon, lat, fill = depth)) +
+  scale_fill_viridis_c(direction = -1) +
+  geom_tile(data = TS_product_stations,
+            aes(lon_centre, lat_centre, width = 1, height = 1),
+            fill = "red")
+
+
+# scale values to surface area
+
+acidification_profiles_station <-
+  acidification_profiles_station %>%
+  mutate(area = earth_surf(lat, lon),
+         across(contains("_delta_interval"),
+                ~ . * area))
+
+# calculate regional means
+
+acidification_profiles_station <- acidification_profiles_station %>%
+  group_by(tref, station, depth) %>%
+  summarise(across(contains("_delta_interval"),
+                   ~ sum(.) / sum(area))) %>%
+  ungroup()
+
+acidification_profiles_station <- acidification_profiles_station %>%
+  mutate(tref = as.factor(tref))
+
+
 
 ```
 
@@ -6360,7 +6500,6 @@ ggsave(
 
 ```
 
-
 ```{r MOBO-DIC_vs_Cant_profiles}
 
 
@@ -6568,6 +6707,7 @@ rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 
 ### dCant
 
+
 ```{r profiles_incremental_change, eval=FALSE}
 
 # create pdf document
@@ -6609,6 +6749,85 @@ acidification_profiles %>%
   facet_grid(basin ~ variable, scales = "free_x")
 
 dev.off()
+
+
+```
+
+
+```{r profiles_incremental_change_station}
+
+
+acidification_profiles_station <-
+  acidification_profiles_station %>%
+  pivot_longer(contains("_delta_interval"),
+               names_to = "variable",
+               values_to = "delta_interval") %>%
+  filter(depth <= 3000) %>%
+  mutate(variable = str_remove(variable, "_delta_interval"))
+
+acidification_profiles_station <- acidification_profiles_station %>%
+  filter(variable %in% OIA_variables)
+
+bind_rows(
+  TS_trends %>%
+    filter(term == "year",
+           name %in% OIA_variables) %>%
+    select(station, variable = name, depth = depth_int, estimate) %>%
+    mutate(
+      driver = "observed",
+      tref = "observation period",
+      delta_interval = estimate * 10
+    ),
+  acidification_profiles_station %>% 
+    filter(tref %in% c(2004, 2014)) %>% 
+    mutate(driver = "reconstructed")
+) %>%
+  ggplot() +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path(
+    data = . %>% filter(variable != "temp"),
+    aes(delta_interval,
+        depth,
+        col = tref)
+  ) +
+  # scale_color_brewer(
+  #   palette = "Dark2",
+  #   direction = -1,
+  #   labels = c(expression(Delta * C[ant]),
+  #              expression(Delta * C[total]),
+  #              expression(Observed))
+  # ) +
+  labs(y = "Depth (m)") +
+  theme(
+    # legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(
+    station ~ variable,
+    scales = "free",
+    switch = "x",
+    labeller = labeller(variable = x_axis_labels)
+  ) +
+  facetted_pos_scales(y = rep(list(
+    scale_y_continuous(trans = trans_reverser("sqrt"),
+                       breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+  ), 6))
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/publication/profiles_incremental_changes_station.png"
+    )
+  ),
+  width = 14,
+  height = 10,
+  dpi = 600,
+  bg = "white"
+)
 
 
 ```
