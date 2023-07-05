@@ -6038,7 +6038,7 @@ acidification_profiles_station <-
     mutate(across(is.numeric, ~ .x - first(.x))) %>% 
     ungroup() %>% 
     filter(tref == 20) %>% 
-    mutate(tref = "1994-2014\nreconstruction")
+    mutate(tref = "reconstruction\n1994-2014")
 
   
 acidification_profiles_station <-
@@ -6799,21 +6799,31 @@ x_axis_labels_stations <-
 bind_rows(
   TS_trends %>%
     filter(term == "year") %>%
-    select(station, variable = name, depth = depth_int, estimate) %>%
+    select(station, variable = name, depth = depth_int, estimate, std.error) %>%
     mutate(
       driver = "observed",
-      tref = "observed\nperiod",
-      delta_interval = estimate * 20
+      tref = "\ntrend over\nobserved\nperiod",
+      delta_interval = estimate * 20,
+      std.error = std.error * 20
     ),
   acidification_profiles_station %>%
     mutate(driver = "reconstructed")
 ) %>%
   ggplot(aes(delta_interval,
-             depth,
-             col = tref)) +
+             depth)) +
   geom_vline(xintercept = 0, col = "grey") +
-  geom_point(size = 0.5) +
-  geom_path() +
+  geom_ribbon(
+    data = . %>% filter(!is.na(std.error)),
+    aes(
+    xmin = delta_interval - std.error,
+    xmax = delta_interval + std.error,
+    fill = "Std error of trend"
+  ),
+  alpha = 0.5)+
+  geom_path(aes(col = tref)) +
+  geom_point(aes(col = tref), size = 0.5) +
+  scale_fill_muted() +
+  scale_color_muted() +
   labs(y = "Depth (m)",
        title = "20 year changes") +
   theme(
