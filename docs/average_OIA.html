@@ -546,15 +546,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree567c7cb81ee9d51c35c4d3455c0abecd7a47a434targetblank567c7cba">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreefc25b2434d48be90734a06ec29cf669fdeac6af7targetblankfc25b24a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/567c7cb81ee9d51c35c4d3455c0abecd7a47a434" target="_blank">567c7cb</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/fc25b2434d48be90734a06ec29cf669fdeac6af7" target="_blank">fc25b24</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree567c7cb81ee9d51c35c4d3455c0abecd7a47a434targetblank567c7cba"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreefc25b2434d48be90734a06ec29cf669fdeac6af7targetblankfc25b24a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +564,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/567c7cb81ee9d51c35c4d3455c0abecd7a47a434" target="_blank">567c7cb</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/fc25b2434d48be90734a06ec29cf669fdeac6af7" target="_blank">fc25b24</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -634,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/fc25b2434d48be90734a06ec29cf669fdeac6af7/analysis/average_OIA.Rmd" target="_blank">fc25b24</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-07-05
+</td>
+<td>
+obs-based trend uncertainty added
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/d7e1ef75649d7b1252062ae20f10b34f4564c47d/docs/average_OIA.html" target="_blank">d7e1ef7</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-07-05
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -5759,6 +5793,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d7e1ef75649d7b1252062ae20f10b34f4564c47d/docs/figure/average_OIA.Rmd/depth_layer_total_change-2.png" target="_blank">d7e1ef7</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-07-05
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/74e28a89f945307427f21d7e944ad70450d54ec0/docs/figure/average_OIA.Rmd/depth_layer_total_change-2.png" target="_blank">74e28a8</a>
 </td>
 <td>
@@ -9962,7 +10007,7 @@ acidification_profiles_station &lt;-
     mutate(across(is.numeric, ~ .x - first(.x))) %&gt;% 
     ungroup() %&gt;% 
     filter(tref == 20) %&gt;% 
-    mutate(tref = &quot;1994-2014\nreconstruction&quot;)
+    mutate(tref = &quot;reconstruction\n1994-2014&quot;)
 
   
 acidification_profiles_station &lt;-
@@ -10907,21 +10952,31 @@ x_axis_labels_stations &lt;-
 bind_rows(
   TS_trends %&gt;%
     filter(term == &quot;year&quot;) %&gt;%
-    select(station, variable = name, depth = depth_int, estimate) %&gt;%
+    select(station, variable = name, depth = depth_int, estimate, std.error) %&gt;%
     mutate(
       driver = &quot;observed&quot;,
-      tref = &quot;observed\nperiod&quot;,
-      delta_interval = estimate * 20
+      tref = &quot;\ntrend over\nobserved\nperiod&quot;,
+      delta_interval = estimate * 20,
+      std.error = std.error * 20
     ),
   acidification_profiles_station %&gt;%
     mutate(driver = &quot;reconstructed&quot;)
 ) %&gt;%
   ggplot(aes(delta_interval,
-             depth,
-             col = tref)) +
+             depth)) +
   geom_vline(xintercept = 0, col = &quot;grey&quot;) +
-  geom_point(size = 0.5) +
-  geom_path() +
+  geom_ribbon(
+    data = . %&gt;% filter(!is.na(std.error)),
+    aes(
+    xmin = delta_interval - std.error,
+    xmax = delta_interval + std.error,
+    fill = &quot;Std error of trend&quot;
+  ),
+  alpha = 0.5)+
+  geom_path(aes(col = tref)) +
+  geom_point(aes(col = tref), size = 0.5) +
+  scale_fill_muted() +
+  scale_color_muted() +
   labs(y = &quot;Depth (m)&quot;,
        title = &quot;20 year changes&quot;) +
   theme(
@@ -10965,6 +11020,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d7e1ef75649d7b1252062ae20f10b34f4564c47d/docs/figure/average_OIA.Rmd/profiles_incremental_change_station-1.png" target="_blank">d7e1ef7</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-07-05
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/71c609f998b4a59df9c5e863c8cb3702e7cdee63/docs/figure/average_OIA.Rmd/profiles_incremental_change_station-1.png" target="_blank">71c609f</a>
