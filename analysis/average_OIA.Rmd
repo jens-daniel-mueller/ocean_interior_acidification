@@ -5984,7 +5984,7 @@ for (i_station in unique(TS_product_stations$station)) {
   acidification_profiles_station <-
     cross_join(i_TS_product_stations,
                acidification_trend %>%
-                 select(-c(basin_AIP, contains("temp"))))
+                 select(-c(basin_AIP)))
   
   
   acidification_profiles_station <-
@@ -6030,15 +6030,34 @@ map +
 
 acidification_profiles_station <-
   acidification_profiles_station %>%
+    filter(tref %in% c(1994,2014)) %>% 
+    select(station, tref, lon, lat, depth,
+           all_of(OIA_variables)) %>% 
+    arrange(tref) %>% 
+    group_by(station, lat, lon, depth) %>% 
+    mutate(across(is.numeric, ~ .x - first(.x))) %>% 
+    ungroup() %>% 
+    filter(tref == 20) %>% 
+    mutate(tref = "1994-2014\nreconstruction")
+
+  
+acidification_profiles_station <-
+  acidification_profiles_station %>%
   mutate(area = earth_surf(lat, lon),
-         across(contains("_delta_interval"),
+         across(tco2:temp,
                 ~ . * area))
+  
+# acidification_profiles_station <-
+#   acidification_profiles_station %>%
+#   mutate(area = earth_surf(lat, lon),
+#          across(contains("_delta_interval"),
+#                 ~ . * area))
 
 # calculate regional means
 
 acidification_profiles_station <- acidification_profiles_station %>%
   group_by(tref, station, depth) %>%
-  summarise(across(contains("_delta_interval"),
+  summarise(across(tco2:temp,
                    ~ sum(.) / sum(area))) %>%
   ungroup()
 
@@ -6759,47 +6778,46 @@ dev.off()
 
 acidification_profiles_station <-
   acidification_profiles_station %>%
-  pivot_longer(contains("_delta_interval"),
+  pivot_longer(tco2:temp,
                names_to = "variable",
                values_to = "delta_interval") %>%
-  filter(depth <= 3000) %>%
-  mutate(variable = str_remove(variable, "_delta_interval"))
+  filter(depth <= 3000)
 
 acidification_profiles_station <- acidification_profiles_station %>%
   filter(variable %in% OIA_variables)
 
+x_axis_labels_stations <-
+  c(
+    x_axis_labels[2:6],
+    "tco2" = "ΔC<sub>ant</sub> or ΔDIC<br>(µmol kg<sup>-1</sup>)",
+    "PO4" = "ΔPO<sub>4</sub><br>(µmol kg<sup>-1</sup>)",
+    "sal" = "ΔSalinity",
+    "Si" = "ΔSilicate<br>(µmol kg<sup>-1</sup>)",
+    "talk" = "ΔAT<br>(µmol kg<sup>-1</sup>)"
+  )
+
 bind_rows(
   TS_trends %>%
-    filter(term == "year",
-           name %in% OIA_variables) %>%
+    filter(term == "year") %>%
     select(station, variable = name, depth = depth_int, estimate) %>%
     mutate(
       driver = "observed",
-      tref = "observation period",
-      delta_interval = estimate * 10
+      tref = "observed\nperiod",
+      delta_interval = estimate * 20
     ),
-  acidification_profiles_station %>% 
-    filter(tref %in% c(2004, 2014)) %>% 
+  acidification_profiles_station %>%
     mutate(driver = "reconstructed")
 ) %>%
-  ggplot() +
+  ggplot(aes(delta_interval,
+             depth,
+             col = tref)) +
   geom_vline(xintercept = 0, col = "grey") +
-  geom_path(
-    data = . %>% filter(variable != "temp"),
-    aes(delta_interval,
-        depth,
-        col = tref)
-  ) +
-  # scale_color_brewer(
-  #   palette = "Dark2",
-  #   direction = -1,
-  #   labels = c(expression(Delta * C[ant]),
-  #              expression(Delta * C[total]),
-  #              expression(Observed))
-  # ) +
-  labs(y = "Depth (m)") +
+  geom_point(size = 0.5) +
+  geom_path() +
+  labs(y = "Depth (m)",
+       title = "20 year changes") +
   theme(
-    # legend.title = element_blank(),
+    legend.title = element_blank(),
     axis.title.x = element_blank(),
     strip.background.x = element_blank(),
     strip.placement = "outside",
@@ -6809,22 +6827,25 @@ bind_rows(
     station ~ variable,
     scales = "free",
     switch = "x",
-    labeller = labeller(variable = x_axis_labels)
+    labeller = labeller(variable = x_axis_labels_stations)
   ) +
+  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
   facetted_pos_scales(y = rep(list(
     scale_y_continuous(trans = trans_reverser("sqrt"),
                        breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
   ), 6))
 
 
+
+
 ggsave(
   here::here(
     paste0(
-      "output/publication/profiles_incremental_changes_station.png"
+      "output/publication/profiles_20yr_changes_station.png"
     )
   ),
   width = 14,
-  height = 10,
+  height = 8,
   dpi = 600,
   bg = "white"
 )
