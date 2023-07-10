@@ -30,6 +30,369 @@ library(broom)
 ```
 
 
+
+# Define labels and breaks
+
+```{r define_labels_and_breaks_OIA_variables}
+
+labels_breaks <- function(i_var) {
+  if (i_var == "tco2") {
+    i_breaks <- c(-Inf, seq(0, 80, 10), Inf)
+    i_contour_level <- 50
+    i_legend_title <- "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)"
+  }
+  
+  if (i_var == "pH") {
+    i_breaks <- c(-Inf, seq(-0.12, 0, 0.02), Inf)
+    i_contour_level <- -0.08
+    i_legend_title <- "ΔpH<sub>T</sub>"
+  }
+  
+  if (i_var == "OmegaAragonite") {
+    i_breaks <- c(-Inf, seq(-0.8, 0, 0.1), Inf)
+    i_contour_level <- -0.5
+    i_legend_title <- "ΔΩ<sub>arag</sub>"
+  }
+  
+  if (i_var == "SIR") {
+    i_breaks <- c(-Inf, seq(-0.08, 0, 0.01), Inf)
+    i_contour_level <- -0.05
+    i_legend_title <- "ΔSIR"
+  }
+  
+  if (i_var == "H_free") {
+    i_breaks <- c(-Inf, seq(0, 3, 0.5), Inf)
+    i_contour_level <- 2
+    i_legend_title <-
+      "ΔH<sup>+</sup><sub>free</sub><br>(nmol kg<sup>-1</sup>)"
+  }
+  
+  if (i_var == "temp") {
+    i_breaks <- c(-Inf, seq(-0.6, 0, 0.2), seq(0.2, 0.6, 0.2), Inf)
+    i_contour_level <- 0
+    i_legend_title <-
+      "ΔT (°C)"
+  }
+  
+  all_labels_breaks <- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+
+
+x_axis_scales <-
+  list(
+    variable == "tco2" ~ scale_x_continuous(breaks = labels_breaks("tco2")$i_breaks[c(TRUE, FALSE)]),
+    variable == "pH" ~ scale_x_continuous(breaks = labels_breaks("pH")$i_breaks[c(TRUE, FALSE)]),
+    variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
+    variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks("SIR")$i_breaks[c(TRUE, FALSE)]),
+    variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks("H_free")$i_breaks[c(TRUE, FALSE)]),
+    variable == "temp" ~ scale_x_continuous(breaks = labels_breaks("temp")$i_breaks[c(TRUE, FALSE)])
+  )
+
+x_axis_labels <-
+  c(
+    "tco2" = labels_breaks("tco2")$i_legend_title,
+    "pH" = labels_breaks("pH")$i_legend_title,
+    "OmegaAragonite" = labels_breaks("OmegaAragonite")$i_legend_title,
+    "SIR" = labels_breaks("SIR")$i_legend_title,
+    "H_free" = labels_breaks("H_free")$i_legend_title,
+    "temp" = labels_breaks("temp")$i_legend_title
+  )
+
+
+contours <-
+  tibble(
+    contour =
+      c(
+        labels_breaks("tco2")$i_contour_level,
+        labels_breaks("pH")$i_contour_level,
+        labels_breaks("OmegaAragonite")$i_contour_level,
+        labels_breaks("SIR")$i_contour_level,
+        labels_breaks("H_free")$i_contour_level,
+        labels_breaks("temp")$i_contour_level
+      ),
+    variable =
+      c("tco2",
+        "pH",
+        "OmegaAragonite",
+        "SIR",
+        "H_free",
+        "temp")
+  )
+
+```
+
+
+```{r define_labels_and_breaks_OIA_variables_stations}
+
+x_axis_labels_stations <-
+  c(
+    x_axis_labels[2:6],
+    "tco2" = "ΔC<sub>ant</sub> or ΔDIC<br>(µmol kg<sup>-1</sup>)",
+    "PO4" = "ΔPO<sub>4</sub><br>(µmol kg<sup>-1</sup>)",
+    "sal" = "ΔSalinity",
+    "Si" = "ΔSilicate<br>(µmol kg<sup>-1</sup>)",
+    "talk" = "ΔTA<br>(µmol kg<sup>-1</sup>)"
+  )
+
+x_axis_labels_stations_absolute <-
+  c(
+    "pH"  =  "pH<sub>T</sub>",
+    "OmegaAragonite" = "Ω<sub>arag</sub>",
+    "SIR" = "SIR",
+    "H_free" = "H<sup>+</sup><sub>free</sub><br>(nmol kg<sup>-1</sup>)",
+    "temp" = "T (°C)",
+    "tco2" = "DIC<br>(µmol kg<sup>-1</sup>)",
+    "PO4" = "PO<sub>4</sub><br>(µmol kg<sup>-1</sup>)",
+    "sal" = "Salinity",
+    "Si" = "Silicate<br>(µmol kg<sup>-1</sup>)",
+    "talk" = "TA<br>(µmol kg<sup>-1</sup>)"
+  )
+
+```
+
+
+```{r define_labels_and_breaks_buffer_variables_addition}
+
+labels_breaks_buffer_variables_addition <- function(i_var) {
+  if (i_var == "pH") {
+    i_breaks <- c(-Inf, seq(-0.0033, -0.0015, 0.0003), Inf)
+    i_contour_level <- -0.0027
+    i_legend_title <- "ΔpH<sub>T</sub>/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
+  }
+  
+  if (i_var == "OmegaAragonite") {
+    i_breaks <- c(-Inf, seq(-0.011, -0.005, 0.001), Inf)
+    i_contour_level <- -0.007
+    i_legend_title <-
+      "ΔΩ<sub>arag</sub>/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
+  }
+  
+  if (i_var == "SIR") {
+    i_breaks <- c(-Inf, seq(-0.0017, -0.0007, 0.0002), Inf)
+    i_contour_level <- -0.0009
+    i_legend_title <- "ΔSIR/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
+  }
+  
+  if (i_var == "H_free") {
+    i_breaks <- c(-Inf, seq(-4.3, -1, 0.55), Inf)
+    i_contour_level <- -3.2
+    i_legend_title <-
+      "ΔH<sup>+</sup><sub>free</sub>/ΔDIC<br>(nmol kg<sup>-1</sup> / µmol kg<sup>-1</sup>)"
+  }
+  
+  all_labels_breaks <- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+
+x_axis_scales_buffer_variables_addition <-
+  list(
+    variable == "pH" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("pH")$i_breaks[c(TRUE, FALSE)]),
+    variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
+    variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("SIR")$i_breaks[c(TRUE, FALSE)]),
+    variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("H_free")$i_breaks[c(TRUE, FALSE)])
+  )
+
+x_axis_labels_buffer_variables_addition <-
+  c(
+    "pH" = labels_breaks_buffer_variables_addition("pH")$i_legend_title,
+    "OmegaAragonite" = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_legend_title,
+    "SIR" = labels_breaks_buffer_variables_addition("SIR")$i_legend_title,
+    "H_free" = labels_breaks_buffer_variables_addition("H_free")$i_legend_title
+  )
+
+
+contours_buffer_variables_addition <-
+  tibble(
+    contour =
+      c(
+        labels_breaks_buffer_variables_addition("pH")$i_contour_level,
+        labels_breaks_buffer_variables_addition("OmegaAragonite")$i_contour_level,
+        labels_breaks_buffer_variables_addition("SIR")$i_contour_level,
+        labels_breaks_buffer_variables_addition("H_free")$i_contour_level
+      ),
+    variable =
+      c("pH",
+        "OmegaAragonite",
+        "SIR",
+        "H_free")
+  )
+
+```
+
+
+```{r define_labels_and_breaks_buffer_variables_addition_change}
+
+
+labels_breaks_buffer_variables_addition_change <- function(i_var) {
+  if (i_var == "pH") {
+    i_breaks <- c(-Inf, seq(0, 8, 2), Inf)
+    i_contour_level <- 4
+    i_legend_title <- "Δ<sub>1900-2004</sub><br>ΔpH<sub>T</sub>/ΔDIC<br>(%)"
+  }
+  
+  if (i_var == "OmegaAragonite") {
+    i_breaks <- c(-Inf, seq(0,5,1), Inf)
+    i_contour_level <- 2
+    i_legend_title <-
+      "Δ<sub>1900-2004</sub><br>ΔΩ<sub>arag</sub>/ΔDIC<br>(%)"
+  }
+  
+  if (i_var == "SIR") {
+    i_breaks <- c(-Inf, seq(0,5,1), Inf)
+    i_contour_level <- 2
+    i_legend_title <- "Δ<sub>1900-2004</sub><br>ΔSIR/ΔDIC<br>(%)"
+  }
+  
+  if (i_var == "H_free") {
+    i_breaks <- c(-Inf, seq(0,25,5), Inf)
+    i_contour_level <- 10
+    i_legend_title <-
+      "Δ<sub>1900-2004</sub><br>ΔH<sup>+</sup><sub>free</sub>/ΔDIC<br>(%)"
+  }
+  
+  all_labels_breaks <- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+# 
+# x_axis_scales_buffer_variables_addition <-
+#   list(
+#     variable == "pH" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("pH")$i_breaks[c(TRUE, FALSE)]),
+#     variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
+#     variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("SIR")$i_breaks[c(TRUE, FALSE)]),
+#     variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("H_free")$i_breaks[c(TRUE, FALSE)])
+#   )
+# 
+# x_axis_labels_buffer_variables_addition <-
+#   c(
+#     "pH" = labels_breaks_buffer_variables_addition("pH")$i_legend_title,
+#     "OmegaAragonite" = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_legend_title,
+#     "SIR" = labels_breaks_buffer_variables_addition("SIR")$i_legend_title,
+#     "H_free" = labels_breaks_buffer_variables_addition("H_free")$i_legend_title
+#   )
+# 
+# 
+# contours_buffer_variables_addition <-
+#   tibble(
+#     contour =
+#       c(
+#         labels_breaks_buffer_variables_addition("pH")$i_contour_level,
+#         labels_breaks_buffer_variables_addition("OmegaAragonite")$i_contour_level,
+#         labels_breaks_buffer_variables_addition("SIR")$i_contour_level,
+#         labels_breaks_buffer_variables_addition("H_free")$i_contour_level
+#       ),
+#     variable =
+#       c("pH",
+#         "OmegaAragonite",
+#         "SIR",
+#         "H_free")
+#   )
+
+```
+
+
+```{r define_labels_and_breaks_buffer_variables, eval=FALSE}
+
+
+labels_breaks_buffer_variables <- function(i_var) {
+  if (i_var == "gammaDIC") {
+    i_breaks <- c(-Inf, seq(0, 80, 10), Inf)
+    i_contour_level <- 50
+    i_legend_title <- "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)"
+  }
+  
+  if (i_var == "betaDIC") {
+    i_breaks <- c(-Inf, seq(-0.12, 0, 0.02), Inf)
+    i_contour_level <- -0.08
+    i_legend_title <- "ΔpH<sub>T</sub>"
+  }
+  
+  if (i_var == "omegaDIC") {
+    i_breaks <- c(-Inf, seq(-0.8, 0, 0.1), Inf)
+    i_contour_level <- -0.5
+    i_legend_title <- "ΔΩ<sub>arag</sub>"
+  }
+  
+  if (i_var == "R") {
+    i_breaks <- c(-Inf, seq(-0.08, 0, 0.01), Inf)
+    i_contour_level <- -0.05
+    i_legend_title <- "ΔSIR"
+  }
+  
+  if (i_var == "tco2_talk_ratio") {
+    i_breaks <- c(-Inf, seq(0, 3, 0.5), Inf)
+    i_contour_level <- 2
+    i_legend_title <-
+      "ΔH<sup>+</sup><sub>free</sub><br>(nmol kg<sup>-1</sup>)"
+  }
+  
+  all_labels_breaks <- lst(i_breaks,
+                           i_contour_level,
+                           i_legend_title)
+  
+  return(all_labels_breaks)
+  
+}
+
+
+
+x_axis_scales_buffer_variables <-
+  list(
+    variable == "tco2" ~ scale_x_continuous(breaks = labels_breaks("tco2")$i_breaks[c(TRUE, FALSE)]),
+    variable == "pH" ~ scale_x_continuous(breaks = labels_breaks("pH")$i_breaks[c(TRUE, FALSE)]),
+    variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
+    variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks("SIR")$i_breaks[c(TRUE, FALSE)]),
+    variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks("H_free")$i_breaks[c(TRUE, FALSE)])
+  )
+
+x_axis_labels_buffer_variables <-
+  c(
+    "tco2" = labels_breaks("tco2")$i_legend_title,
+    "pH" = labels_breaks("pH")$i_legend_title,
+    "OmegaAragonite" = labels_breaks("OmegaAragonite")$i_legend_title,
+    "SIR" = labels_breaks("SIR")$i_legend_title,
+    "H_free" = labels_breaks("H_free")$i_legend_title,
+    "temp" = "ΔT (°C)"
+  )
+
+
+contours_buffer_variables <-
+  tibble(
+    contour =
+      c(
+        labels_breaks("tco2")$i_contour_level,
+        labels_breaks("pH")$i_contour_level,
+        labels_breaks("OmegaAragonite")$i_contour_level,
+        labels_breaks("SIR")$i_contour_level,
+        labels_breaks("H_free")$i_contour_level
+      ),
+    variable =
+      c("tco2",
+        "pH",
+        "OmegaAragonite",
+        "SIR",
+        "H_free")
+  )
+
+```
+
+
+
 # Read data
 
 ```{r define_paths_to_access_eMLR_files}
@@ -813,11 +1176,12 @@ ALOHA %>%
                      breaks = depth_labels) +
   facet_grid(~ selection, scales = "free_y") +
   theme_bw() +
-  labs(y = "Depth (m)",
-       title = "ALOHA | DIC observations") +
+  labs(x = expression(DIC~(µmol~kg^{-1})),
+       y = "Selected depth levels (m)",
+       title = "ALOHA | data selection and binning") +
   coord_cartesian(expand = FALSE) +
-  theme(panel.grid.minor = element_blank(),
-        axis.title.x = element_blank())
+  theme(panel.grid.minor = element_blank())
+
 
 ggsave(
   here::here("output/all_variables/ALOHA_tco2_all_data_profiles.pdf"),
@@ -990,11 +1354,11 @@ BATS %>%
                      breaks = depth_labels) +
   facet_grid(~ selection, scales = "free_y") +
   theme_bw() +
-  labs(y = "Depth (m)",
-       title = "BATS | DIC observations") +
+  labs(x = expression(DIC~(µmol~kg^{-1})),
+       y = "Selected depth levels (m)",
+       title = "BATS | data selection and binning") +
   coord_cartesian(expand = FALSE) +
-  theme(panel.grid.minor = element_blank(),
-        axis.title.x = element_blank())
+  theme(panel.grid.minor = element_blank())
 
 ggsave(
   here::here("output/all_variables/BATS_tco2_all_data_profiles.pdf"),
@@ -1133,40 +1497,79 @@ date_range <-
   c(min(TS_product$date),
     max(TS_product$date))
 
-# pdf(
-#   here::here("output/all_variables/BATS_ALOHA_time_series.pdf"),
-#   width = 14,
-#   height = 8
-# )
-# 
-# TS_product %>%
-#   arrange(date) %>% 
-#   group_by(depth_int, station) %>%
-#   group_split() %>%
-#   # head(1) %>%
-#   map(
-#     ~ ggplot(data = .x,
-#              aes(date, value)) +
-#       geom_path() +
-#       geom_point(aes(fill = depth_int - depth),
-#                  shape = 21,
-#                  alpha = 0.5) +
-#       labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
-#       scale_fill_continuous_divergingx(
-#         name = "Vertical distance\nfrom depth centre (m)"
-#       ) +
-#       scale_x_date(limits = date_range) +
-#       geom_smooth(method = "lm", se = FALSE, col = "black") +
-#       # geom_smooth(se = FALSE, col = "grey60") +
-#       facet_wrap(. ~ name,
-#                  scales = "free",
-#                  ncol = 3) +
-#       theme(axis.title = element_blank(),
-#             legend.position = c(0.6,0.1),
-#             legend.direction = "horizontal")
-#   )
-# 
-# dev.off()
+
+
+TS_product %>% 
+  filter(!is.na(value)) %>% 
+  ggplot(aes(value, depth, col = year)) +
+  geom_point(size = 1, alpha = 0.5) +
+  scale_color_viridis_c() +
+  coord_cartesian(expand = FALSE) +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(
+    station ~ name,
+    scales = "free",
+    switch = "x",
+    labeller = labeller(name = x_axis_labels_stations_absolute)
+  ) +
+  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
+  facetted_pos_scales(y = rep(list(
+    scale_y_continuous(trans = trans_reverser("sqrt"),
+                       breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+  ), 6))
+
+ggsave(
+  here::here("output/all_variables/BATS_ALOHA_all_variables_profiles_absolute.png"),
+  width = 14,
+  height = 8
+)
+
+cairo_pdf(
+  here::here("output/all_variables/BATS_ALOHA_time_series.pdf"),
+  width = 14,
+  height = 10
+)
+
+TS_product %>%
+  arrange(date) %>%
+  group_by(depth_int, station) %>%
+  group_split() %>%
+  head(1) %>%
+  map(
+    ~ ggplot(data = .x,
+             aes(date, value)) +
+      geom_path() +
+      geom_point(aes(fill = depth_int - depth),
+                 shape = 21,
+                 alpha = 0.5) +
+      labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
+      scale_fill_continuous_divergingx(
+        name = "Vertical distance\nfrom depth centre (m)"
+      ) +
+      scale_x_date(limits = date_range) +
+      geom_smooth(method = "lm", se = FALSE, col = "black") +
+      facet_wrap(
+        . ~ name,
+        labeller = labeller(name = x_axis_labels_stations_absolute),
+        scales = "free",
+        ncol = 3
+      ) +
+      theme(
+        axis.title = element_blank(),
+        legend.position = c(0.6, 0.1),
+        legend.direction = "horizontal",
+        strip.text.x = element_markdown()
+      )
+  )
+
+dev.off()
 
 detrended <- TS_product %>%
   nest(data = -c(depth_int, station, name)) %>%
@@ -1191,32 +1594,39 @@ detrended <-
   detrended %>%
   arrange(station, date)
 
-# pdf(
-#   here::here("output/all_variables/BATS_ALOHA_time_series_detrended.pdf"),
-#   width = 14,
-#   height = 8
-# )
-# 
-# detrended %>%
-#   group_by(depth_int, station) %>%
-#   group_split() %>%
-#   # head(1) %>%
-#   map(
-#     ~ ggplot(data = .x,
-#              aes(date, value_detrended)) +
-#       geom_path() +
-#       geom_point(shape = 21,
-#                  fill = "black",
-#                  alpha = 0.2) +
-#       labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
-#       # geom_smooth(se = FALSE, col = "grey60") +
-#       geom_smooth(method = "lm", se = FALSE, col = "black") +
-#       facet_wrap(. ~ name,
-#                  scales = "free",
-#                  ncol = 3)
-#   )
-# 
-# dev.off()
+cairo_pdf(
+  here::here("output/all_variables/BATS_ALOHA_time_series_detrended.pdf"),
+  width = 14,
+  height = 10
+)
+
+detrended %>%
+  group_by(depth_int, station) %>%
+  group_split() %>%
+  head(1) %>%
+  map(
+    ~ ggplot(data = .x,
+             aes(date, value_detrended)) +
+      geom_path() +
+      geom_point(shape = 21,
+                 fill = "black",
+                 alpha = 0.2) +
+      labs(title = paste(.x$station, "|", .x$depth_int,"m")) +
+      # geom_smooth(se = FALSE, col = "grey60") +
+      geom_smooth(method = "lm", se = FALSE, col = "black") +
+      facet_wrap(
+        . ~ name,
+        labeller = labeller(name = x_axis_labels_stations_absolute),
+        scales = "free",
+        ncol = 3
+      ) +
+      theme(
+        axis.title = element_blank(),
+        strip.text.x = element_markdown()
+      )
+  )
+
+dev.off()
 
 
 detrended <-
@@ -1228,41 +1638,47 @@ detrended <-
   
 
 
-# pdf(
-#   here::here("output/all_variables/BATS_ALOHA_detrended_monthly_climatology.pdf"),
-#   width = 14,
-#   height = 8
-# )
-# 
-# 
-# detrended %>%
-#   group_by(depth_int, station) %>%
-#   group_split() %>%
-#   # head(1) %>%
-#   map(
-#     ~ ggplot(data = .x) +
-#       # geom_path(aes(month, value_detrended, group = year), col="grey80") +
-#       geom_point(aes(month, value_detrended), alpha = 0.2) +
-#       geom_point(
-#         aes(month, mean, fill = "Monthly mean"),
-#         shape = 21,
-#         size = 2
-#       ) +
-#       geom_point(
-#         aes(month, median, fill = "Monthly median"),
-#         shape = 21,
-#         size = 2
-#       ) +
-#       labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
-#       scale_x_continuous(breaks = seq(1, 12, 3)) +
-#       theme(legend.title = element_blank()) +
-#       facet_wrap(~ name, scales = "free_y", ncol = 3) +
-#       theme(
-#         legend.position = c(0.6, 0.1)
-#       )
-#   )
-# 
-# dev.off()
+cairo_pdf(
+  here::here("output/all_variables/BATS_ALOHA_detrended_monthly_climatology.pdf"),
+  width = 14,
+  height = 10
+)
+
+
+detrended %>%
+  group_by(depth_int, station) %>%
+  group_split() %>%
+  head(1) %>%
+  map(
+    ~ ggplot(data = .x) +
+      geom_point(aes(month, value_detrended), alpha = 0.2) +
+      geom_point(
+        aes(month, mean, fill = "Monthly mean"),
+        shape = 21,
+        size = 2
+      ) +
+      geom_point(
+        aes(month, median, fill = "Monthly median"),
+        shape = 21,
+        size = 2
+      ) +
+      labs(title = paste(.x$station, "|", .x$depth_int, "m"),
+           y = "Detrended values") +
+      scale_x_continuous(breaks = seq(1, 12, 3)) +
+      facet_wrap(
+        . ~ name,
+        labeller = labeller(name = x_axis_labels_stations_absolute),
+        scales = "free",
+        ncol = 3
+      ) +
+      theme(
+        legend.title = element_blank(),
+        legend.position = c(0.6, 0.1),
+        strip.text.x = element_markdown()
+      )
+  )
+
+dev.off()
 
 
 detrended <-
@@ -1271,62 +1687,66 @@ detrended <-
 
 
 
-# pdf(
-#   here::here(
-#     "output/all_variables/BATS_ALOHA_time_series_deasonalized.pdf"
-#   ),
-#   width = 14,
-#   height = 8
-# )
-# 
-# 
-# detrended %>%
-#   group_by(depth_int, station) %>%
-#   group_split() %>%
-#   # head(1) %>%
-#   map(
-#     ~ ggplot(data = .x) +
-#       geom_path(aes(date, value,
-#                     col = "measured")) +
-#       geom_point(
-#         aes(date, value,
-#             fill = "measured"),
-#         shape = 21,
-#         alpha = 0.2
-#       ) +
-#       geom_path(aes(date, value_deseason,
-#                     col = "deseasonalized")) +
-#       geom_point(
-#         aes(date, value_deseason,
-#             fill = "deseasonalized"),
-#         shape = 21,
-#         alpha = 0.2
-#       ) +
-#       geom_smooth(
-#         aes(date, value, col = "measured"),
-#         method = "lm",
-#         se = FALSE
-#       ) +
-#       geom_smooth(
-#         aes(date, value_deseason, col = "deseasonalized"),
-#         method = "lm",
-#         se = FALSE
-#       ) +
-#       scale_color_manual(values = c("red", "grey"), name = "") +
-#       scale_fill_manual(values = c("red", "grey"), name = "") +
-#       labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
-#       facet_wrap(. ~ name,
-#                  scales = "free",
-#                  ncol = 3) +
-#       scale_x_date(limits = date_range) +
-#       theme(
-#         axis.title = element_blank(),
-#         legend.title = element_blank(),
-#         legend.position = c(0.6, 0.1)
-#       )
-#   )
-# 
-# dev.off()
+cairo_pdf(
+  here::here(
+    "output/all_variables/BATS_ALOHA_time_series_deasonalized.pdf"
+  ),
+  width = 14,
+  height = 10
+)
+
+
+detrended %>%
+  group_by(depth_int, station) %>%
+  group_split() %>%
+  # head(1) %>%
+  map(
+    ~ ggplot(data = .x) +
+      geom_path(aes(date, value,
+                    col = "measured")) +
+      geom_point(
+        aes(date, value,
+            fill = "measured"),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_path(aes(date, value_deseason,
+                    col = "deseasonalized")) +
+      geom_point(
+        aes(date, value_deseason,
+            fill = "deseasonalized"),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_smooth(
+        aes(date, value, col = "measured"),
+        method = "lm",
+        se = FALSE
+      ) +
+      geom_smooth(
+        aes(date, value_deseason, col = "deseasonalized"),
+        method = "lm",
+        se = FALSE
+      ) +
+      scale_color_manual(values = c("red", "grey"), name = "") +
+      scale_fill_manual(values = c("red", "grey"), name = "") +
+      labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
+      facet_wrap(
+        . ~ name,
+        labeller = labeller(name = x_axis_labels_stations_absolute),
+        scales = "free",
+        ncol = 3
+      ) +
+      theme(
+        axis.title = element_blank(),
+        strip.text.x = element_markdown(),
+        legend.title = element_blank(),
+        legend.position = c(0.6, 0.1)
+      ) +
+      scale_x_date(limits = date_range)
+  )
+
+dev.off()
 
 
 detrended %>%
@@ -1352,60 +1772,64 @@ detrended <-
 
 
 
-# pdf(
-#   here::here(
-#     "output/all_variables/BATS_ALOHA_time_series_deasonalized_annual.pdf"
-#   ),
-#   width = 14,
-#   height = 8
-# )
-# 
-# 
-# detrended %>%
-#   group_by(depth_int, station) %>%
-#   group_split() %>%
-#   # head(1) %>%
-#   map(
-#     ~ ggplot(data = .x) +
-#       geom_path(aes(date, value_deseason,
-#                     col = "deseasonalized")) +
-#       geom_point(
-#         aes(date, value_deseason,
-#             fill = "deseasonalized"),
-#         shape = 21,
-#         alpha = 0.2
-#       ) +
-#       geom_path(aes(date, value_deseason_annual,
-#                     col = "deseasonalized annual mean")) +
-#       geom_point(
-#         aes(date, value_deseason_annual,
-#             fill = "deseasonalized annual mean"),
-#         shape = 21,
-#         alpha = 0.2
-#       ) +
-#       geom_smooth(aes(date, value_deseason, col = "deseasonalized"),
-#                   method = "lm",
-#                   se = FALSE)+
-#       geom_smooth(
-#         aes(date, value_deseason_annual, col = "deseasonalized annual mean"),
-#         method = "lm",
-#         se = FALSE
-#       ) +
-#       scale_color_manual(values = c("grey", "red"), name = "") +
-#       scale_fill_manual(values = c("grey", "red"), name = "") +
-#       labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
-#       facet_wrap(. ~ name,
-#                  scales = "free",
-#                  ncol = 3) +
-#       scale_x_date(limits = date_range) +
-#       theme(
-#         axis.title = element_blank(),
-#         legend.title = element_blank(),
-#         legend.position = c(0.6, 0.1)
-#       )
-#   )
-# 
-# dev.off()
+cairo_pdf(
+  here::here(
+    "output/all_variables/BATS_ALOHA_time_series_deasonalized_annual.pdf"
+  ),
+  width = 14,
+  height = 10
+)
+
+
+detrended %>%
+  group_by(depth_int, station) %>%
+  group_split() %>%
+  head(1) %>%
+  map(
+    ~ ggplot(data = .x) +
+      geom_path(aes(date, value_deseason,
+                    col = "deseasonalized")) +
+      geom_point(
+        aes(date, value_deseason,
+            fill = "deseasonalized"),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_path(aes(date, value_deseason_annual,
+                    col = "deseasonalized annual mean")) +
+      geom_point(
+        aes(date, value_deseason_annual,
+            fill = "deseasonalized annual mean"),
+        shape = 21,
+        alpha = 0.2
+      ) +
+      geom_smooth(aes(date, value_deseason, col = "deseasonalized"),
+                  method = "lm",
+                  se = FALSE)+
+      geom_smooth(
+        aes(date, value_deseason_annual, col = "deseasonalized annual mean"),
+        method = "lm",
+        se = FALSE
+      ) +
+      scale_color_manual(values = c("grey", "red"), name = "") +
+      scale_fill_manual(values = c("grey", "red"), name = "") +
+      labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
+      facet_wrap(
+        . ~ name,
+        labeller = labeller(name = x_axis_labels_stations_absolute),
+        scales = "free",
+        ncol = 3
+      ) +
+      theme(
+        axis.title = element_blank(),
+        strip.text.x = element_markdown(),
+        legend.title = element_blank(),
+        legend.position = c(0.6, 0.1)
+      ) +
+      scale_x_date(limits = date_range)
+  )
+
+dev.off()
 
 
 detrended_annual %>%
@@ -1462,21 +1886,32 @@ TS_trends %>%
   ),
   alpha = 0.5) +
   geom_path(aes(col = station)) +
-  scale_y_reverse(breaks = seq(0, 3000, 500)) +
   scale_fill_brewer(palette = "Dark2") +
   scale_color_brewer(palette = "Dark2") +
-  labs(y = "Depth (m)",
-       x = "Long term trend") +
-  # scale_y_continuous(trans = trans_reverser("sqrt")) +
-  coord_cartesian(expand = 0, ylim = c(3000, 0)) +
-  facet_wrap( ~ name, scales = "free_x",
-              ncol = 3) +
-  theme(legend.position = c(0.6, 0.1))
+  labs(y = "Depth (m)") +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(
+    . ~ name,
+    scales = "free",
+    switch = "x",
+    labeller = labeller(name = x_axis_labels_stations)
+  ) +
+  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
+  facetted_pos_scales(y = rep(list(
+    scale_y_continuous(trans = trans_reverser("sqrt"),
+                       breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+  ), 6))
 
 ggsave(
-  here::here("output/all_variables/BATS_ALOHA_annual_mean_trend_profile.pdf"),
-  width = 8,
-  height = 14
+  here::here("output/all_variables/BATS_ALOHA_all_variables_profiles_trend.png"),
+  width = 14,
+  height = 6
 )
 
 ```
@@ -1527,342 +1962,6 @@ ocean_volume_biome <- ocean_volume_biome %>%
 
 rm(ocean_volume_global)
 rm(ocean_bathymetry)
-```
-
-
-
-# Define labels and breaks
-
-```{r define_labels_and_breaks_OIA_variables}
-
-labels_breaks <- function(i_var) {
-  if (i_var == "tco2") {
-    i_breaks <- c(-Inf, seq(0, 80, 10), Inf)
-    i_contour_level <- 50
-    i_legend_title <- "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)"
-  }
-  
-  if (i_var == "pH") {
-    i_breaks <- c(-Inf, seq(-0.12, 0, 0.02), Inf)
-    i_contour_level <- -0.08
-    i_legend_title <- "ΔpH<sub>T</sub>"
-  }
-  
-  if (i_var == "OmegaAragonite") {
-    i_breaks <- c(-Inf, seq(-0.8, 0, 0.1), Inf)
-    i_contour_level <- -0.5
-    i_legend_title <- "ΔΩ<sub>arag</sub>"
-  }
-  
-  if (i_var == "SIR") {
-    i_breaks <- c(-Inf, seq(-0.08, 0, 0.01), Inf)
-    i_contour_level <- -0.05
-    i_legend_title <- "ΔSIR"
-  }
-  
-  if (i_var == "H_free") {
-    i_breaks <- c(-Inf, seq(0, 3, 0.5), Inf)
-    i_contour_level <- 2
-    i_legend_title <-
-      "ΔH<sup>+</sup><sub>free</sub><br>(nmol kg<sup>-1</sup>)"
-  }
-  
-  if (i_var == "temp") {
-    i_breaks <- c(-Inf, seq(-0.6, 0, 0.2), seq(0.2, 0.6, 0.2), Inf)
-    i_contour_level <- 0
-    i_legend_title <-
-      "ΔT (°C)"
-  }
-  
-  all_labels_breaks <- lst(i_breaks,
-                           i_contour_level,
-                           i_legend_title)
-  
-  return(all_labels_breaks)
-  
-}
-
-
-
-x_axis_scales <-
-  list(
-    variable == "tco2" ~ scale_x_continuous(breaks = labels_breaks("tco2")$i_breaks[c(TRUE, FALSE)]),
-    variable == "pH" ~ scale_x_continuous(breaks = labels_breaks("pH")$i_breaks[c(TRUE, FALSE)]),
-    variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
-    variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks("SIR")$i_breaks[c(TRUE, FALSE)]),
-    variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks("H_free")$i_breaks[c(TRUE, FALSE)]),
-    variable == "temp" ~ scale_x_continuous(breaks = labels_breaks("temp")$i_breaks[c(TRUE, FALSE)])
-  )
-
-x_axis_labels <-
-  c(
-    "tco2" = labels_breaks("tco2")$i_legend_title,
-    "pH" = labels_breaks("pH")$i_legend_title,
-    "OmegaAragonite" = labels_breaks("OmegaAragonite")$i_legend_title,
-    "SIR" = labels_breaks("SIR")$i_legend_title,
-    "H_free" = labels_breaks("H_free")$i_legend_title,
-    "temp" = labels_breaks("temp")$i_legend_title
-  )
-
-
-contours <-
-  tibble(
-    contour =
-      c(
-        labels_breaks("tco2")$i_contour_level,
-        labels_breaks("pH")$i_contour_level,
-        labels_breaks("OmegaAragonite")$i_contour_level,
-        labels_breaks("SIR")$i_contour_level,
-        labels_breaks("H_free")$i_contour_level,
-        labels_breaks("temp")$i_contour_level
-      ),
-    variable =
-      c("tco2",
-        "pH",
-        "OmegaAragonite",
-        "SIR",
-        "H_free",
-        "temp")
-  )
-
-```
-
-
-```{r define_labels_and_breaks_buffer_variables_addition}
-
-buffer_variables_addition
-
-labels_breaks_buffer_variables_addition <- function(i_var) {
-  if (i_var == "pH") {
-    i_breaks <- c(-Inf, seq(-0.0033, -0.0015, 0.0003), Inf)
-    i_contour_level <- -0.0027
-    i_legend_title <- "ΔpH<sub>T</sub>/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
-  }
-  
-  if (i_var == "OmegaAragonite") {
-    i_breaks <- c(-Inf, seq(-0.011, -0.005, 0.001), Inf)
-    i_contour_level <- -0.007
-    i_legend_title <-
-      "ΔΩ<sub>arag</sub>/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
-  }
-  
-  if (i_var == "SIR") {
-    i_breaks <- c(-Inf, seq(-0.0017, -0.0007, 0.0002), Inf)
-    i_contour_level <- -0.0009
-    i_legend_title <- "ΔSIR/ΔDIC<br>(/ µmol kg<sup>-1</sup>)"
-  }
-  
-  if (i_var == "H_free") {
-    i_breaks <- c(-Inf, seq(-4.3, -1, 0.55), Inf)
-    i_contour_level <- -3.2
-    i_legend_title <-
-      "ΔH<sup>+</sup><sub>free</sub>/ΔDIC<br>(nmol kg<sup>-1</sup> / µmol kg<sup>-1</sup>)"
-  }
-  
-  all_labels_breaks <- lst(i_breaks,
-                           i_contour_level,
-                           i_legend_title)
-  
-  return(all_labels_breaks)
-  
-}
-
-
-x_axis_scales_buffer_variables_addition <-
-  list(
-    variable == "pH" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("pH")$i_breaks[c(TRUE, FALSE)]),
-    variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
-    variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("SIR")$i_breaks[c(TRUE, FALSE)]),
-    variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("H_free")$i_breaks[c(TRUE, FALSE)])
-  )
-
-x_axis_labels_buffer_variables_addition <-
-  c(
-    "pH" = labels_breaks_buffer_variables_addition("pH")$i_legend_title,
-    "OmegaAragonite" = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_legend_title,
-    "SIR" = labels_breaks_buffer_variables_addition("SIR")$i_legend_title,
-    "H_free" = labels_breaks_buffer_variables_addition("H_free")$i_legend_title
-  )
-
-
-contours_buffer_variables_addition <-
-  tibble(
-    contour =
-      c(
-        labels_breaks_buffer_variables_addition("pH")$i_contour_level,
-        labels_breaks_buffer_variables_addition("OmegaAragonite")$i_contour_level,
-        labels_breaks_buffer_variables_addition("SIR")$i_contour_level,
-        labels_breaks_buffer_variables_addition("H_free")$i_contour_level
-      ),
-    variable =
-      c("pH",
-        "OmegaAragonite",
-        "SIR",
-        "H_free")
-  )
-
-```
-
-
-```{r define_labels_and_breaks_buffer_variables_addition_change}
-
-
-labels_breaks_buffer_variables_addition_change <- function(i_var) {
-  if (i_var == "pH") {
-    i_breaks <- c(-Inf, seq(0, 8, 2), Inf)
-    i_contour_level <- 4
-    i_legend_title <- "Δ<sub>1900-2004</sub><br>ΔpH<sub>T</sub>/ΔDIC<br>(%)"
-  }
-  
-  if (i_var == "OmegaAragonite") {
-    i_breaks <- c(-Inf, seq(0,5,1), Inf)
-    i_contour_level <- 2
-    i_legend_title <-
-      "Δ<sub>1900-2004</sub><br>ΔΩ<sub>arag</sub>/ΔDIC<br>(%)"
-  }
-  
-  if (i_var == "SIR") {
-    i_breaks <- c(-Inf, seq(0,5,1), Inf)
-    i_contour_level <- 2
-    i_legend_title <- "Δ<sub>1900-2004</sub><br>ΔSIR/ΔDIC<br>(%)"
-  }
-  
-  if (i_var == "H_free") {
-    i_breaks <- c(-Inf, seq(0,25,5), Inf)
-    i_contour_level <- 10
-    i_legend_title <-
-      "Δ<sub>1900-2004</sub><br>ΔH<sup>+</sup><sub>free</sub>/ΔDIC<br>(%)"
-  }
-  
-  all_labels_breaks <- lst(i_breaks,
-                           i_contour_level,
-                           i_legend_title)
-  
-  return(all_labels_breaks)
-  
-}
-
-# 
-# x_axis_scales_buffer_variables_addition <-
-#   list(
-#     variable == "pH" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("pH")$i_breaks[c(TRUE, FALSE)]),
-#     variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
-#     variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("SIR")$i_breaks[c(TRUE, FALSE)]),
-#     variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks_buffer_variables_addition("H_free")$i_breaks[c(TRUE, FALSE)])
-#   )
-# 
-# x_axis_labels_buffer_variables_addition <-
-#   c(
-#     "pH" = labels_breaks_buffer_variables_addition("pH")$i_legend_title,
-#     "OmegaAragonite" = labels_breaks_buffer_variables_addition("OmegaAragonite")$i_legend_title,
-#     "SIR" = labels_breaks_buffer_variables_addition("SIR")$i_legend_title,
-#     "H_free" = labels_breaks_buffer_variables_addition("H_free")$i_legend_title
-#   )
-# 
-# 
-# contours_buffer_variables_addition <-
-#   tibble(
-#     contour =
-#       c(
-#         labels_breaks_buffer_variables_addition("pH")$i_contour_level,
-#         labels_breaks_buffer_variables_addition("OmegaAragonite")$i_contour_level,
-#         labels_breaks_buffer_variables_addition("SIR")$i_contour_level,
-#         labels_breaks_buffer_variables_addition("H_free")$i_contour_level
-#       ),
-#     variable =
-#       c("pH",
-#         "OmegaAragonite",
-#         "SIR",
-#         "H_free")
-#   )
-
-```
-
-
-```{r define_labels_and_breaks_buffer_variables, eval=FALSE}
-
-buffer_variables
-
-labels_breaks_buffer_variables <- function(i_var) {
-  if (i_var == "gammaDIC") {
-    i_breaks <- c(-Inf, seq(0, 80, 10), Inf)
-    i_contour_level <- 50
-    i_legend_title <- "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)"
-  }
-  
-  if (i_var == "betaDIC") {
-    i_breaks <- c(-Inf, seq(-0.12, 0, 0.02), Inf)
-    i_contour_level <- -0.08
-    i_legend_title <- "ΔpH<sub>T</sub>"
-  }
-  
-  if (i_var == "omegaDIC") {
-    i_breaks <- c(-Inf, seq(-0.8, 0, 0.1), Inf)
-    i_contour_level <- -0.5
-    i_legend_title <- "ΔΩ<sub>arag</sub>"
-  }
-  
-  if (i_var == "R") {
-    i_breaks <- c(-Inf, seq(-0.08, 0, 0.01), Inf)
-    i_contour_level <- -0.05
-    i_legend_title <- "ΔSIR"
-  }
-  
-  if (i_var == "tco2_talk_ratio") {
-    i_breaks <- c(-Inf, seq(0, 3, 0.5), Inf)
-    i_contour_level <- 2
-    i_legend_title <-
-      "ΔH<sup>+</sup><sub>free</sub><br>(nmol kg<sup>-1</sup>)"
-  }
-  
-  all_labels_breaks <- lst(i_breaks,
-                           i_contour_level,
-                           i_legend_title)
-  
-  return(all_labels_breaks)
-  
-}
-
-
-
-x_axis_scales_buffer_variables <-
-  list(
-    variable == "tco2" ~ scale_x_continuous(breaks = labels_breaks("tco2")$i_breaks[c(TRUE, FALSE)]),
-    variable == "pH" ~ scale_x_continuous(breaks = labels_breaks("pH")$i_breaks[c(TRUE, FALSE)]),
-    variable == "OmegaAragonite" ~ scale_x_continuous(breaks = labels_breaks("OmegaAragonite")$i_breaks[c(TRUE, FALSE)]),
-    variable == "SIR" ~ scale_x_continuous(breaks = labels_breaks("SIR")$i_breaks[c(TRUE, FALSE)]),
-    variable == "H_free" ~ scale_x_continuous(breaks = labels_breaks("H_free")$i_breaks[c(TRUE, FALSE)])
-  )
-
-x_axis_labels_buffer_variables <-
-  c(
-    "tco2" = labels_breaks("tco2")$i_legend_title,
-    "pH" = labels_breaks("pH")$i_legend_title,
-    "OmegaAragonite" = labels_breaks("OmegaAragonite")$i_legend_title,
-    "SIR" = labels_breaks("SIR")$i_legend_title,
-    "H_free" = labels_breaks("H_free")$i_legend_title,
-    "temp" = "ΔT (°C)"
-  )
-
-
-contours_buffer_variables <-
-  tibble(
-    contour =
-      c(
-        labels_breaks("tco2")$i_contour_level,
-        labels_breaks("pH")$i_contour_level,
-        labels_breaks("OmegaAragonite")$i_contour_level,
-        labels_breaks("SIR")$i_contour_level,
-        labels_breaks("H_free")$i_contour_level
-      ),
-    variable =
-      c("tco2",
-        "pH",
-        "OmegaAragonite",
-        "SIR",
-        "H_free")
-  )
-
 ```
 
 
@@ -6786,16 +6885,7 @@ acidification_profiles_station <-
 acidification_profiles_station <- acidification_profiles_station %>%
   filter(variable %in% OIA_variables)
 
-x_axis_labels_stations <-
-  c(
-    x_axis_labels[2:6],
-    "tco2" = "ΔC<sub>ant</sub> or ΔDIC<br>(µmol kg<sup>-1</sup>)",
-    "PO4" = "ΔPO<sub>4</sub><br>(µmol kg<sup>-1</sup>)",
-    "sal" = "ΔSalinity",
-    "Si" = "ΔSilicate<br>(µmol kg<sup>-1</sup>)",
-    "talk" = "ΔAT<br>(µmol kg<sup>-1</sup>)"
-  )
-
+acidification_profiles_station_obs_reconstructed <-
 bind_rows(
   TS_trends %>%
     filter(term == "year") %>%
@@ -6808,7 +6898,21 @@ bind_rows(
     ),
   acidification_profiles_station %>%
     mutate(driver = "reconstructed")
-) %>%
+) 
+
+
+acidification_profiles_station_obs_reconstructed %>%
+  filter(station == "ALOHA" & depth <= 250 |
+           station == "BATS" & depth <= 500) %>% 
+  group_by(station, variable, driver) %>% 
+  summarise(delta_interval = mean(delta_interval)) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = driver,
+              values_from = delta_interval) %>% 
+  mutate(relative = 100 * reconstructed / observed)
+
+
+acidification_profiles_station_obs_reconstructed %>%
   ggplot(aes(delta_interval,
              depth)) +
   geom_vline(xintercept = 0, col = "grey") +
