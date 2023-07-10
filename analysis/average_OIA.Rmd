@@ -1500,11 +1500,11 @@ date_range <-
 
 
 TS_product %>% 
-  filter(!is.na(value)) %>% 
+  filter(!is.na(value),
+         depth <= 3000) %>% 
   ggplot(aes(value, depth, col = year)) +
   geom_point(size = 1, alpha = 0.5) +
   scale_color_viridis_c() +
-  coord_cartesian(expand = FALSE) +
   labs(y = "Depth (m)") +
   theme(
     legend.title = element_blank(),
