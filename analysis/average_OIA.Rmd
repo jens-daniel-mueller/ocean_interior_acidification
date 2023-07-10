@@ -1533,6 +1533,7 @@ ggsave(
 
 cairo_pdf(
   here::here("output/all_variables/BATS_ALOHA_time_series.pdf"),
+  onefile = TRUE,
   width = 14,
   height = 10
 )
@@ -1596,6 +1597,7 @@ detrended <-
 
 cairo_pdf(
   here::here("output/all_variables/BATS_ALOHA_time_series_detrended.pdf"),
+  onefile = TRUE,
   width = 14,
   height = 10
 )
@@ -1640,6 +1642,7 @@ detrended <-
 
 cairo_pdf(
   here::here("output/all_variables/BATS_ALOHA_detrended_monthly_climatology.pdf"),
+  onefile = TRUE,
   width = 14,
   height = 10
 )
@@ -1691,6 +1694,7 @@ cairo_pdf(
   here::here(
     "output/all_variables/BATS_ALOHA_time_series_deasonalized.pdf"
   ),
+  onefile = TRUE,
   width = 14,
   height = 10
 )
@@ -1699,7 +1703,7 @@ cairo_pdf(
 detrended %>%
   group_by(depth_int, station) %>%
   group_split() %>%
-  # head(1) %>%
+  # head(2) %>%
   map(
     ~ ggplot(data = .x) +
       geom_path(aes(date, value,
@@ -1776,6 +1780,7 @@ cairo_pdf(
   here::here(
     "output/all_variables/BATS_ALOHA_time_series_deasonalized_annual.pdf"
   ),
+  onefile = TRUE,
   width = 14,
   height = 10
 )
@@ -6955,7 +6960,7 @@ acidification_profiles_station_obs_reconstructed %>%
 ggsave(
   here::here(
     paste0(
-      "output/publication/profiles_20yr_changes_station.png"
+      "output/publication/BATS_ALOHA_20_yr_changes.png"
     )
   ),
   width = 14,
