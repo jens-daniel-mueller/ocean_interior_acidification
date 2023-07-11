@@ -2020,11 +2020,15 @@ ocean_volume_mask <- acidification_trend %>%
 ocean_volume_mask <-
   m_layer_thickness(ocean_volume_mask)
 
-ocean_volume <- inner_join(ocean_volume_mask,
-                           basinmask)
+ocean_volume_mask <- inner_join(ocean_volume_mask,
+                                basinmask)
 
-ocean_volume <- ocean_volume %>%
-  mutate(volume_total = layer_thickness * area) %>%
+ocean_volume_mask <- ocean_volume_mask %>%
+  mutate(volume_total = layer_thickness * area) %>% 
+  select(lat, lon, depth, basin, volume_total)
+
+
+ocean_volume <- ocean_volume_mask %>% 
   group_by(basin) %>%
   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
   ungroup()
@@ -2033,25 +2037,27 @@ ocean_volume_global <- ocean_volume %>%
   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
   mutate(basin = "Global")
 
-
 ocean_volume <- bind_rows(
   ocean_volume,
   ocean_volume_global
 )
 
+rm(ocean_volume_global)
+
+
+
+ocean_volume_mask <- ocean_volume_mask %>% 
+  select(-basin)
 
 ocean_volume_biome <- inner_join(ocean_volume_mask,
-                           biomemask)
+                                 biomemask)
 
 ocean_volume_biome <- ocean_volume_biome %>%
-  mutate(volume_total = layer_thickness * area) %>%
   group_by(biome) %>%
   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
   ungroup()
 
 
-rm(ocean_volume_global)
-rm(ocean_volume_mask)
 ```
 
 
@@ -2066,6 +2072,7 @@ quantile_low <- 0.02
 break_numbers <- 10
 
 three_year_colors <- c("#f77f00", "#d62828", "#003049")
+four_year_colors <- c("grey50", three_year_colors)
 
 ```
  
@@ -3958,18 +3965,28 @@ for (i_var in OIA_variables[-6]) {
   # i_var <- OIA_variables[2]
   
   i_contours <- labels_breaks(i_var)$i_breaks
-  i_contours <- i_contours[-c(1, length(i_contours))]
   
   i_acidification_volume_raw <- acidification_volume_raw %>% 
     filter(variable == i_var)
   
+  acidification_volume_binned <-
+    full_join(i_acidification_volume_raw,
+              ocean_volume_mask) %>%
+    filter(depth <= 1000) %>% 
+    mutate(delta_total = cut(delta_total, i_contours)) %>%
+    group_by(tref, delta_total, variable) %>%
+    summarise(volume = sum(volume_total, na.rm = TRUE)) %>%
+    ungroup()
+  
+  
+  i_contours <- i_contours[-c(1, length(i_contours))]
+    
   for (i_contour in i_contours) {
     # i_contour <- i_contours[2]
     
     acidification_horizon <-
       i_acidification_volume_raw %>%
       filter(abs(delta_total) > abs(i_contour)) %>%
-
       mutate(contour = i_contour)
     
     acidification_volume_global <-
@@ -4029,8 +4046,62 @@ for (i_var in OIA_variables[-6]) {
     
 
   }
+  
+  if (exists("acidification_volume_binned_all")) {
+    acidification_volume_binned_all <-
+      bind_rows(acidification_volume_binned_all,
+                acidification_volume_binned)
+  }
+  
+  if (!exists("acidification_volume_binned_all")) {
+    acidification_volume_binned_all <- acidification_volume_binned
+  }
 
 }
+
+# rm(acidification_volume_binned_all)
+
+ocean_volume_total <-
+  full_join(acidification_trend %>%
+              filter(tref == 1994),
+            ocean_volume_mask) %>%
+  filter(depth <= 1000) %>%
+  summarise(volume = sum(volume_total, na.rm = TRUE)) %>% 
+  pull
+
+acidification_volume_binned_all %>% 
+  filter(variable != "SIR") %>% 
+  mutate(tref = as.factor(tref),
+         delta_total = fct_relevel(delta_total, "(0, Inf]", after = Inf),
+         volume_rel = 100 * volume / ocean_volume_total) %>%
+  ggplot(aes(delta_total, volume_rel, col=tref, fill = tref, group=tref)) +
+  geom_area(alpha = 0.2,
+            position = position_identity()) +
+  scale_color_manual(values = three_year_colors,
+                     name = "Change from\n1800 to:") +
+  scale_fill_manual(values = three_year_colors,
+                     name = "Change from\n1800 to:") +
+  facet_wrap(~ variable, scales = "free_x",
+             labeller = labeller(variable = x_axis_labels)) +
+  labs(y = "Acidified volume (% of total volume)",
+       title = "Expansion of OA over the top 1000m of the ocean") +
+  theme(strip.text.x = element_markdown(),
+        axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.title.x = element_blank())
+
+
+ggsave(
+  here::here(
+    "output/publication/acidification_volume_binned.png"
+  ),
+  width = 10,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
+
+
 
 
 full_join(ocean_volume,
