@@ -133,7 +133,12 @@ contours <-
 x_axis_labels_stations <-
   c(
     x_axis_labels[2:6],
+    "pHstar"  =  "ΔpH<sub>T</sub>*",
+    "OmegaAragonitestar" = "ΔΩ<sub>arag</sub>*",
+    "SIRstar" = "ΔSIR*",
+    "H_freestar" = "ΔH<sup>+</sup><sub>free</sub>*<br>(nmol kg<sup>-1</sup>)",
     "tco2" = "ΔC<sub>ant</sub> or ΔDIC<br>(µmol kg<sup>-1</sup>)",
+    "tco2star" = "ΔC<sub>ant</sub> or ΔDIC*<br>(µmol kg<sup>-1</sup>)",
     "PO4" = "ΔPO<sub>4</sub><br>(µmol kg<sup>-1</sup>)",
     "sal" = "ΔSalinity",
     "Si" = "ΔSilicate<br>(µmol kg<sup>-1</sup>)",
@@ -143,11 +148,16 @@ x_axis_labels_stations <-
 x_axis_labels_stations_absolute <-
   c(
     "pH"  =  "pH<sub>T</sub>",
+    "pHstar"  =  "pH<sub>T</sub>*",
     "OmegaAragonite" = "Ω<sub>arag</sub>",
+    "OmegaAragonitestar" = "Ω<sub>arag</sub>*",
     "SIR" = "SIR",
+    "SIRstar" = "SIR*",
     "H_free" = "H<sup>+</sup><sub>free</sub><br>(nmol kg<sup>-1</sup>)",
+    "H_freestar" = "H<sup>+</sup><sub>free</sub>*<br>(nmol kg<sup>-1</sup>)",
     "temp" = "T (°C)",
     "tco2" = "DIC<br>(µmol kg<sup>-1</sup>)",
+    "tco2star" = "DIC*<br>(µmol kg<sup>-1</sup>)",
     "PO4" = "PO<sub>4</sub><br>(µmol kg<sup>-1</sup>)",
     "sal" = "Salinity",
     "Si" = "Silicate<br>(µmol kg<sup>-1</sup>)",
@@ -532,30 +542,53 @@ biomemask <- biomemask %>%
 biomemask <- biomemask  %>% 
   mutate(biome = case_when(
     region == "atlantic" & value == "1" ~ "NA-SPSS",
-    # region == "atlantic" & value == "2" ~ "NA-STSS",
+    region == "atlantic" & value == "2" ~ "NA-STSS",
     region == "atlantic" & value == "3" ~ "NA-STPS",
-    # region == "atlantic" & value == "4" ~ "AEQU",
-    # region == "atlantic" & value == "5" ~ "SA-STPS",
-    # region == "atlantic" & value == "6" ~ "MED",
+    region == "atlantic" & value == "4" ~ "AEQU",
+    region == "atlantic" & value == "5" ~ "SA-STPS",
+    region == "atlantic" & value == "6" ~ "MED",
     region == "pacific" & value == "1" ~ "NP-SPSS",
-    # region == "pacific" & value == "2" ~ "NP-STSS",
+    region == "pacific" & value == "2" ~ "NP-STSS",
     region == "pacific" & value == "3" ~ "NP-STPS",
-    # region == "pacific" & value == "4" ~ "PEQU-W",
+    region == "pacific" & value == "4" ~ "PEQU-W",
     region == "pacific" & value == "5" ~ "PEQU-E",
-    # region == "pacific" & value == "6" ~ "SP-STSS",
-    # region == "indian" & value == "1" ~ "Arabian Sea",
-    # region == "indian" & value == "2" ~ "Bay of Bengal",
-    # region == "indian" & value == "3" ~ "Equatorial Indian",
-    # region == "indian" & value == "4" ~ "Southern Indian",
-    # region == "arctic" & value == "1" ~ "ARCTIC-ICE",
-    # region == "arctic" & value == "2" ~ "NP-ICE",
-    # region == "arctic" & value == "3" ~ "NA-ICE",
-    # region == "arctic" & value == "4" ~ "Barents",
+    region == "pacific" & value == "6" ~ "SP-STSS",
+    region == "indian" & value == "1" ~ "Arabian Sea",
+    region == "indian" & value == "2" ~ "Bay of Bengal",
+    region == "indian" & value == "3" ~ "Equatorial Indian",
+    region == "indian" & value == "4" ~ "Southern Indian",
+    region == "arctic" & value == "1" ~ "ARCTIC-ICE",
+    region == "arctic" & value == "2" ~ "NP-ICE",
+    region == "arctic" & value == "3" ~ "NA-ICE",
+    region == "arctic" & value == "4" ~ "Barents",
     region == "southern" & value == "1" ~ "SO-STSS",
-    # region == "southern" & value == "2" ~ "SO-SPSS",
-    # region == "southern" & value == "3" ~ "SO-ICE",
+    region == "southern" & value == "2" ~ "SO-SPSS",
+    region == "southern" & value == "3" ~ "SO-ICE",
     TRUE ~ "other"
   ))
+
+biomemask <- biomemask  %>%
+  mutate(
+    biome_agg = case_when(
+      biome %in% c("NA-SPSS", "NA-STSS") ~ "NA",
+      biome %in% c("NP-SPSS", "NP-STSS") ~ "NP",
+      biome %in% c(
+        "NA-STPS",
+        "SA-STPS",
+        "NP-STPS",
+        "SP-STSS",
+        "PEQU-W",
+        "Equatorial Indian",
+        "Southern Indian",
+        "SO-STSS"
+      ) ~ "ST",
+      biome %in% c("AEQU", "PEQU-E", "Arabian Sea", "Bay of Bengal") ~ "EQ",
+      biome %in% c("SO-SPSS", "SO-ICE") ~ "SO",
+      TRUE ~ "other"
+    )
+  ) %>% 
+  select(-biome) %>% 
+  rename(biome = biome_agg)
 
 biomemask <- biomemask %>% 
   filter(biome != "other") %>% 
@@ -598,7 +631,7 @@ ggplot() +
     xlim = lon_lim,
     expand = FALSE
   ) +
-  scale_fill_okabeito(reverse = TRUE)  +
+  scale_fill_okabeito()  +
   theme(
     axis.title = element_blank(),
     axis.text = element_blank(),
@@ -1466,6 +1499,49 @@ TS_product <- TS_product %>%
          !is.na(sal),
          !is.na(temp)) 
 
+
+TS_product_cstar <-
+  TS_product %>%
+  group_by(station, depth_int) %>%
+  mutate(talk_mean = mean(talk, na.rm = TRUE),
+         PO4_mean = mean(PO4, na.rm = TRUE)) %>%
+  ungroup() %>%
+  mutate(tco2star =
+           tco2  -
+           (117 * (PO4 - PO4_mean))  -
+           0.5 * ((talk - talk_mean) + (16 * (PO4 - PO4_mean)))) %>%
+  filter(!is.na(tco2star))
+
+TS_product_cstar <-
+  TS_product_cstar %>%
+  # head(10) %>%
+  mutate(
+    sir(
+      flag = 15,
+      var1 = talk_mean * 1e-6,
+      var2 = tco2star * 1e-6,
+      S = sal,
+      T = temp,
+      P = depth / 10,
+      # Pt = phosphate * 1e-6,
+      # Sit = silicate * 1e-6,
+      k1k2 = "s20",
+      kf = "dg",
+      pHscale = "T"
+    )[c(6, 18, 20, 21)]
+  )
+
+TS_product_cstar <-
+TS_product_cstar %>%
+  rename(
+    pHstar = pH,
+    OmegaAragonitestar = OmegaAragonite,
+    SIRstar = SIR,
+    H_freestar = H_free
+  ) %>%
+  select(station:depth_int, contains("star"))
+
+
 TS_product <-
   TS_product %>%
   # head(10) %>%
@@ -1485,13 +1561,21 @@ TS_product <-
     )[c(6, 18, 20, 21)]
   )
 
+
 TS_product <-
-  TS_product %>%
-  mutate(H_free = 1e3 * H_free)
+  full_join(TS_product,
+            TS_product_cstar)
+rm(TS_product_cstar)
+
 
 TS_product <-
   TS_product %>%
-  pivot_longer(PO4:H_free)
+  mutate(H_free = 1e3 * H_free,
+         H_freestar = 1e3 * H_freestar)
+
+TS_product <-
+  TS_product %>%
+  pivot_longer(PO4:H_freestar)
 
 date_range <-
   c(min(TS_product$date),
@@ -1527,14 +1611,14 @@ TS_product %>%
 
 ggsave(
   here::here("output/all_variables/BATS_ALOHA_all_variables_profiles_absolute.png"),
-  width = 14,
+  width = 18,
   height = 8
 )
 
 cairo_pdf(
   here::here("output/all_variables/BATS_ALOHA_time_series.pdf"),
   onefile = TRUE,
-  width = 14,
+  width = 18,
   height = 10
 )
 
@@ -1542,7 +1626,7 @@ TS_product %>%
   arrange(date) %>%
   group_by(depth_int, station) %>%
   group_split() %>%
-  head(1) %>%
+  head(2) %>%
   map(
     ~ ggplot(data = .x,
              aes(date, value)) +
@@ -1560,11 +1644,11 @@ TS_product %>%
         . ~ name,
         labeller = labeller(name = x_axis_labels_stations_absolute),
         scales = "free",
-        ncol = 3
+        ncol = 4
       ) +
       theme(
         axis.title = element_blank(),
-        legend.position = c(0.6, 0.1),
+        legend.position = c(0.9, 0.1),
         legend.direction = "horizontal",
         strip.text.x = element_markdown()
       )
@@ -1598,14 +1682,14 @@ detrended <-
 cairo_pdf(
   here::here("output/all_variables/BATS_ALOHA_time_series_detrended.pdf"),
   onefile = TRUE,
-  width = 14,
+  width = 18,
   height = 10
 )
 
 detrended %>%
   group_by(depth_int, station) %>%
   group_split() %>%
-  head(1) %>%
+  head(2) %>%
   map(
     ~ ggplot(data = .x,
              aes(date, value_detrended)) +
@@ -1620,7 +1704,7 @@ detrended %>%
         . ~ name,
         labeller = labeller(name = x_axis_labels_stations_absolute),
         scales = "free",
-        ncol = 3
+        ncol = 4
       ) +
       theme(
         axis.title = element_blank(),
@@ -1643,7 +1727,7 @@ detrended <-
 cairo_pdf(
   here::here("output/all_variables/BATS_ALOHA_detrended_monthly_climatology.pdf"),
   onefile = TRUE,
-  width = 14,
+  width = 18,
   height = 10
 )
 
@@ -1651,7 +1735,7 @@ cairo_pdf(
 detrended %>%
   group_by(depth_int, station) %>%
   group_split() %>%
-  head(1) %>%
+  head(2) %>%
   map(
     ~ ggplot(data = .x) +
       geom_point(aes(month, value_detrended), alpha = 0.2) +
@@ -1672,11 +1756,11 @@ detrended %>%
         . ~ name,
         labeller = labeller(name = x_axis_labels_stations_absolute),
         scales = "free",
-        ncol = 3
+        ncol = 4
       ) +
       theme(
         legend.title = element_blank(),
-        legend.position = c(0.6, 0.1),
+        legend.position = c(0.9, 0.1),
         strip.text.x = element_markdown()
       )
   )
@@ -1690,67 +1774,67 @@ detrended <-
 
 
 
-cairo_pdf(
-  here::here(
-    "output/all_variables/BATS_ALOHA_time_series_deasonalized.pdf"
-  ),
-  onefile = TRUE,
-  width = 14,
-  height = 10
-)
-
-
-detrended %>%
-  group_by(depth_int, station) %>%
-  group_split() %>%
-  # head(2) %>%
-  map(
-    ~ ggplot(data = .x) +
-      geom_path(aes(date, value,
-                    col = "measured")) +
-      geom_point(
-        aes(date, value,
-            fill = "measured"),
-        shape = 21,
-        alpha = 0.2
-      ) +
-      geom_path(aes(date, value_deseason,
-                    col = "deseasonalized")) +
-      geom_point(
-        aes(date, value_deseason,
-            fill = "deseasonalized"),
-        shape = 21,
-        alpha = 0.2
-      ) +
-      geom_smooth(
-        aes(date, value, col = "measured"),
-        method = "lm",
-        se = FALSE
-      ) +
-      geom_smooth(
-        aes(date, value_deseason, col = "deseasonalized"),
-        method = "lm",
-        se = FALSE
-      ) +
-      scale_color_manual(values = c("red", "grey"), name = "") +
-      scale_fill_manual(values = c("red", "grey"), name = "") +
-      labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
-      facet_wrap(
-        . ~ name,
-        labeller = labeller(name = x_axis_labels_stations_absolute),
-        scales = "free",
-        ncol = 3
-      ) +
-      theme(
-        axis.title = element_blank(),
-        strip.text.x = element_markdown(),
-        legend.title = element_blank(),
-        legend.position = c(0.6, 0.1)
-      ) +
-      scale_x_date(limits = date_range)
-  )
-
-dev.off()
+# cairo_pdf(
+#   here::here(
+#     "output/all_variables/BATS_ALOHA_time_series_deasonalized.pdf"
+#   ),
+#   onefile = TRUE,
+#   width = 18,
+#   height = 10
+# )
+# 
+# 
+# detrended %>%
+#   group_by(depth_int, station) %>%
+#   group_split() %>%
+#   # head(2) %>%
+#   map(
+#     ~ ggplot(data = .x) +
+#       geom_path(aes(date, value,
+#                     col = "measured")) +
+#       geom_point(
+#         aes(date, value,
+#             fill = "measured"),
+#         shape = 21,
+#         alpha = 0.2
+#       ) +
+#       geom_path(aes(date, value_deseason,
+#                     col = "deseasonalized")) +
+#       geom_point(
+#         aes(date, value_deseason,
+#             fill = "deseasonalized"),
+#         shape = 21,
+#         alpha = 0.2
+#       ) +
+#       geom_smooth(
+#         aes(date, value, col = "measured"),
+#         method = "lm",
+#         se = FALSE
+#       ) +
+#       geom_smooth(
+#         aes(date, value_deseason, col = "deseasonalized"),
+#         method = "lm",
+#         se = FALSE
+#       ) +
+#       scale_color_manual(values = c("red", "grey"), name = "") +
+#       scale_fill_manual(values = c("red", "grey"), name = "") +
+#       labs(title = paste(.x$station, "|", .x$depth_int, "m")) +
+#       facet_wrap(
+#         . ~ name,
+#         labeller = labeller(name = x_axis_labels_stations_absolute),
+#         scales = "free",
+#         ncol = 4
+#       ) +
+#       theme(
+#         axis.title = element_blank(),
+#         strip.text.x = element_markdown(),
+#         legend.title = element_blank(),
+#         legend.position = c(0.9, 0.1)
+#       ) +
+#       scale_x_date(limits = date_range)
+#   )
+# 
+# dev.off()
 
 
 detrended %>%
@@ -1781,7 +1865,7 @@ cairo_pdf(
     "output/all_variables/BATS_ALOHA_time_series_deasonalized_annual.pdf"
   ),
   onefile = TRUE,
-  width = 14,
+  width = 18,
   height = 10
 )
 
@@ -1789,7 +1873,7 @@ cairo_pdf(
 detrended %>%
   group_by(depth_int, station) %>%
   group_split() %>%
-  head(1) %>%
+  head(2) %>%
   map(
     ~ ggplot(data = .x) +
       geom_path(aes(date, value_deseason,
@@ -1929,17 +2013,18 @@ ggsave(
 
 ocean_depth <- 3000
 
-ocean_bathymetry <- acidification_trend %>%
+ocean_volume_mask <- acidification_trend %>%
   filter(depth <= ocean_depth) %>% 
-  group_by(lat, lon) %>%
-  summarise(depth = max(depth)) %>%
-  ungroup()
+  distinct(lat, lon, depth)
 
-ocean_volume <- inner_join(ocean_bathymetry,
+ocean_volume_mask <-
+  m_layer_thickness(ocean_volume_mask)
+
+ocean_volume <- inner_join(ocean_volume_mask,
                            basinmask)
 
 ocean_volume <- ocean_volume %>%
-  mutate(volume_total = depth * area) %>%
+  mutate(volume_total = layer_thickness * area) %>%
   group_by(basin) %>%
   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
   ungroup()
@@ -1955,18 +2040,18 @@ ocean_volume <- bind_rows(
 )
 
 
-ocean_volume_biome <- inner_join(ocean_bathymetry,
+ocean_volume_biome <- inner_join(ocean_volume_mask,
                            biomemask)
 
 ocean_volume_biome <- ocean_volume_biome %>%
-  mutate(volume_total = depth * area) %>%
+  mutate(volume_total = layer_thickness * area) %>%
   group_by(biome) %>%
   summarise(volume_total = sum(volume_total, na.rm = TRUE)) %>%
   ungroup()
 
 
 rm(ocean_volume_global)
-rm(ocean_bathymetry)
+rm(ocean_volume_mask)
 ```
 
 
@@ -2304,6 +2389,11 @@ rm(sensitivity,
 
 m_depth_layer <- function(df) {
   
+  # df <- acidification_trend
+  
+    
+  df <- m_layer_thickness(df)
+  
   df <- df %>%
     mutate(depth = cut(
       depth,
@@ -2311,19 +2401,21 @@ m_depth_layer <- function(df) {
       c("A: 0 - 100 m", "B: 100 - 500 m", "C :500 - 1500 m", "D: 1500 - 3000 m"),
       include.lowest = TRUE
     )) %>%
-    drop_na() %>%
-    select(c(lat, lon, depth, tref),
+    drop_na()
+  
+  df <- df %>%
+    select(c(lat, lon, depth, tref, layer_thickness),
            where(is.numeric)) %>%
     fgroup_by(lat, lon, depth, tref) %>% {
       add_vars(fgroup_vars(., "unique"),
-               fmean(., keep.group_vars = FALSE))
+               fmean(., 
+                     w = layer_thickness,
+                     keep.group_vars = FALSE))
     }
   
   return(df)
   
 }
-
-
 
 
 acidification_depth_layer <- m_depth_layer(acidification_trend)
@@ -3849,17 +3941,17 @@ acidification_volume_raw <-
   acidification_trend %>%
   filter(tref != 1800,
          depth <= ocean_depth) %>%
-  select(lon, lat, depth, tref, contains("delta_total")) %>%
+  select(lon, lat, depth, tref, contains("delta_total"))
+
+acidification_volume_raw <-
+  m_layer_thickness(acidification_volume_raw)
+
+acidification_volume_raw <-
+  acidification_volume_raw %>%
   pivot_longer(contains("delta_total"),
                names_to = "variable",
                values_to = "delta_total") %>%
   mutate(variable = str_remove(variable, "_delta_total"))
-
-pdf(
-  here::here("output/all_variables/maps_acidification_horizons.pdf"),
-  width = 5,
-  height = 7
-)
 
 for (i_var in OIA_variables[-6]) {
   
@@ -3877,15 +3969,13 @@ for (i_var in OIA_variables[-6]) {
     acidification_horizon <-
       i_acidification_volume_raw %>%
       filter(abs(delta_total) > abs(i_contour)) %>%
-      group_by(lon, lat, tref, variable) %>%
-      filter(depth == max(depth)) %>%
-      ungroup() %>% 
+
       mutate(contour = i_contour)
     
     acidification_volume_global <-
       left_join(acidification_horizon,
                 basinmask) %>%
-      mutate(volume = depth * area,
+      mutate(volume = layer_thickness * area,
              basin = "Global") %>%
       group_by(tref, variable, contour, basin) %>%
       summarise(volume = sum(volume)) %>%
@@ -3894,7 +3984,7 @@ for (i_var in OIA_variables[-6]) {
     acidification_volume_regional <-
       left_join(acidification_horizon,
                 basinmask) %>%
-      mutate(volume = depth * area) %>%
+      mutate(volume = layer_thickness * area) %>%
       group_by(tref, variable, contour, basin) %>%
       summarise(volume = sum(volume)) %>%
       ungroup()
@@ -3911,20 +4001,11 @@ for (i_var in OIA_variables[-6]) {
     
     acidification_volume_biome <- left_join(acidification_horizon,
                                              biomemask) %>%
-      mutate(volume = depth * area) %>%
+      mutate(volume = layer_thickness * area) %>%
       group_by(tref, variable, contour, biome) %>%
       summarise(volume = sum(volume)) %>%
       ungroup()
-    
-    if (exists("acidification_horizon_all")) {
-      acidification_horizon_all <-
-        bind_rows(acidification_horizon_all,
-                  acidification_horizon)
-    }
-    
-    if (!exists("acidification_horizon_all")) {
-      acidification_horizon_all <- acidification_horizon
-    }
+
     
     if (exists("acidification_volume_all")) {
       acidification_volume_all <-
@@ -3946,27 +4027,10 @@ for (i_var in OIA_variables[-6]) {
       acidification_volume_biome_all <- acidification_volume_biome
     }
     
-    
+
   }
-  
-  print(
-  acidification_horizon_all %>%
-    select(-delta_total) %>% 
-    p_map_mdim_robinson(
-      dim_col = "tref",
-      dim_row = "contour",
-      var = "depth",
-      breaks = seq(0,3000,200),
-      legend_position = "right"
-    ) +
-    labs(title = i_var))
 
-  rm(acidification_horizon_all)
-  
 }
-
-dev.off()
-
 
 
 full_join(ocean_volume,
@@ -4142,6 +4206,94 @@ rm(acidification_volume_all,
    acidification_volume_biome,
    acidification_volume_raw,
    acidification_horizon)
+
+
+
+acidification_trend_long <-
+  acidification_trend %>%
+  filter(depth <= ocean_depth) %>%
+  select(depth, tref, all_of(OIA_variables)) %>%
+  pivot_longer(tco2:temp) %>%
+  mutate(tref = as.factor(tref)) %>%
+  filter(name %in% OIA_variables[c(1:3, 5)])
+
+
+acidification_trend_long %>%
+  ggplot(aes(value, col = tref, fill = tref)) +
+  geom_density(alpha = 0.3) +
+  scale_fill_manual(values = c("grey50", three_year_colors)) +
+  scale_color_manual(values = c("grey50", three_year_colors)) +
+  facet_wrap( ~ name,
+              scales = "free",
+              labeller = labeller(name = x_axis_labels_stations_absolute)) +
+  theme(axis.title = element_blank(),
+        legend.title = element_blank(),
+        strip.text.x = element_markdown())
+
+ggsave(
+  here::here(
+    "output/publication/acidification_volume_distribution_absolute.png"
+  ),
+  width = 8,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
+acidification_trend_long <-
+  acidification_trend %>%
+  filter(depth <= ocean_depth,
+         tref != 1800) %>%
+  select(depth, tref, contains("delta_total")) %>%
+  pivot_longer(contains("delta_total")) %>% 
+  mutate(name = str_remove(name, "_delta_total"),
+         tref = as.factor(tref)) %>% 
+  filter(name %in% OIA_variables[c(1:3,5)])
+
+
+acidification_trend_long %>%
+  ggplot(aes(value, col = tref, fill = tref)) +
+  geom_density(alpha = 0.3) +
+  scale_fill_manual(values = three_year_colors) +
+  scale_color_manual(values = three_year_colors) +
+  facet_wrap( ~ name,
+              scales = "free",
+              labeller = labeller(name = x_axis_labels)) +
+  theme(axis.title = element_blank(),
+        legend.title = element_blank(),
+        strip.text.x = element_markdown())
+
+ggsave(
+  here::here(
+    "output/publication/acidification_volume_distribution_delta_total.png"
+  ),
+  width = 8,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
+# acidification_trend_long %>%
+#   ggplot(aes(value, depth, col = tref)) +
+#   geom_density_2d(bins = 2) +
+#   scale_y_reverse() +
+#   scale_color_manual(values = three_year_colors) +
+#   facet_wrap( ~ name,
+#               scales = "free_x",
+#               labeller = labeller(name = x_axis_labels)) +
+#   theme(axis.title = element_blank(),
+#         legend.title = element_blank(),
+#         strip.text.x = element_markdown())
+# 
+# ggsave(
+#   here::here(
+#     "output/publication/acidification_volume_depth_distribution_delta_total.png"
+#   ),
+#   width = 8,
+#   height = 6,
+#   dpi = 600,
+#   bg = "white"
+# )
 
 ```
 
@@ -6139,7 +6291,7 @@ acidification_profiles_station <-
            all_of(OIA_variables)) %>% 
     arrange(tref) %>% 
     group_by(station, lat, lon, depth) %>% 
-    mutate(across(is.numeric, ~ .x - first(.x))) %>% 
+    mutate(across(where(is.numeric), ~ .x - first(.x))) %>% 
     ungroup() %>% 
     filter(tref == 20) %>% 
     mutate(tref = "reconstruction\n1994-2014")
@@ -6902,7 +7054,11 @@ bind_rows(
       std.error = std.error * 20
     ),
   acidification_profiles_station %>%
-    mutate(driver = "reconstructed")
+    mutate(driver = "reconstructed"),
+  acidification_profiles_station %>%
+    mutate(driver = "reconstructed") %>%
+    filter(variable != "temp") %>% 
+    mutate(variable = paste0(variable, "star"))
 ) 
 
 
@@ -6963,7 +7119,7 @@ ggsave(
       "output/publication/BATS_ALOHA_20_yr_changes.png"
     )
   ),
-  width = 14,
+  width = 18,
   height = 8,
   dpi = 600,
   bg = "white"
