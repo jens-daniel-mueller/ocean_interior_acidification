@@ -518,6 +518,7 @@ basinmask <- basinmask %>%
 ```
 
 
+
 ## Biomemask
 
 ```{r read_biomemask}
@@ -570,8 +571,8 @@ biomemask <- biomemask  %>%
 biomemask <- biomemask  %>%
   mutate(
     biome_agg = case_when(
-      biome %in% c("NA-SPSS", "NA-STSS") ~ "NA",
-      biome %in% c("NP-SPSS", "NP-STSS") ~ "NP",
+      biome %in% c("NA-SPSS", "NA-STSS") ~ "North\nAtlantic",
+      biome %in% c("NP-SPSS", "NP-STSS") ~ "North\nPacific",
       biome %in% c(
         "NA-STPS",
         "SA-STPS",
@@ -581,9 +582,9 @@ biomemask <- biomemask  %>%
         "Equatorial Indian",
         "Southern Indian",
         "SO-STSS"
-      ) ~ "ST",
-      biome %in% c("AEQU", "PEQU-E", "Arabian Sea", "Bay of Bengal") ~ "EQ",
-      biome %in% c("SO-SPSS", "SO-ICE") ~ "SO",
+      ) ~ "Subtropical\ngyres",
+      biome %in% c("AEQU", "PEQU-E", "Arabian Sea", "Bay of Bengal") ~ "Equatorial\nregions",
+      biome %in% c("SO-SPSS", "SO-ICE") ~ "Southern\nOcean",
       TRUE ~ "other"
     )
   ) %>% 
@@ -632,12 +633,15 @@ ggplot() +
     expand = FALSE
   ) +
   scale_fill_okabeito()  +
+  guides(fill = guide_legend(byrow = TRUE)) +
   theme(
     axis.title = element_blank(),
     axis.text = element_blank(),
     axis.ticks = element_blank(),
     panel.border = element_rect(colour = "transparent"),
-    strip.background = element_blank()
+    strip.background = element_blank(),
+    legend.title = element_blank(),
+    legend.spacing.y = unit(0.2, 'cm')
   )
 
 ggsave(
@@ -656,6 +660,17 @@ ggsave(
 
 biomemask <- biomemask %>% 
     mutate(area = earth_surf(lat, lon))
+
+```
+
+## Atm CO2
+
+```{r atm_CO2}
+
+co2_atm_reccap2 <-
+  read_csv(paste0(path_preprocessing,
+                  "co2_atm_reccap2.csv"))
+
 
 ```
 
@@ -3204,7 +3219,8 @@ acidification_depth_layer_total <-
   acidification_depth_layer %>%
   select(lat:tref,
          contains("_delta_total")) %>%
-  filter(tref != 1800)
+  filter(tref != 1800) %>% 
+  mutate(tref = paste0("1800-",tref))
 
 
 acidification_depth_layer_total <-
@@ -3270,11 +3286,11 @@ for (i_var in OIA_variables[-6]) {
 
 acidification_depth_layer_total_relative <-
   acidification_depth_layer_total %>%
-  filter(tref %in% c(1994, 2014),
+  filter(tref %in% c("1800-1994", "1800-2014"),
          variable %in% OIA_variables[-6]) %>%
   pivot_wider(names_from = tref,
               values_from = delta_total) %>%
-  mutate(delta_total_relative = 100 * (`2014` - `1994`) / `1994`) %>%
+  mutate(delta_total_relative = 100 * (`1800-2014` - `1800-1994`) / `1800-1994`) %>%
   select(lon, lat, depth, variable, delta_total_relative)
 
 i_breaks        <- c(-Inf, seq(0, 70, 10), Inf)
@@ -3351,6 +3367,7 @@ ggsave(
 )
 
 acidification_depth_layer_total %>%
+  mutate(tref = str_remove(tref, "1800-")) %>% 
   filter(variable == "H_free") %>% 
   mutate(tref = as.factor(tref),
          lon = if_else(lon > 180, lon - 360, lon)) %>%
@@ -3491,7 +3508,7 @@ acidification_depth_layer_total_relative %>%
   mutate(delta_total_relative = 100 * delta_total / absolute)
 
 for (i_var in OIA_variables[-6]) {
-  # i_var <- OIA_variables[2]
+  # i_var <- OIA_variables[5]
   
   # subset OIA variable
   
@@ -4069,25 +4086,28 @@ ocean_volume_total <-
   summarise(volume = sum(volume_total, na.rm = TRUE)) %>% 
   pull
 
+
 acidification_volume_binned_all %>% 
   filter(variable != "SIR") %>% 
-  mutate(tref = as.factor(tref),
+  mutate(tref = paste0("1800-", tref),
+         tref = as.factor(tref),
          delta_total = fct_relevel(delta_total, "(0, Inf]", after = Inf),
          volume_rel = 100 * volume / ocean_volume_total) %>%
   ggplot(aes(delta_total, volume_rel, col=tref, fill = tref, group=tref)) +
   geom_area(alpha = 0.2,
             position = position_identity()) +
-  scale_color_manual(values = three_year_colors,
-                     name = "Change from\n1800 to:") +
-  scale_fill_manual(values = three_year_colors,
-                     name = "Change from\n1800 to:") +
+  scale_color_manual(values = three_year_colors) +
+  scale_fill_manual(values = three_year_colors) +
   facet_wrap(~ variable, scales = "free_x",
              labeller = labeller(variable = x_axis_labels)) +
   labs(y = "Acidified volume (% of total volume)",
        title = "Expansion of OA over the top 1000m of the ocean") +
-  theme(strip.text.x = element_markdown(),
-        axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.title.x = element_blank())
+  theme(
+    strip.text.x = element_markdown(),
+    legend.title = element_blank(),
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    axis.title.x = element_blank()
+  )
 
 
 ggsave(
@@ -4839,6 +4859,99 @@ print(
 
 dev.off()
 
+acidification_volume <-
+  right_join(co2_atm_reccap2 %>% rename(tref = year),
+             acidification_volume) 
+
+co2_atm_level <- acidification_volume %>% 
+  distinct(pCO2) %>% 
+  pull() %>% 
+  round()
+
+
+acidification_volume_print <-
+acidification_volume %>%
+  filter(
+    mineral == "Aragonite",
+    sat_level %in% c(1, 1.5, 2, 3, 4),
+    estimate %in% c(
+      "volume_relative_to_3000m_volume",
+      "volume_loss_cumulative_relative_to_3000m_volume",
+      "volume_loss_cumulative_relative_to_preind_volume"
+    )
+  ) %>%
+  mutate(
+    sat_level = as.factor(sat_level),
+    estimate = case_when(
+      estimate == "volume_relative_to_3000m_volume" ~
+        "Saturated volume\n(% total vol.)",
+      estimate == "volume_loss_cumulative_relative_to_3000m_volume" ~
+        "Loss of sat. volume\n(% total vol.)",
+      estimate == "volume_loss_cumulative_relative_to_preind_volume" ~
+        "Loss of sat. volume\n(% preind. vol.)"
+    ),
+    estimate = factor(
+      estimate,
+      levels = c(
+        "Saturated volume\n(% total vol.)",
+        "Loss of sat. volume\n(% total vol.)",
+        "Loss of sat. volume\n(% preind. vol.)"
+      )
+    ),
+  ) 
+
+
+acidification_volume_print %>%
+  filter(basin %in% c("N. Atlantic", "N. Pacific")) %>% 
+  ggplot(aes(pCO2, value)) +
+  labs(x = expression(Atmospheric ~ CO[2] ~ (ppm))) +
+  scale_x_continuous(breaks = co2_atm_level) +
+  geom_path(aes(col = sat_level, group = sat_level)) +
+  geom_point(aes(fill = sat_level), 
+             shape = 21) +
+  scale_color_viridis_d(direction = -1, 
+                        name = expression(atop(Ω[arag],threshold))) +
+  scale_fill_viridis_d(direction = -1, 
+                        name = expression(atop(Ω[arag],threshold))) +
+  theme(axis.title.y = element_blank()) +
+  facet_grid(estimate ~ basin, scales = "free_y")
+
+
+ggsave(
+  here::here("output/publication/volume_omega_saturation_basin.png"),
+  width = 6,
+  height = 4.5,
+  dpi = 600,
+  bg = "white"
+)
+
+
+acidification_volume_print %>%
+  filter(basin == "Global") %>% 
+  ggplot(aes(pCO2, value)) +
+  labs(x = expression(Atmospheric ~ CO[2] ~ (ppm)),
+       title = "Global") +
+  scale_x_continuous(breaks = co2_atm_level) +
+  geom_path(aes(col = sat_level, group = sat_level)) +
+  geom_point(aes(fill = sat_level), 
+             shape = 21) +
+  scale_color_viridis_d(direction = -1, 
+                        name = expression(atop(Ω[arag],threshold))) +
+  scale_fill_viridis_d(direction = -1, 
+                        name = expression(atop(Ω[arag],threshold))) +
+  theme(axis.title.y = element_blank(),
+        legend.position = c(0.8,0.2)) +
+  facet_wrap(estimate ~ ., scales = "free_y", ncol = 2)
+
+
+ggsave(
+  here::here("output/publication/volume_omega_saturation_global.png"),
+  width = 6,
+  height = 5,
+  dpi = 600,
+  bg = "white"
+)
+
 # volume_relative_to_3000m_volume
 # volume_loss_cumulative_relative_to_preind_volume
 # volume_loss_cumulative_relative_to_3000m_volume
@@ -4910,6 +5023,60 @@ rm(acidification_saturation_horizon,
    acidification_area_profile)
 
 ```
+
+
+# Acidified bottom
+
+```{r bottom_area}
+
+
+acidification_bottom <- acidification_trend %>%
+  select(lat, lon, depth, tref,
+         contains("Omega"),
+         -contains("delta"))
+
+acidification_bottom <-
+  acidification_bottom %>%
+  pivot_longer(
+    contains("Omega"),
+    names_to = "mineral",
+    names_prefix = "Omega",
+    values_to = "Omega"
+  )
+
+acidification_bottom <-
+  acidification_bottom %>%
+  group_by(lat, lon, tref, mineral) %>%
+  filter(depth == max(depth)) %>%
+  ungroup()
+
+acidification_bottom <-
+  expand_grid(acidification_bottom,
+              sat_level = c(5, 4, 3, 2, 1.5, 1))
+
+
+acidification_bottom %>%
+  filter(mineral == "Aragonite",
+         Omega > sat_level) %>%
+  arrange(tref) %>% 
+  mutate(tref = as.factor(tref)) %>% 
+  ggplot(aes(lon, lat, fill = tref)) +
+  geom_tile() +
+  scale_fill_viridis_d() +
+  coord_quickmap() +
+  facet_wrap(~sat_level)
+
+ggsave(
+  here::here("output/publication/omega_bottom.png"),
+  width = 10,
+  height = 5,
+  dpi = 600,
+  bg = "white"
+)
+
+```
+
+
 
 
 # Zonal sections
@@ -6058,14 +6225,6 @@ acidification_global_section_absolute <-
   mutate(variable = str_remove(variable, "_mean"))
 
 
-# create pdf document
-
-pdf(
-  here::here("output/all_variables/global_sections_absolute_state.pdf"),
-  width = 10,
-  height = 16
-)
-
 # loop over OIA variables
 # print incremental sections
 
@@ -6093,19 +6252,22 @@ for (i_var in OIA_variables) {
   
   breaks <- c(-Inf, seq(low, high, length.out = 10), Inf)
   
+  all_labels_breaks <- labels_breaks(i_var)
+  i_legend_title  <- unlist(all_labels_breaks[3])
+  i_legend_title <- str_remove(i_legend_title, "Δ")
+  
   p_global_section_period1 <-
     i_acidification_global_section_absolute %>%
     filter(tref == 1800) %>%
     p_section_global(
       var = "mean",
-      legend_title = i_var,
+      legend_title = i_legend_title,
       title_text = "A   1800",
       breaks = breaks,
       subtitle_text = NULL,
       plot_slabs = "n"
     ) &
-    theme(legend.position = "none",
-          axis.title.x = element_blank(),
+    theme(axis.title.x = element_blank(),
           axis.text.x.bottom = element_blank())
   
   p_global_section_period2 <-
@@ -6118,7 +6280,8 @@ for (i_var in OIA_variables) {
       subtitle_text = NULL,
       plot_slabs = "n",
       breaks = breaks
-    )
+    ) &
+    theme(legend.position = "none")
   
   p_global_section_period3 <-
     i_acidification_global_section_absolute %>%
@@ -6162,9 +6325,22 @@ for (i_var in OIA_variables) {
     )
   )
   
+  ggsave(
+    here::here(
+      paste0(
+        "output/publication/global_sections_",
+        i_var,
+        "_absolute_state.png"
+      )
+    ),
+    width = 6,
+    height = 10,
+    dpi = 600,
+    bg = "white"
+  )
+  
 }
 
-dev.off()
 
 rm(acidification_global_section_absolute,
    acidification_global_section,
@@ -6267,7 +6443,7 @@ acidification_profiles_biomes_global <- acidification_profiles_biomes %>%
 # join global and regional profiles
   
 acidification_profiles_biomes <-
-  bind_rows(#acidification_profiles_biomes_global,
+  bind_rows(acidification_profiles_biomes_global,
             acidification_profiles_biomes_regional)
   
 rm(acidification_profiles_biomes_regional,
@@ -6507,7 +6683,8 @@ dCant_temp_profiles_temp_contribution_biome <-
 
 # scale values to surface area
 
-dCant_temp_profiles_temp_contribution_biome <- dCant_temp_profiles_temp_contribution_biome %>% 
+dCant_temp_profiles_temp_contribution_biome <-
+  dCant_temp_profiles_temp_contribution_biome %>%
   mutate(across(contains("_delta"),
                 ~ . * area))
 
@@ -6516,7 +6693,7 @@ dCant_temp_profiles_temp_contribution_biome <- dCant_temp_profiles_temp_contribu
 dCant_temp_profiles_temp_contribution_biome_regional <- dCant_temp_profiles_temp_contribution_biome %>%
   group_by(tref, biome, depth) %>%
   summarise(across(contains("_delta"),
-                   ~ sum(.) / sum(area))) %>%
+                   ~ sum(., na.rm = TRUE) / sum(area, na.rm = TRUE))) %>%
   ungroup()
 
 # calculate global means
@@ -6525,13 +6702,13 @@ dCant_temp_profiles_temp_contribution_biome_global <- dCant_temp_profiles_temp_c
   mutate(biome = "Global") %>% 
   group_by(tref, biome, depth) %>%
   summarise(across(contains("_delta"),
-                   ~ sum(.) / sum(area))) %>%
+                   ~ sum(., na.rm = TRUE) / sum(area, na.rm = TRUE))) %>%
   ungroup()
 
 # join global and regional profiles
   
 dCant_temp_profiles_temp_contribution_biome <-
-  bind_rows(#dCant_temp_profiles_temp_contribution_biome_global,
+  bind_rows(dCant_temp_profiles_temp_contribution_biome_global,
             dCant_temp_profiles_temp_contribution_biome_regional)
   
 rm(dCant_temp_profiles_temp_contribution_biome_regional,
@@ -7120,7 +7297,7 @@ bind_rows(
     select(station, variable = name, depth = depth_int, estimate, std.error) %>%
     mutate(
       driver = "observed",
-      tref = "\ntrend over\nobserved\nperiod",
+      tref = "trend over\nobserved\nperiod",
       delta_interval = estimate * 20,
       std.error = std.error * 20
     ),
@@ -7145,6 +7322,8 @@ acidification_profiles_station_obs_reconstructed %>%
 
 
 acidification_profiles_station_obs_reconstructed %>%
+  filter(station == "ALOHA" | depth <= 500 | driver == "reconstructed",
+         variable %in% c("tco2star", "H_freestar", "OmegaAragonitestar", "temp")) %>% 
   ggplot(aes(delta_interval,
              depth)) +
   geom_vline(xintercept = 0, col = "grey") +
@@ -7153,21 +7332,24 @@ acidification_profiles_station_obs_reconstructed %>%
     aes(
     xmin = delta_interval - std.error,
     xmax = delta_interval + std.error,
-    fill = "Std error of trend"
+    fill = "Std error of\nobs. trend"
   ),
   alpha = 0.5)+
   geom_path(aes(col = tref)) +
   geom_point(aes(col = tref), size = 0.5) +
-  scale_fill_muted() +
-  scale_color_muted() +
+  scale_fill_manual(values = c("#BB5566")) +
+  scale_color_manual(values = c("#4477AA", "#BB5566")) +
   labs(y = "Depth (m)",
        title = "20 year changes") +
+  guides(color = guide_legend(byrow = TRUE,
+                              order = 1)) +
   theme(
     legend.title = element_blank(),
     axis.title.x = element_blank(),
     strip.background.x = element_blank(),
     strip.placement = "outside",
-    strip.text.x = element_markdown()
+    strip.text.x = element_markdown(),
+    legend.spacing.y = unit(0.5, "cm")
   ) +
   facet_grid(
     station ~ variable,
@@ -7175,7 +7357,7 @@ acidification_profiles_station_obs_reconstructed %>%
     switch = "x",
     labeller = labeller(variable = x_axis_labels_stations)
   ) +
-  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
+  # scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
   facetted_pos_scales(y = rep(list(
     scale_y_continuous(trans = trans_reverser("sqrt"),
                        breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
@@ -7190,8 +7372,8 @@ ggsave(
       "output/publication/BATS_ALOHA_20_yr_changes.png"
     )
   ),
-  width = 18,
-  height = 8,
+  width = 10,
+  height = 6,
   dpi = 600,
   bg = "white"
 )
@@ -7478,15 +7660,97 @@ acidification_profiles_biome_long <- acidification_profiles_biome_long %>%
 
 
 acidification_profiles_biome_long %>%
-  filter(!is.na(biome)) %>% 
+  filter(biome == "Global",
+         variable %in% c("OmegaAragonite", "H_free", "tco2", "temp")) %>%
+  mutate(variable = factor(variable, levels = c(
+    "OmegaAragonite", "H_free", "tco2", "temp"
+  )),
+  tref = paste0("1800-", tref)) %>%
   ggplot() +
-  geom_vline(xintercept = 0, col = "grey") +
   geom_path(aes(delta_total_temp,
                 depth,
-                col = tref, linetype = "dcant_temp")) +
+                col = tref, linetype = "dcant_temp"),
+                linewidth = 0.8) +
   geom_path(
     data = . %>% filter(variable != "temp"),
     aes(delta_total,
+        depth,
+        col = tref, linetype = "dcant_only"),
+    linewidth = 0.8
+  ) +
+  scale_color_manual(values = three_year_colors) +
+  scale_linetype_manual(values = c(1, 2),
+                        labels = c(expression(Delta * C[ant]),
+                                   expression(atop(Delta * C[ant] ~ "+", Temp)))) +
+  labs(y = "Depth (m)",
+       title = "Global") +
+  theme(
+    legend.title = element_blank(),
+    axis.title.x = element_blank(),
+    # strip.background.x = element_blank(),
+    # strip.placement = "outside",
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm")
+  ) +
+  facet_wrap(. ~ variable,
+             scales = "free_x",
+             labeller = labeller(variable = x_axis_labels)
+             # strip.position = "bottom"
+             ) +
+  facetted_pos_scales(#x = x_axis_scales,
+    y = rep(list(
+      scale_y_continuous(trans = trans_reverser("sqrt"),
+                         breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+    ), 6))
+
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/publication/profiles_total_changes_global.png"
+    )
+  ),
+  width = 6,
+  height = 8,
+  dpi = 600,
+  bg = "white"
+)
+
+
+
+
+
+acidification_profiles_biome_long %>%
+  filter(
+    !is.na(biome),
+    biome != "Global",
+    variable %in% c("OmegaAragonite", "H_free", "tco2", "temp")
+  ) %>%
+  mutate(
+    variable = factor(variable,
+                      levels = c(
+                        "OmegaAragonite", "H_free", "tco2", "temp"
+                      )),
+    biome = factor(
+      biome,
+      levels = c(
+        "North\nAtlantic",
+        "North\nPacific",
+        "Subtropical\ngyres",
+        "Equatorial\nregions",
+        "Southern\nOcean"
+      )
+    ),
+    tref = paste0("1800-", tref)
+  ) %>%
+  ggplot()+
+  # geom_vline(xintercept = 0, col = "grey") +
+  geom_path(aes(delta_total_temp,
+                depth,
+                col = tref, linetype = "dcant_temp")) +
+  geom_path(data = . %>% filter(variable != "temp"),
+            aes(delta_total,
         depth,
         col = tref, linetype = "dcant_only")
   ) +
@@ -7498,14 +7762,14 @@ acidification_profiles_biome_long %>%
   theme(
     legend.title = element_blank(),
     axis.title.x = element_blank(),
-    strip.background.x = element_blank(),
-    strip.placement = "outside",
+    # strip.background.x = element_blank(),
+    # strip.placement = "outside",
     strip.text.x = element_markdown()
   ) +
   facet_grid(
     biome ~ variable,
     scales = "free",
-    switch = "x",
+    # switch = "x",
     labeller = labeller(variable = x_axis_labels)
   ) +
   facetted_pos_scales(x = x_axis_scales,
@@ -7522,8 +7786,8 @@ ggsave(
       "output/publication/profiles_total_changes_biome.png"
     )
   ),
-  width = 10,
-  height = 10,
+  width = 6,
+  height = 8,
   dpi = 600,
   bg = "white"
 )
