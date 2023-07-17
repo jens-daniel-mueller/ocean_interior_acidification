@@ -521,6 +521,71 @@ basinmask <- basinmask %>%
 
 ## Biomemask
 
+### Longhurst
+
+```{r longhurst}
+
+longhurst <- read_sf(here::here("data/Longhurst_world_v4_2010.shp"))
+
+longhurst %>% 
+  ggplot() +
+  geom_sf(fill = "transparent")
+
+longhurst_biome <-
+st_drop_geometry(longhurst) %>%
+    mutate(
+      type = str_split(ProvDescr, " - ", simplify = TRUE)[, 1],
+      ProvDescr = str_split(ProvDescr, " - ", simplify = TRUE)[, 2],
+      ID = row_number(),
+      biome = case_when(
+        ProvCode %in%
+          c(
+            "PNEC",
+            "PEQD",
+            "CCAL",
+            "CHIL",
+            "CAMR",
+            "WTRA",
+            "ETRA",
+            "CNRY",
+            "GUIN",
+            "BENG",
+            "MONS",
+            "ARAB",
+            "INDW",
+            "INDE"
+          ) ~ "Upwelling",
+        ProvCode %in% c("SANT", "ANTA", "APLR") ~ "Southern\nOcean",
+        ProvCode %in% c("ARCT","SARC","NADR","NECS", "BPLR") ~ "North\nAtlantic",
+        ProvCode %in% c("ALSK","PSAE","NPPF","BERS", "PSAW") ~ "North\nPacific",
+        TRUE ~ "Subtropical\nGyres"
+      )
+    )
+
+longhurst_raster <-
+  st_rasterize(sf = longhurst,
+               dx = 1,
+               dy = 1) %>%
+  as.tibble() %>%
+  rename(lon = x, lat = y) %>%
+  mutate(lon = if_else(lon < 0, lon + 360, lon)) %>%
+  drop_na()
+
+
+longhurst <-
+  full_join(longhurst_biome,
+            longhurst_raster)
+
+longhurst %>%
+  ggplot(aes(lon, lat, fill = biome)) +
+  geom_tile()
+
+
+
+```
+
+### Fay
+
 ```{r read_biomemask}
 
 biomemask <-
@@ -594,6 +659,25 @@ biomemask <- biomemask  %>%
 biomemask <- biomemask %>% 
   filter(biome != "other") %>% 
   select(-c(value, region))
+
+longhurst %>% pull(lon)
+biomemask %>% pull(lon)
+
+longhurst <-
+  longhurst %>%
+  mutate(lat = round(lat / 0.5) * 0.5,
+         lon = round(lon / 0.5) * 0.5)
+
+ggplot() +
+  geom_tile(data = biomemask %>% select(lon, lat),
+            aes(lon, lat, fill = "biome")) +
+  geom_tile(data = longhurst %>% select(lon, lat),
+            aes(lon, lat, fill = "longhurst"))
+
+biomemask <-
+inner_join(biomemask %>% select(lon, lat) %>% arrange(lon, lat),
+           longhurst %>% select(lon, lat, biome) %>% arrange(lon, lat))
+
 
 biomemask_robin_raster <- rast(biomemask %>% 
                                  mutate(dist = 1) %>% 
@@ -3211,6 +3295,7 @@ rm(acidification_depth_layer_incremental,
 
 ## Total changes
 
+
 ```{r depth_layer_total_change}
 
 # subset total change sections
@@ -3231,8 +3316,32 @@ acidification_depth_layer_total <-
   mutate(variable = str_remove(variable, "_delta_total"))
 
 
+acidification_depth_layer_total_trend <-
+  inner_join(acidification_depth_layer_total,
+             biomemask) %>%
+  filter(variable %in% OIA_variables[-6]) %>%
+  group_by(depth, biome, tref, variable) %>%
+  summarise(delta_total = weighted.mean(delta_total, area)) %>%
+  ungroup() %>%
+  mutate(tref = str_remove(tref, "1800-"))
+
+acidification_depth_layer_total_trend <-
+  full_join(
+    acidification_depth_layer_total_trend %>%
+      distinct(depth, biome, variable) %>%
+      mutate(tref = "1800",
+             delta_total = 0),
+    acidification_depth_layer_total_trend
+  ) %>% 
+  mutate(tref = as.numeric(as.character(tref)))
+
+acidification_depth_layer_total_trend <-
+  left_join(acidification_depth_layer_total_trend %>%
+              rename(year = tref),
+            co2_atm_reccap2)
+
 for (i_var in OIA_variables[-6]) {
-  # i_var <- OIA_variables[2]
+  # i_var <- OIA_variables[5]
   
   # subset OIA variable
   
@@ -3260,7 +3369,8 @@ for (i_var in OIA_variables[-6]) {
   i_contour_level <- unlist(all_labels_breaks[2])
   i_legend_title  <- unlist(all_labels_breaks[3])
   
-  i_acidification_depth_layer_total %>%
+  p_maps <- i_acidification_depth_layer_total %>%
+    filter(tref == "1800-2014") %>% 
     p_map_mdim_robinson(
       dim_row = "depth",
       dim_col = "tref",
@@ -3271,18 +3381,37 @@ for (i_var in OIA_variables[-6]) {
       legend_position = "right"
     )
   
+  p_trends <- acidification_depth_layer_total_trend %>%
+    filter(variable == i_var) %>%
+    ggplot(aes(pCO2, delta_total, col = biome, group = biome)) +
+    geom_hline(yintercept = i_contour_level, col = "grey50") +
+    geom_path() +
+    geom_point() +
+    scale_y_continuous(breaks = as.numeric(i_breaks)) +
+    scale_x_continuous(
+      breaks = round(unique(acidification_depth_layer_total_trend$pCO2))) +
+    scale_color_okabeito() +
+    labs(y = i_legend_title,
+         x = expression(pCO["2,atm"]~(ppm))) +
+    theme(axis.title.y = element_blank(),
+          strip.text = element_blank(),
+          legend.title = element_blank()) +
+    facet_grid(depth ~.)
+  
+  p_maps + p_trends +
+    plot_layout(widths = c(3,1))
+  
   ggsave(
     here::here(
       paste0("output/publication/maps_depth_layer_",i_var,"_total_changes.png")
     ),
     width = 10,
-    height = 4.5,
+    height = 10,
     dpi = 600,
     bg = "white"
   )
   
 }
-
 
 acidification_depth_layer_total_relative <-
   acidification_depth_layer_total %>%
