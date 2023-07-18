@@ -4995,35 +4995,42 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
 }
 
 for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
-  
   # i_sat_level <- unique(acidification_saturation_horizon_levels$sat_level)[1]
   
   print(
-  acidification_saturation_horizon_levels %>%
-    relocate(lon) %>%
-    filter(sat_level == i_sat_level) %>% 
-    select(-sat_level) %>% 
-    p_map_mdim_robinson(
-      dim_row = "tref",
-      dim_col = "mineral",
-      var = "depth",
-      legend_title = paste0("Ω=",i_sat_level,"<br>horizon<br>(m)"),
-      legend_position = "right",
-      breaks = seq(6000, 0, -500)
-    )
+    acidification_saturation_horizon_levels %>%
+      relocate(lon) %>%
+      filter(sat_level == i_sat_level) %>%
+      select(-sat_level) %>%
+      p_map_mdim_robinson(
+        dim_row = "tref",
+        dim_col = "mineral",
+        var = "depth",
+        legend_title = paste0("Ω=", i_sat_level, "<br>horizon<br>(m)"),
+        legend_position = "right",
+        breaks = seq(6000, 0, -500)
+      )
   )
   
   ggsave(
-  here::here(
-    paste0("output/publication/maps_saturation_horizon_absolute_state_sat_level_",i_sat_level,".png")
-  ),
-  width = 6,
-  height = 6,
-  dpi = 600,
-  bg = "white"
-)
+    here::here(
+      paste0(
+        "output/publication/maps_saturation_horizon_absolute_state_sat_level_",
+        i_sat_level,
+        ".png"
+      )
+    ),
+    width = 6,
+    height = 6,
+    dpi = 600,
+    bg = "white"
+  )
   
 }
+
+
+
+
 
 for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
   
@@ -5070,6 +5077,64 @@ for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
   
   
 }
+
+
+p_sat_absolute <- acidification_saturation_horizon_levels %>%
+  relocate(lon) %>%
+  filter(tref == 2014,
+         mineral == "Aragonite",
+         sat_level < 5) %>%
+  select(-c(tref, mineral)) %>%
+  p_map_mdim_robinson(
+    dim_row = "sat_level",
+    var = "depth",
+    legend_title = paste0("Saturation<br>horizon<br>2014<br>(m)"),
+    legend_position = "left",
+    breaks = seq(3000, 0, -200)
+  )
+  
+
+p_sat_change <- acidification_saturation_horizon_levels %>%
+  filter(tref %in% c(1800, 2014),
+         mineral == "Aragonite",
+         sat_level < 5) %>%
+  select(-c(mineral)) %>%
+  arrange(tref) %>%
+  group_by(lat, lon, sat_level) %>%
+  mutate(n = n()) %>%
+  filter(n == 2) %>%
+  mutate(delta_depth = depth - first(depth),
+         period = paste(first(tref), "-", tref)) %>%
+  ungroup() %>%
+  filter(tref != 1800) %>%
+  drop_na() %>%
+  select(lon, lat, period, sat_level, delta_depth) %>%
+  p_map_mdim_robinson(
+    dim_row = "sat_level",
+    # dim_col = "mineral",
+    col = "div",
+    var = "delta_depth",
+    legend_title = paste0("ΔSaturation<br>horizon<br>1800-2014<br>(m)"),
+    legend_position = "right",
+    breaks = c(-Inf, seq(-300, 300, 50), Inf)
+  ) &
+  theme(strip.text = element_blank())
+
+p_sat_absolute | p_sat_change
+
+ggsave(
+  here::here(
+    paste0(
+      "output/publication/maps_saturation_horizon_absolute_change_state_aragonite_all_sat_level_2014.png"
+    )
+  ),
+  width = 8,
+  height = 7,
+  dpi = 600,
+  bg = "white"
+)
+
+
 
 
 for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
