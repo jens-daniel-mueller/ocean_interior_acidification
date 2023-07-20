@@ -40,24 +40,28 @@ labels_breaks <- function(i_var) {
     i_breaks <- c(-Inf, seq(0, 80, 10), Inf)
     i_contour_level <- 50
     i_legend_title <- "ΔC<sub>ant</sub><br>(µmol kg<sup>-1</sup>)"
+    i_contour_level_abs <- 2200
   }
   
   if (i_var == "pH") {
     i_breaks <- c(-Inf, seq(-0.12, 0, 0.02), Inf)
     i_contour_level <- -0.08
     i_legend_title <- "ΔpH<sub>T</sub>"
+    i_contour_level_abs <- 8
   }
   
   if (i_var == "OmegaAragonite") {
     i_breaks <- c(-Inf, seq(-0.8, 0, 0.1), Inf)
     i_contour_level <- -0.5
     i_legend_title <- "ΔΩ<sub>arag</sub>"
+    i_contour_level_abs <- 1
   }
   
   if (i_var == "SIR") {
     i_breaks <- c(-Inf, seq(-0.08, 0, 0.01), Inf)
     i_contour_level <- -0.05
     i_legend_title <- "ΔSIR"
+    i_contour_level_abs <- 0.2
   }
   
   if (i_var == "H_free") {
@@ -65,6 +69,7 @@ labels_breaks <- function(i_var) {
     i_contour_level <- 1.5
     i_legend_title <-
       "ΔH<sup>+</sup><br>(nmol kg<sup>-1</sup>)"
+    i_contour_level_abs <- 10
   }
   
   if (i_var == "temp") {
@@ -72,11 +77,13 @@ labels_breaks <- function(i_var) {
     i_contour_level <- 0
     i_legend_title <-
       "ΔT (°C)"
+    i_contour_level_abs <- 8
   }
   
   all_labels_breaks <- lst(i_breaks,
                            i_contour_level,
-                           i_legend_title)
+                           i_legend_title,
+                           i_contour_level_abs)
   
   return(all_labels_breaks)
   
@@ -389,7 +396,7 @@ path_reccap2 <-
 
 path_ungrd_3d_ocn <- "/nfs/kryo/work/datasets/ungridded/interior/ocean"
 
-path_out <-   paste0(path_observations, "output_main/")
+path_out <-   paste0(path_observations, "output_publication/")
 path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 
 
@@ -5241,7 +5248,7 @@ rm(acidification_saturation_horizon,
 
 # Acidified bottom
 
-```{r bottom_area}
+```{r bottom_area, eval=FALSE}
 
 
 acidification_bottom <- acidification_trend %>%
@@ -5279,14 +5286,6 @@ acidification_bottom %>%
   scale_fill_viridis_d() +
   coord_quickmap() +
   facet_wrap(~sat_level)
-
-ggsave(
-  here::here("output/main/omega_bottom.png"),
-  width = 10,
-  height = 5,
-  dpi = 600,
-  bg = "white"
-)
 
 ```
 
@@ -6313,28 +6312,52 @@ acidification_global_section_total <-
 
 acidification_global_section_total <-
   acidification_global_section_total %>%
-  pivot_longer(contains("_delta_total"),
-               names_to = "variable",
+  pivot_longer(contains("delta_total_mean"),
                values_to = "delta_total") %>%
-  mutate(variable = str_remove(variable, "_delta_total_mean"))
+  mutate(name = str_remove(name, "_delta_total_mean")) %>% 
+  filter(name %in% OIA_variables[-6])
 
+# subset total change sections
+
+absolute_global_section_total <-
+  acidification_global_section %>%
+  select(tref:band, dist,
+         contains(paste0(OIA_variables[-6],"_mean"))) %>%
+  filter(tref != 1800)
+
+
+# subset reference reconstruction
+
+absolute_global_section_total <-
+  absolute_global_section_total %>%
+  pivot_longer(contains("_mean"),
+               values_to = "mean") %>%
+  mutate(name = str_remove(name, "_mean"))
+
+
+acidification_global_section_total <-
+  full_join(acidification_global_section_total,
+            absolute_global_section_total)
+
+rm(absolute_global_section_total)
 
 # loop over OIA variables
 # print incremental sections
 
 for (i_var in OIA_variables[-6]) {
-  # i_var <- OIA_variables[2]
+  # i_var <- OIA_variables[1]
   
   # subset OIA variable
   
   i_acidification_global_section_total <-
     acidification_global_section_total %>%
-    filter(variable == i_var,
+    filter(name == i_var,
            depth <= 3000)
   
   all_labels_breaks <- labels_breaks(i_var)
   i_breaks        <- unlist(all_labels_breaks[1])
   i_contour_level <- unlist(all_labels_breaks[2])
+  i_contour_level_abs <- unlist(all_labels_breaks[4])
   i_legend_title  <- unlist(all_labels_breaks[3])
   
   p_global_section_period1 <-
@@ -6342,9 +6365,11 @@ for (i_var in OIA_variables[-6]) {
     filter(tref == 1994) %>%
     p_section_global(
       var = "delta_total",
+      var_contour = "mean",
       title_text = "A   1800 - 1994",
       legend_title = i_legend_title,
       contour_level = i_contour_level,
+      contour_level_var = i_contour_level_abs,
       breaks = i_breaks,
       subtitle_text = NULL,
       plot_slabs = "n"
@@ -6355,8 +6380,10 @@ for (i_var in OIA_variables[-6]) {
     filter(tref == 2004) %>%
     p_section_global(
       var = "delta_total",
+      var_contour = "mean",
       legend_title = i_legend_title,
       contour_level = i_contour_level,
+      contour_level_var = i_contour_level_abs,
       title_text = "B   1800 - 2004",
       subtitle_text = NULL,
       plot_slabs = "n",
@@ -6368,8 +6395,10 @@ for (i_var in OIA_variables[-6]) {
     filter(tref == 2014) %>%
     p_section_global(
       var = "delta_total",
+      var_contour = "mean",
       legend_title = i_legend_title,
       contour_level = i_contour_level,
+      contour_level_var = i_contour_level_abs,
       title_text = "C   1800 - 2014",
       subtitle_text = NULL,
       plot_slabs = "n",
@@ -6410,7 +6439,7 @@ for (i_var in OIA_variables[-6]) {
   ggsave(
     here::here(
       paste0(
-        "output/main/global_sections_",
+        "output/all_variables/global_sections_",
         i_var,
         "_total_changes.png"
       )
@@ -6467,7 +6496,7 @@ rm(acidification_global_section_total,
 
 ## Absolute state
 
-```{r global_section_absolute_state, eval=FALSE}
+```{r global_section_absolute_state}
 
 # subset absolute value sections
 
@@ -6591,7 +6620,7 @@ for (i_var in OIA_variables) {
   ggsave(
     here::here(
       paste0(
-        "output/main/global_sections_",
+        "output/all_variables/global_sections_",
         i_var,
         "_absolute_state.png"
       )
@@ -6721,6 +6750,10 @@ acidification_profiles_biomes <- acidification_profiles_biomes %>%
 ```{r compute_mean_profiles_total_acidification_stations}
 
 lat_lon_radius <- 3
+
+TS_product <-
+  bind_rows(ALOHA,
+            BATS)
 
 TS_product_stations <-
   TS_product %>%
@@ -7274,7 +7307,7 @@ DIC_dCant_temp_profiles %>%
 ggsave(
   here::here(
     paste0(
-      "output/main/profiles_incremental_changes_Cnat_basin.png"
+      "output/supplement/profiles_incremental_changes_Cnat_basin.png"
     )
   ),
   width = 10,
@@ -7370,11 +7403,11 @@ DIC_dCant_temp_profiles %>%
                      position = "top") +
   theme_classic() +
   theme(legend.position = "none")
-
-ggsave(  here::here("output/all_variables/profiles_MOBO-DIC_vs_eMLR.jpg"),
-  width = 5,
-  height = 5,
-  dpi = 600)
+# 
+# ggsave(  here::here("output/supplement/profiles_MOBO-DIC_vs_eMLR.jpg"),
+#   width = 5,
+#   height = 5,
+#   dpi = 600)
 
 #>      blue       red     green    yellow      cyan    purple      grey 
 #> "#4477AA" "#EE6677" "#228833" "#CCBB44" "#66CCEE" "#AA3377" "#BBBBBB" 
@@ -7543,9 +7576,6 @@ dev.off()
 
 ```{r trend_analysis_observations}
 
-TS_product <-
-  bind_rows(ALOHA,
-            BATS)
 
 TS_product <- TS_product %>%
   group_by(across(-value)) %>%
@@ -7821,7 +7851,6 @@ detrended <-
   mutate(value_deseason = value - mean)
 
 
-
 # cairo_pdf(
 #   here::here(
 #     "output/all_variables/BATS_ALOHA_time_series_deasonalized.pdf"
@@ -8047,7 +8076,7 @@ TS_trends %>%
   ), 6))
 
 ggsave(
-  here::here("output/all_variables/BATS_ALOHA_all_variables_profiles_trend.png"),
+  here::here("output/supplement/BATS_ALOHA_all_variables_profiles_trend.png"),
   width = 14,
   height = 10
 )
@@ -8072,7 +8101,7 @@ acidification_profiles_station_obs_reconstructed <-
 bind_rows(
   TS_trends %>%
     filter(term == "year") %>%
-    select(station, variable = name, depth = depth_int, estimate, std.error) %>%
+    select(station, DIC_variant, variable = name, depth = depth_int, estimate, std.error) %>%
     mutate(
       driver = "observed",
       tref = "trend over\nobserved\nperiod",
@@ -8080,28 +8109,38 @@ bind_rows(
       std.error = std.error * 20
     ),
   acidification_profiles_station %>%
-    mutate(driver = "reconstructed"),
-  acidification_profiles_station %>%
-    mutate(driver = "reconstructed") %>%
-    filter(variable != "temp") %>% 
-    mutate(variable = paste0(variable, "star"))
+    mutate(DIC_variant = "tco2_star_talk_PO4",
+           driver = "reconstructed")
 ) 
 
 
 acidification_profiles_station_obs_reconstructed %>%
   filter(station == "ALOHA" & depth <= 250 |
            station == "BATS" & depth <= 500) %>% 
-  group_by(station, variable, driver) %>% 
+  group_by(station, variable, driver, DIC_variant) %>% 
   summarise(delta_interval = mean(delta_interval)) %>% 
   ungroup() %>% 
   pivot_wider(names_from = driver,
               values_from = delta_interval) %>% 
-  mutate(relative = 100 * reconstructed / observed)
+  mutate(relative = 100 * reconstructed / observed) %>% 
+  drop_na()
+
+labels_tco2 <- c(
+  "DIC",
+  "DIC*(TA)",
+  "DIC*(TA,P)"
+)
 
 
 acidification_profiles_station_obs_reconstructed %>%
   filter(station == "ALOHA" | depth <= 500 | driver == "reconstructed",
-         variable %in% c("tco2star", "H_freestar", "OmegaAragonitestar", "temp")) %>% 
+         variable %in% c("tco2", "H_free", "OmegaAragonite",
+                         "talk", "PO4", "temp", "sal")) %>% 
+  mutate(variable = factor(
+    variable,
+    levels = c("H_free", "OmegaAragonite", "tco2", 
+                         "talk", "PO4", "temp", "sal")
+  )) %>% 
   ggplot(aes(delta_interval,
              depth)) +
   geom_vline(xintercept = 0, col = "grey") +
@@ -8110,32 +8149,31 @@ acidification_profiles_station_obs_reconstructed %>%
     aes(
     xmin = delta_interval - std.error,
     xmax = delta_interval + std.error,
-    fill = "Std error of\nobs. trend"
+    fill = DIC_variant
   ),
-  alpha = 0.5)+
-  geom_path(aes(col = tref)) +
-  geom_point(aes(col = tref), size = 0.5) +
-  scale_fill_manual(values = c("#BB5566")) +
-  scale_color_manual(values = c("#4477AA", "#BB5566")) +
-  labs(y = "Depth (m)",
-       title = "20 year changes") +
-  guides(color = guide_legend(byrow = TRUE,
-                              order = 1)) +
+  alpha = 0.5) +
+  geom_path(aes(col = DIC_variant, linetype = driver)) +
+  scale_fill_brewer(palette = "Dark2",
+                     labels = labels_tco2) +
+  scale_color_brewer(palette = "Dark2",
+                     labels = labels_tco2) +
+  scale_linetype_discrete(limits = rev) +
+  coord_cartesian(expand = 0) +
+  labs(y = "Depth (m)") +
   theme(
     legend.title = element_blank(),
     axis.title.x = element_blank(),
     strip.background.x = element_blank(),
     strip.placement = "outside",
     strip.text.x = element_markdown(),
-    legend.spacing.y = unit(0.5, "cm")
+    legend.position = "top"
   ) +
-  facet_grid(
+  facet_nested(
     station ~ variable,
-    scales = "free",
+    scales = "free_x",
     switch = "x",
     labeller = labeller(variable = x_axis_labels_stations)
   ) +
-  # scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
   facetted_pos_scales(y = rep(list(
     scale_y_continuous(trans = trans_reverser("sqrt"),
                        breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
@@ -8254,7 +8292,7 @@ acidification_profiles_long %>%
 ggsave(
   here::here(
     paste0(
-      "output/main/profiles_total_changes_basin.png"
+      "output/supplement/profiles_total_changes_basin.png"
     )
   ),
   width = 10,
@@ -8295,7 +8333,7 @@ acidification_profiles_long_relative %>%
 
 ggsave(
   here::here(
-    paste0("output/main/profiles_total_changes_basin_relative.png")
+    paste0("output/supplement/profiles_total_changes_basin_relative.png")
   ),
   width = 10,
   height = 10,
@@ -8327,7 +8365,7 @@ acidification_profiles_long_relative %>%
 
 ggsave(
   here::here(
-    "output/main/acidification_rates_500m_relative.png"
+    "output/supplement/acidification_rates_500m_relative.png"
   ),
   width = 8,
   height = 6,
@@ -8486,7 +8524,7 @@ acidification_profiles_biome_long %>%
 ggsave(
   here::here(
     paste0(
-      "output/main/profiles_total_changes_global.png"
+      "output/supplement/profiles_total_changes_global.png"
     )
   ),
   width = 6,
@@ -8561,7 +8599,7 @@ acidification_profiles_biome_long %>%
 ggsave(
   here::here(
     paste0(
-      "output/main/profiles_total_changes_biome.png"
+      "output/supplement/profiles_total_changes_biome.png"
     )
   ),
   width = 6,
