@@ -4873,6 +4873,9 @@ acidification_saturation_horizon_levels %>%
   mutate(n = n()) %>%
   filter(n == 2) %>%
   mutate(delta_depth = depth - first(depth),
+         delta_depth = if_else(delta_depth == 0,
+                               NA,
+                               delta_depth),
          period = paste(first(tref), "-", tref)) %>%
   ungroup() %>%
   filter(tref != 1800) %>%
@@ -4906,6 +4909,32 @@ ggsave(
   dpi = 600,
   bg = "white"
 )
+
+library(kableExtra)
+
+inner_join(
+  acidification_saturation_horizon_levels %>%
+    relocate(lon) %>%
+    filter(tref == 2014,
+           mineral == "Aragonite",
+           sat_level < 5),
+  basinmask
+) %>%
+  group_by(basin, tref, sat_level, mineral) %>%
+  summarise(depth = weighted.mean(depth, area)) %>%
+  ungroup() %>%
+  kable() %>%
+  kable_styling() %>%
+  scroll_box(height = "300px")
+
+inner_join(acidification_saturation_horizon_levels_change,
+           basinmask) %>% 
+  group_by(basin, period, sat_level) %>%
+  summarise(delta_depth = weighted.mean(delta_depth, area)) %>%
+  ungroup() %>%
+  kable() %>%
+  kable_styling() %>%
+  scroll_box(height = "300px")
 
 
 
@@ -7359,9 +7388,14 @@ DIC_dCant_temp_profiles_biome <- DIC_dCant_temp_profiles_biome %>%
     driver = if_else(str_detect(driver, "dCant"), "dCant", "DIC")
   )
 
-
-DIC_dCant_temp_profiles_biome %>% 
- ggplot() +
+p_acid_profiles_global <-
+  DIC_dCant_temp_profiles_biome %>%
+  filter(biome == "Global",
+         variable %in% c("OmegaAragonite", "H_free", "tco2", "temp")) %>%
+  mutate(variable = factor(variable, levels = c(
+    "OmegaAragonite", "H_free", "tco2", "temp"
+  ))) %>%
+  ggplot() +
   geom_vline(xintercept = 0, col = "grey") +
   geom_path(
     data = . %>% filter(variable == "temp"),
@@ -7373,34 +7407,87 @@ DIC_dCant_temp_profiles_biome %>%
     data = . %>% filter(variable != "temp"),
     aes(delta_interval,
         depth,
-        col = driver, 
+        col = driver,
         linetype = temperature)
   ) +
-  scale_color_brewer(palette = "Dark2",
-                     direction = -1,
-                     labels = c(expression(Delta * C[ant]),
-                                      expression(Delta * DIC)),
-                     name = "Acidification\ndriver") +
+  scale_color_brewer(
+    palette = "Dark2",
+    direction = -1,
+    labels = c(expression(Delta * C[ant]),
+               expression(Delta * DIC)),
+    name = "Acidification\ndriver"
+  ) +
   scale_linetype(name = "Temperature\nestimate") +
-  scale_x_continuous(guide = guide_axis(n.dodge=2)) +
+  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
+  labs(y = "Depth (m)",
+       title = "Global") +
+  theme(
+    legend.position = "none",
+    legend.text.align = 0,
+    axis.title.x = element_blank(),
+    strip.text.x = element_markdown()
+  ) +
+  facet_wrap(
+    ~ variable,
+    scales = "free",
+    labeller = labeller(variable = x_axis_labels_stations)
+  ) +
+  facetted_pos_scales(y = rep(list(
+    scale_y_continuous(trans = trans_reverser("sqrt"),
+                       breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+  ), 6))
+
+
+p_acid_profiles_biome <-
+  DIC_dCant_temp_profiles_biome %>%
+  filter(biome != "Global",
+         variable %in% c("OmegaAragonite", "H_free", "tco2", "temp")) %>%
+  mutate(variable = factor(variable, levels = c(
+    "OmegaAragonite", "H_free", "tco2", "temp"
+  ))) %>%
+  ggplot() +
+  geom_vline(xintercept = 0, col = "grey") +
+  geom_path(
+    data = . %>% filter(variable == "temp"),
+    aes(delta_interval,
+        depth,
+        linetype = temperature)
+  ) +
+  geom_path(
+    data = . %>% filter(variable != "temp"),
+    aes(delta_interval,
+        depth,
+        col = driver,
+        linetype = temperature)
+  ) +
+  scale_color_brewer(
+    palette = "Dark2",
+    direction = -1,
+    labels = c(expression(Delta * C[ant]),
+               expression(Delta * DIC)),
+    name = "Acidification\ndriver"
+  ) +
+  scale_linetype(name = "Temperature\nestimate") +
+  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
   labs(y = "Depth (m)") +
   theme(
     legend.text.align = 0,
-    axis.title.x = element_blank(),
-    strip.background.x = element_blank(),
-    strip.placement = "outside",
+    axis.title = element_blank(),
     strip.text.x = element_markdown()
   ) +
   facet_grid(
     biome ~ variable,
     scales = "free",
-    switch = "x",
     labeller = labeller(variable = x_axis_labels_stations)
   ) +
   facetted_pos_scales(y = rep(list(
-                        scale_y_continuous(trans = trans_reverser("sqrt"),
-                                           breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
-                      ), 6))
+    scale_y_continuous(trans = trans_reverser("sqrt"),
+                       breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+  ), 6))
+
+
+
+p_acid_profiles_global + p_acid_profiles_biome
 
 
 ggsave(
@@ -7409,8 +7496,8 @@ ggsave(
       "output/supplement/profiles_incremental_changes_Cnat_biome.png"
     )
   ),
-  width = 10,
-  height = 10,
+  width = 11,
+  height = 8,
   dpi = 600,
   bg = "white"
 )
@@ -8244,28 +8331,58 @@ acidification_profiles_station_obs_reconstructed %>%
              depth)) +
   geom_vline(xintercept = 0, col = "grey") +
   geom_ribbon(
-    data = . %>% filter(!is.na(std.error)),
+    data = . %>% filter(!is.na(std.error),
+                        variable %in% c("H_free", "OmegaAragonite", "tco2")),
     aes(
     xmin = delta_interval - std.error,
     xmax = delta_interval + std.error,
     fill = DIC_variant
   ),
-  alpha = 0.5) +
-  geom_path(aes(col = DIC_variant, linetype = driver)) +
-  scale_fill_brewer(palette = "Dark2",
-                     labels = labels_tco2) +
-  scale_color_brewer(palette = "Dark2",
-                     labels = labels_tco2) +
+  alpha = 0.3) +
+  geom_ribbon(
+    data = . %>% filter(!is.na(std.error),
+                        !(variable %in% c("H_free", "OmegaAragonite", "tco2")),
+                            DIC_variant == "tco2"),
+    aes(
+    xmin = delta_interval - std.error,
+    xmax = delta_interval + std.error
+  ),
+  alpha = 0.3) +
+  geom_path(
+        data = . %>% filter(variable %in% c("H_free", "OmegaAragonite", "tco2")),
+        aes(col = DIC_variant, linetype = driver, linewidth = DIC_variant)) +
+  geom_path(
+        data = . %>% filter(!(variable %in% c("H_free", "OmegaAragonite", "tco2")),
+                            DIC_variant == "tco2"),
+        aes(linetype = driver),
+        linewidth = 0.3) +
+  # scale_fill_brewer(palette = "Dark2",
+  #                    labels = labels_tco2) +
+  # scale_color_brewer(palette = "Dark2",
+  #                    labels = labels_tco2) +
+  scale_fill_highcontrast(labels = labels_tco2,
+                          reverse = TRUE) +
+  scale_color_highcontrast(labels = labels_tco2,
+                          reverse = TRUE) +
+  scale_discrete_manual("linewidth",
+                        labels = labels_tco2,
+                        values = c(0.3, 0.3, 1))+
   scale_linetype_discrete(limits = rev) +
+  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
+  guides(colour = guide_legend(order = 1),
+         fill = guide_legend(order = 1),
+         linewidth = guide_legend(order = 1),
+         linetype = guide_legend(order = 2)) +
   coord_cartesian(expand = 0) +
   labs(y = "Depth (m)") +
   theme(
     legend.title = element_blank(),
+    legend.direction = "vertical",
+    legend.position = "bottom",
     axis.title.x = element_blank(),
     strip.background.x = element_blank(),
     strip.placement = "outside",
-    strip.text.x = element_markdown(),
-    legend.position = "top"
+    strip.text.x = element_markdown()
   ) +
   facet_nested(
     station ~ variable,
@@ -8287,8 +8404,8 @@ ggsave(
       "output/main/BATS_ALOHA_20_yr_changes.png"
     )
   ),
-  width = 10,
-  height = 6,
+  width = 8,
+  height = 7,
   dpi = 600,
   bg = "white"
 )
