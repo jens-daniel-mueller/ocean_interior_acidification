@@ -1926,6 +1926,19 @@ rm(sensitivity,
    sensitivity_temp)
 
 
+carb(
+  flag = 24,
+  var1 = 400,
+  var2 = 2300 * 1e-6,
+  T = c(10,12))
+
+carb(
+  flag = 15,
+  var1 = 2300 * 1e-6,
+  var2 = 0.002117926,
+  T = c(10,12))
+
+
 ```
 
 
@@ -5156,7 +5169,7 @@ acidification_volume %>%
 
 
 acidification_volume_print %>%
-  filter(basin %in% c("N. Atlantic", "N. Pacific")) %>% 
+  # filter(basin %in% c("N. Atlantic", "N. Pacific")) %>% 
   ggplot(aes(pCO2, value)) +
   labs(x = expression(Atmospheric ~ CO[2] ~ (ppm))) +
   scale_x_continuous(breaks = co2_atm_level) +
@@ -5173,7 +5186,7 @@ acidification_volume_print %>%
 
 ggsave(
   here::here("output/supplement/volume_omega_saturation_basin.png"),
-  width = 6,
+  width = 10,
   height = 4.5,
   dpi = 600,
   bg = "white"
@@ -8723,13 +8736,10 @@ p_acid_profiles_global <-
     axis.title.x = element_blank(),
     strip.text.x = element_markdown(),
     legend.key.width = unit(1, "cm")
-    # strip.background.x = element_blank(),
-    # strip.placement = "outside"
   ) +
   facet_wrap(. ~ variable,
              scales = "free_x",
              labeller = labeller(variable = x_axis_labels)
-             # strip.position = "bottom"
              ) +
   facetted_pos_scales(#x = x_axis_scales,
     y = rep(list(
@@ -8982,10 +8992,23 @@ acidification_profiles_biome_long_interval <-
 
 
 acidification_profiles_biome_long_interval %>%
-  filter(depth <= 500) %>%
+  filter(depth <= 1000) %>%
   group_by(tref, biome, variable) %>%
-  summarise(delta_interval_rel_temp = mean(delta_interval_rel_temp)) %>%
+  summarise(temp_enhance = mean(delta_interval_rel_temp),
+            temp_enhance_sd = sd(delta_interval_rel_temp)) %>%
   ungroup() %>%
+  arrange(biome, variable, tref) %>% 
+  kable() %>%
+  kable_styling() %>%
+  scroll_box(height = "300px")
+
+acidification_profiles_biome_long_interval %>%
+  filter(depth <= 1000) %>%
+  group_by(biome, variable) %>%
+  summarise(temp_enhance = mean(delta_interval_rel_temp),
+            temp_enhance_sd = sd(delta_interval_rel_temp)) %>%
+  ungroup() %>%
+  arrange(biome, variable) %>% 
   kable() %>%
   kable_styling() %>%
   scroll_box(height = "300px")
@@ -8996,7 +9019,8 @@ acidification_profiles_biome_long_interval %>%
 p_acid_profiles_global <-
   acidification_profiles_biome_long_interval %>%
   filter(biome == "Global",
-         variable %in% c("OmegaAragonite", "H_free")) %>%
+         variable %in% c("OmegaAragonite", "H_free"),
+         delta_interval_rel_temp != 0) %>%
   mutate(variable = factor(variable, levels = c(
     "OmegaAragonite", "H_free"
   ))) %>%
