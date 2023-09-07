@@ -7282,7 +7282,7 @@ buffer_profiles <- buffer_profiles %>%
 
 ```
 
-```{r compute_mean_profiles_buffer_biome, eval=FALSE}
+```{r compute_mean_profiles_buffer_biome}
 
 
 # join with 3D acidification fields
@@ -8839,17 +8839,17 @@ acidification_profiles_biome_long %>%
 p_acid_profiles_global + p_acid_profiles_biome +
   plot_layout(guides = "collect")
 
-ggsave(
-  here::here(
-    paste0(
-      "output/main/profiles_total_changes_biome.png"
-    )
-  ),
-  width = 10,
-  height = 8,
-  dpi = 600,
-  bg = "white"
-)
+# ggsave(
+#   here::here(
+#     paste0(
+#       "output/main/profiles_total_changes_biome.png"
+#     )
+#   ),
+#   width = 10,
+#   height = 8,
+#   dpi = 600,
+#   bg = "white"
+# )
 
 ```
 
@@ -9382,6 +9382,239 @@ buffer_profiles_biome %>%
 
 
 ```
+
+## Merged profiles
+
+```{r merged_profiles_global}
+
+p_acid_profiles_global <-
+  acidification_profiles_biome_long %>%
+  filter(biome == "Global",
+         variable %in% c("OmegaAragonite", "H_free")) %>%
+  mutate(variable = factor(variable, levels = c("OmegaAragonite", "H_free", "tco2"))) %>%
+  ggplot() +
+  geom_path(aes(delta_total,
+                depth,
+                col = tref),
+            linewidth = 0.8) +
+  scale_color_manual(values = three_year_colors,
+                     name = "") +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_wrap(
+    . ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels),
+    strip.position = "bottom", ncol = 2
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+p_tco2_profiles_global <-
+  acidification_profiles_biome_long %>%
+  filter(biome == "Global",
+         variable %in% c("tco2")) %>%
+  mutate(variable = factor(variable, levels = c("OmegaAragonite", "H_free", "tco2"))) %>%
+  ggplot() +
+  geom_path(aes(delta_total,
+                depth,
+                col = tref),
+            linewidth = 0.8) +
+  scale_color_manual(values = three_year_colors,
+                     name = "") +
+  labs(y = "Depth (m)") +
+  theme(
+    axis.title.x = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_wrap(
+    . ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels),
+    strip.position = "bottom", ncol = 2
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+p_buffer_profiles_global <-
+buffer_profiles_biome %>%
+  filter(biome == "Global",
+         variable %in% c("OmegaAragonite", "H_free"),
+         tref != 1800) %>%
+  mutate(variable = factor(variable, levels = c(
+    "OmegaAragonite", "H_free"
+  ))) %>%
+  ggplot() +
+  geom_path(aes(sensitivity,
+                depth,
+                col = tref),
+            linewidth = 0.8) +
+  scale_color_manual(values = three_year_colors,
+                     name = "") +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_wrap(
+    . ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels_buffer_variables_addition),
+    strip.position = "bottom", ncol = 2
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+layout <-
+  "AA
+BC
+DD"
+
+p_acid_profiles_global +
+  p_tco2_profiles_global +
+  guide_area() + 
+  p_buffer_profiles_global +
+  plot_layout(guides = 'collect',
+              design = layout)
+
+ggsave(
+  here::here(
+    paste0(
+      "output/main/profiles_total_changes_global.png"
+    )
+  ),
+  width = 4,
+  height = 7,
+  dpi = 600,
+  bg = "white"
+)
+
+```
+
+
+```{r merged_profiles_biome}
+
+p_acid_profiles_biome <-
+  acidification_profiles_biome_long %>%
+  filter(biome != "Global",
+         variable %in% c("OmegaAragonite", "H_free", "tco2")) %>%
+  mutate(variable = factor(variable, levels = c("OmegaAragonite", "H_free", "tco2"))) %>%
+  ggplot() +
+  geom_path(aes(delta_total,
+                depth,
+                col = tref),
+            linewidth = 0.8) +
+  scale_color_manual(values = three_year_colors,
+                     name = "") +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    strip.text = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background = element_blank(),
+    strip.text.y = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_grid(
+    biome ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels),
+    switch = "x"
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+p_buffer_profiles_biome <-
+buffer_profiles_biome %>%
+  filter(biome != "Global",
+         variable %in% c("OmegaAragonite", "H_free"),
+         tref != 1800) %>%
+  mutate(variable = factor(variable, levels = c(
+    "OmegaAragonite", "H_free"
+  ))) %>%
+  ggplot() +
+  geom_path(aes(sensitivity,
+                depth,
+                col = tref),
+            linewidth = 0.8) +
+  scale_color_manual(values = three_year_colors,
+                     name = "") +
+  labs(y = "Depth (m)") +
+  theme(
+    axis.title.x = element_blank(),
+    strip.text = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+  ) +
+  facet_grid(
+    biome ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels),
+    switch = "x"
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+
+cowplot::plot_grid(p_acid_profiles_biome,
+                   p_buffer_profiles_biome,
+                   rel_widths = c(11,9))
+
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/profiles_total_changes_biome.png"
+    )
+  ),
+  width = 12,
+  height = 12,
+  dpi = 600,
+  bg = "white"
+)
+
+```
+
 
 
 
