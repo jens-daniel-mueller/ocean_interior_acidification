@@ -5210,17 +5210,17 @@ acidification_volume %>%
     mineral == "Aragonite",
     sat_level %in% c(1, 1.5, 2, 3, 4),
     estimate %in% c(
-      "volume_relative_to_3000m_volume",
-      "volume_loss_cumulative_relative_to_3000m_volume",
+      "volume_relative_to_total_volume",
+      "volume_loss_cumulative_relative_to_total_volume",
       "volume_loss_cumulative_relative_to_preind_volume"
     )
   ) %>%
   mutate(
     sat_level = as.factor(sat_level),
     estimate = case_when(
-      estimate == "volume_relative_to_3000m_volume" ~
+      estimate == "volume_relative_to_total_volume" ~
         "Saturated volume\n(% total vol.)",
-      estimate == "volume_loss_cumulative_relative_to_3000m_volume" ~
+      estimate == "volume_loss_cumulative_relative_to_total_volume" ~
         "Loss of sat. volume\n(% total vol.)",
       estimate == "volume_loss_cumulative_relative_to_preind_volume" ~
         "Loss of sat. volume\n(% preind. vol.)"
@@ -5232,7 +5232,7 @@ acidification_volume %>%
         "Loss of sat. volume\n(% total vol.)",
         "Loss of sat. volume\n(% preind. vol.)"
       )
-    ),
+    )
   ) 
 
 
@@ -5264,6 +5264,23 @@ ggsave(
 
 acidification_volume_print %>%
   filter(depth_integration == depth_integration_use) %>%
+  mutate(
+    estimate = case_when(
+      estimate == "Saturated volume\n(% total vol.)" ~
+        "Saturated volume\n(% top 500m vol.)",
+      estimate == "Loss of sat. volume\n(% total vol.)" ~
+        "Loss of sat. volume\n(% top 500m vol.)",
+      TRUE ~ estimate
+    ),
+    estimate = factor(
+      estimate,
+      levels = c(
+        "Saturated volume\n(% top 500m vol.)",
+        "Loss of sat. volume\n(% top 500m vol.)",
+        "Loss of sat. volume\n(% preind. vol.)"
+      )
+    )
+  ) %>% 
   ggplot(aes(pCO2, value)) +
   labs(x = expression(Atmospheric ~ CO[2] ~ (ppm))) +
   scale_x_continuous(breaks = seq(280, 400, 20),
@@ -5313,6 +5330,80 @@ ggsave(
   here::here("output/main/volume_omega_saturation_global.png"),
   width = 4,
   height = 8,
+  dpi = 600,
+  bg = "white"
+)
+
+
+acidification_volume_print %>%
+  filter(depth_integration == depth_integration_use,
+         estimate != "Loss of sat. volume\n(% total vol.)") %>%
+    mutate(
+    estimate = case_when(
+      estimate == "Saturated volume\n(% total vol.)" ~
+        "Saturated volume\n(% top 500m vol.)",
+      estimate == "Loss of sat. volume\n(% total vol.)" ~
+        "Loss of sat. volume\n(% top 500m vol.)",
+      TRUE ~ estimate
+    ),
+    estimate = factor(
+      estimate,
+      levels = c(
+        "Saturated volume\n(% top 500m vol.)",
+        "Loss of sat. volume\n(% top 500m vol.)",
+        "Loss of sat. volume\n(% preind. vol.)"
+      )
+    )
+  ) %>% 
+  ggplot(aes(pCO2, value)) +
+  labs(x = expression(Atmospheric ~ CO[2] ~ (ppm))) +
+  scale_x_continuous(breaks = seq(280, 400, 20),
+                     sec.axis = sec_axis(
+                       ~ (. - 282.5) * 1.537,
+                       breaks = seq(0,175,50),
+                       name = expression(Oceanic~C[ant]~storage~(PgC)))) +
+  geom_path(aes(col = sat_level, group = sat_level)) +
+  geom_point(aes(fill = sat_level,
+                 shape = sat_level)) +
+  geom_text(data = . %>% 
+              filter(estimate == "Loss of sat. volume\n(% preind. vol.)",
+                     sat_level == 4,
+                     tref != 1800),
+            aes(label = tref),
+            nudge_y = -7,
+            nudge_x = -4) +
+  geom_text(data = . %>% 
+              filter(estimate == "Loss of sat. volume\n(% preind. vol.)",
+                     sat_level == 4,
+                     tref == 1800),
+            aes(label = tref),
+            nudge_y = 7,
+            nudge_x = 4) +
+  scale_color_viridis_d(direction = -1,
+                        name = expression(atop(Ω[arag], threshold))) +
+  scale_fill_viridis_d(direction = -1,
+                       name = expression(atop(Ω[arag], threshold))) +
+  scale_shape_manual(values = seq(21,25,1),
+                     name = expression(atop(Ω[arag], threshold))) +
+  theme(
+    axis.title.y = element_blank(),
+    # legend.position = c(0.15, 0.17),
+    legend.background = element_rect(fill = "transparent"),
+    strip.background = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(
+    estimate ~ .,
+    scales = "free_y",
+    switch = "y"
+  )
+
+
+ggsave(
+  here::here("output/main/volume_omega_saturation_global_OSM.png"),
+  width = 5,
+  height = 5,
   dpi = 600,
   bg = "white"
 )
@@ -9387,10 +9478,10 @@ buffer_profiles_biome %>%
 
 ```{r merged_profiles_global}
 
-p_acid_profiles_global <-
+p_acid_profiles_global_omega <-
   acidification_profiles_biome_long %>%
   filter(biome == "Global",
-         variable %in% c("OmegaAragonite", "H_free")) %>%
+         variable %in% c("OmegaAragonite")) %>%
   mutate(variable = factor(variable, levels = c("OmegaAragonite", "H_free", "tco2"))) %>%
   ggplot() +
   geom_path(aes(delta_total,
@@ -9412,7 +9503,41 @@ p_acid_profiles_global <-
     . ~ variable,
     scales = "free_x",
     labeller = labeller(variable = x_axis_labels),
-    strip.position = "bottom", ncol = 2
+    strip.position = "bottom", ncol = 1
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+p_acid_profiles_global_H_free <-
+  acidification_profiles_biome_long %>%
+  filter(biome == "Global",
+         variable %in% c("H_free")) %>%
+  mutate(variable = factor(variable, levels = c("OmegaAragonite", "H_free", "tco2"))) %>%
+  ggplot() +
+  geom_path(aes(delta_total,
+                depth,
+                col = tref),
+            linewidth = 0.8) +
+  scale_color_manual(values = three_year_colors,
+                     name = "") +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_wrap(
+    . ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels),
+    strip.position = "bottom", ncol = 1
   ) +
   scale_y_continuous(
     trans = trans_reverser("sqrt"),
@@ -9432,10 +9557,11 @@ p_tco2_profiles_global <-
                 col = tref),
             linewidth = 0.8) +
   scale_color_manual(values = three_year_colors,
-                     name = "") +
+                     name = "Change from\n1800 to") +
   labs(y = "Depth (m)") +
   theme(
-    axis.title.x = element_blank(),
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
     strip.text.x = element_markdown(),
     legend.key.width = unit(1, "cm"),
     strip.background.x = element_blank(),
@@ -9445,7 +9571,7 @@ p_tco2_profiles_global <-
     . ~ variable,
     scales = "free_x",
     labeller = labeller(variable = x_axis_labels),
-    strip.position = "bottom", ncol = 2
+    strip.position = "bottom", ncol = 1
   ) +
   scale_y_continuous(
     trans = trans_reverser("sqrt"),
@@ -9454,10 +9580,10 @@ p_tco2_profiles_global <-
     expand = c(0, 0)
   )
 
-p_buffer_profiles_global <-
+p_buffer_profiles_global_omega <-
 buffer_profiles_biome %>%
   filter(biome == "Global",
-         variable %in% c("OmegaAragonite", "H_free"),
+         variable %in% c("OmegaAragonite"),
          tref != 1800) %>%
   mutate(variable = factor(variable, levels = c(
     "OmegaAragonite", "H_free"
@@ -9472,7 +9598,8 @@ buffer_profiles_biome %>%
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
-    axis.title.x = element_blank(),
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
     strip.text.x = element_markdown(),
     legend.key.width = unit(1, "cm"),
     strip.background.x = element_blank(),
@@ -9482,7 +9609,45 @@ buffer_profiles_biome %>%
     . ~ variable,
     scales = "free_x",
     labeller = labeller(variable = x_axis_labels_buffer_variables_addition),
-    strip.position = "bottom", ncol = 2
+    strip.position = "bottom", ncol = 1
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+p_buffer_profiles_global_H_free <-
+buffer_profiles_biome %>%
+  filter(biome == "Global",
+         variable %in% c("H_free"),
+         tref != 1800) %>%
+  mutate(variable = factor(variable, levels = c(
+    "OmegaAragonite", "H_free"
+  ))) %>%
+  ggplot() +
+  geom_path(aes(sensitivity,
+                depth,
+                col = tref),
+            linewidth = 0.8) +
+  scale_color_manual(values = three_year_colors,
+                     name = "") +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.position = "none",
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_wrap(
+    . ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels_buffer_variables_addition),
+    strip.position = "bottom", ncol = 1
   ) +
   scale_y_continuous(
     trans = trans_reverser("sqrt"),
@@ -9492,14 +9657,15 @@ buffer_profiles_biome %>%
   )
 
 layout <-
-  "AA
-BC
-DD"
+  "ACE
+BDF"
 
-p_acid_profiles_global +
+p_acid_profiles_global_omega +
+p_acid_profiles_global_H_free +
   p_tco2_profiles_global +
   guide_area() + 
-  p_buffer_profiles_global +
+  p_buffer_profiles_global_omega +
+  p_buffer_profiles_global_H_free +
   plot_layout(guides = 'collect',
               design = layout)
 
@@ -9509,8 +9675,33 @@ ggsave(
       "output/main/profiles_total_changes_global.png"
     )
   ),
+  width = 8,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
+
+layout <-
+  "AC
+BD"
+
+p_acid_profiles_global_omega +
+p_acid_profiles_global_H_free +
+  p_tco2_profiles_global +
+  guide_area() + 
+  plot_layout(guides = 'collect',
+              design = layout)
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/main/profiles_total_changes_global_OSM.png"
+    )
+  ),
   width = 4,
-  height = 7,
+  height = 6,
   dpi = 600,
   bg = "white"
 )
