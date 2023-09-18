@@ -1803,19 +1803,20 @@ quantile_low <- 0.02
 
 break_numbers <- 10
 
-three_year_colors <- viridis::viridis(3,
-                                      begin = 0.1,
-                                      end = 0.6,
-                                      option = "magma")
+# three_year_colors <- viridis::viridis(3,
+#                                       begin = 0.1,
+#                                       end = 0.6,
+#                                       option = "magma")
+# 
+# four_year_colors <- c("grey50", three_year_colors)
 
-scales::show_col(three_year_colors)
+
+four_year_colors <- c("#9bc53d", "#ffa71a", "#e71f29", "#7c1c97")
+three_year_colors <- four_year_colors[-1]
+
+
+two_year_colors <- three_year_colors[-1]
 three_year_colors_2014 <- c(rep("transparent",2),three_year_colors[3])
-
-two_year_colors <- three_year_colors[-3]
-scales::show_col(two_year_colors)
-
-four_year_colors <- c("grey50", three_year_colors)
-scales::show_col(four_year_colors)
 four_year_colors_2014 <- c(rep("transparent",3),four_year_colors[4])
 
 biome_colors <- colour("okabe ito", names = "FALSE")(6)
@@ -2965,9 +2966,9 @@ rm(acidification_depth_layer_incremental,
 acidification_depth_layer_total <-
   acidification_depth_layer %>%
   select(lat:tref,
-         contains("_delta_total")) %>%
-  filter(tref != 1800) %>% 
-  mutate(tref = paste0("1800-",tref))
+         contains("_delta_total"))
+  # filter(tref != 1800) %>% 
+  # mutate(tref = paste0("1800-",tref))
 
 
 acidification_depth_layer_total <-
@@ -3003,8 +3004,8 @@ acidification_depth_layer_total_trend <-
   bind_rows(
     acidification_depth_layer_total_trend,
     acidification_depth_layer_total_trend_global
-  ) %>%
-  mutate(tref = str_remove(tref, "1800-"))
+  )
+  # mutate(tref = str_remove(tref, "1800-"))
 
 rm(acidification_depth_layer_total_trend_global)
 
@@ -3014,12 +3015,11 @@ acidification_depth_layer_total_trend <-
   full_join(
     acidification_depth_layer_total_trend %>%
       distinct(depth, biome, variable) %>%
-      mutate(tref = "1800",
+      mutate(tref = 1800,
              delta_total = 0,
              delta_total_sd = 0),
     acidification_depth_layer_total_trend
-  ) %>%
-  mutate(tref = as.numeric(as.character(tref)))
+  )
 
 # join atmospheric co2
 
@@ -3034,14 +3034,15 @@ acidification_depth_layer_total_zonal <-
   acidification_depth_layer_total %>%
   filter(variable %in% OIA_variables) %>%
   group_by(depth, tref, variable, lat) %>%
-  summarise(delta_total_sd = sd(delta_total, na.rm = TRUE),
-            delta_total = mean(delta_total, na.rm = TRUE)) %>%
+  summarise(
+    delta_total_sd = sd(delta_total, na.rm = TRUE),
+    delta_total = mean(delta_total, na.rm = TRUE)
+  ) %>%
   ungroup() %>%
-  mutate(tref = str_remove(tref, "1800-"))
+  mutate(tref = as.factor(tref))
 
 acidification_depth_layer_total_zonal %>% 
   ggplot() +
-  geom_vline(xintercept = 0) +
   geom_ribbon(#data = . %>% filter(tref == 2014),
               aes(xmin = delta_total - delta_total_sd,
                   xmax = delta_total + delta_total_sd,
@@ -3049,8 +3050,8 @@ acidification_depth_layer_total_zonal %>%
                   fill = tref),
               alpha = 0.2) +
   geom_path(aes(delta_total, lat, col = tref)) +
-  scale_color_manual(values = three_year_colors) +
-  scale_fill_manual(values = three_year_colors_2014) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
   facet_grid(depth~variable, scales = "free_x")
 
 for (i_var in OIA_variables) {
@@ -3083,7 +3084,7 @@ for (i_var in OIA_variables) {
   i_legend_title  <- unlist(all_labels_breaks[3])
   
   p_maps <- i_acidification_depth_layer_total %>%
-    filter(tref == "1800-2014") %>% 
+    filter(tref == "2014") %>% 
     p_map_mdim_robinson(
       dim_row = "depth",
       dim_col = "tref",
@@ -3094,7 +3095,8 @@ for (i_var in OIA_variables) {
       legend_position = "top"
     )
 
-  p_zonal <- acidification_depth_layer_total_zonal %>%
+  p_zonal <-
+    acidification_depth_layer_total_zonal %>%
     filter(variable == i_var) %>%
     ggplot() +
     geom_vline(xintercept = i_contour_level, col = "grey50") +
@@ -3106,17 +3108,17 @@ for (i_var in OIA_variables) {
     geom_path(aes(delta_total, lat, col = tref)) +
     scale_x_continuous(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)]) +
     scale_y_continuous(breaks = seq(-60,60,30)) +
-    scale_color_manual(values = three_year_colors,
-                       name = "1800-") +
-    scale_fill_manual(values = three_year_colors_2014,
-                       name = "1800-") +
+    scale_color_manual(values = four_year_colors) +
+    scale_fill_manual(values = four_year_colors_2014) +
     labs(x = str_replace(i_legend_title, "<br>", " "),
          y = "Latitude (°N)") +
     coord_cartesian(expand = 0) +
     theme(axis.title.x = element_markdown(),
           strip.text = element_blank(),
           legend.position = "top",
-          legend.direction = "vertical") +
+          legend.title = element_blank(),
+          legend.direction = "vertical"
+          ) +
     facet_grid(depth ~.)
   
     
@@ -3185,12 +3187,12 @@ for (i_var in OIA_variables) {
 
 acidification_depth_layer_total_relative <-
   acidification_depth_layer_total %>%
-  filter(tref %in% c("1800-1994", "1800-2014"),
+  filter(tref %in% c(1994, 2014),
          variable %in% OIA_variables[c(1,3,5)],
          depth %in% unique(.$depth)[c(1,2)]) %>%
   pivot_wider(names_from = tref,
               values_from = delta_total) %>%
-  mutate(delta_total_relative = 100 * (`1800-2014` - `1800-1994`) / `1800-1994`) %>%
+  mutate(delta_total_relative = 100 * (`2014` - `1994`) / `1994`) %>%
   select(lon, lat, depth, variable, delta_total_relative)
 
 i_breaks        <- c(-Inf, seq(0, 70, 10), Inf)
@@ -3320,7 +3322,7 @@ rm(
 
 
 acidification_depth_layer_total_relative %>%
-  filter(tref == "1800-2014",
+  filter(tref == 2014,
          variable %in% c("H_free", "OmegaAragonite")) %>%
   mutate(
     delta_total_relative = if_else(
@@ -8804,8 +8806,7 @@ acidification_profiles_biome_long <-
   acidification_profiles_biomes %>%
   filter(str_detect(variable, "_delta_total")) %>% 
   mutate(variable = str_remove(variable, "_delta_total")) %>%
-  filter(tref != 1800,
-         depth <= ocean_depth,
+  filter(depth <= ocean_depth,
          variable %in% OIA_variables)
 
 
@@ -8826,9 +8827,9 @@ p_acid_profiles_global_omega <-
                 depth,
                 col = tref),
             linewidth = 1.5) +
-  scale_color_manual(values = three_year_colors,
+  scale_color_manual(values = four_year_colors,
                      name = "") +
-  scale_fill_manual(values = three_year_colors_2014,
+  scale_fill_manual(values = four_year_colors_2014,
                     name = "") +
   labs(y = "Depth (m)") +
   theme(
@@ -8870,9 +8871,9 @@ p_acid_profiles_global_H_free <-
                 depth,
                 col = tref),
             linewidth = 1.5) +
-  scale_color_manual(values = three_year_colors,
+  scale_color_manual(values = four_year_colors,
                      name = "") +
-  scale_fill_manual(values = three_year_colors_2014,
+  scale_fill_manual(values = four_year_colors_2014,
                     name = "") +
   labs(y = "Depth (m)") +
   theme(
@@ -8913,16 +8914,15 @@ p_tco2_profiles_global <-
                 depth,
                 col = tref),
             linewidth = 1.5) +
-  scale_color_manual(values = three_year_colors,
-                     name = "Change from\n1800 to") +
-  scale_fill_manual(values = three_year_colors_2014,
-                    name = "Change from\n1800 to") +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
   labs(y = "Depth (m)") +
   theme(
     axis.title = element_blank(),
     axis.text.y = element_blank(),
     strip.text.x = element_markdown(),
     legend.key.width = unit(1, "cm"),
+    legend.title = element_blank(),
     strip.background.x = element_blank(),
     strip.placement = "outside"
   ) +
@@ -8942,8 +8942,7 @@ p_tco2_profiles_global <-
 p_buffer_profiles_global_omega <-
 buffer_profiles_biome %>%
   filter(biome == "Global",
-         variable %in% c("OmegaAragonite"),
-         tref != 1800) %>%
+         variable %in% c("OmegaAragonite")) %>%
   mutate(variable = factor(variable, levels = c(
     "OmegaAragonite", "H_free"
   ))) %>%
@@ -8959,10 +8958,8 @@ buffer_profiles_biome %>%
                 depth,
                 col = tref),
             linewidth = 1.5) +
-  scale_color_manual(values = three_year_colors,
-                     name = "") +
-  scale_fill_manual(values = three_year_colors_2014,
-                    name = "") +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
@@ -8989,8 +8986,7 @@ buffer_profiles_biome %>%
 p_buffer_profiles_global_H_free <-
 buffer_profiles_biome %>%
   filter(biome == "Global",
-         variable %in% c("H_free"),
-         tref != 1800) %>%
+         variable %in% c("H_free")) %>%
   mutate(variable = factor(variable, levels = c(
     "OmegaAragonite", "H_free"
   ))) %>%
@@ -9006,10 +9002,8 @@ buffer_profiles_biome %>%
                 depth,
                 col = tref),
             linewidth = 1.5) +
-  scale_color_manual(values = three_year_colors,
-                     name = "") +
-  scale_fill_manual(values = three_year_colors_2014,
-                    name = "") +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
@@ -9080,9 +9074,9 @@ p_acid_profiles_biome <-
                 depth,
                 col = tref),
             linewidth = 0.8) +
-  scale_color_manual(values = three_year_colors,
+  scale_color_manual(values = four_year_colors,
                      name = "") +
-  scale_fill_manual(values = three_year_colors_2014,
+  scale_fill_manual(values = four_year_colors_2014,
                     name = "") +
   labs(y = "Depth (m)") +
   theme(
@@ -9110,8 +9104,7 @@ p_acid_profiles_biome <-
 p_buffer_profiles_biome <-
 buffer_profiles_biome %>%
   filter(biome != "Global",
-         variable %in% c("OmegaAragonite", "H_free"),
-         tref != 1800) %>%
+         variable %in% c("OmegaAragonite", "H_free")) %>%
   mutate(variable = factor(variable, levels = c(
     "OmegaAragonite", "H_free"
   ))) %>%
@@ -9127,15 +9120,14 @@ buffer_profiles_biome %>%
                 depth,
                 col = tref),
             linewidth = 0.8) +
-  scale_color_manual(values = three_year_colors,
-                     name = "") +
-  scale_fill_manual(values = three_year_colors_2014,
-                    name = "") +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
   labs(y = "Depth (m)") +
   theme(
     axis.title.x = element_blank(),
     strip.text = element_markdown(),
     legend.key.width = unit(1, "cm"),
+    legend.title = element_blank(),
     strip.background.x = element_blank(),
     strip.placement = "outside",
     axis.title.y = element_blank(),
