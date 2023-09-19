@@ -7754,48 +7754,66 @@ rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 ### dCant
 
 
-```{r profiles_incremental_change, eval=FALSE}
+```{r profiles_incremental_change}
 
-# create pdf document
 
-pdf(
-  here::here("output/all_variables/profiles_incremental_changes.pdf"),
-  width = 14,
-  height = 8
+
+acidification_profiles_biomes %>%
+  filter(str_detect(variable, "_delta_interval")) %>%
+  mutate(variable = str_remove(variable, "_delta_interval")) %>%
+  filter(depth <= ocean_depth,
+         variable %in% c("OmegaAragonite", "H_free", "tco2")) %>%
+  group_by(biome, depth, variable) %>% 
+  mutate(tref = paste(lag(tref),"-",tref)) %>% 
+  ungroup() %>% 
+  filter(tref != "NA - 1800") %>% 
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = mean - sd,
+    xmax = mean + sd,
+    y = depth,
+    fill = tref
+  ),
+  alpha = 0.3) +
+  geom_path(aes(mean,
+                depth,
+                col = tref),
+            linewidth = 1.5) +
+  scale_color_manual(values = three_year_colors) +
+  scale_fill_manual(values = three_year_colors) +
+  labs(y = "Depth (m)") +
+  theme(
+    axis.title.x = element_blank(),
+    legend.title = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_grid(
+    biome ~ variable,
+    scales = "free_x",
+    switch = "x",
+    labeller = labeller(variable = x_axis_labels)
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/profiles_incremental_changes_biome.png"
+    )
+  ),
+  width = 6,
+  height = 8,
+  dpi = 600,
+  bg = "white"
 )
-
-acidification_profiles %>%
-  select(tref,
-         basin,
-         depth,
-         MLR_basins,
-         Version_ID_group,
-         contains("_delta_interval")) %>%
-  pivot_longer(contains("_delta_interval"),
-               names_to = "variable",
-               values_to = "delta_interval") %>%
-  filter(tref %in% c(2004,2014),
-         depth <= 3000) %>%
-  mutate(variable = str_remove(variable, "_delta_interval")) %>% 
-  ggplot(aes(
-    delta_interval,
-    depth,
-    col = tref,
-    group = interaction(tref, MLR_basins, Version_ID_group)
-  )) +
-  geom_vline(xintercept = 0, col = "grey") +
-  geom_path() +
-  scale_color_manual(values = c("#EE7733", "#009988")) +
-  labs(y = "Depth (m)",
-       title = "Incremental change from previous estimate")+
-  scale_y_continuous(trans = trans_reverser("sqrt"),
-                     breaks = c(0, 100, 500, seq(1500, 5000, 1000))) +
-  theme(legend.title = element_blank(),
-        axis.title.x = element_blank()) +
-  facet_grid(basin ~ variable, scales = "free_x")
-
-dev.off()
-
 
 ```
 
@@ -9079,7 +9097,7 @@ p_acid_profiles_biome <-
   geom_path(aes(mean,
                 depth,
                 col = tref),
-            linewidth = 0.8) +
+            linewidth = 1.5) +
   scale_color_manual(values = four_year_colors,
                      name = "") +
   scale_fill_manual(values = four_year_colors_2014,
@@ -9125,7 +9143,7 @@ buffer_profiles_biome %>%
   geom_path(aes(sensitivity,
                 depth,
                 col = tref),
-            linewidth = 0.8) +
+            linewidth = 1.5) +
   scale_color_manual(values = four_year_colors) +
   scale_fill_manual(values = four_year_colors_2014) +
   labs(y = "Depth (m)") +
@@ -9143,7 +9161,7 @@ buffer_profiles_biome %>%
   facet_grid(
     biome ~ variable,
     scales = "free_x",
-    labeller = labeller(variable = x_axis_labels),
+    labeller = labeller(variable = x_axis_labels_buffer_variables_addition),
     switch = "x"
   ) +
   scale_y_continuous(
@@ -9151,12 +9169,14 @@ buffer_profiles_biome %>%
     breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
     limits = c(3000, 0),
     expand = c(0, 0)
-  )
+  ) +
+  scale_x_continuous(guide = guide_axis(n.dodge=2))
 
 
 cowplot::plot_grid(p_acid_profiles_biome,
                    p_buffer_profiles_biome,
-                   rel_widths = c(11,9))
+                   rel_widths = c(11,9),
+                   align = "h")
 
 
 
@@ -9166,8 +9186,8 @@ ggsave(
       "output/supplement/profiles_total_changes_biome.png"
     )
   ),
-  width = 12,
-  height = 12,
+  width = 8,
+  height = 8,
   dpi = 600,
   bg = "white"
 )
