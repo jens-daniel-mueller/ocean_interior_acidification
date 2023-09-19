@@ -1811,7 +1811,11 @@ break_numbers <- 10
 # four_year_colors <- c("grey50", three_year_colors)
 
 
-four_year_colors <- c("#9bc53d", "#ffa71a", "#e71f29", "#7c1c97")
+# four_year_colors <- c("#9bc53d", "#ffa71a", "#e71f29", "#7c1c97")
+four_year_colors <- c("#7a8483", "#55609e", "#ffc125", "#b43032")
+
+
+
 three_year_colors <- four_year_colors[-1]
 
 
@@ -3083,12 +3087,14 @@ for (i_var in OIA_variables) {
   i_contour_level <- unlist(all_labels_breaks[2])
   i_legend_title  <- unlist(all_labels_breaks[3])
   
-  p_maps <- i_acidification_depth_layer_total %>%
+  p_maps <-
+    i_acidification_depth_layer_total %>%
     filter(tref == "2014") %>% 
     p_map_mdim_robinson(
       dim_row = "depth",
       dim_col = "tref",
       var = "delta_total",
+      col_scale = "RdPu",
       contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
