@@ -1812,7 +1812,7 @@ break_numbers <- 10
 
 
 # four_year_colors <- c("#9bc53d", "#ffa71a", "#e71f29", "#7c1c97")
-four_year_colors <- c("#7a8483", "#55609e", "#ffc125", "#b43032")
+four_year_colors <- c("grey70", "#55609e", "#ffc125", "#b43032")
 
 
 
@@ -2170,7 +2170,7 @@ m_depth_layer <- function(df) {
     mutate(depth = cut(
       depth,
       c(0, 100, 500, 1500, 3000),
-      c("A: 0 - 100 m", "B: 100 - 500 m", "C :500 - 1500 m", "D: 1500 - 3000 m"),
+      c("A: 0 - 100 m", "B: 100 - 500 m", "C: 500 - 1500 m", "D: 1500 - 3000 m"),
       include.lowest = TRUE
     )) %>%
     drop_na()
@@ -3089,74 +3089,116 @@ for (i_var in OIA_variables) {
   
   p_maps <-
     i_acidification_depth_layer_total %>%
-    filter(tref == "2014") %>% 
+    filter(tref == "2014") %>%
     p_map_mdim_robinson(
       dim_row = "depth",
       dim_col = "tref",
       var = "delta_total",
-      col_scale = "RdPu",
+      # col_scale = "RdPu",
       contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
+      n_labels = 2,
       legend_position = "top"
-    )
+    ) +
+    labs(title = "Spatial patterns")
 
   p_zonal <-
     acidification_depth_layer_total_zonal %>%
     filter(variable == i_var) %>%
+    mutate(depth = str_split(depth, ": ", simplify = TRUE)[, 2]) %>%
+    mutate(depth = fct_inorder(depth)) %>%
     ggplot() +
-    geom_vline(xintercept = i_contour_level, col = "grey50") +
-    geom_ribbon(aes(xmin = delta_total - delta_total_sd,
-                    xmax = delta_total + delta_total_sd,
-                    y = lat, 
-                    fill = tref),
-                alpha = 0.3) +
-    geom_path(aes(delta_total, lat, col = tref)) +
+    # geom_vline(xintercept = i_contour_level, col = "grey50") +
+    geom_ribbon(
+      aes(
+        xmin = delta_total - delta_total_sd,
+        xmax = delta_total + delta_total_sd,
+        y = lat,
+        fill = tref
+      ),
+      alpha = 0.3
+    ) +
+    geom_path(aes(delta_total, lat, col = tref, linewidth = tref)) +
     scale_x_continuous(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)]) +
-    scale_y_continuous(breaks = seq(-60,60,30)) +
+    scale_y_continuous(breaks = seq(-45,45,45),
+                       position = "right",
+                       labels = ~ paste0(.x, "°N")) +
+    scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
     scale_color_manual(values = four_year_colors) +
     scale_fill_manual(values = four_year_colors_2014) +
+    guides(
+      fill = guide_legend(ncol = 2),
+      col = guide_legend(ncol = 2)
+    ) +
     labs(x = str_replace(i_legend_title, "<br>", " "),
-         y = "Latitude (°N)") +
+         y = "Latitude (°N)",
+         title = "Zonal means") +
     coord_cartesian(expand = 0) +
+    theme_classic() +
     theme(axis.title.x = element_markdown(),
-          strip.text = element_blank(),
+          axis.text.y = element_text(hjust = 1),
+          axis.title.y = element_blank(),
+          strip.text = element_text(size = 10),
+          strip.background = element_blank(),
           legend.position = "top",
           legend.title = element_blank(),
           legend.direction = "vertical"
           ) +
-    facet_grid(depth ~.)
+    facet_grid(depth ~.,
+               switch = "y")
   
     
   p_trends <-
     acidification_depth_layer_total_trend %>%
     filter(variable == i_var) %>%
     ggplot() +
-    geom_hline(yintercept = i_contour_level, col = "grey50") +
+    # geom_hline(yintercept = i_contour_level, col = "grey50") +
+    geom_hline(yintercept = 0, col = "grey70") +
     geom_ribbon(aes(x = pCO2,
                     ymin = delta_total - delta_total_sd,
                     ymax = delta_total + delta_total_sd,
                     fill = biome, group = biome),
                 alpha = 0.1) +
-    geom_path(aes(pCO2, delta_total, col = biome, group = biome)) +
-    geom_point(aes(pCO2, delta_total, col = biome, group = biome),
-               size = 0.5) +
-    scale_y_continuous(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)]) +
-    scale_x_continuous(
-      breaks = round(unique(acidification_depth_layer_total_trend$pCO2))) +
+    geom_path(aes(pCO2, delta_total, col = biome, group = biome, linewidth = biome)) +
+    geom_point(aes(pCO2, delta_total, col = biome, group = biome, size = biome),
+              shape = 21,
+              fill = "white") +
+    geom_path(data = . %>% filter(biome == "Global"),
+              aes(pCO2, delta_total, col = biome, group = biome, linewidth = biome)) +
+    geom_point(data = . %>% filter(biome == "Global"),
+               aes(pCO2, delta_total, col = biome, group = biome, size = biome),
+              shape = 21,
+              fill = "white") +
+    scale_y_continuous(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)],
+                       position = "right") +
+    scale_x_continuous(breaks = seq(280, 400, 40)) +
     scale_color_manual(values = biome_colors) +
     scale_fill_manual(values = biome_colors_global) +
+    scale_discrete_manual("linewidth", values = c(1, rep(0.5,5))) +
+    scale_size_manual(values = c(1.5, rep(0,5))) +
+    guides(
+      fill=guide_legend(ncol=2, byrow = TRUE),
+      col=guide_legend(ncol=2, byrow = TRUE),
+      size=guide_legend(ncol=2, byrow = TRUE),
+      linewidth=guide_legend(ncol=2, byrow = TRUE)
+      ) +
     labs(y = str_replace(i_legend_title, "<br>", " "),
-         x = expression(pCO["2,atm"]~(ppm))) +
-    theme(axis.title.y = element_markdown(),
+         x = expression(pCO["2,atm"]~(ppm)),
+         title = "Biome means") +
+    theme_classic() +
+    theme(legend.spacing.y = unit(0.2, 'cm'),
+          axis.title.y.right = element_markdown(),
           strip.background = element_blank(),
+          strip.text = element_blank(),
           legend.title = element_blank(),
           legend.position = "top",
-          legend.direction = "vertical") +
+          legend.direction = "vertical"
+          ) +
     facet_grid(depth ~.)
   
-  p_maps + p_zonal + p_trends +
-    plot_layout(widths = c(4, 1, 1.5))
+  p_zonal + p_maps + p_trends +
+    plot_layout(widths = c(1, 4, 1.5))
   
   if (i_var %in% OIA_variables_core) {
      folder <- "main"
@@ -3198,12 +3240,12 @@ acidification_depth_layer_total_relative <-
          depth %in% unique(.$depth)[c(1,2)]) %>%
   pivot_wider(names_from = tref,
               values_from = delta_total) %>%
-  mutate(delta_total_relative = 100 * (`2014` - `1994`) / `1994`) %>%
+  mutate(delta_total_relative = 100 * (`2014` - `1994`) / `2014`) %>%
   select(lon, lat, depth, variable, delta_total_relative)
 
-i_breaks        <- c(-Inf, seq(0, 70, 10), Inf)
-i_contour_level <- 30
-i_legend_title  <- "Δ 1994 - 2014<br>(% of Δ 1800 - 1994)"
+i_breaks        <- c(-Inf, seq(0, 50, 10), Inf)
+i_contour_level <- 20
+i_legend_title  <- "Δ 1994 - 2014<br>(% of Δ 1800 - 2014)"
 
 acidification_depth_layer_total_relative %>%
   p_map_mdim_robinson(
@@ -3239,7 +3281,7 @@ acidification_depth_layer_absolute <-
   acidification_depth_layer %>%
   select(lat:tref,
          all_of(OIA_variables)) %>%
-  filter(tref == 2004)
+  filter(tref == 1800)
 
 
 acidification_depth_layer_absolute <-
@@ -3291,7 +3333,7 @@ for (i_var in OIA_variables) {
   i_legend_title  <- unlist(all_labels_breaks[3])
   i_legend_title <- str_split(i_legend_title, "<br>", simplify = TRUE)[,1]
   i_legend_title <-
-    paste0(i_legend_title, " / <br>", str_remove(i_legend_title, "Δ"), " (2004)")
+    paste0(i_legend_title, " / <br>", str_remove(i_legend_title, "Δ"), " (1800)")
   
   i_acidification_depth_layer_total_relative %>%
     p_map_mdim_robinson(
@@ -3342,8 +3384,9 @@ acidification_depth_layer_total_relative %>%
     dim_row = "depth",
     dim_col = "variable",
     var = "delta_total_relative",
-    legend_title = "Δ<sub>1800-2014</sub> / <br>Absolute<sub>2004</sub>",
-    breaks = c(-Inf,seq(0,30,5),Inf),
+    contour_level = 20,
+    legend_title = "Δ<sub>1800-2014</sub> / <br>Absolute<sub>1800</sub>",
+    breaks = c(-Inf,seq(0,40,5),Inf),
     legend_position = "right"
   )
   
@@ -3579,6 +3622,13 @@ buffer_addition_depth_layer_zonal %>%
   scale_color_manual(values = four_year_colors) +
   facet_grid(depth~variable, scales = "free_x")
 
+buffer_addition_depth_layer_zonal %>% 
+  ggplot(aes(sensitivity, lat, col = tref)) +
+  geom_vline(xintercept = 0) +
+  geom_path() +
+  scale_color_viridis_d(labels = c("1","","2","")) +
+  facet_grid(depth~variable, scales = "free_x")
+
 
 
 
@@ -3586,7 +3636,7 @@ buffer_addition_depth_layer_zonal %>%
 # print incremental sections
 
 for (i_var in buffer_variables_addition) {
-  # i_var <- buffer_variables_addition[2]
+  # i_var <- buffer_variables_addition[4]
   
   # subset OIA variable
   
@@ -3602,7 +3652,8 @@ for (i_var in buffer_variables_addition) {
   i_contour_level <- unlist(all_labels_breaks[2])
   i_legend_title  <- unlist(all_labels_breaks[3])
   
-  p_maps <- i_buffer_addition_depth_layer %>%
+  p_maps <-
+    i_buffer_addition_depth_layer %>%
     filter(tref == 2014) %>% 
     mutate(tref = paste0("1800-", tref)) %>% 
     p_map_mdim_robinson(
@@ -3612,7 +3663,8 @@ for (i_var in buffer_variables_addition) {
       contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
-      legend_position = "left"
+      n_labels = 2,
+      legend_position = "top"
     )
   
   breaks_test <- i_breaks[!i_breaks == Inf]
@@ -3623,30 +3675,43 @@ for (i_var in buffer_variables_addition) {
   p_zonal <-
     buffer_addition_depth_layer_zonal %>%
     filter(variable == i_var) %>%
+    mutate(depth = str_split(depth, ": ", simplify = TRUE)[, 2]) %>%
+    mutate(depth = fct_inorder(depth)) %>% 
     ggplot() +
-    geom_vline(xintercept = i_contour_level, col = "grey50") +
+    # geom_vline(xintercept = i_contour_level, col = "grey50") +
     geom_ribbon(aes(x = sensitivity, 
                     xmin = sensitivity - sensitivity_sd,
                     xmax = sensitivity + sensitivity_sd,
                     y = lat, 
                     fill = tref),
                 alpha = 0.3) +
-    geom_path(aes(sensitivity, lat, col = tref)) +
-    scale_x_continuous(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)]) +
-    scale_y_continuous(breaks = seq(-60,60,30)) +
-    scale_color_manual(values = four_year_colors,
-                       name = "1800-") +
-    scale_fill_manual(values = four_year_colors_2014,
-                       name = "1800-") +
+    geom_path(aes(sensitivity, lat, col = tref, linewidth = tref)) +
+    scale_y_continuous(breaks = seq(-45,45,45),
+                       position = "right",
+                       labels = ~ paste0(.x, "°N")) +
+    scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
+    scale_color_manual(values = four_year_colors) +
+    scale_fill_manual(values = four_year_colors_2014) +
+    guides(
+      fill = guide_legend(ncol = 2),
+      col = guide_legend(ncol = 2)
+    ) +
     labs(x = i_legend_title,
-         y = "Latitude (°N)") +
+         y = "Latitude (°N)",
+         title = "Zonal means") +
     coord_cartesian(expand = 0) +
+    theme_classic() +
     theme(axis.title.x = element_markdown(),
-          strip.text = element_blank(),
+          axis.text.y = element_text(hjust = 1),
+          axis.title.y = element_blank(),
+          strip.text = element_text(size = 10),
+          strip.background = element_blank(),
           legend.position = "top",
-          legend.direction = "vertical",
-          legend.title = element_blank()) +
-    facet_grid(depth ~.)
+          legend.title = element_blank(),
+          legend.direction = "vertical"
+          ) +
+    facet_grid(depth ~.,
+               switch = "y")
   
   if (breaks_reverse == TRUE) {
     p_zonal <- p_zonal +
@@ -3658,46 +3723,84 @@ for (i_var in buffer_variables_addition) {
   }
     
   p_trends <-
-    buffer_addition_depth_layer_trend %>%
+  buffer_addition_depth_layer_trend %>%
     filter(variable == i_var) %>%
     ggplot() +
-    geom_hline(yintercept = i_contour_level, col = "grey50") +
-    geom_ribbon(aes(x = pCO2,
-                    ymin = sensitivity - sensitivity_sd,
-                    ymax = sensitivity + sensitivity_sd,
-                    fill = biome,
-                    group = biome),
-                alpha = 0.1) +
-    geom_path(aes(pCO2, sensitivity, col = biome, group = biome)) +
-    geom_point(aes(pCO2, sensitivity, col = biome, group = biome),
-               size = 0.5) +
-    scale_x_continuous(
-      breaks = round(unique(acidification_depth_layer_total_trend$pCO2))) +
+    geom_ribbon(
+      aes(
+        x = pCO2,
+        ymin = sensitivity - sensitivity_sd,
+        ymax = sensitivity + sensitivity_sd,
+        fill = biome,
+        group = biome
+      ),
+      alpha = 0.1
+    ) +
+    geom_path(aes(
+      pCO2, sensitivity,
+      col = biome, group = biome, linewidth = biome
+    )) +
+    geom_point(
+      aes(
+        pCO2, sensitivity,
+        col = biome, group = biome, size = biome
+      ),
+      shape = 21, fill = "white"
+    ) +
+    geom_path(data = . %>% filter(biome == "Global"),
+              aes(
+      pCO2, sensitivity,
+      col = biome, group = biome, linewidth = biome
+    )) +
+    geom_point(data = . %>% filter(biome == "Global"),
+      aes(
+        pCO2, sensitivity,
+        col = biome, group = biome, size = biome
+      ),
+      shape = 21, fill = "white"
+    ) +
+    scale_x_continuous(breaks = seq(280, 400, 40)) +
     scale_color_manual(values = biome_colors) +
     scale_fill_manual(values = biome_colors_global) +
-    labs(y = str_replace(i_legend_title, "<br>", " "),
-         x = expression(pCO["2,atm"]~(ppm))) +
-    theme(axis.title.y = element_markdown(),
-          # strip.text = element_blank(),
-          strip.background = element_blank(),
-          legend.title = element_blank(),
-          legend.position = "top",
-          legend.direction = "vertical") +
-    facet_grid(depth ~.)
+    scale_discrete_manual("linewidth", values = c(1, rep(0.5, 5))) +
+    scale_size_manual(values = c(1.5, rep(0, 5))) +
+    guides(
+      fill = guide_legend(ncol = 2),
+      col = guide_legend(ncol = 2),
+      size = guide_legend(ncol = 2),
+      linewidth = guide_legend(ncol = 2)
+    ) +
+    labs(
+      y = str_replace(i_legend_title, "<br>", " "),
+      x = expression(pCO["2,atm"] ~ (ppm)),
+      title = "Biome means"
+    ) +
+    theme_classic() +
+    theme(
+      axis.title.y.right = element_markdown(),
+      strip.background = element_blank(),
+      strip.text = element_blank(),
+      legend.title = element_blank(),
+      legend.position = "top",
+      legend.direction = "vertical"
+    ) +
+    facet_grid(depth ~ .)
   
     
   if (breaks_reverse == TRUE) {
     p_trends <- p_trends +
-          scale_y_continuous(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)])
+          scale_y_continuous(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)],
+                             position = "right")
     
   } else{
     p_trends <- p_trends +
-          scale_y_reverse(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)])
+          scale_y_reverse(breaks = as.numeric(i_breaks)[c(FALSE, TRUE)],
+                             position = "right")
   }
   
   
-  p_maps + p_zonal + p_trends +
-    plot_layout(widths = c(4,1,1.5))
+  p_zonal + p_maps + p_trends +
+    plot_layout(widths = c(1,4,1.5))
   
   if (i_var %in% OIA_variables_core) {
     folder <- "supplement"
@@ -3941,7 +4044,7 @@ biome_co2_speciation <-
     depth_calc = case_when(
       depth == "A: 0 - 100 m"     ~ 50,
       depth == "B: 100 - 500 m"   ~ 300,
-      depth == "C :500 - 1500 m"  ~ 1000,
+      depth == "C: 500 - 1500 m"  ~ 1000,
       depth == "D: 1500 - 3000 m" ~ 2250
     )
   ) 
@@ -4036,19 +4139,27 @@ biome_co2_speciation %>%
 
 
 biome_co2_speciation %>%
-  select(-c(CO2:CO3)) %>% 
+  select(-c(CO2:CO3)) %>%
   pivot_longer(H_free:OmegaAragonite) %>%
   pivot_wider(names_from = estimate,
               values_from = value) %>%
-  ggplot(aes(absolute, sensitivity, 
-             col = depth, 
-             shape = biome,
-             alpha = tref,
-             group = interaction(biome, depth))) +
+  mutate(depth = str_split(depth, ": ", simplify = TRUE)[, 2]) %>%
+  mutate(depth = fct_inorder(depth)) %>%
+  ggplot(aes(
+    absolute,
+    sensitivity,
+    fill = depth,
+    shape = biome,
+    alpha = tref,
+    group = interaction(biome, depth)
+  )) +
   geom_path() +
   geom_point() +
-  scale_color_viridis_d(direction = -1) +
-  scale_alpha_discrete(range = c(0.4,1)) +
+  scale_fill_viridis_d(option = "mako",
+                       direction = -1) +
+  scale_alpha_discrete(range = c(0.4, 1)) +
+  scale_shape_manual(values = 21:25) +
+  guides(fill = guide_legend(override.aes = list(shape = 21))) +
   facet_wrap(
     ~ name,
     scales = "free",
@@ -4059,11 +4170,17 @@ biome_co2_speciation %>%
        y = expression(Change ~ per ~ Delta * DIC ~ (µmol ^ {
          -1
        } ~ kg))) +
+  guides(shape = guide_legend(byrow = TRUE)) +
   theme(
+    legend.spacing.y = unit(0.2, 'cm'),
     legend.title = element_blank(),
     strip.text = element_markdown(),
     aspect.ratio = 1
   )
+
+
+
+
 
 ggsave(
   here::here(
@@ -4793,7 +4910,8 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
 # }
 
 
-p_sat_absolute <- acidification_saturation_horizon_levels %>%
+p_sat_absolute <- 
+  acidification_saturation_horizon_levels %>%
   relocate(lon) %>%
   filter(tref == 2014,
          mineral == "Aragonite",
@@ -4804,6 +4922,7 @@ p_sat_absolute <- acidification_saturation_horizon_levels %>%
     var = "depth",
     legend_title = paste0("Saturation<br>horizon<br>2014<br>(m)"),
     legend_position = "left",
+    col_scale = "mako",
     breaks = seq(3000, 0, -200)
   )
   
@@ -4829,15 +4948,17 @@ acidification_saturation_horizon_levels %>%
 
 
 
-p_sat_change <- acidification_saturation_horizon_levels_change %>%
+p_sat_change <- 
+  acidification_saturation_horizon_levels_change %>%
+  mutate(delta_depth = -delta_depth) %>% 
   p_map_mdim_robinson(
     dim_row = "sat_level",
     # dim_col = "mineral",
-    col = "div",
+    col_scale = "RdPu",
     var = "delta_depth",
-    legend_title = paste0("ΔSaturation<br>horizon<br>1800-2014<br>(m)"),
+    legend_title = paste0("Shoaling<br>saturation<br>horizon<br>1800-2014<br>(m)"),
     legend_position = "right",
-    breaks = c(-Inf, seq(-300, 300, 50), Inf)
+    breaks = c(-Inf, seq(0, 300, 50), Inf)
   ) &
   theme(strip.text = element_blank())
 
@@ -5092,7 +5213,7 @@ acidification_volume_print %>%
   filter(depth_integration == depth_integration_saturation) %>%
   ggplot(aes(pCO2, value)) +
   labs(x = expression(Atmospheric ~ CO[2] ~ (ppm))) +
-  scale_x_continuous(breaks = seq(280, 400, 20),
+  scale_x_continuous(breaks = seq(280, 400, 40),
                      sec.axis = sec_axis(
                        ~ (. - 282.5) * 1.537,
                        breaks = seq(0,175,50),
@@ -5114,10 +5235,8 @@ acidification_volume_print %>%
             aes(label = tref),
             nudge_y = 7,
             nudge_x = 4) +
-  scale_color_viridis_d(direction = -1,
-                        name = expression(atop(Ω[arag], threshold))) +
-  scale_fill_viridis_d(direction = -1,
-                       name = expression(atop(Ω[arag], threshold))) +
+  scale_color_viridis_d(name = expression(atop(Ω[arag], threshold))) +
+  scale_fill_viridis_d(name = expression(atop(Ω[arag], threshold))) +
   scale_shape_manual(values = seq(21,25,1),
                      name = expression(atop(Ω[arag], threshold))) +
   theme(
@@ -6290,6 +6409,7 @@ for (i_var in OIA_variables) {
       contour_level = i_contour_level,
       contour_level_var = i_contour_level_abs,
       breaks = i_breaks,
+      n_labels = 2,
       subtitle_text = NULL,
       plot_slabs = "n"
     )
@@ -6306,7 +6426,8 @@ for (i_var in OIA_variables) {
       title_text = "B   1800 - 2004",
       subtitle_text = NULL,
       plot_slabs = "n",
-      breaks = i_breaks
+      breaks = i_breaks,
+      n_labels = 2
     )
   
   p_global_section_period3 <-
@@ -6321,7 +6442,8 @@ for (i_var in OIA_variables) {
       title_text = "C   1800 - 2014",
       subtitle_text = NULL,
       plot_slabs = "n",
-      breaks = i_breaks
+      breaks = i_breaks,
+      n_labels = 2
     )
   
   if(i_var == "tco2"){
@@ -6478,6 +6600,7 @@ for (i_var in OIA_variables) {
       legend_title = i_legend_title,
       title_text = "A   1800",
       breaks = i_breaks,
+      n_labels = 2,
       contour_level = i_contour_level,
       subtitle_text = NULL,
       plot_slabs = "n"
@@ -6495,6 +6618,7 @@ for (i_var in OIA_variables) {
       subtitle_text = NULL,
       plot_slabs = "n",
       breaks = i_breaks,
+      n_labels = 2,
       contour_level = i_contour_level
     ) &
     theme(legend.position = "none")
@@ -6509,6 +6633,7 @@ for (i_var in OIA_variables) {
       subtitle_text = NULL,
       plot_slabs = "n",
       breaks = i_breaks,
+      n_labels = 2,
       contour_level = i_contour_level
     ) &
     theme(legend.position = "none")
@@ -6523,6 +6648,7 @@ for (i_var in OIA_variables) {
       subtitle_text = NULL,
       plot_slabs = "n",
       breaks = i_breaks,
+      n_labels = 2,
       contour_level = i_contour_level
     ) &
     theme(legend.position = "none")
@@ -6604,7 +6730,8 @@ for (i_var in OIA_variables) {
       title_text = NULL,
       subtitle_text = NULL,
       plot_slabs = "n",
-      breaks = i_breaks
+      breaks = i_breaks,
+      n_labels = 2
     )
   
   if(i_var == "tco2"){
@@ -8576,13 +8703,15 @@ acidification_profiles_biomes %>%
   ), alpha = 0.3) +
   geom_path(aes(mean,
                 depth,
-                col = tref), linewidth = 1.5) +
+                col = tref, 
+                linewidth = tref)) +
   # geom_point(aes(mean,
   #                depth,
   #                col = tref), size = 0.1,
   #            col = "white") +
   scale_color_manual(values = four_year_colors) +
   scale_fill_manual(values = four_year_colors_2014) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)",
        x = x_axis_labels[3]) +
   scale_y_continuous(trans = trans_reverser("sqrt"),
@@ -8849,12 +8978,11 @@ p_acid_profiles_global_omega <-
   alpha = 0.3) +
   geom_path(aes(mean,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
-  scale_color_manual(values = four_year_colors,
-                     name = "") +
-  scale_fill_manual(values = four_year_colors_2014,
-                    name = "") +
+                col = tref,
+                linewidth = tref)) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
@@ -8893,12 +9021,11 @@ p_acid_profiles_global_H_free <-
   alpha = 0.3) +
   geom_path(aes(mean,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
-  scale_color_manual(values = four_year_colors,
-                     name = "") +
-  scale_fill_manual(values = four_year_colors_2014,
-                    name = "") +
+                col = tref,
+                linewidth = tref)) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
@@ -8936,10 +9063,11 @@ p_tco2_profiles_global <-
   alpha = 0.3) +
   geom_path(aes(mean,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
+                col = tref,
+                linewidth = tref)) +
   scale_color_manual(values = four_year_colors) +
   scale_fill_manual(values = four_year_colors_2014) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
     axis.title = element_blank(),
@@ -8980,10 +9108,11 @@ buffer_profiles_biome %>%
   alpha = 0.3) +
   geom_path(aes(sensitivity,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
+                col = tref,
+            linewidth = tref)) +
   scale_color_manual(values = four_year_colors) +
   scale_fill_manual(values = four_year_colors_2014) +
+      scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
@@ -9024,10 +9153,11 @@ buffer_profiles_biome %>%
   alpha = 0.3) +
   geom_path(aes(sensitivity,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
+                col = tref,
+            linewidth = tref)) +
   scale_color_manual(values = four_year_colors) +
   scale_fill_manual(values = four_year_colors_2014) +
+      scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
@@ -9096,12 +9226,11 @@ p_acid_profiles_biome <-
   alpha = 0.2) +
   geom_path(aes(mean,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
-  scale_color_manual(values = four_year_colors,
-                     name = "") +
-  scale_fill_manual(values = four_year_colors_2014,
-                    name = "") +
+                col = tref,
+            linewidth = tref)) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_2014) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
     legend.position = "none",
@@ -9142,10 +9271,11 @@ buffer_profiles_biome %>%
   alpha = 0.2) +
   geom_path(aes(sensitivity,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
+                col = tref,
+            linewidth = tref)) +
   scale_color_manual(values = four_year_colors) +
   scale_fill_manual(values = four_year_colors_2014) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
     axis.title.x = element_blank(),
