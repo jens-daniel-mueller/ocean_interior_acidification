@@ -3475,85 +3475,93 @@ rm(acidification_depth_layer_total,
 
 
 
-## Climatology
+## Absolute state
 
 ### OIA variables
 
-```{r depth_layer_climatology, eval=FALSE}
+```{r depth_layer_absolute}
 
 # subset total change sections
 
-climatology_depth_layer <-
-  climatology_depth_layer %>%
-  select(-contains("_delta"))
+acidification_depth_layer_absolute <-
+  acidification_depth_layer %>%
+  filter(tref %in% c(2014)) %>%
+  select(-c(tref, contains("_delta")))
 
-
-climatology_depth_layer <-
-  climatology_depth_layer %>%
-  pivot_longer(-c(lat:tref),
+acidification_depth_layer_absolute <-
+  acidification_depth_layer_absolute %>%
+  pivot_longer(-c(lat:depth),
                names_to = "variable",
                values_to = "value")
 
-climatology_depth_layer %>% 
-  distinct(variable)
+acidification_depth_layer_absolute <-
+  acidification_depth_layer_absolute %>%
+  relocate(lon)
 
-# create pdf document
 
-pdf(
-  here::here("output/all_variables/maps_depth_layer_climatology.pdf"),
-  width = 5,
-  height = 8
-)
-
-# loop over OIA variables
-# print incremental sections
-
-for (i_var in OIA_variables) {
+for (i_var in OIA_variables[c(1,3,5)]) {
   # i_var <- OIA_variables[1]
   
   # subset OIA variable
   
-  i_climatology_depth_layer <-
-    climatology_depth_layer %>%
-    filter(variable == i_var) %>%
-    select(lon, lat, depth, tref, value)
+  i_acidification_depth_layer_absolute <-
+    acidification_depth_layer_absolute %>%
+    filter(variable == i_var)
   
-  # determine endpoints and breaks of color scale
+  all_labels_breaks <- labels_breaks_absolute(i_var)
+  i_breaks        <- unlist(all_labels_breaks[1])
+  i_contour_level <- unlist(all_labels_breaks[2])
+  i_contour_level_abs <- unlist(all_labels_breaks[4])
+  i_legend_title  <- unlist(all_labels_breaks[3])
   
-  low <- i_climatology_depth_layer %>%
-    filter(!is.na(value)) %>%
-    pull(value) %>%
-    quantile(c(quantile_low), names = FALSE)
-
-  high <- i_climatology_depth_layer %>%
-    filter(!is.na(value)) %>%
-    pull(value) %>%
-    quantile(c(quantile_high), names = FALSE)
-
-  breaks <- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
-  
-  p_climatology <-
-  i_climatology_depth_layer %>%
+  p_depth_layer_maps_period3 <-
+    i_acidification_depth_layer_absolute %>%
     p_map_mdim_robinson(
-      dim_row = "depth",
-      dim_col = "tref",
       var = "value",
-      legend_title = i_var,
-      breaks = breaks,
-      legend_position = "right"
+      dim_row = "depth",
+      legend_title = i_legend_title,
+      breaks = i_breaks,
+      col_scale = "plasma",
+      n_labels = 2
     )
   
-  print(
-  p_climatology
-  )
+  if (i_var == "tco2") {
+    p_depth_layer_maps_tco2 <- p_depth_layer_maps_period3
+  }
+  
+  if (i_var == "H_free") {
+    p_depth_layer_maps_H_free <- p_depth_layer_maps_period3
+  }
+  
+  if (i_var == "OmegaAragonite") {
+    p_depth_layer_maps_OmegaAragonite <- p_depth_layer_maps_period3
+  }
   
 }
 
-dev.off()
 
-rm(climatology_depth_layer,
-   i_climatology_depth_layer,
-   low, high)
+print(
+  wrap_plots(
+    p_depth_layer_maps_OmegaAragonite,
+    p_depth_layer_maps_H_free &
+      theme(strip.text = element_blank()),
+    p_depth_layer_maps_tco2 &
+      theme(strip.text = element_blank())
+  )
+)
+
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/maps_depth_layer_all_variables_absolute.png"
+    )
+  ),
+  width = 11,
+  height = 7,
+  dpi = 600,
+  bg = "white"
+)
+
 
 ```
 
@@ -3663,6 +3671,7 @@ for (i_var in buffer_variables_addition) {
       contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
+      col_scale = "rocket",
       n_labels = 2,
       legend_position = "top"
     )
@@ -6600,6 +6609,7 @@ for (i_var in OIA_variables) {
       legend_title = i_legend_title,
       title_text = "A   1800",
       breaks = i_breaks,
+      col_scale = "plasma",
       n_labels = 2,
       contour_level = i_contour_level,
       subtitle_text = NULL,
@@ -6617,6 +6627,7 @@ for (i_var in OIA_variables) {
       title_text = "B   1994",
       subtitle_text = NULL,
       plot_slabs = "n",
+      col_scale = "plasma",
       breaks = i_breaks,
       n_labels = 2,
       contour_level = i_contour_level
@@ -6632,6 +6643,7 @@ for (i_var in OIA_variables) {
       title_text = "C   2004",
       subtitle_text = NULL,
       plot_slabs = "n",
+      col_scale = "plasma",
       breaks = i_breaks,
       n_labels = 2,
       contour_level = i_contour_level
@@ -6647,6 +6659,7 @@ for (i_var in OIA_variables) {
       title_text = "D   2014",
       subtitle_text = NULL,
       plot_slabs = "n",
+      col_scale = "plasma",
       breaks = i_breaks,
       n_labels = 2,
       contour_level = i_contour_level
@@ -6730,6 +6743,8 @@ for (i_var in OIA_variables) {
       title_text = NULL,
       subtitle_text = NULL,
       plot_slabs = "n",
+      col_scale = "plasma",
+      col_contour = "#98CE00",
       breaks = i_breaks,
       n_labels = 2
     )
