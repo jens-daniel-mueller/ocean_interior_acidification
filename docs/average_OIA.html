@@ -387,7 +387,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">22 September, 2023</h4>
+<h4 class="date">25 September, 2023</h4>
 
 </div>
 
@@ -416,7 +416,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-09-22
+<strong>Last updated:</strong> 2023-09-25
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -548,15 +548,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeefa23b4d941d88c0dee3f6ca43bb0f70d75f3a49targetblankefa23b4a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree1586d442fdf37eca35bee48ec0acb3bc890f6c9atargetblank1586d44a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/efa23b4d941d88c0dee3f6ca43bb0f70d75f3a49" target="_blank">efa23b4</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/1586d442fdf37eca35bee48ec0acb3bc890f6c9a" target="_blank">1586d44</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeefa23b4d941d88c0dee3f6ca43bb0f70d75f3a49targetblankefa23b4a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree1586d442fdf37eca35bee48ec0acb3bc890f6c9atargetblank1586d44a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -566,7 +566,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/efa23b4d941d88c0dee3f6ca43bb0f70d75f3a49" target="_blank">efa23b4</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/1586d442fdf37eca35bee48ec0acb3bc890f6c9a" target="_blank">1586d44</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -636,6 +636,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/1586d442fdf37eca35bee48ec0acb3bc890f6c9a/analysis/average_OIA.Rmd" target="_blank">1586d44</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-09-25
+</td>
+<td>
+added absolute and sensitvity maps and sections
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/6dc25be15ffa820c44fec84eac9eff0c532b4fc1/docs/average_OIA.html" target="_blank">6dc25be</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-09-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -6690,88 +6724,95 @@ rm(acidification_depth_layer_total,
    i_acidification_depth_layer_total)</code></pre>
 </div>
 </div>
-<div id="climatology" class="section level2">
-<h2>Climatology</h2>
+<div id="absolute-state" class="section level2">
+<h2>Absolute state</h2>
 <div id="oia-variables-2" class="section level3">
 <h3>OIA variables</h3>
 <pre class="r"><code># subset total change sections
 
-climatology_depth_layer &lt;-
-  climatology_depth_layer %&gt;%
-  select(-contains(&quot;_delta&quot;))
+acidification_depth_layer_absolute &lt;-
+  acidification_depth_layer %&gt;%
+  filter(tref %in% c(2014)) %&gt;%
+  select(-c(tref, contains(&quot;_delta&quot;)))
 
-
-climatology_depth_layer &lt;-
-  climatology_depth_layer %&gt;%
-  pivot_longer(-c(lat:tref),
+acidification_depth_layer_absolute &lt;-
+  acidification_depth_layer_absolute %&gt;%
+  pivot_longer(-c(lat:depth),
                names_to = &quot;variable&quot;,
                values_to = &quot;value&quot;)
 
-climatology_depth_layer %&gt;% 
-  distinct(variable)
+acidification_depth_layer_absolute &lt;-
+  acidification_depth_layer_absolute %&gt;%
+  relocate(lon)
 
-# create pdf document
 
-pdf(
-  here::here(&quot;output/all_variables/maps_depth_layer_climatology.pdf&quot;),
-  width = 5,
-  height = 8
-)
-
-# loop over OIA variables
-# print incremental sections
-
-for (i_var in OIA_variables) {
+for (i_var in OIA_variables[c(1,3,5)]) {
   # i_var &lt;- OIA_variables[1]
   
   # subset OIA variable
   
-  i_climatology_depth_layer &lt;-
-    climatology_depth_layer %&gt;%
-    filter(variable == i_var) %&gt;%
-    select(lon, lat, depth, tref, value)
+  i_acidification_depth_layer_absolute &lt;-
+    acidification_depth_layer_absolute %&gt;%
+    filter(variable == i_var)
   
-  # determine endpoints and breaks of color scale
+  all_labels_breaks &lt;- labels_breaks_absolute(i_var)
+  i_breaks        &lt;- unlist(all_labels_breaks[1])
+  i_contour_level &lt;- unlist(all_labels_breaks[2])
+  i_contour_level_abs &lt;- unlist(all_labels_breaks[4])
+  i_legend_title  &lt;- unlist(all_labels_breaks[3])
   
-  low &lt;- i_climatology_depth_layer %&gt;%
-    filter(!is.na(value)) %&gt;%
-    pull(value) %&gt;%
-    quantile(c(quantile_low), names = FALSE)
-
-  high &lt;- i_climatology_depth_layer %&gt;%
-    filter(!is.na(value)) %&gt;%
-    pull(value) %&gt;%
-    quantile(c(quantile_high), names = FALSE)
-
-  breaks &lt;- c(-Inf, seq(low, high, length.out = break_numbers), Inf)
-  
-  p_climatology &lt;-
-  i_climatology_depth_layer %&gt;%
+  p_depth_layer_maps_period3 &lt;-
+    i_acidification_depth_layer_absolute %&gt;%
     p_map_mdim_robinson(
-      dim_row = &quot;depth&quot;,
-      dim_col = &quot;tref&quot;,
       var = &quot;value&quot;,
-      legend_title = i_var,
-      breaks = breaks,
-      legend_position = &quot;right&quot;
+      dim_row = &quot;depth&quot;,
+      legend_title = i_legend_title,
+      breaks = i_breaks,
+      col_scale = &quot;plasma&quot;,
+      n_labels = 2
     )
   
-  print(
-  p_climatology
-  )
+  if (i_var == &quot;tco2&quot;) {
+    p_depth_layer_maps_tco2 &lt;- p_depth_layer_maps_period3
+  }
+  
+  if (i_var == &quot;H_free&quot;) {
+    p_depth_layer_maps_H_free &lt;- p_depth_layer_maps_period3
+  }
+  
+  if (i_var == &quot;OmegaAragonite&quot;) {
+    p_depth_layer_maps_OmegaAragonite &lt;- p_depth_layer_maps_period3
+  }
   
 }
 
-dev.off()
 
-rm(climatology_depth_layer,
-   i_climatology_depth_layer,
-   low, high)</code></pre>
+print(
+  wrap_plots(
+    p_depth_layer_maps_OmegaAragonite,
+    p_depth_layer_maps_H_free &amp;
+      theme(strip.text = element_blank()),
+    p_depth_layer_maps_tco2 &amp;
+      theme(strip.text = element_blank())
+  )
+)</code></pre>
+<p><img src="figure/average_OIA.Rmd/depth_layer_absolute-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(
+    paste0(
+      &quot;output/supplement/maps_depth_layer_all_variables_absolute.png&quot;
+    )
+  ),
+  width = 11,
+  height = 7,
+  dpi = 600,
+  bg = &quot;white&quot;
+)</code></pre>
 </div>
 </div>
 <div id="buffer-variables-1" class="section level2">
 <h2>Buffer variables</h2>
-<div id="absolute-state" class="section level3">
+<div id="absolute-state-1" class="section level3">
 <h3>Absolute state</h3>
 <pre class="r"><code>buffer_addition_depth_layer_trend &lt;-
   inner_join(buffer_addition_depth_layer,
@@ -6996,6 +7037,7 @@ for (i_var in buffer_variables_addition) {
       contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
+      col_scale = &quot;rocket&quot;,
       n_labels = 2,
       legend_position = &quot;top&quot;
     )
@@ -10886,7 +10928,7 @@ dev.off()
 rm(acidification_zonal_buffer_total,
    i_acidification_zonal_buffer_total)</code></pre>
 </div>
-<div id="absolute-state-1" class="section level2">
+<div id="absolute-state-2" class="section level2">
 <h2>Absolute state</h2>
 <pre class="r"><code># subset absolute value sections
 
@@ -11883,7 +11925,7 @@ jens-daniel-mueller
 rm(acidification_global_section_total,
    i_acidification_global_section_total)</code></pre>
 </div>
-<div id="absolute-state-2" class="section level2">
+<div id="absolute-state-3" class="section level2">
 <h2>Absolute state</h2>
 <pre class="r"><code># subset absolute value sections
 
@@ -11946,6 +11988,7 @@ for (i_var in OIA_variables) {
       legend_title = i_legend_title,
       title_text = &quot;A   1800&quot;,
       breaks = i_breaks,
+      col_scale = &quot;plasma&quot;,
       n_labels = 2,
       contour_level = i_contour_level,
       subtitle_text = NULL,
@@ -11963,6 +12006,7 @@ for (i_var in OIA_variables) {
       title_text = &quot;B   1994&quot;,
       subtitle_text = NULL,
       plot_slabs = &quot;n&quot;,
+      col_scale = &quot;plasma&quot;,
       breaks = i_breaks,
       n_labels = 2,
       contour_level = i_contour_level
@@ -11978,6 +12022,7 @@ for (i_var in OIA_variables) {
       title_text = &quot;C   2004&quot;,
       subtitle_text = NULL,
       plot_slabs = &quot;n&quot;,
+      col_scale = &quot;plasma&quot;,
       breaks = i_breaks,
       n_labels = 2,
       contour_level = i_contour_level
@@ -11993,6 +12038,7 @@ for (i_var in OIA_variables) {
       title_text = &quot;D   2014&quot;,
       subtitle_text = NULL,
       plot_slabs = &quot;n&quot;,
+      col_scale = &quot;plasma&quot;,
       breaks = i_breaks,
       n_labels = 2,
       contour_level = i_contour_level
@@ -12375,6 +12421,8 @@ for (i_var in OIA_variables) {
       title_text = NULL,
       subtitle_text = NULL,
       plot_slabs = &quot;n&quot;,
+      col_scale = &quot;plasma&quot;,
+      col_contour = &quot;#98CE00&quot;,
       breaks = i_breaks,
       n_labels = 2
     )
@@ -14401,7 +14449,7 @@ buffer_profiles %&gt;%
 dev.off()</code></pre>
 </div>
 </div>
-<div id="absolute-state-3" class="section level2">
+<div id="absolute-state-4" class="section level2">
 <h2>Absolute state</h2>
 <div id="saturation-state" class="section level3">
 <h3>Saturation state</h3>
