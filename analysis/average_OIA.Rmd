@@ -10022,7 +10022,7 @@ TS_trends %>%
 ```
 
 
-```{r profiles_incremental_change_station, eval=FALSE}
+```{r profiles_incremental_change_station}
 
 
 acidification_profiles_station <-
@@ -10076,7 +10076,8 @@ labels_tco2 <- c(
   "DIC*(TA,P)"
 )
 
-
+# colors_accent <- c("#D9DB95", "#DCA99E", "#033F63")
+colors_accent <- c("grey80", "grey50", "#AA4499")
 
 acidification_profiles_station_obs_reconstructed %>%
   filter(
@@ -10090,7 +10091,6 @@ acidification_profiles_station_obs_reconstructed %>%
   )) %>%
   ggplot(aes(delta_interval,
              depth)) +
-  geom_vline(xintercept = 0, col = "grey") +
   geom_ribbon(
     data = . %>% filter(
       !is.na(std.error),
@@ -10108,25 +10108,16 @@ acidification_profiles_station_obs_reconstructed %>%
     aes(
       col = DIC_variant,
       linetype = driver,
-      # linewidth = DIC_variant
     )
   ) +
-  # geom_path(
-  #   data = . %>% filter(!(
-  #     variable %in% c("H_free", "OmegaAragonite", "tco2")
-  #   ),
-  #   DIC_variant == "tco2"),
-  #   aes(linetype = driver),
-  #   linewidth = 0.3
-  # ) +
-  scale_fill_manual(values = c("#beaed4", "#7fc97f", "#386cb0"),
+  scale_fill_manual(values = colors_accent,
                     labels = labels_tco2) +
-  scale_color_manual(values = c("#beaed4", "#7fc97f", "#386cb0"),
+  scale_color_manual(values = colors_accent,
                      labels = labels_tco2) +
   scale_discrete_manual("linewidth",
                         labels = labels_tco2,
                         values = c(0.3, 0.3, 1)) +
-  scale_linetype_discrete() +
+  scale_linetype_manual(values = c(73,"solid")) +
   scale_x_continuous() +
   guides(
     colour = guide_legend(order = 1),
@@ -10159,56 +10150,42 @@ acidification_profiles_station_obs_reconstructed %>%
 ggsave(
   here::here(
     paste0(
-      "output/main/BATS_ALOHA_20_yr_changes.png"
+      "output/main/BATS_ALOHA_20_yr_acidification_trends.png"
     )
   ),
   width = 6,
-  height = 4,
+  height = 5,
   dpi = 600,
   bg = "white"
 )
 
-
-acidification_profiles_station_obs_reconstructed %>%
-  filter(station == "ALOHA" | depth <= 500 | driver == "reconstructed",
-         variable %in% c("tco2", "talk", "PO4", "temp", "sal")) %>% 
+p_station_change <-
+  acidification_profiles_station_obs_reconstructed %>%
+  filter(station == "ALOHA" | depth <= 500,
+         variable %in% c("tco2", "talk", "PO4", "temp", "sal")) %>%
   filter(driver == "observed",
-         DIC_variant == "tco2") %>% 
-  mutate(variable = factor(
-    variable,
-    levels = c("H_free", "OmegaAragonite", "tco2", 
-                         "talk", "PO4", "temp", "sal")
-  )) %>% 
+         DIC_variant == "tco2") %>%
+  mutate(variable = factor(variable,
+                           levels = c("tco2", "talk", "PO4", "temp", "sal"))) %>%
   ggplot(aes(delta_interval,
              depth)) +
-  geom_vline(xintercept = 0, col = "grey") +
   geom_ribbon(
-    data = . %>% filter(!is.na(std.error),
-                        variable %in% c("H_free", "OmegaAragonite", "tco2")),
     aes(
-    xmin = delta_interval - std.error,
-    xmax = delta_interval + std.error,
-    fill = DIC_variant
-  ),
-  alpha = 0.3) +
-  geom_path(
-        data = . %>% filter(variable %in% c("H_free", "OmegaAragonite", "tco2")),
-        aes(col = DIC_variant, linetype = driver, linewidth = DIC_variant)) +
-  scale_discrete_manual("linewidth",
-                        labels = labels_tco2,
-                        values = c(0.3, 0.3, 1))+
-  scale_linetype_discrete(limits = rev) +
-  scale_x_continuous(guide = guide_axis(n.dodge = 2)) +
-  guides(colour = guide_legend(order = 1),
-         fill = guide_legend(order = 1),
-         linewidth = guide_legend(order = 1),
-         linetype = guide_legend(order = 2)) +
+      xmin = delta_interval - std.error,
+      xmax = delta_interval + std.error,
+      fill = variable
+    ),
+    alpha = 0.3
+  ) +
+  geom_path(aes(col = variable)) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
   coord_cartesian(expand = 0) +
   labs(y = "Depth (m)") +
+  theme_bw() +
   theme(
-    legend.title = element_blank(),
-    legend.direction = "vertical",
-    legend.position = "bottom",
+    legend.position = "none",
+    panel.grid.minor = element_blank(),
     axis.title.x = element_blank(),
     strip.background.x = element_blank(),
     strip.placement = "outside",
@@ -10221,10 +10198,60 @@ acidification_profiles_station_obs_reconstructed %>%
     labeller = labeller(variable = x_axis_labels_stations)
   ) +
   scale_y_continuous(trans = trans_reverser("sqrt"),
-                       breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+
+p_station_absolute <-
+TS_product_mean %>%
+  select(station, depth_int, tco2, talk, PO4, temp, sal) %>%
+  rename(depth = depth_int) %>%
+  pivot_longer(-c(station, depth),
+               names_to = "variable") %>% 
+  group_by(station, depth, variable) %>%
+  summarise(sd = sd(value, na.rm = TRUE),
+            mean = mean(value, na.rm = TRUE)) %>%
+  ungroup() %>% 
+  filter(station == "ALOHA" | depth <= 500,
+         depth <= 3000) %>%
+  mutate(variable = factor(variable,
+                           levels = c("tco2", "talk", "PO4", "temp", "sal"))) %>%
+  ggplot(aes(mean,
+             depth)) +
+  geom_ribbon(
+    aes(
+      xmin = mean - sd,
+      xmax = mean + sd,
+      fill = variable
+    ),
+    alpha = 0.3
+  ) +
+  geom_path(aes(col = variable)) +
+  scale_color_brewer(palette = "Dark2") +
+  scale_fill_brewer(palette = "Dark2") +
+  coord_cartesian(expand = 0) +
+  labs(y = "Depth (m)") +
+  theme_bw() +
+  theme(
+    legend.position = "none",
+    panel.grid.minor = element_blank(),
+    axis.title.x = element_blank(),
+    strip.background.x = element_blank(),
+    strip.placement = "outside",
+    strip.text.x = element_markdown()
+  ) +
+  facet_grid(
+    station ~ variable,
+    scales = "free_x",
+    switch = "x",
+    labeller = labeller(variable = x_axis_labels_stations_absolute)
+  ) +
+  scale_y_continuous(trans = trans_reverser("sqrt"),
+                     breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
 
 
-
+cowplot::plot_grid(p_station_change,
+                   p_station_absolute,
+                   ncol = 1,
+                   align = "h")
 
 ggsave(
   here::here(
@@ -10233,7 +10260,7 @@ ggsave(
     )
   ),
   width = 8,
-  height = 7,
+  height = 10,
   dpi = 600,
   bg = "white"
 )
