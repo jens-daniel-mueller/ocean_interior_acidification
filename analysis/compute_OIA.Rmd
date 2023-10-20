@@ -30,7 +30,7 @@ library(lubridate)
 
 basinmask <- basinmask %>% 
   filter(MLR_basins == "5") %>% 
-  select(lon, lat, basin)
+  select(lon, lat, basin_AIP)
 
 ```
 
@@ -46,7 +46,7 @@ path_observations <-
 path_preprocessing    <-
   paste0(path_observations, "preprocessing/")
 
-path_out <-   paste0(path_observations, "output_publication/")
+path_out <-   paste0(path_observations, "output_publication_compressed/")
 
 
 # path to ocean interior temperature reconstructions
@@ -70,25 +70,30 @@ path_OIA <-   "/nfs/kryo/work/jenmueller/ocean_interior_acidification/"
 
 ## Delta Cant
 
-```{r read_interior_dcant_files}
+```{r test_interior_dcant_files, eval=FALSE}
+library(units)
+install_unit(symbol = "decade", def = "10 years")
 
 file_out <- paste0(path_out, "dcant_emlr_cstar_mueller_94-04-14.nc")
 
 dcant_3d_read_mdim <-
   read_mdim(file_out)
 
+# st_get_dimension_values(dcant_3d_read_mdim, "depth")
+
 ggplot() +
   geom_stars(data = dcant_3d_read_mdim %>% 
                filter(period == "1994 - 2004",
-                      depth == 50)) +
-  facet_grid(MLR_basins~Version_ID_group) +
+                      depth == set_units(50, m))) +
+  facet_grid(MLR_configuration ~ MLR_basin_mask) +
   scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
                        na.value = "transparent")
 
 
 dcant_3d_tibble <- dcant_3d_read_mdim %>% 
-               # filter(Version_ID_group == "Standard case",
-               #        MLR_basins == "3") %>% 
+               filter(MLR_configuration == "Standard case",
+                      MLR_basin_mask == "3",
+                      period == "1994 - 2004") %>%
   as_tibble()
 
 rm(dcant_3d_read_mdim, file_out)
@@ -101,12 +106,158 @@ dcant_3d_tibble <- dcant_3d_tibble %>%
 #   mutate(dcant = if_else(dcant < 0, 0, dcant))
 
 dcant_3d_tibble %>%
-  filter(depth == 500,
-         Version_ID_group == "Standard case",
-         MLR_basins == "3") %>%
+  filter(depth == set_units(500,m),
+         MLR_configuration == "Standard case",
+         MLR_basin_mask == "3") %>%
+  drop_units() %>% 
   ggplot() +
   geom_raster(aes(lon, lat, fill = dcant)) +
-  facet_grid(MLR_basins ~ Version_ID_group) +
+  facet_grid(MLR_basin_mask ~ MLR_configuration) +
+  scale_fill_viridis_b(breaks = c(-Inf, seq(0, 16, 2), Inf),
+                       na.value = "transparent")
+
+
+file_out <- paste0(path_out, "volume_mask_emlr_cstar_mueller_94-04-14.nc")
+
+dcant_3d_read_mdim <-
+  read_mdim(file_out)
+
+dcant_3d_read_mdim %>% 
+  st_get_dimension_values("depth")
+
+volume <- dcant_3d_read_mdim %>%
+  as_tibble() %>% 
+  drop_na()
+
+file_out <- paste0(path_out, "inv_dcant_emlr_cstar_mueller_94-04-14.nc")
+
+dcant_3d_read_mdim <-
+  read_mdim(file_out)
+
+dcant_3d_read_mdim %>% st_get_dimension_values("lat")
+
+dcant_inv <- dcant_3d_read_mdim %>% 
+               filter(MLR_configuration == "Standard case",
+                      MLR_basin_mask == "3",
+                      period == "1994 - 2004") %>%
+  as_tibble() %>% 
+  drop_na()
+
+file_out <- paste0(path_out, "surface_area_mask_emlr_cstar_mueller_94-04-14.nc")
+
+dcant_3d_read_mdim <-
+  read_mdim(file_out)
+
+surface_area <- dcant_3d_read_mdim %>% 
+  as_tibble() %>% 
+  drop_na()
+
+
+volume <- full_join(volume,
+                    surface_area)
+
+p1 <-
+  left_join(dcant_3d_tibble,
+            volume) %>%
+  filter(depth <= set_units(3000, m)) %>%
+  drop_units() %>%
+  group_by(lat, lon) %>%
+  summarise(dcant = sum(dcant * 1.03 * volume / 1000) / mean(surface_area)) %>%
+  ungroup() %>%
+  ggplot(aes(lon, lat, fill = dcant)) +
+  geom_tile() +
+  scale_fill_divergent(limits = c(-2, 2) * 1e1) +
+  labs(title = "3000") +
+  coord_quickmap()
+
+p2 <-
+  left_join(dcant_3d_tibble,
+            volume) %>%
+  filter(depth <= set_units(2500, m)) %>%
+  drop_units() %>%
+  group_by(lat, lon) %>%
+  summarise(dcant = sum(dcant * 1.03 * volume / 1000) / mean(surface_area)) %>%
+  ungroup() %>%
+  ggplot(aes(lon, lat, fill = dcant)) +
+  geom_tile() +
+  scale_fill_divergent(limits = c(-2, 2) * 1e1) +
+  labs(title = "2500") +
+  coord_quickmap()
+
+p3 <-
+  left_join(dcant_3d_tibble,
+            volume) %>%
+  filter(depth <= set_units(3000, m)) %>%
+  mutate(volume = if_else(depth == set_units(3000, m),
+                          volume * 0.5,
+                          volume)) %>%
+  drop_units() %>%
+  group_by(lat, lon) %>%
+  summarise(dcant = sum(dcant * 1.03 * volume / 1000) / mean(surface_area)) %>%
+  ungroup() %>%
+  ggplot(aes(lon, lat, fill = dcant)) +
+  geom_tile() +
+  scale_fill_divergent(limits = c(-2, 2) * 1e1) +
+  labs(title = "3000 halfed") +
+  coord_quickmap()
+
+p4 <-
+  dcant_inv %>%
+  drop_units() %>%
+  ggplot(aes(lon, lat, fill = dcant_inv)) +
+  geom_tile() +
+  scale_fill_divergent(limits = c(-2, 2) * 1e1,
+                       na.value = "white") +
+  labs(title = "3000 direct") +
+  coord_quickmap()
+
+
+p1 + p2 + p3 + p4
+
+
+
+```
+
+```{r read_interior_dcant_files}
+library(units)
+
+file_out <- paste0(path_out, "dcant_emlr_cstar_mueller_94-04-14.nc")
+
+dcant_3d_read_mdim <-
+  read_mdim(file_out,
+            make_units = FALSE)
+
+ggplot() +
+  geom_stars(data = dcant_3d_read_mdim %>% 
+               filter(period == "1994 - 2004",
+                      depth == set_units(50, m))) +
+  facet_grid(MLR_basin_mask~MLR_configuration) +
+  scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
+                       na.value = "transparent")
+
+
+dcant_3d_tibble <- dcant_3d_read_mdim %>% 
+               # filter(MLR_configuration == "Standard case",
+               #        MLR_basin_mask == "3") %>% 
+  as_tibble() %>% 
+  drop_units()
+
+rm(dcant_3d_read_mdim, file_out)
+
+dcant_3d_tibble <- dcant_3d_tibble %>% 
+  drop_na()
+
+# remove negative delta Cant
+# dcant_3d_tibble <- dcant_3d_tibble
+#   mutate(dcant = if_else(dcant < 0, 0, dcant))
+
+dcant_3d_tibble %>%
+  filter(depth == 500,
+         MLR_configuration == "Standard case",
+         MLR_basin_mask == "3") %>%
+  ggplot() +
+  geom_raster(aes(lon, lat, fill = dcant)) +
+  facet_grid(MLR_basin_mask ~ MLR_configuration) +
   scale_fill_viridis_b(breaks = c(-Inf, seq(0, 16, 2), Inf),
                        na.value = "transparent")
 
@@ -129,6 +280,114 @@ S04_cant_3d <-
 
 
 ## GLODAP climatologies
+
+```{r read_GLODAP_climatology_errors}
+
+path_glodapv2_2016b   <-
+  "/nfs/kryo/work/datasets/gridded/ocean/interior/observation/glodap/v2.2016b/"
+
+file_list <- c(
+  "GLODAPv2.2016b.TAlk.nc",
+  "GLODAPv2.2016b.TCO2.nc"
+)
+
+
+for (file in file_list) {
+  # file <- file_list[1]
+  
+  print(file)
+  # open file
+
+  # extract parameter name
+  
+  parameter <-
+    str_split(file, pattern = "GLODAPv2.2016b.", simplify = TRUE)[2]
+  parameter <-
+    str_split(parameter, pattern = ".nc", simplify = TRUE)[1]
+  parameter <- paste0(parameter,"_error")
+  
+    
+  clim <-
+    read_stars(paste(path_glodapv2_2016b, file, sep = ""),
+              sub = parameter)
+  
+  #convert to table
+  
+  clim_tibble <- clim %>%
+    as_tibble()
+  
+  # harmonize column names
+  
+  clim_tibble <- clim_tibble %>%
+    rename(lat = y,
+           lon = x,
+           depth = depth_surface)
+  
+  clim_tibble <- clim_tibble %>%
+    mutate(lat = lat - 90,
+           lon = lon + 20)
+
+  # clim_tibble %>% 
+  #   filter(depth == 0) %>% 
+  #   ggplot(aes(lon, lat, fill = NO3)) +
+  #   geom_raster()
+  
+  # join with basin mask and remove data outside basin mask
+  
+  clim_tibble <- inner_join(clim_tibble, basinmask)
+
+  # determine bottom depth
+  
+  bottom_depth <- clim_tibble %>%
+    filter(!is.na(!!sym(parameter))) %>%
+    group_by(lon, lat) %>%
+    summarise(bottom_depth = max(depth)) %>%
+    ungroup()
+  
+  # remove data below bottom depth
+  clim_tibble <- left_join(clim_tibble, bottom_depth)
+  rm(bottom_depth)
+  
+  clim_tibble <- clim_tibble %>%
+    filter(depth <= bottom_depth) %>%
+    select(-bottom_depth)
+  
+  # fill NAs with closest value along longitude
+  
+  clim_tibble <- clim_tibble %>%
+    group_by(lat, depth, basin_AIP) %>%
+    arrange(lon) %>%
+    fill(!!sym(parameter), .direction = "downup") %>%
+    ungroup()
+  
+  # remove NAs
+  
+  clim_tibble <- clim_tibble %>%
+    drop_na()
+  
+  # plot maps
+  
+  print(p_map_climatology(df = clim_tibble,
+                          var = parameter))
+  
+
+  # write csv file
+  
+  if (exists("GLODAP_predictors_error")) {
+    GLODAP_predictors_error <- full_join(GLODAP_predictors_error, clim_tibble)
+  }
+  
+  if (!exists("GLODAP_predictors_error")) {
+    GLODAP_predictors_error <- clim_tibble
+  }
+  
+}
+
+rm(clim, clim_tibble, parameter, file, file_list)
+
+
+```
+
 
 
 ```{r load_GLODAPv2_2016b_MappedClimatologies_interior_mapping}
@@ -189,7 +448,7 @@ WOA18_predictors_nuts_O2 <-
 
 ## Cheng temperature
 
-```{r read_cheng_temperature}
+```{r read_cheng_temperature, eval=FALSE}
 
 # loop over reference years, plus/minus enveloppe years, and month
 # to obtain a decadal averaged temperature field
@@ -341,7 +600,7 @@ temperature_all %>%
 
 ## MOBO-DIC
 
-```{r read_mobo-dic}
+```{r read_mobo-dic, eval=FALSE}
 
 mobo_dic_dates <-
   read_ncdf(paste0(path_mobo, "MPI_MOBO-DIC_2004-2019_Oct2022.nc")) %>%
@@ -467,6 +726,13 @@ coord_grid <-
              S04_cant_3d %>%
                distinct(lon, lat, depth))
 
+coord_grid <-
+  inner_join(coord_grid,
+             GLODAP_predictors_error %>%
+               distinct(lon, lat, depth))
+
+
+
 # restrict CO2 fields to common grid
 
 predictors <- inner_join(
@@ -481,6 +747,11 @@ dcant_3d_tibble <- inner_join(
 
 S04_cant_3d <- inner_join(
   S04_cant_3d,
+  coord_grid
+)
+
+GLODAP_predictors_error <- inner_join(
+  GLODAP_predictors_error,
   coord_grid
 )
 
@@ -518,8 +789,8 @@ DIC_2014 <- DIC_2014 %>%
 
 
 DIC_1800 <- inner_join(
-  DIC_1994 %>%   filter(Version_ID_group == "Standard case",
-                        MLR_basins == "3"),
+  DIC_1994 %>%   filter(MLR_configuration == "Standard case",
+                        MLR_basin_mask == "3"),
   S04_cant_3d %>% select(lon, lat, depth, tcant)
 )
 
@@ -529,9 +800,6 @@ DIC_1800 <- DIC_1800 %>%
 
 
 DIC <- bind_rows(
-  predictors %>% mutate(tref = "2002",
-                        Version_ID_group = "DIC_climatology",
-                        MLR_basins = "none"),
   DIC_1800 %>% mutate(tref = "1800"),
   DIC_1994 %>% mutate(tref = "1994"),
   DIC_2004 %>% mutate(tref = "2004"),
@@ -542,18 +810,62 @@ rm(DIC_1800, DIC_1994, DIC_2004, DIC_2014, predictors, dcant_3d_tibble, S04_cant
 
 ```
 
-```{r join_dCant_temperature}
+```{r include_TCO2_TAlk_uncertainty}
+
+DIC_clim_uncertainty <- inner_join(
+  DIC %>% filter(MLR_configuration == "Standard case",
+                 MLR_basin_mask == "3"),
+  GLODAP_predictors_error %>% select(-basin_AIP)
+)
+
+
+DIC <- bind_rows(
+  DIC_clim_uncertainty %>%
+    mutate(
+      MLR_configuration = "high DIC low TA",
+      tco2 = tco2 + TCO2_error,
+      talk = talk - TAlk_error
+    ),
+  DIC_clim_uncertainty %>%
+    mutate(
+      MLR_configuration = "low DIC high TA",
+      tco2 = tco2 - TCO2_error,
+      talk = talk + TAlk_error
+    ),
+  DIC_clim_uncertainty %>%
+    mutate(
+      MLR_configuration = "high DIC",
+      tco2 = tco2 + TCO2_error
+    ),
+  DIC_clim_uncertainty %>%
+    mutate(
+      MLR_configuration = "low DIC",
+      tco2 = tco2 - TCO2_error
+    ),
+  DIC
+)
+
+DIC <- DIC %>% 
+  select(-c(TAlk_error, TCO2_error))
+
+rm(DIC_clim_uncertainty, GLODAP_predictors_error)
+
+```
+
+
+
+```{r join_dCant_temperature, eval=FALSE}
 
 # create DIC fields with variable temperature
 
 DIC_temp <- DIC %>%
   filter(tref != 1800,
-         Version_ID_group == "Standard case",
-         MLR_basins == 3) %>%
-  mutate(Version_ID_group = "dCant + temp")
+         MLR_configuration == "Standard case",
+         MLR_basin_mask == 3) %>%
+  mutate(MLR_configuration = "dCant + temp")
 
 DIC_temp %>%
-  distinct(tref, Version_ID_group, MLR_basins)
+  distinct(tref, MLR_configuration, MLR_basin_mask)
 
 DIC_depths <- DIC_temp %>% 
   distinct(depth) %>% 
@@ -637,16 +949,16 @@ rm(DIC_temp, temperature_all)
 
 
 
-```{r join_dCant_DIC}
+```{r join_dCant_DIC, eval=FALSE}
 
 # create DIC fields with variable temperature
 
 DIC_DIC <- DIC %>%
   filter(tref %in% c("2004", "2014"),
-         Version_ID_group %in% c("Standard case", "dCant + temp"),
-         MLR_basins == 3) %>%
-  mutate(Version_ID_group = if_else(
-    Version_ID_group == "Standard case",
+         MLR_configuration %in% c("Standard case", "dCant + temp"),
+         MLR_basin_mask == 3) %>%
+  mutate(MLR_configuration = if_else(
+    MLR_configuration == "Standard case",
     "DIC",
     "DIC + temp"
   ))
@@ -686,13 +998,13 @@ gc()
 
 # table with cases to loop over
 cases <- DIC %>%
-  distinct(Version_ID_group, MLR_basins)
+  distinct(MLR_configuration, MLR_basin_mask)
 
 # cases <- cases %>% 
-#   filter(MLR_basins == "none")
+#   filter(MLR_basin_mask == "none")
 
 # cases <- cases %>% 
-#   filter(MLR_basins == "3") %>% 
+#   filter(MLR_basin_mask == "3") %>% 
 #   slice(-c(2:6))
 
 
@@ -716,18 +1028,16 @@ calc_delta_interval <- function(x)
 for (i in 1:nrow(cases)) {
   # i <- 1
   
-  i_Version_ID_group <-  cases[i, ]$Version_ID_group
-  i_MLR_basins <-  cases[i, ]$MLR_basins
+  i_MLR_configuration <-  cases[i, ]$MLR_configuration
+  i_MLR_basin_mask <-  cases[i, ]$MLR_basin_mask
   
   i_DIC <- DIC %>%
-    filter(Version_ID_group == i_Version_ID_group,
-           MLR_basins == i_MLR_basins)
+    filter(MLR_configuration == i_MLR_configuration,
+           MLR_basin_mask == i_MLR_basin_mask)
   
   
   acidification <- i_DIC %>%
-    # filter(lon == 190.5,
-    #        lat == 0.5,
-    #        depth == 0) %>%
+    # head(6) %>%
     mutate(
       sir(
         flag = 15,
@@ -749,58 +1059,38 @@ for (i in 1:nrow(cases)) {
   
   acidification <- acidification %>%
     select(
-      -c(
-        flag,
-        S,
-        T,
-        Patm,
-        P,
-        CO2,
-        contains("fCO2"),
-        contains("_t"),
-        contains("_sws"),
-        pH_free,
-        HCO3,
-        pCO2pot,
-        pCO2,
-        DIC,
-        ALK
-      )
+      lon, lat, depth, tref,
+      MLR_basin_mask, MLR_configuration,
+      tco2, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
     )
   
   acidification <- acidification %>%
     mutate(
       CO3 = CO3 * 1e6,
-      tco2_talk_ratio = tco2 / talk
+      H_free = H_free * 1e3
     )
   
-  acidification_trend <- acidification %>%
+  acidification <- acidification %>%
     arrange(tref) %>%
-    group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+    group_by(lat, lon, depth, MLR_configuration, MLR_basin_mask) %>%
     mutate(across(
       .cols = c(
         tco2,
         pH,
-        pCO2insitu,
         CO3,
         OmegaAragonite,
         OmegaCalcite,
-        tco2_talk_ratio,
         SIR,
-        H_free,
-        temp
+        H_free
       ),
       .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
     )) %>%
     ungroup()
+
+  acidification %>%
+    write_csv(paste0(path_OIA,"OIA_",i_MLR_configuration,"_",i_MLR_basin_mask,".csv"))
   
   rm(acidification)
-  gc()
-  
-  acidification_trend %>%
-    write_csv(paste0(path_OIA,"OIA_",i_Version_ID_group,"_",i_MLR_basins,".csv"))
-  
-  rm(acidification_trend)
   gc()
   
 }
@@ -816,13 +1106,13 @@ for (i in 1:nrow(cases)) {
 for (i in 1:nrow(cases)) {
   # i <- 1
   
-  i_Version_ID_group <-  cases[i,]$Version_ID_group
-  i_MLR_basins <-  cases[i,]$MLR_basins
+  i_MLR_configuration <-  cases[i,]$MLR_configuration
+  i_MLR_basin_mask <-  cases[i,]$MLR_basin_mask
   
   
   i_DIC <- DIC %>%
-    filter(Version_ID_group == i_Version_ID_group,
-           MLR_basins == i_MLR_basins)
+    filter(MLR_configuration == i_MLR_configuration,
+           MLR_basin_mask == i_MLR_basin_mask)
   
   buffer <- i_DIC %>%
     # filter(lon == 190.5,
@@ -854,8 +1144,8 @@ for (i in 1:nrow(cases)) {
         lat,
         depth,
         tref,
-        MLR_basins,
-        Version_ID_group,
+        MLR_basin_mask,
+        MLR_configuration,
         gammaDIC,
         betaDIC,
         omegaDIC,
@@ -865,7 +1155,7 @@ for (i in 1:nrow(cases)) {
   
   buffer_trend <- buffer %>%
     arrange(tref) %>%
-    group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+    group_by(lat, lon, depth, MLR_configuration, MLR_basin_mask) %>%
     mutate(across(
       .cols = c(gammaDIC,
                 betaDIC,
@@ -879,7 +1169,7 @@ for (i in 1:nrow(cases)) {
   gc()
   
   buffer_trend %>%
-    write_csv(paste0(path_OIA,"buffer_",i_Version_ID_group,"_",i_MLR_basins,".csv"))
+    write_csv(paste0(path_OIA,"buffer_",i_MLR_configuration,"_",i_MLR_basin_mask,".csv"))
   
   rm(buffer_trend)
   gc()
@@ -893,28 +1183,25 @@ for (i in 1:nrow(cases)) {
 
 ```{r compute_buffer_factors_DIC_increase}
 
-cases <- cases %>% 
-  filter(Version_ID_group == "Standard case",
-         MLR_basins == "3")
+# cases <- cases %>% 
+#   filter(MLR_configuration == "Standard case",
+#          MLR_basin_mask == "3")
 
 for (i in 1:nrow(cases)) {
   # i <- 1
   
-  i_Version_ID_group <-  cases[i, ]$Version_ID_group
-  i_MLR_basins <-  cases[i, ]$MLR_basins
+  i_MLR_configuration <-  cases[i, ]$MLR_configuration
+  i_MLR_basin_mask <-  cases[i, ]$MLR_basin_mask
   
   i_DIC <- DIC %>%
-    filter(Version_ID_group == i_Version_ID_group,
-           MLR_basins == i_MLR_basins)
+    filter(MLR_configuration == i_MLR_configuration,
+           MLR_basin_mask == i_MLR_basin_mask)
   
   i_DIC <- i_DIC %>% 
     mutate(tco2 = tco2 + 5)
   
-  
   acidification <- i_DIC %>%
-    # filter(lon == 190.5,
-    #        lat == 0.5,
-    #        depth == 0) %>%
+    # head(6) %>%
     mutate(
       sir(
         flag = 15,
@@ -936,58 +1223,38 @@ for (i in 1:nrow(cases)) {
   
   acidification <- acidification %>%
     select(
-      -c(
-        flag,
-        S,
-        T,
-        Patm,
-        P,
-        CO2,
-        contains("fCO2"),
-        contains("_t"),
-        contains("_sws"),
-        pH_free,
-        HCO3,
-        pCO2pot,
-        pCO2,
-        DIC,
-        ALK
-      )
+      lon, lat, depth, tref,
+      MLR_basin_mask, MLR_configuration,
+      tco2, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
     )
   
   acidification <- acidification %>%
     mutate(
       CO3 = CO3 * 1e6,
-      tco2_talk_ratio = tco2 / talk
+      H_free = H_free * 1e3
     )
   
-  acidification_trend <- acidification %>%
+  acidification <- acidification %>%
     arrange(tref) %>%
-    group_by(lat, lon, depth, Version_ID_group, MLR_basins) %>%
+    group_by(lat, lon, depth, MLR_configuration, MLR_basin_mask) %>%
     mutate(across(
       .cols = c(
         tco2,
         pH,
-        pCO2insitu,
         CO3,
         OmegaAragonite,
         OmegaCalcite,
-        tco2_talk_ratio,
         SIR,
-        H_free,
-        temp
+        H_free
       ),
       .fns = list(delta_total = calc_delta_total, delta_interval = calc_delta_interval)
     )) %>%
     ungroup()
   
+  acidification %>%
+    write_csv(paste0(path_OIA,"OIA_",i_MLR_configuration,"_",i_MLR_basin_mask,"_DIC_addition.csv"))
+  
   rm(acidification)
-  gc()
-  
-  acidification_trend %>%
-    write_csv(paste0(path_OIA,"OIA_",i_Version_ID_group,"_",i_MLR_basins,"_DIC_addition.csv"))
-  
-  rm(acidification_trend)
   gc()
   
 }
@@ -1007,8 +1274,8 @@ acidification_trend_stars <- st_as_stars(
     "lat",
     "depth",
     "tref",
-    "MLR_basins",
-    "Version_ID_group"
+    "MLR_basin_mask",
+    "MLR_configuration"
   )
 )
 
@@ -1021,7 +1288,7 @@ st_crs(acidification_trend_stars) <- st_crs(4326)
 #   geom_stars(data = acidification_trend_stars %>% 
 #                filter(period == "1994 - 2004",
 #                       depth == 50)) +
-#   facet_grid(MLR_basins~Version_ID_group) +
+#   facet_grid(MLR_basin_mask~MLR_configuration) +
 #   scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
 #                        na.value = "transparent")
 
@@ -1050,7 +1317,7 @@ acidification_trend_stars %>%
 #   geom_stars(data = dcant_3d_read_ncdf %>% 
 #                filter(period == "1994 - 2004",
 #                       depth == 50)) +
-#   facet_grid(MLR_basins~Version_ID_group) +
+#   facet_grid(MLR_basin_mask~MLR_configuration) +
 #   scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
 #                        na.value = "transparent")
 # 
@@ -1058,7 +1325,7 @@ acidification_trend_stars %>%
 #   geom_stars(data = dcant_3d_read_mdim %>% 
 #                filter(period == "1994 - 2004",
 #                       depth == 50)) +
-#   facet_grid(MLR_basins~Version_ID_group) +
+#   facet_grid(MLR_basin_mask~MLR_configuration) +
 #   scale_fill_viridis_b(breaks = c(-Inf, seq(0,16,2), Inf),
 #                        na.value = "transparent")
 
