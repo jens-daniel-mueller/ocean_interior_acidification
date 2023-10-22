@@ -51,7 +51,7 @@ path_out <-   paste0(path_observations, "output_publication_compressed/")
 
 # path to ocean interior temperature reconstructions
 
-path_temperature <- 
+path_temperature <-
   "/nfs/kryo/work/updata/cheng/CZ16_v3_IAP_Temperature_gridded_1month_netcdf/Monthly"
 
 # path to ocean interior DIC reconstructions
@@ -1023,7 +1023,7 @@ calc_delta_interval <- function(x)
 
 # Compute acidification trends
 
-```{r compute_acidification_trends, eval=FALSE}
+```{r compute_acidification_trends}
 
 for (i in 1:nrow(cases)) {
   # i <- 1
@@ -1181,7 +1181,7 @@ for (i in 1:nrow(cases)) {
 
 ## incremental DIC increase
 
-```{r compute_buffer_factors_DIC_increase}
+```{r compute_buffer_factors_DIC_increase, eval=FALSE}
 
 # cases <- cases %>% 
 #   filter(MLR_configuration == "Standard case",
