@@ -247,6 +247,11 @@ rm(dcant_3d_read_mdim, file_out)
 dcant_3d_tibble <- dcant_3d_tibble %>% 
   drop_na()
 
+dcant_3d_tibble <-
+  dcant_3d_tibble %>% 
+  mutate(lon = ifelse(lon < 20, lon + 360, lon))
+
+
 # remove negative delta Cant
 # dcant_3d_tibble <- dcant_3d_tibble
 #   mutate(dcant = if_else(dcant < 0, 0, dcant))
@@ -371,7 +376,7 @@ for (file in file_list) {
                           var = parameter))
   
 
-  # write csv file
+  # join error fields
   
   if (exists("GLODAP_predictors_error")) {
     GLODAP_predictors_error <- full_join(GLODAP_predictors_error, clim_tibble)
@@ -695,9 +700,9 @@ predictors <- rquery::natural_join(predictors, WOA18_predictors_nuts_O2,
                            jointype = "LEFT") %>% 
   as_tibble()
 
+
 predictors <- predictors %>% 
   drop_na()
-
 
 rm(GLODAP_predictors, WOA18_predictors_nuts_O2, WOA18_predictors)
 
@@ -730,8 +735,6 @@ coord_grid <-
   inner_join(coord_grid,
              GLODAP_predictors_error %>%
                distinct(lon, lat, depth))
-
-
 
 # restrict CO2 fields to common grid
 
@@ -1025,6 +1028,14 @@ calc_delta_interval <- function(x)
 
 ```{r compute_acidification_trends}
 
+# DIC %>%
+#   distinct(lon, lat, tref, MLR_basin_mask) %>%
+#   ggplot(aes(lon, lat)) +
+#   geom_raster(data = basinmask) +
+#   geom_raster(fill = "red") +
+#   facet_grid(MLR_basin_mask~tref)
+
+
 for (i in 1:nrow(cases)) {
   # i <- 1
   
@@ -1181,7 +1192,7 @@ for (i in 1:nrow(cases)) {
 
 ## incremental DIC increase
 
-```{r compute_buffer_factors_DIC_increase, eval=FALSE}
+```{r compute_buffer_factors_DIC_increase}
 
 # cases <- cases %>% 
 #   filter(MLR_configuration == "Standard case",
