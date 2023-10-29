@@ -1006,19 +1006,17 @@ cases <- DIC %>%
 # cases <- cases %>% 
 #   filter(MLR_basin_mask == "none")
 
-# cases <- cases %>% 
-#   filter(MLR_basin_mask == "3") %>% 
-#   slice(-c(2:6))
+cases <- cases %>%
+  filter(MLR_basin_mask == "3",
+         MLR_configuration == "Standard case")
 
 
 
 # definition of functions to compute incremental and total differences
 
-calc_delta_total <- function(x)
-  (x - first(x))
+calc_delta_total <- function(x) (x - first(x))
 
-calc_delta_interval <- function(x)
-  (x - lag(x, default = first(x)))
+calc_delta_interval <- function(x) (x - lag(x, default = first(x)))
 
 ```
 
@@ -1072,7 +1070,7 @@ for (i in 1:nrow(cases)) {
     select(
       lon, lat, depth, tref,
       MLR_basin_mask, MLR_configuration,
-      tco2, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
+      tco2, talk, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
     )
   
   acidification <- acidification %>%
@@ -1112,7 +1110,7 @@ for (i in 1:nrow(cases)) {
 
 ## direct approach
 
-```{r compute_buffer_factors_direct, eval=FALSE}
+```{r compute_buffer_factors_direct}
 
 for (i in 1:nrow(cases)) {
   # i <- 1
@@ -1126,9 +1124,7 @@ for (i in 1:nrow(cases)) {
            MLR_basin_mask == i_MLR_basin_mask)
   
   buffer <- i_DIC %>%
-    # filter(lon == 190.5,
-    #        lat == 0.5,
-    #        depth == 0) %>%
+    # head(6) %>% 
     mutate(
       buffesm(
         flag = 15,
@@ -1236,7 +1232,7 @@ for (i in 1:nrow(cases)) {
     select(
       lon, lat, depth, tref,
       MLR_basin_mask, MLR_configuration,
-      tco2, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
+      tco2, talk, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
     )
   
   acidification <- acidification %>%
