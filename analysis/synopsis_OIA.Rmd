@@ -995,7 +995,7 @@ acidification_trend <- acidification_trend %>%
 acidification_trend_uncertainty <-
   bind_rows(acidification_trend_uncertainty,
             acidification_trend %>%
-              select(-talk))
+              select(-c(talk, tco2, temp, sal, phosphate, silicate)))
 
 acidification_trend <- acidification_trend %>% 
   select(-c(MLR_basin_mask, MLR_configuration))
@@ -4513,7 +4513,7 @@ rm(buffer_climatology_depth_layer,
 
 ## CO2 System speciation
 
-```{r speciation, eval=FALSE}
+```{r speciation}
 
 biome_co2_speciation <-
   inner_join(
