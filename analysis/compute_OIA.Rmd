@@ -1070,7 +1070,8 @@ for (i in 1:nrow(cases)) {
     select(
       lon, lat, depth, tref,
       MLR_basin_mask, MLR_configuration,
-      tco2, talk, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
+      talk, tco2, temp, sal, phosphate, silicate,
+      pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
     )
   
   acidification <- acidification %>%
@@ -1110,7 +1111,7 @@ for (i in 1:nrow(cases)) {
 
 ## direct approach
 
-```{r compute_buffer_factors_direct}
+```{r compute_buffer_factors_direct, eval=FALSE}
 
 for (i in 1:nrow(cases)) {
   # i <- 1
@@ -1188,7 +1189,7 @@ for (i in 1:nrow(cases)) {
 
 ## incremental DIC increase
 
-```{r compute_buffer_factors_DIC_increase}
+```{r compute_buffer_factors_DIC_increase, eval=FALSE}
 
 # cases <- cases %>% 
 #   filter(MLR_configuration == "Standard case",
