@@ -345,9 +345,6 @@ div.tocify {
   <a href="compute_OIA.html">Computation</a>
 </li>
 <li>
-  <a href="average_OIA.html">Averaging</a>
-</li>
-<li>
   <a href="synopsis_OIA.html">Synopsis</a>
 </li>
       </ul>
@@ -385,7 +382,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA computation</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">23 October, 2023</h4>
+<h4 class="date">29 October, 2023</h4>
 
 </div>
 
@@ -414,7 +411,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-10-23
+<strong>Last updated:</strong> 2023-10-29
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -546,15 +543,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeafe3b037bbba210018c9cf90bdb3f4d84c6400dbtargetblankafe3b03a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4a3024f4f5257641f7c65eb687d211c6f89413b0targetblank4a3024fa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/afe3b037bbba210018c9cf90bdb3f4d84c6400db" target="_blank">afe3b03</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4a3024f4f5257641f7c65eb687d211c6f89413b0" target="_blank">4a3024f</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreeafe3b037bbba210018c9cf90bdb3f4d84c6400dbtargetblankafe3b03a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4a3024f4f5257641f7c65eb687d211c6f89413b0targetblank4a3024fa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -564,7 +561,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/afe3b037bbba210018c9cf90bdb3f4d84c6400db" target="_blank">afe3b03</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4a3024f4f5257641f7c65eb687d211c6f89413b0" target="_blank">4a3024f</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -588,7 +585,9 @@ Untracked files:
     Untracked:  code/start_job.R
 
 Unstaged changes:
-    Modified:   analysis/average_OIA.Rmd
+    Modified:   analysis/_site.yml
+    Deleted:    analysis/average_OIA.Rmd
+    Modified:   analysis/synopsis_OIA.Rmd
 
 </code></pre>
 <p>
@@ -634,6 +633,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4a3024f4f5257641f7c65eb687d211c6f89413b0/analysis/compute_OIA.Rmd" target="_blank">4a3024f</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-29
+</td>
+<td>
+talk in output, compute revelle factor changes
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/3fe79b68359a375a90c10d4a85cf9d4ef1230145/docs/compute_OIA.html" target="_blank">3fe79b6</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-27
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1484,6 +1517,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/3fe79b68359a375a90c10d4a85cf9d4ef1230145/docs/figure/compute_OIA.Rmd/read_interior_dcant_files-2.png" target="_blank">3fe79b6</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-27
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/8a7a1da4c2b5ff3368121d7fa8640a9c1a26a88c/docs/figure/compute_OIA.Rmd/read_interior_dcant_files-2.png" target="_blank">8a7a1da</a>
 </td>
 <td>
@@ -2297,19 +2341,17 @@ cases &lt;- DIC %&gt;%
 # cases &lt;- cases %&gt;% 
 #   filter(MLR_basin_mask == &quot;none&quot;)
 
-# cases &lt;- cases %&gt;% 
-#   filter(MLR_basin_mask == &quot;3&quot;) %&gt;% 
-#   slice(-c(2:6))
+cases &lt;- cases %&gt;%
+  filter(MLR_basin_mask == &quot;3&quot;,
+         MLR_configuration == &quot;Standard case&quot;)
 
 
 
 # definition of functions to compute incremental and total differences
 
-calc_delta_total &lt;- function(x)
-  (x - first(x))
+calc_delta_total &lt;- function(x) (x - first(x))
 
-calc_delta_interval &lt;- function(x)
-  (x - lag(x, default = first(x)))</code></pre>
+calc_delta_interval &lt;- function(x) (x - lag(x, default = first(x)))</code></pre>
 </div>
 <div id="compute-acidification-trends" class="section level1">
 <h1>Compute acidification trends</h1>
@@ -2357,7 +2399,7 @@ for (i in 1:nrow(cases)) {
     select(
       lon, lat, depth, tref,
       MLR_basin_mask, MLR_configuration,
-      tco2, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
+      tco2, talk, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
     )
   
   acidification &lt;- acidification %&gt;%
@@ -2407,9 +2449,7 @@ for (i in 1:nrow(cases)) {
            MLR_basin_mask == i_MLR_basin_mask)
   
   buffer &lt;- i_DIC %&gt;%
-    # filter(lon == 190.5,
-    #        lat == 0.5,
-    #        depth == 0) %&gt;%
+    # head(6) %&gt;% 
     mutate(
       buffesm(
         flag = 15,
@@ -2512,7 +2552,7 @@ for (i in 1:nrow(cases)) {
     select(
       lon, lat, depth, tref,
       MLR_basin_mask, MLR_configuration,
-      tco2, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
+      tco2, talk, pH, CO3, OmegaAragonite, OmegaCalcite, SIR, H_free
     )
   
   acidification &lt;- acidification %&gt;%
