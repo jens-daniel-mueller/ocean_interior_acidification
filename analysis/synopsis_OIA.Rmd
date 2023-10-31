@@ -561,7 +561,6 @@ basinmask <- basinmask %>%
     )
   )
 
-
 basinmask_robin_raster <- rast(basinmask %>% 
                                  mutate(dist = 1) %>% 
                                  pivot_wider(names_from = basin,
@@ -793,6 +792,11 @@ biomemask <- biomemask %>%
   select(-c(value, region))
 
 
+
+biomemask <-
+  biomemask %>%
+  mutate(lon = ifelse(lon < 20, lon + 360, lon))
+
 ```
 
 ### Selected mask
@@ -924,6 +928,10 @@ buffer_uncertainty_files <-
   uncertainty_files[uncertainty_files %>%
                       str_detect(c("DIC_addition.csv"))]
 
+buffer_uncertainty_files <-
+  buffer_uncertainty_files[buffer_uncertainty_files %>%
+                      str_detect(c(" DIC"))]
+
 rm(uncertainty_files)
 
 ```
@@ -1010,24 +1018,6 @@ acidification_trend_uncertainty <-
   filter(tref != 1800) %>% 
   rename_with(~str_remove(., "_delta_interval"))
 
-# acidification_trend_uncertainty %>% 
-#   distinct(lon, lat) %>% 
-#   ggplot(aes(lon, lat)) +
-#   geom_raster(data = biomemask) +
-#   geom_raster(fill = "red")
-
-# acidification_trend_uncertainty <-
-#   acidification_trend_uncertainty %>%
-#   pivot_wider(names_from = tref,
-#               values_from = value) %>%
-#   mutate(value = `2004` + `2014`) %>%
-#   select(-c(`2004`, `2014`))
-# 
-# 
-# acidification_trend_uncertainty <-
-#   acidification_trend_uncertainty %>%
-#   pivot_wider(names_from = name,
-#               values_from = value)
 
 ```
 
@@ -1043,6 +1033,72 @@ acidification_trend_uncertainty <-
 
 buffer_trend <-
   read_csv(paste0(path_OIA, "OIA_Standard case_3_DIC_addition.csv"))
+
+buffer_trend_uncertainty <-
+  read_csv(paste0(path_OIA, buffer_uncertainty_files))
+
+buffer_trend_uncertainty <-
+  bind_rows(buffer_trend %>% select(-talk),
+            buffer_trend_uncertainty)
+
+buffer_trend_uncertainty <-
+  buffer_trend_uncertainty %>% 
+  mutate(MLR_basin_mask = as.character(MLR_basin_mask))
+
+gc()
+
+
+# Join with standard OIA estimates
+buffer_trend_addition_uncertainty <-
+  left_join(
+    buffer_trend_uncertainty %>%
+      select(
+        MLR_basin_mask,
+        MLR_configuration,
+        lon,
+        lat,
+        depth,
+        tref,
+        contains(OIA_variables)
+      ) %>%
+      select(-c(contains("delta"), "tco2")) %>%
+      pivot_longer(
+        any_of(OIA_variables),
+        names_to = "variable",
+        values_to = "added"
+      ),
+    acidification_trend_uncertainty %>%
+      select(
+        MLR_basin_mask,
+        MLR_configuration,
+        lon,
+        lat,
+        depth,
+        tref,
+        contains(OIA_variables)
+      ) %>%
+      select(-c(contains("delta"), "tco2")) %>%
+      pivot_longer(
+        any_of(OIA_variables),
+        names_to = "variable",
+        values_to = "raw"
+      )
+  )
+
+rm(buffer_trend_uncertainty)
+gc()
+
+# compute OIA variable sensitivity to DIC addition
+buffer_trend_addition_uncertainty <-
+  buffer_trend_addition_uncertainty %>%
+  mutate(sensitivity = (added - raw) / 5)
+
+buffer_trend_addition_uncertainty <-
+  buffer_trend_addition_uncertainty %>%
+  select(-c(raw, added))
+
+
+
 
 buffer_trend <- buffer_trend %>% 
   select(-c(MLR_basin_mask, MLR_configuration))
@@ -1887,6 +1943,7 @@ three_year_colors <- four_year_colors[-1]
 two_year_colors <- three_year_colors[-1]
 three_year_colors_2014 <- c(rep("transparent",2),three_year_colors[3])
 four_year_colors_2014 <- c(rep("transparent",3),four_year_colors[4])
+four_year_colors_1800 <- c("transparent",four_year_colors[c(2:4)])
 
 biome_colors <- colour("okabe ito", names = "FALSE")(6)
 biome_colors_global <- c(biome_colors[1], rep("transparent",5))
@@ -3418,7 +3475,7 @@ acidification_depth_layer_total_zonal %>%
               alpha = 0.2) +
   geom_path(aes(delta_total, lat, col = tref)) +
   scale_color_manual(values = four_year_colors) +
-  scale_fill_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_1800) +
   facet_grid(depth~variable, scales = "free_x")
 
 for (i_var in OIA_variables) {
@@ -3457,7 +3514,8 @@ for (i_var in OIA_variables) {
       dim_row = "depth",
       dim_col = "tref",
       var = "delta_total",
-      contour_level = i_contour_level,
+      col_scale = "Rocket",
+      # contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
       n_labels = 2,
@@ -3487,7 +3545,7 @@ for (i_var in OIA_variables) {
                        position = "right") +
     scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
     scale_color_manual(values = four_year_colors) +
-    scale_fill_manual(values = four_year_colors) +
+    scale_fill_manual(values = four_year_colors_1800) +
     guides(
       fill = guide_legend(ncol = 2),
       col = guide_legend(ncol = 2)
@@ -3586,6 +3644,7 @@ for (i_var in OIA_variables) {
 
 
 
+
 ```
 
 ### Depth of highest change
@@ -3612,7 +3671,7 @@ depth_max_change %>%
     var = "depth",
     dim_row = "variable",
     legend_title = "Depth of<br>highest<br>change<br>(m)",
-    legend_position = "left",
+    legend_position = "right",
     col_scale = "mako",
     breaks = seq(0, 1000, 100)
   )
@@ -3709,7 +3768,7 @@ acidification_depth_layer_total_relative %>%
   mutate(delta_total_relative = 100 * delta_total / absolute)
 
 for (i_var in OIA_variables) {
-  # i_var <- OIA_variables[5]
+  # i_var <- OIA_variables[4]
   
   # subset OIA variable
   
@@ -3746,6 +3805,7 @@ for (i_var in OIA_variables) {
       dim_col = "tref",
       var = "delta_total_relative",
       # contour_level = i_contour_level,
+      col_scale = "Rocket",
       legend_title = i_legend_title,
       breaks = i_breaks,
       legend_position = "right"
@@ -3793,7 +3853,8 @@ acidification_depth_layer_total_relative %>%
     dim_row = "depth",
     dim_col = "variable",
     var = "delta_total_relative",
-    contour_level = 20,
+    # contour_level = 20,
+    col_scale = "Rocket",
     legend_title = "Δ<sub>1800-2014</sub> / <br>Absolute<sub>1800</sub>",
     breaks = c(-Inf,seq(0,40,5),Inf),
     legend_position = "right"
@@ -3977,7 +4038,7 @@ for (i_var in OIA_variables) {
       dim_row = "depth",
       legend_title = i_legend_title,
       breaks = i_breaks,
-      col_scale = "plasma",
+      # col_scale = "plasma",
       n_labels = 2
     )
   
@@ -4000,7 +4061,7 @@ for (i_var in OIA_variables) {
         drop = FALSE,
         name = i_legend_title,
         direction = -1,
-        option = "plasma",
+        # option = "plasma",
         labels = unname(i_breaks)
       )
   }
@@ -4119,7 +4180,7 @@ buffer_addition_depth_layer_zonal %>%
 # print incremental sections
 
 for (i_var in buffer_variables_addition) {
-  # i_var <- buffer_variables_addition[4]
+  # i_var <- buffer_variables_addition[3]
   
   # subset OIA variable
   
@@ -4143,7 +4204,7 @@ for (i_var in buffer_variables_addition) {
       dim_row = "depth",
       dim_col = "tref",
       var = "sensitivity",
-      contour_level = i_contour_level,
+      # contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
       col_scale = "cividis",

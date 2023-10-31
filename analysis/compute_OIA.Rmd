@@ -1024,7 +1024,7 @@ calc_delta_interval <- function(x) (x - lag(x, default = first(x)))
 
 # Compute acidification trends
 
-```{r compute_acidification_trends}
+```{r compute_acidification_trends, eval=FALSE}
 
 # DIC %>%
 #   distinct(lon, lat, tref, MLR_basin_mask) %>%
