@@ -384,7 +384,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">30 October, 2023</h4>
+<h4 class="date">31 October, 2023</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-10-30
+<strong>Last updated:</strong> 2023-10-31
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree1cabeb5a08bba27f50a93cfd2f777194b54075dftargetblank1cabeb5a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree3b5338cbce8d705ea91e899f71d3d01fefc87b55targetblank3b5338ca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/1cabeb5a08bba27f50a93cfd2f777194b54075df" target="_blank">1cabeb5</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/3b5338cbce8d705ea91e899f71d3d01fefc87b55" target="_blank">3b5338c</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree1cabeb5a08bba27f50a93cfd2f777194b54075dftargetblank1cabeb5a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree3b5338cbce8d705ea91e899f71d3d01fefc87b55targetblank3b5338ca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/1cabeb5a08bba27f50a93cfd2f777194b54075df" target="_blank">1cabeb5</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/3b5338cbce8d705ea91e899f71d3d01fefc87b55" target="_blank">3b5338c</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -634,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/3b5338cbce8d705ea91e899f71d3d01fefc87b55/analysis/synopsis_OIA.Rmd" target="_blank">3b5338c</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-31
+</td>
+<td>
+rerun with new OIA reconstructions for uncertainty
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/d9fac443dc7c75a3cca67badc1c822878a6f6cc2/docs/synopsis_OIA.html" target="_blank">d9fac44</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-30
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1401,7 +1435,6 @@ basinmask &lt;- basinmask %&gt;%
     )
   )
 
-
 basinmask_robin_raster &lt;- rast(basinmask %&gt;% 
                                  mutate(dist = 1) %&gt;% 
                                  pivot_wider(names_from = basin,
@@ -1732,7 +1765,13 @@ biomemask &lt;- biomemask  %&gt;%
 
 biomemask &lt;- biomemask %&gt;% 
   filter(biome != &quot;other&quot;) %&gt;% 
-  select(-c(value, region))</code></pre>
+  select(-c(value, region))
+
+
+
+biomemask &lt;-
+  biomemask %&gt;%
+  mutate(lon = ifelse(lon &lt; 20, lon + 360, lon))</code></pre>
 </div>
 <div id="selected-mask" class="section level3">
 <h3>Selected mask</h3>
@@ -1885,6 +1924,10 @@ buffer_uncertainty_files &lt;-
   uncertainty_files[uncertainty_files %&gt;%
                       str_detect(c(&quot;DIC_addition.csv&quot;))]
 
+buffer_uncertainty_files &lt;-
+  buffer_uncertainty_files[buffer_uncertainty_files %&gt;%
+                      str_detect(c(&quot; DIC&quot;))]
+
 rm(uncertainty_files)</code></pre>
 </div>
 <div id="climatologies" class="section level2">
@@ -1922,8 +1965,8 @@ OIA_variables_core &lt;- OIA_variables[c(3,4)]</code></pre>
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used   (Mb)
-Ncells    3098234  165.5    5582910   298.2    5582910  298.2
-Vcells 1145784279 8741.7 1435085873 10948.9 1145842229 8742.1</code></pre>
+Ncells    3098239  165.5    5582914   298.2    5582914  298.2
+Vcells 1145887578 8742.5 1435234623 10950.0 1145945528 8742.9</code></pre>
 <pre class="r"><code>acidification_trend &lt;- acidification_trend %&gt;% 
   mutate(MLR_basin_mask = as.character(MLR_basin_mask))
 
@@ -1937,40 +1980,90 @@ acidification_trend &lt;- acidification_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3099111  165.6    5582910   298.2    5582910   298.2
-Vcells 1240169393 9461.8 2527645913 19284.5 2274528160 17353.3</code></pre>
+Ncells    3099116  165.6    5582914   298.2    5582914   298.2
+Vcells 1240272692 9462.6 2527769872 19285.4 2274631459 17354.1</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
          MLR_basin_mask, MLR_configuration,
          paste0(OIA_variables, &quot;_delta_interval&quot;)) %&gt;%
   filter(tref != 1800) %&gt;% 
-  rename_with(~str_remove(., &quot;_delta_interval&quot;))
-
-# acidification_trend_uncertainty %&gt;% 
-#   distinct(lon, lat) %&gt;% 
-#   ggplot(aes(lon, lat)) +
-#   geom_raster(data = biomemask) +
-#   geom_raster(fill = &quot;red&quot;)
-
-# acidification_trend_uncertainty &lt;-
-#   acidification_trend_uncertainty %&gt;%
-#   pivot_wider(names_from = tref,
-#               values_from = value) %&gt;%
-#   mutate(value = `2004` + `2014`) %&gt;%
-#   select(-c(`2004`, `2014`))
-# 
-# 
-# acidification_trend_uncertainty &lt;-
-#   acidification_trend_uncertainty %&gt;%
-#   pivot_wider(names_from = name,
-#               values_from = value)</code></pre>
+  rename_with(~str_remove(., &quot;_delta_interval&quot;))</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
 
 buffer_trend &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_Standard case_3_DIC_addition.csv&quot;))
+
+buffer_trend_uncertainty &lt;-
+  read_csv(paste0(path_OIA, buffer_uncertainty_files))
+
+buffer_trend_uncertainty &lt;-
+  bind_rows(buffer_trend %&gt;% select(-talk),
+            buffer_trend_uncertainty)
+
+buffer_trend_uncertainty &lt;-
+  buffer_trend_uncertainty %&gt;% 
+  mutate(MLR_basin_mask = as.character(MLR_basin_mask))
+
+gc()</code></pre>
+<pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells    3100006  165.6    5582914   298.2    5582914   298.2
+Vcells 1102546193 8411.8 2527769872 19285.4 2525936275 19271.4</code></pre>
+<pre class="r"><code># Join with standard OIA estimates
+buffer_trend_addition_uncertainty &lt;-
+  left_join(
+    buffer_trend_uncertainty %&gt;%
+      select(
+        MLR_basin_mask,
+        MLR_configuration,
+        lon,
+        lat,
+        depth,
+        tref,
+        contains(OIA_variables)
+      ) %&gt;%
+      select(-c(contains(&quot;delta&quot;), &quot;tco2&quot;)) %&gt;%
+      pivot_longer(
+        any_of(OIA_variables),
+        names_to = &quot;variable&quot;,
+        values_to = &quot;added&quot;
+      ),
+    acidification_trend_uncertainty %&gt;%
+      select(
+        MLR_basin_mask,
+        MLR_configuration,
+        lon,
+        lat,
+        depth,
+        tref,
+        contains(OIA_variables)
+      ) %&gt;%
+      select(-c(contains(&quot;delta&quot;), &quot;tco2&quot;)) %&gt;%
+      pivot_longer(
+        any_of(OIA_variables),
+        names_to = &quot;variable&quot;,
+        values_to = &quot;raw&quot;
+      )
+  )
+
+rm(buffer_trend_uncertainty)
+gc()</code></pre>
+<pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells    3100818  165.7    5582914   298.2    5582914   298.2
+Vcells 1102547886 8411.8 4232165428 32288.9 5284191689 40315.2</code></pre>
+<pre class="r"><code># compute OIA variable sensitivity to DIC addition
+buffer_trend_addition_uncertainty &lt;-
+  buffer_trend_addition_uncertainty %&gt;%
+  mutate(sensitivity = (added - raw) / 5)
+
+buffer_trend_addition_uncertainty &lt;-
+  buffer_trend_addition_uncertainty %&gt;%
+  select(-c(raw, added))
+
+
+
 
 buffer_trend &lt;- buffer_trend %&gt;% 
   select(-c(MLR_basin_mask, MLR_configuration))
@@ -3046,6 +3139,7 @@ three_year_colors &lt;- four_year_colors[-1]
 two_year_colors &lt;- three_year_colors[-1]
 three_year_colors_2014 &lt;- c(rep(&quot;transparent&quot;,2),three_year_colors[3])
 four_year_colors_2014 &lt;- c(rep(&quot;transparent&quot;,3),four_year_colors[4])
+four_year_colors_1800 &lt;- c(&quot;transparent&quot;,four_year_colors[c(2:4)])
 
 biome_colors &lt;- colour(&quot;okabe ito&quot;, names = &quot;FALSE&quot;)(6)
 biome_colors_global &lt;- c(biome_colors[1], rep(&quot;transparent&quot;,5))</code></pre>
@@ -4566,7 +4660,7 @@ acidification_depth_layer_total_zonal %&gt;%
               alpha = 0.2) +
   geom_path(aes(delta_total, lat, col = tref)) +
   scale_color_manual(values = four_year_colors) +
-  scale_fill_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors_1800) +
   facet_grid(depth~variable, scales = &quot;free_x&quot;)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-2.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -4642,7 +4736,8 @@ jens-daniel-mueller
       dim_row = &quot;depth&quot;,
       dim_col = &quot;tref&quot;,
       var = &quot;delta_total&quot;,
-      contour_level = i_contour_level,
+      col_scale = &quot;Rocket&quot;,
+      # contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
       n_labels = 2,
@@ -4672,7 +4767,7 @@ jens-daniel-mueller
                        position = &quot;right&quot;) +
     scale_discrete_manual(&quot;linewidth&quot;, values = c(0.5,rep(1,3))) +
     scale_color_manual(values = four_year_colors) +
-    scale_fill_manual(values = four_year_colors) +
+    scale_fill_manual(values = four_year_colors_1800) +
     guides(
       fill = guide_legend(ncol = 2),
       col = guide_legend(ncol = 2)
@@ -4791,7 +4886,7 @@ depth_max_change %&gt;%
     var = &quot;depth&quot;,
     dim_row = &quot;variable&quot;,
     legend_title = &quot;Depth of&lt;br&gt;highest&lt;br&gt;change&lt;br&gt;(m)&quot;,
-    legend_position = &quot;left&quot;,
+    legend_position = &quot;right&quot;,
     col_scale = &quot;mako&quot;,
     breaks = seq(0, 1000, 100)
   )</code></pre>
@@ -4952,7 +5047,7 @@ acidification_depth_layer_total_relative %&gt;%
   mutate(delta_total_relative = 100 * delta_total / absolute)
 
 for (i_var in OIA_variables) {
-  # i_var &lt;- OIA_variables[5]
+  # i_var &lt;- OIA_variables[4]
   
   # subset OIA variable
   
@@ -4989,6 +5084,7 @@ for (i_var in OIA_variables) {
       dim_col = &quot;tref&quot;,
       var = &quot;delta_total_relative&quot;,
       # contour_level = i_contour_level,
+      col_scale = &quot;Rocket&quot;,
       legend_title = i_legend_title,
       breaks = i_breaks,
       legend_position = &quot;right&quot;
@@ -5036,7 +5132,8 @@ acidification_depth_layer_total_relative %&gt;%
     dim_row = &quot;depth&quot;,
     dim_col = &quot;variable&quot;,
     var = &quot;delta_total_relative&quot;,
-    contour_level = 20,
+    # contour_level = 20,
+    col_scale = &quot;Rocket&quot;,
     legend_title = &quot;Δ&lt;sub&gt;1800-2014&lt;/sub&gt; / &lt;br&gt;Absolute&lt;sub&gt;1800&lt;/sub&gt;&quot;,
     breaks = c(-Inf,seq(0,40,5),Inf),
     legend_position = &quot;right&quot;
@@ -5287,7 +5384,7 @@ for (i_var in OIA_variables) {
       dim_row = &quot;depth&quot;,
       legend_title = i_legend_title,
       breaks = i_breaks,
-      col_scale = &quot;plasma&quot;,
+      # col_scale = &quot;plasma&quot;,
       n_labels = 2
     )
   
@@ -5310,7 +5407,7 @@ for (i_var in OIA_variables) {
         drop = FALSE,
         name = i_legend_title,
         direction = -1,
-        option = &quot;plasma&quot;,
+        # option = &quot;plasma&quot;,
         labels = unname(i_breaks)
       )
   }
@@ -5433,18 +5530,18 @@ buffer_addition_depth_layer_trend %&gt;%
 <pre><code># A tibble: 12 × 8
    depth            biome   year variable       sensiti…¹ sensit…²  pCO2 sensi…³
    &lt;fct&gt;            &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
- 1 A: 0 - 100 m     Global  2014 H_free          0.0118    0.0350   396.  50.0  
- 2 A: 0 - 100 m     Global  2014 OmegaAragonite  0.000767 -0.00942  396.  -3.03 
- 3 A: 0 - 100 m     Global  2014 pH              0.000412 -0.00202  396.  13.9  
- 4 B: 100 - 500 m   Global  2014 H_free          0.0356    0.0739   396.  30.2  
- 5 B: 100 - 500 m   Global  2014 OmegaAragonite  0.00108  -0.00758  396.  -5.58 
- 6 B: 100 - 500 m   Global  2014 pH              0.000399 -0.00266  396.   9.44 
- 7 C: 500 - 1500 m  Global  2014 H_free          0.0329    0.0994   396.   7.67 
- 8 C: 500 - 1500 m  Global  2014 OmegaAragonite  0.000841 -0.00560  396.  -2.97 
- 9 C: 500 - 1500 m  Global  2014 pH              0.000204 -0.00305  396.   2.74 
-10 D: 1500 - 3000 m Global  2014 H_free          0.0204    0.0882   396.   1.35 
-11 D: 1500 - 3000 m Global  2014 OmegaAragonite  0.000425 -0.00450  396.  -0.481
-12 D: 1500 - 3000 m Global  2014 pH              0.000184 -0.00296  396.   0.563
+ 1 A: 0 - 100 m     Global  2014 H_free          0.0119    0.0352   396.  50.4  
+ 2 A: 0 - 100 m     Global  2014 OmegaAragonite  0.000770 -0.00940  396.  -3.09 
+ 3 A: 0 - 100 m     Global  2014 pH              0.000412 -0.00203  396.  14.0  
+ 4 B: 100 - 500 m   Global  2014 H_free          0.0356    0.0741   396.  30.5  
+ 5 B: 100 - 500 m   Global  2014 OmegaAragonite  0.00107  -0.00757  396.  -5.65 
+ 6 B: 100 - 500 m   Global  2014 pH              0.000397 -0.00267  396.   9.48 
+ 7 C: 500 - 1500 m  Global  2014 H_free          0.0326    0.0988   396.   7.86 
+ 8 C: 500 - 1500 m  Global  2014 OmegaAragonite  0.000828 -0.00561  396.  -3.02 
+ 9 C: 500 - 1500 m  Global  2014 pH              0.000201 -0.00305  396.   2.78 
+10 D: 1500 - 3000 m Global  2014 H_free          0.0205    0.0875   396.   1.38 
+11 D: 1500 - 3000 m Global  2014 OmegaAragonite  0.000427 -0.00452  396.  -0.485
+12 D: 1500 - 3000 m Global  2014 pH              0.000186 -0.00296  396.   0.567
 # … with abbreviated variable names ¹​sensitivity_sd, ²​sensitivity,
 #   ³​sensitivity_change</code></pre>
 <pre class="r"><code>buffer_addition_depth_layer_zonal &lt;-
@@ -5548,7 +5645,7 @@ jens-daniel-mueller
 # print incremental sections
 
 for (i_var in buffer_variables_addition) {
-  # i_var &lt;- buffer_variables_addition[4]
+  # i_var &lt;- buffer_variables_addition[3]
   
   # subset OIA variable
   
@@ -5572,7 +5669,7 @@ for (i_var in buffer_variables_addition) {
       dim_row = &quot;depth&quot;,
       dim_col = &quot;tref&quot;,
       var = &quot;sensitivity&quot;,
-      contour_level = i_contour_level,
+      # contour_level = i_contour_level,
       legend_title = i_legend_title,
       breaks = i_breaks,
       col_scale = &quot;cividis&quot;,
@@ -5750,18 +5847,18 @@ buffer_addition_depth_layer_trend %&gt;%
 <pre><code># A tibble: 12 × 3
    depth            variable       delta_sensitvity
    &lt;fct&gt;            &lt;chr&gt;                     &lt;dbl&gt;
- 1 A: 0 - 100 m     H_free                   50.0  
- 2 A: 0 - 100 m     OmegaAragonite           -3.03 
- 3 A: 0 - 100 m     pH                       13.9  
- 4 B: 100 - 500 m   H_free                   30.2  
- 5 B: 100 - 500 m   OmegaAragonite           -5.58 
- 6 B: 100 - 500 m   pH                        9.44 
- 7 C: 500 - 1500 m  H_free                    7.67 
- 8 C: 500 - 1500 m  OmegaAragonite           -2.97 
- 9 C: 500 - 1500 m  pH                        2.74 
-10 D: 1500 - 3000 m H_free                    1.35 
-11 D: 1500 - 3000 m OmegaAragonite           -0.481
-12 D: 1500 - 3000 m pH                        0.563</code></pre>
+ 1 A: 0 - 100 m     H_free                   50.4  
+ 2 A: 0 - 100 m     OmegaAragonite           -3.09 
+ 3 A: 0 - 100 m     pH                       14.0  
+ 4 B: 100 - 500 m   H_free                   30.5  
+ 5 B: 100 - 500 m   OmegaAragonite           -5.65 
+ 6 B: 100 - 500 m   pH                        9.48 
+ 7 C: 500 - 1500 m  H_free                    7.86 
+ 8 C: 500 - 1500 m  OmegaAragonite           -3.02 
+ 9 C: 500 - 1500 m  pH                        2.78 
+10 D: 1500 - 3000 m H_free                    1.38 
+11 D: 1500 - 3000 m OmegaAragonite           -0.485
+12 D: 1500 - 3000 m pH                        0.567</code></pre>
 <pre class="r"><code>rm(p_maps, p_zonal, p_trends)</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
@@ -6091,6 +6188,43 @@ biome_co2_speciation %&gt;%
   scale_fill_okabeito() +
   facet_grid(depth ~ tref)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/speciation-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-speciation-1">
+Past versions of speciation-1.png
+</button>
+</p>
+<div id="fig-speciation-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d9fac443dc7c75a3cca67badc1c822878a6f6cc2/docs/figure/synopsis_OIA.Rmd/speciation-1.png" target="_blank">d9fac44</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>biome_co2_speciation %&gt;% 
   select(-c(CO2:CO3)) %&gt;% 
   pivot_longer(H_free:OmegaAragonite) %&gt;% 
@@ -6102,6 +6236,43 @@ biome_co2_speciation %&gt;%
   facet_nested(biome ~ name + estimate, scales = &quot;free_x&quot;) +
   theme(axis.title = element_blank())</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/speciation-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-speciation-2">
+Past versions of speciation-2.png
+</button>
+</p>
+<div id="fig-speciation-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d9fac443dc7c75a3cca67badc1c822878a6f6cc2/docs/figure/synopsis_OIA.Rmd/speciation-2.png" target="_blank">d9fac44</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>biome_co2_speciation &lt;-
   biome_co2_speciation %&gt;%
   select(-c(CO2:CO3)) %&gt;%
@@ -6171,6 +6342,43 @@ for(i_var in OIA_variables_core){
 p_speciation_OmegaAragonite / p_speciation_H_free +
   plot_layout(guides = &quot;collect&quot;)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/speciation-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-speciation-3">
+Past versions of speciation-3.png
+</button>
+</p>
+<div id="fig-speciation-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d9fac443dc7c75a3cca67badc1c822878a6f6cc2/docs/figure/synopsis_OIA.Rmd/speciation-3.png" target="_blank">d9fac44</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-10-30
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     paste0(
@@ -10711,15 +10919,15 @@ acidification_profiles_biomes %&gt;%
 <pre><code># A tibble: 37,632 × 5
    tref  biome  depth name                   value
    &lt;fct&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;                  &lt;dbl&gt;
- 1 1800  Global     0 tco2-mean           1970.   
+ 1 1800  Global     0 tco2-mean           1971.   
  2 1800  Global     0 sal-mean              34.8  
- 3 1800  Global     0 phosphate-mean         0.467
- 4 1800  Global     0 silicate-mean          5.95 
+ 3 1800  Global     0 phosphate-mean         0.474
+ 4 1800  Global     0 silicate-mean          6.19 
  5 1800  Global     0 pH-mean                8.19 
- 6 1800  Global     0 CO3-mean             231.   
- 7 1800  Global     0 OmegaAragonite-mean    3.62 
- 8 1800  Global     0 OmegaCalcite-mean      5.55 
- 9 1800  Global     0 SIR-mean               0.341
+ 6 1800  Global     0 CO3-mean             230.   
+ 7 1800  Global     0 OmegaAragonite-mean    3.61 
+ 8 1800  Global     0 OmegaCalcite-mean      5.53 
+ 9 1800  Global     0 SIR-mean               0.342
 10 1800  Global     0 H_free-mean            5.11 
 # … with 37,622 more rows</code></pre>
 <pre class="r"><code>acidification_profiles_biomes &lt;-
