@@ -5,8 +5,6 @@ navbar:
   left:
   - text: Computation
     href: compute_OIA.html
-  - text: Averaging
-    href: average_OIA.html
   - text: Synopsis
     href: synopsis_OIA.html
   right:
