@@ -937,30 +937,6 @@ rm(uncertainty_files)
 
 ```
 
-## 2002 climatologies
-
-### OIA variables
-
-```{r climatology_2002_Lauvset, eval=FALSE}
-
-climatology <-
-  read_csv(paste0(path_OIA, "OIA_DIC_climatology_none.csv"))
-
-climatology <- climatology %>%
-  select(-c(MLR_basin_mask, MLR_configuration))
-
-```
-
-
-### buffer variables
-
-```{r buffer_climatology_2002_Lauvset, eval=FALSE}
-
-buffer_climatology <-
-  read_csv(paste0(path_OIA, "buffer_DIC_climatology_none.csv"))
-
-```
-
 ## Acidification estimates
 
 ### dCant driver
@@ -970,6 +946,8 @@ buffer_climatology <-
 acidification_trend <-
   read_csv(paste0(path_OIA, "OIA_Standard case_3.csv"))
 
+acidification_trend <- acidification_trend %>%
+  mutate(MLR_basin_mask = as.character(MLR_basin_mask))
 
 ```
 
@@ -1002,9 +980,6 @@ acidification_trend_uncertainty <-
 
 gc()
 
-acidification_trend <- acidification_trend %>%
-  mutate(MLR_basin_mask = as.character(MLR_basin_mask))
-
 acidification_trend_uncertainty <-
   bind_rows(acidification_trend_uncertainty,
             acidification_trend %>%
@@ -1024,87 +999,82 @@ acidification_trend_uncertainty_absolute <-
 
 gc()
 
-# acidification_trend_uncertainty <-
-#   acidification_trend_uncertainty %>%
-#   select(tref, lon, lat, depth,
-#          MLR_basin_mask, MLR_configuration,
-#          paste0(OIA_variables, "_delta_interval")) %>%
-#   rename_with(~str_remove(., "_delta_interval"))
-
-# read file with delta total estimates
-
-acidification_trend_uncertainty <- read_csv(paste0(path_OIA, "OIA_merged_DIC_addition.csv"))
-gc()
-
-
-acidification_trend_uncertainty_wide <-
-acidification_trend_uncertainty %>%
-  select(-delta_interval) %>% 
-  pivot_wider(names_from = variable,
-              values_from = delta_total)
-gc()
-
 ```
 
 ```{r compute_total_changes_for_all_OIA_uncertainty_cases, eval=FALSE}
 
 
-acidification_volume_raw <-
+acidification_uncertainty_raw <-
   acidification_trend_uncertainty %>%
   filter(tref != 1800,
          depth <= ocean_depth)
 gc()
 
-acidification_volume_cases_1994 <-
-  acidification_volume_raw %>%
+acidification_uncertainty_cases_1994 <-
+  acidification_uncertainty_raw %>%
   filter(depth == 0) %>% 
   group_by(tref, MLR_basin_mask, MLR_configuration) %>% 
-  summarise(tco2 = mean(tco2)) %>% 
+  summarise(tco2 = mean(tco2_delta_interval)) %>% 
   ungroup() %>% 
   filter(tco2 == 0) %>% 
   distinct(tref, MLR_basin_mask, MLR_configuration)
 
-acidification_volume_raw_1994 <-
+acidification_uncertainty_raw_1994 <-
   expand_grid(
-    acidification_volume_raw %>%
+    acidification_uncertainty_raw %>%
       filter(
         MLR_basin_mask == MLR_basin_mask_reference,
         MLR_configuration == MLR_configuration_reference,
         tref == 1994
       ) %>% 
       select(-c(tref, MLR_basin_mask, MLR_configuration)),
-    acidification_volume_cases_1994
+    acidification_uncertainty_cases_1994
   )
 
-acidification_volume_raw_all <-
-  anti_join(acidification_volume_raw,
-            acidification_volume_cases_1994)
+acidification_uncertainty_raw_all <-
+  anti_join(acidification_uncertainty_raw,
+            acidification_uncertainty_cases_1994)
 
-acidification_volume_raw <-
-  bind_rows(acidification_volume_raw_1994,
-            acidification_volume_raw_all)
+acidification_uncertainty_raw <-
+  bind_rows(acidification_uncertainty_raw_1994,
+            acidification_uncertainty_raw_all)
 
 rm(
-  acidification_volume_raw_1994,
-  acidification_volume_raw_all,
-  acidification_volume_cases_1994
+  acidification_uncertainty_raw_1994,
+  acidification_uncertainty_raw_all,
+  acidification_uncertainty_cases_1994
 )
 gc()
 
-acidification_volume_raw <-
-  acidification_volume_raw %>%
+acidification_uncertainty_raw <-
+  acidification_uncertainty_raw %>%
   group_by(lat, lon, depth, MLR_basin_mask, MLR_configuration) %>%
   mutate(n_obs = n()) %>%
   ungroup()
 
 
-acidification_volume_raw <-
-  acidification_volume_raw %>%
+acidification_uncertainty_raw <-
+  acidification_uncertainty_raw %>%
   filter(n_obs == 3) %>% 
   select(-n_obs)
 
-acidification_volume_raw <-
-  acidification_volume_raw %>%
+acidification_uncertainty_raw <-
+  acidification_uncertainty_raw %>%
+  select(lon,
+         lat,
+         depth,
+         tref,
+         MLR_basin_mask,
+         MLR_configuration,
+         all_of(paste0(OIA_variables, "_delta_interval"))) %>%
+  rename_at(all_of(paste0(OIA_variables, "_delta_interval")),
+            ~ str_remove(.x, "_delta_interval"))
+
+acidification_uncertainty_raw %>% 
+  write_csv(paste0(path_OIA, "OIA_merged_delta_interval.csv"))
+
+acidification_uncertainty_raw <-
+  acidification_uncertainty_raw %>%
   pivot_longer(all_of(OIA_variables),
                names_to = "variable",
                values_to = "delta_interval")
@@ -1112,18 +1082,42 @@ acidification_volume_raw <-
 gc()
 
 
-acidification_volume_raw <-
-  acidification_volume_raw %>%
+acidification_uncertainty_raw <-
+  acidification_uncertainty_raw %>%
   arrange(tref) %>% 
   group_by(variable, lat, lon, depth, MLR_basin_mask, MLR_configuration) %>%
   mutate(delta_total = cumsum(delta_interval)) %>%
   ungroup()
+
 gc()
 
-acidification_volume_raw %>% 
-  write_csv(paste0(path_OIA, "OIA_merged_DIC_addition.csv"))
+acidification_uncertainty_raw <-
+  acidification_uncertainty_raw %>%
+  select(-delta_interval) %>% 
+  pivot_wider(names_from = variable,
+              values_from = delta_total)
+
+
+
+acidification_uncertainty_raw %>% 
+  write_csv(paste0(path_OIA, "OIA_merged_delta_total.csv"))
+
+
 ```
 
+```{r reopen_preprocessed_OIA_data_uncertainty}
+
+rm(acidification_trend_uncertainty)
+
+acidification_trend_uncertainty_delta_interval <-
+  read_csv(paste0(path_OIA, "OIA_merged_delta_interval.csv"))
+
+acidification_trend_uncertainty_delta_total <-
+  read_csv(paste0(path_OIA, "OIA_merged_delta_total.csv"))
+
+gc()
+
+```
 
 
 #### Buffer trends
@@ -1139,6 +1133,12 @@ buffer_trend <-
 buffer_trend <-
   buffer_trend %>% 
   mutate(MLR_basin_mask = as.character(MLR_basin_mask))
+
+
+
+```
+
+```{r compute_buffer_absolute_for_all_OIA_uncertainty_cases, eval=FALSE}
 
 
 buffer_trend_uncertainty <-
@@ -1198,12 +1198,24 @@ buffer_trend_addition_uncertainty <-
               values_from = sensitivity)
 
 
-buffer_trend_addition_uncertainty %>%
-  group_by(MLR_basin_mask, MLR_configuration, tref) %>%
-  summarise(mean(OmegaAragonite)) %>%
-  ungroup() %>%
-  arrange(tref) %>%
-  print(n = Inf)
+buffer_trend_addition_uncertainty %>% 
+  write_csv(paste0(path_OIA, "buffer_merged_absolute.csv"))
+
+
+
+
+
+```
+
+```{r reopen_preprocessed_buffer_absolute_for_all_OIA_uncertainty_cases}
+
+buffer_trend_addition_uncertainty <-
+  read_csv(paste0(path_OIA, "buffer_merged_absolute.csv"))
+
+```
+
+
+```{r compute_buffer_absolute_for_standard_OIA_cases}
 
 ### prepare absolute fields
 
@@ -1243,11 +1255,9 @@ buffer_trend_addition <-
               values_from = sensitivity)
 
 
-acidification_trend_uncertainty <-
-  acidification_trend_uncertainty %>%
-  filter(tref != 1800)
-
 ```
+
+
 
 
 ```{r read_buffer_changes_direct_estimates, eval=FALSE}
@@ -2072,7 +2082,7 @@ biome_colors_global <- c(biome_colors[1], rep("transparent",5))
 MLR_basin_mask_reference <- "3"
 
 MLR_basin_mask_all <-
-  unique(acidification_trend_uncertainty$MLR_basin_mask)
+  unique(acidification_trend_uncertainty_delta_interval$MLR_basin_mask)
 
 MLR_basin_mask_uncertainty <-
   MLR_basin_mask_all[!MLR_basin_mask_all %in% MLR_basin_mask_reference]
@@ -2082,7 +2092,7 @@ MLR_basin_mask_uncertainty <-
 MLR_configuration_reference <- "Standard case"
 
 MLR_configuration_all <-
-  unique(acidification_trend_uncertainty$MLR_configuration)
+  unique(acidification_trend_uncertainty_delta_interval$MLR_configuration)
 
 
 MLR_configuration_uncertainty <-
@@ -2150,8 +2160,9 @@ additive_uncertainty <- function(df,
   df_CO2_stat <-
     df_CO2 %>%
     group_by(across(-delta_value)) %>%
-    summarise(sd = mean(abs(delta_value))) %>%
+    summarise(sd = sd(delta_value)) %>%
     ungroup()
+
   
   # df_CO2_stat %>%
   #   mutate(tref = as.factor(tref)) %>%
@@ -2307,7 +2318,7 @@ additive_uncertainty <- function(df,
     summarise(sd = sqrt(sum(sd ^ 2, na.rm = TRUE))) %>%
     ungroup()
   
-  # Scale eMLR uncertainty for reference year 1994
+  # Scale eMLR uncertainty for the initial reference year
   
   df_factorial_eMLR_stat <-
     bind_rows(
@@ -2412,17 +2423,33 @@ additive_uncertainty <- function(df,
     full_join(df_factorial_stat,
               df_std_case)
   
+  if (mode == "delta_interval") {
+    df_stat <-
+      full_join(
+        df_stat %>%
+          select(-c(tref, std_case, sd)) %>% 
+          distinct() %>%
+          mutate(
+            tref = 1800,
+            std_case = 0,
+            sd = 0
+          ),
+        df_stat %>%
+          filter(tref != 1800)
+      )
+  }
+  
   # determine significance
   
-  df_stat <- df_stat %>%
-    mutate(
-      signif_single = if_else(abs(std_case) >= sd,
-                              1,
-                              0),
-      signif_double = if_else(abs(std_case) >= sd * 2,
-                              1,
-                              0)
-    )
+  # df_stat <- df_stat %>%
+  #   mutate(
+  #     signif_single = if_else(abs(std_case) >= sd,
+  #                             1,
+  #                             0),
+  #     signif_double = if_else(abs(std_case) >= sd * 2,
+  #                             1,
+  #                             0)
+  #   )
   
   
   df_stat <-
@@ -2635,10 +2662,8 @@ m_depth_layer <- function(df) {
 
 acidification_depth_layer <- m_depth_layer(acidification_trend)
 
-
-
 acidification_depth_layer_uncertainty <-
-  acidification_trend_uncertainty_wide %>%
+  acidification_trend_uncertainty_delta_interval %>%
   group_by(MLR_basin_mask, MLR_configuration) %>%
   nest() %>%
   mutate(layer = map(.x = data, ~ m_depth_layer(.x))) %>%
@@ -2655,42 +2680,6 @@ buffer_addition_depth_layer_uncertainty <- buffer_trend_addition_uncertainty %>%
   select(-data) %>%
   unnest(layer) %>%
   ungroup()
-
-
-# buffer_climatology_depth_layer <- m_depth_layer(buffer_climatology)
-# climatology_depth_layer <- m_depth_layer(climatology)
-
-# buffer_depth_layer <- buffer_trend %>%
-#   group_by(variable) %>%
-#   nest() %>%
-#   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
-#   select(-data) %>%
-#   unnest(layer) %>%
-#   ungroup()
-
-# acidification_depth_layer_dCant_temp <- dCant_temp_trend %>%
-#   group_by(driver) %>%
-#   nest() %>%
-#   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
-#   select(-data) %>%
-#   unnest(layer) %>% 
-#   ungroup()
-
-# acidification_depth_layer_DIC_dCant_temp <- dCant_DIC_temp_trend %>%
-#   group_by(driver) %>%
-#   nest() %>%
-#   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
-#   select(-data) %>%
-#   unnest(layer) %>% 
-#   ungroup()
-
-# acidification_depth_layer_dCant_DIC_surface <- dCant_DIC_surface_trend %>%
-#   group_by(driver) %>%
-#   nest() %>%
-#   mutate(layer = map(.x = data, ~m_depth_layer(.x))) %>%
-#   select(-data) %>%
-#   unnest(layer) %>% 
-#   ungroup()
 
 ```
 
@@ -3432,7 +3421,9 @@ acidification_depth_layer_total <-
 
 acidification_depth_layer_total <-
   acidification_depth_layer_total %>%
-  pivot_longer(contains("_delta_total"),
+  select(lat, lon, depth, tref,
+         all_of(paste0(OIA_variables,"_delta_total"))) %>% 
+  pivot_longer(all_of(paste0(OIA_variables,"_delta_total")),
                names_to = "variable",
                values_to = "delta_total") %>%
   mutate(variable = str_remove(variable, "_delta_total"))
@@ -3441,7 +3432,7 @@ acidification_depth_layer_uncertainty <-
   acidification_depth_layer_uncertainty %>%
   pivot_longer(all_of(OIA_variables),
                names_to = "variable",
-               values_to = "delta_total")
+               values_to = "delta_interval")
 
 
 ### regional mean trends
@@ -3476,7 +3467,7 @@ acidification_depth_layer_total_trend_regional <-
   inner_join(acidification_depth_layer_uncertainty,
              biomemask) %>%
   pivot_wider(names_from = variable,
-              values_from = delta_total) %>% 
+              values_from = delta_interval) %>% 
   group_by(depth, biome, tref, MLR_basin_mask, MLR_configuration) %>%
   summarise(across(
     .cols = all_of(OIA_variables),
@@ -3491,7 +3482,7 @@ acidification_depth_layer_total_trend_global <-
              biomemask) %>%
   mutate(biome = "Global") %>% 
   pivot_wider(names_from = variable,
-              values_from = delta_total) %>% 
+              values_from = delta_interval) %>% 
   group_by(depth, biome, tref, MLR_basin_mask, MLR_configuration) %>%
   summarise(across(
     .cols = all_of(OIA_variables),
@@ -3517,28 +3508,22 @@ acidification_depth_layer_uncertainty_trend <-
                        mode = "delta_interval")[[1]]
 
 
+
+ggplot() +
+  geom_path(data = acidification_depth_layer_uncertainty_trend,
+            aes(tref, std_case, col = biome)) +
+  geom_path(data = acidification_depth_layer_total_trend,
+            aes(tref, delta_total, col = biome),
+            linetype = 2) +
+  facet_grid(variable ~ depth, scales = "free_y")
+
 # join absolute values and uncertainty
 
 acidification_depth_layer_total_trend <-
-  full_join(
-    acidification_depth_layer_total_trend,
     acidification_depth_layer_uncertainty_trend %>%
-      select(depth, biome, tref, variable, delta_total_sd = sd)
-  )
-
-
-# include zero change for 1800
-
-acidification_depth_layer_total_trend <-
-  full_join(
-    acidification_depth_layer_total_trend %>%
-      distinct(depth, biome, variable) %>%
-      mutate(tref = 1800,
-             delta_total = 0,
-             delta_total_sd = 0),
-    acidification_depth_layer_total_trend %>% 
-      filter(tref != 1800)
-  )
+      select(depth, biome, tref, variable, 
+             delta_total = std_case, delta_total_sd = sd)
+rm(acidification_depth_layer_uncertainty_trend)
 
 # join atmospheric co2
 
@@ -3573,7 +3558,7 @@ acidification_depth_layer_total_zonal %>%
 acidification_depth_layer_uncertainty_zonal <-
   acidification_depth_layer_uncertainty %>%
   pivot_wider(names_from = variable,
-              values_from = delta_total) %>% 
+              values_from = delta_interval) %>% 
   group_by(depth, tref, lat, MLR_configuration, MLR_basin_mask) %>%
   summarise(across(
     .cols = all_of(OIA_variables),
@@ -3590,12 +3575,10 @@ acidification_depth_layer_uncertainty_zonal <-
 # join absolute values and uncertainty
 
 acidification_depth_layer_total_zonal <-
-  full_join(
-    acidification_depth_layer_total_zonal,
-    acidification_depth_layer_uncertainty_zonal %>%
-      select(depth, tref, lat, variable, delta_total_sd = sd) %>%
-      mutate(tref = as.factor(tref))
-  )
+  acidification_depth_layer_uncertainty_zonal %>%
+  select(depth, tref, lat, variable, 
+         delta_total = std_case, delta_total_sd = sd) %>%
+  mutate(tref = as.factor(tref))
 
 acidification_depth_layer_total_zonal %>% 
   ggplot() +
@@ -4243,17 +4226,17 @@ rm(
 
 # pivot data frames to long format
 
-buffer_addition_depth_layer <-
-  buffer_addition_depth_layer %>%
-  pivot_longer(all_of(buffer_variables_addition),
-               names_to = "variable",
-               values_to = "sensitivity")
-
-buffer_addition_depth_layer_uncertainty <-
-  buffer_addition_depth_layer_uncertainty %>%
-  pivot_longer(all_of(buffer_variables_addition),
-               names_to = "variable",
-               values_to = "sensitivity")
+# buffer_addition_depth_layer <-
+#   buffer_addition_depth_layer %>%
+#   pivot_longer(all_of(buffer_variables_addition),
+#                names_to = "variable",
+#                values_to = "sensitivity")
+# 
+# buffer_addition_depth_layer_uncertainty <-
+#   buffer_addition_depth_layer_uncertainty %>%
+#   pivot_longer(all_of(buffer_variables_addition),
+#                names_to = "variable",
+#                values_to = "sensitivity")
 
 
 ### regional mean sensitivities
@@ -4262,18 +4245,22 @@ buffer_addition_depth_layer_uncertainty <-
 buffer_addition_depth_layer_trend_regional <-
   inner_join(buffer_addition_depth_layer,
              biomemask) %>%
-  filter(variable %in% OIA_variables) %>%
-  group_by(depth, biome, tref, variable) %>%
-  summarise(sensitivity = wmean(sensitivity, area)) %>%
+  group_by(depth, biome, tref) %>%
+  summarise(across(
+    .cols = all_of(buffer_variables_addition),
+    .fns = ~ wmean(.x, area)
+  )) %>%
   ungroup()
 
 buffer_addition_depth_layer_trend_global <-
   inner_join(buffer_addition_depth_layer,
              biomemask) %>%
-  filter(variable %in% OIA_variables) %>%
   mutate(biome = "Global") %>% 
-  group_by(depth, biome, tref, variable) %>%
-  summarise(sensitivity = weighted.mean(sensitivity, area)) %>%
+  group_by(depth, biome, tref) %>%
+  summarise(across(
+    .cols = all_of(buffer_variables_addition),
+    .fns = ~ wmean(.x, area)
+  )) %>%
   ungroup()
 
 buffer_addition_depth_layer_trend <-
@@ -4287,8 +4274,6 @@ buffer_addition_depth_layer_trend <-
 buffer_addition_depth_layer_trend_regional <-
   inner_join(buffer_addition_depth_layer_uncertainty,
              biomemask) %>%
-  pivot_wider(names_from = variable,
-              values_from = sensitivity) %>% 
   group_by(depth, biome, tref, MLR_basin_mask, MLR_configuration) %>%
   summarise(across(
     .cols = all_of(buffer_variables_addition),
@@ -4302,8 +4287,6 @@ buffer_addition_depth_layer_trend_global <-
   inner_join(buffer_addition_depth_layer_uncertainty,
              biomemask) %>%
   mutate(biome = "Global") %>% 
-  pivot_wider(names_from = variable,
-              values_from = sensitivity) %>% 
   group_by(depth, biome, tref, MLR_basin_mask, MLR_configuration) %>%
   summarise(across(
     .cols = all_of(buffer_variables_addition),
@@ -4333,11 +4316,13 @@ buffer_addition_depth_layer_uncertainty_trend <-
 # join absolute values and uncertainty
 
 buffer_addition_depth_layer_trend <-
-  full_join(
-    buffer_addition_depth_layer_trend,
-    buffer_addition_depth_layer_uncertainty_trend %>%
-      select(depth, biome, tref, variable, sensitivity_sd = sd)
-  )
+  buffer_addition_depth_layer_uncertainty_trend %>%
+  select(depth,
+         biome,
+         tref,
+         variable,
+         sensitivity = std_case,
+         sensitivity_sd = sd)
 
 
 # join atmospheric co2
@@ -4352,14 +4337,19 @@ buffer_addition_depth_layer_trend <-
 
 buffer_addition_depth_layer_zonal <-
   buffer_addition_depth_layer %>%
-  group_by(depth, tref, variable, lat) %>%
-  summarise(
-    sensitivity = mean(sensitivity, na.rm = TRUE)
-  ) %>%
+  group_by(depth, tref, lat) %>%
+  summarise(across(
+    .cols = all_of(buffer_variables_addition),
+    .fns = ~ mean(.x, na.rm = TRUE)
+    
+  )) %>%
   ungroup() %>%
   mutate(tref = as.factor(tref))
 
 buffer_addition_depth_layer_zonal %>% 
+  pivot_longer(all_of(buffer_variables_addition),
+               names_to = "variable",
+               values_to = "sensitivity") %>% 
   ggplot() +
   geom_path(aes(sensitivity, lat, col = tref)) +
   scale_color_manual(values = four_year_colors) +
@@ -4370,8 +4360,6 @@ buffer_addition_depth_layer_zonal %>%
 
 buffer_addition_depth_layer_uncertainty_zonal <-
   buffer_addition_depth_layer_uncertainty %>%
-  pivot_wider(names_from = variable,
-              values_from = sensitivity) %>% 
   group_by(depth, tref, lat, MLR_configuration, MLR_basin_mask) %>%
   summarise(across(
     .cols = all_of(buffer_variables_addition),
@@ -4419,12 +4407,10 @@ buffer_addition_depth_layer_uncertainty_zonal <-
 # join absolute values and uncertainty
 
 buffer_addition_depth_layer_zonal <-
-  full_join(
-    buffer_addition_depth_layer_zonal,
-    buffer_addition_depth_layer_uncertainty_zonal %>%
-      select(depth, tref, lat, variable, sensitivity_sd = sd) %>%
+  buffer_addition_depth_layer_uncertainty_zonal %>%
+      select(depth, tref, lat, variable, 
+             sensitivity = std_case, sensitivity_sd = sd) %>%
       mutate(tref = as.factor(tref))
-  )
 
 buffer_addition_depth_layer_zonal %>% 
   ggplot() +
@@ -4439,6 +4425,12 @@ buffer_addition_depth_layer_zonal %>%
   facet_grid(depth~variable, scales = "free_x")
 
 
+
+buffer_addition_depth_layer <- 
+  buffer_addition_depth_layer %>% 
+  pivot_longer(all_of(buffer_variables_addition),
+               names_to = "variable",
+               values_to = "sensitivity")
 
 # loop over OIA variables
 # print incremental sections
@@ -4638,8 +4630,6 @@ buffer_addition_depth_layer_trend %>%
   ungroup()
 
 rm(p_maps, p_zonal, p_trends,
-   buffer_addition_depth_layer_trend_global,
-   buffer_addition_depth_layer_trend_regional,
    buffer_addition_depth_layer_trend,
    buffer_addition_depth_layer_uncertainty,
    buffer_addition_depth_layer_uncertainty_trend,
@@ -4749,11 +4739,8 @@ for (i_var in buffer_variables_addition) {
 }
 
 rm(buffer_addition_depth_layer,
-   i_buffer_addition_depth_layer,
    i_buffer_addition_depth_layer_relative,
-   buffer_addition_depth_layer_zonal,
    buffer_addition_depth_layer_relative,
-   buffer_addition_depth_layer_trend,
    low, high)
 
 ```
@@ -5063,9 +5050,9 @@ rm(biome_co2_speciation,
 
 
 acidification_volume_raw <-
-  acidification_trend_uncertainty %>%
-  filter(depth <= depth_integration_acidification) %>% 
-  select(-delta_interval)
+  acidification_trend_uncertainty_delta_total %>%
+  filter(depth <= depth_integration_acidification)
+
 gc()
 
 
@@ -5073,8 +5060,7 @@ acidification_bottom_area <-
   acidification_volume_raw %>%
   filter(tref == 1994,
          MLR_basin_mask == MLR_basin_mask_reference,
-         MLR_configuration == MLR_configuration_reference,
-         variable == "tco2") %>% 
+         MLR_configuration == MLR_configuration_reference) %>% 
   group_by(lon, lat) %>%
   filter(depth == max(depth)) %>%
   ungroup() %>%
@@ -5104,6 +5090,18 @@ bottom_area_total <-
   summarise(area_total = sum(area)) %>%
   pull()
 
+acidification_volume_raw <-
+  acidification_volume_raw %>%
+  pivot_longer(all_of(OIA_variables),
+               names_to = "variable",
+               values_to = "delta_total")
+
+acidification_bottom_raw <-
+  acidification_bottom_raw %>%
+  pivot_longer(all_of(OIA_variables),
+               names_to = "variable",
+               values_to = "delta_total")
+gc()
 
 for (i_var in OIA_variables) {
   # i_var <- OIA_variables[4]
@@ -5191,8 +5189,7 @@ acidification_volume_binned_all <-
   acidification_volume_binned_all %>%
   mutate(
     across(std_case, ~replace_na(.x, 0))
-  ) %>% 
-  select(-contains("signif"))
+  )
 
 acidification_volume_binned_all %>% 
   mutate(tref = as.factor(tref)) %>% 
@@ -5844,184 +5841,8 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
     acidification_saturation_horizon_levels <- saturation_horizon
   }
   
-  
-  # calculate volume of undersaturated waters
-  
-  for (i_depth in c(500, 1000, 2000, 3000)) {
-    # i_depth <- 500
-    
-    undersaturated_volume <-
-      left_join(
-        undersaturated %>%
-          filter(depth <= i_depth) %>%
-          mutate(depth_integration = i_depth),
-        ocean_volume_mask
-      ) %>%
-      group_by(tref, mineral, depth_integration) %>%
-      summarise(volume_undersat = sum(volume_total, na.rm = TRUE)) %>%
-      ungroup() %>% 
-      mutate(sat_level = i_sat_level)
-    
-    
-    if (exists("undersaturated_volume_all")) {
-      undersaturated_volume_all <-
-        bind_rows(undersaturated_volume_all,
-                  undersaturated_volume)
-    }
-    
-    if (!exists("undersaturated_volume_all")) {
-      undersaturated_volume_all <- undersaturated_volume
-    }
-    
-  }
-  
-
-  
 }
 
-
-# print all saturation levels for both minerals
-
-# for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
-#   # i_sat_level <- unique(acidification_saturation_horizon_levels$sat_level)[1]
-#   
-#   print(
-#     acidification_saturation_horizon_levels %>%
-#       relocate(lon) %>%
-#       filter(sat_level == i_sat_level) %>%
-#       select(-sat_level) %>%
-#       p_map_mdim_robinson(
-#         dim_row = "tref",
-#         dim_col = "mineral",
-#         var = "depth",
-#         legend_title = paste0("Ω=", i_sat_level, "<br>horizon<br>(m)"),
-#         legend_position = "right",
-#         breaks = seq(6000, 0, -500)
-#       )
-#   )
-#   
-#   ggsave(
-#     here::here(
-#       paste0(
-#         "output/all_variables/maps_saturation_horizon_absolute_state_sat_level_",
-#         i_sat_level,
-#         ".png"
-#       )
-#     ),
-#     width = 6,
-#     height = 6,
-#     dpi = 600,
-#     bg = "white"
-#   )
-#   
-# }
-
-
-
-# print all cumulative saturation level changes for both minerals
-
-# for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
-#   # i_sat_level <- unique(acidification_saturation_horizon_levels$sat_level)[1]
-#   
-#   print(
-#     acidification_saturation_horizon_levels %>%
-#       filter(sat_level == i_sat_level) %>%
-#       select(-sat_level) %>%
-#       arrange(tref) %>%
-#       group_by(lat, lon, mineral) %>%
-#       mutate(n = n()) %>%
-#       filter(n == 4) %>%
-#       mutate(
-#         delta_depth = depth - first(depth),
-#         period = paste(first(tref), "-", tref)
-#       ) %>%
-#       ungroup() %>%
-#       filter(tref != 1800) %>%
-#       drop_na() %>%
-#       select(lon, lat, period, mineral, delta_depth) %>%
-#       p_map_mdim_robinson(
-#         dim_row = "period",
-#         dim_col = "mineral",
-#         col = "div",
-#         var = "delta_depth",
-#         legend_title = paste0("ΔΩ=", i_sat_level, "<br>horizon<br>(m)"),
-#         legend_position = "right",
-#         breaks = c(-Inf, seq(-300, 300, 50), Inf)
-#       )
-#   )
-#   
-#   ggsave(
-#     here::here(
-#       paste0(
-#         "output/all_variables/maps_saturation_horizon_total_change_sat_level_",
-#         i_sat_level,
-#         ".png"
-#       )
-#     ),
-#     width = 6,
-#     height = 4,
-#     dpi = 600,
-#     bg = "white"
-#   )
-#   
-#   
-# }
-
-
-# print all incremental saturation level changes for both minerals
-
-# for (i_sat_level in unique(acidification_saturation_horizon_levels$sat_level)) {
-#   print(
-#     acidification_saturation_horizon_levels %>%
-#       filter(sat_level == i_sat_level) %>%
-#       select(-sat_level) %>%
-#       arrange(tref) %>%
-#       group_by(lat, lon, mineral) %>%
-#       mutate(n = n()) %>% 
-#       filter(n == 4) %>% 
-#       mutate(
-#         delta_depth = depth - lag(depth),
-#         period = paste(lag(tref), "-", tref)
-#       ) %>%
-#       ungroup() %>%
-#       filter(tref != 1800) %>% 
-#       drop_na() %>%
-#       select(lon, lat, period, mineral, delta_depth) %>%
-#       p_map_mdim_robinson(
-#         dim_row = "period",
-#         dim_col = "mineral",
-#         col = "div",
-#         var = "delta_depth",
-#         legend_title = paste0("ΔΩ=", i_sat_level, "<br>horizon<br>(m)"),
-#         legend_position = "right",
-#         breaks = c(-Inf, seq(-300, 300, 50), Inf)
-#       ) +
-#       labs(title = paste("Saturation threshold:", i_sat_level))
-#   )
-#   
-#     
-#   ggsave(
-#     here::here(
-#       paste0(
-#         "output/all_variables/maps_saturation_horizon_incremental_change_sat_level_",
-#         i_sat_level,
-#         ".png"
-#       )
-#     ),
-#     width = 6,
-#     height = 4,
-#     dpi = 600,
-#     bg = "white"
-#   )
-# }
-
-
-# df =   acidification_saturation_horizon_levels %>%
-#   relocate(lon) %>%
-#   filter(tref == 2014,
-#          mineral == "Aragonite",
-#          sat_level %in% c(4)) %>% 
-#   mutate(depth = ifelse(depth == 0, NA, depth))
 
 p_sat_absolute <- 
   acidification_saturation_horizon_levels %>%
@@ -6246,17 +6067,17 @@ rm(df_sec,
 
 ```{r saturation_volume_changes}
 
-acidification_saturation_horizon <- acidification_trend_uncertainty_absolute %>%
-  select(lat, lon, depth, tref, 
-         MLR_basin_mask, MLR_configuration,
-         OmegaAragonite) %>% 
-  filter(depth <= ocean_depth)
 
-# bathymetry <-
-#   acidification_saturation_horizon %>%
-#   group_by(lat, lon, tref) %>%
-#   summarise(depth = max(depth)) %>%
-#   ungroup()
+acidification_saturation_horizon <-
+  acidification_trend_uncertainty_absolute %>%
+  select(lat,
+         lon,
+         depth,
+         tref,
+         MLR_basin_mask,
+         MLR_configuration,
+         OmegaAragonite) %>%
+  filter(depth <= ocean_depth)
 
 
 
@@ -6299,33 +6120,33 @@ volume_total <-
   pull(volume_total)
 
 acidification_volume <-
-  undersaturated_volume_all %>% 
+  undersaturated_volume_all %>%
   mutate(volume = volume_total - volume_undersat)
 
 acidification_volume <-
-bind_rows(
-  acidification_volume,
-  expand_grid(
-    acidification_volume %>%
-      filter(
-        MLR_basin_mask == MLR_basin_mask_reference,
-        MLR_configuration == MLR_configuration_reference,
-        tref == 1800
-      ) %>%
-      select(-c(MLR_basin_mask)),
-    MLR_basin_mask = MLR_basin_mask_uncertainty
-  ),
-  expand_grid(
-    acidification_volume %>%
-      filter(
-        MLR_basin_mask == MLR_basin_mask_reference,
-        MLR_configuration == MLR_configuration_reference,
-        tref == 1800
-      ) %>%
-      select(-c(MLR_configuration)),
-    MLR_configuration = MLR_configuration_uncertainty
+  bind_rows(
+    acidification_volume,
+    expand_grid(
+      acidification_volume %>%
+        filter(
+          MLR_basin_mask == MLR_basin_mask_reference,
+          MLR_configuration == MLR_configuration_reference,
+          tref == 1800
+        ) %>%
+        select(-c(MLR_basin_mask)),
+      MLR_basin_mask = MLR_basin_mask_uncertainty
+    ),
+    expand_grid(
+      acidification_volume %>%
+        filter(
+          MLR_basin_mask == MLR_basin_mask_reference,
+          MLR_configuration == MLR_configuration_reference,
+          tref == 1800
+        ) %>%
+        select(-c(MLR_configuration)),
+      MLR_configuration = MLR_configuration_uncertainty
+    )
   )
-)
 
 
 
@@ -6351,7 +6172,7 @@ acidification_volume <-
 
 acidification_volume <-
   acidification_volume %>%
-  select(-c(volume_undersat)) %>% 
+  select(-c(volume_undersat)) %>%
   pivot_longer(contains("volume"),
                names_to = "estimate",
                values_to = "value")
@@ -6371,25 +6192,26 @@ acidification_volume <-
 acidification_volume <-
   additive_uncertainty(
     df = acidification_volume %>%
-      mutate(estimate = paste0(estimate, "_interval_mean")) %>% 
+      mutate(estimate = paste0(estimate, "_interval_mean")) %>%
       pivot_wider(names_from = estimate,
                   values_from = value),
-    mode = "delta_total")[[1]]
+    mode = "delta_total"
+  )[[1]]
 
 
 acidification_volume <-
   right_join(co2_atm_reccap2 %>% rename(tref = year),
-             acidification_volume) 
+             acidification_volume)
 
-co2_atm_level <- acidification_volume %>% 
-  distinct(pCO2) %>% 
-  pull() %>% 
+co2_atm_level <- acidification_volume %>%
+  distinct(pCO2) %>%
+  pull() %>%
   round()
 
 
 acidification_volume <-
   acidification_volume %>%
-  rename(estimate = variable) %>% 
+  rename(estimate = variable) %>%
   filter(
     sat_level %in% c(1, 1.5, 2, 3, 4),
     estimate %in% c(
@@ -6416,7 +6238,7 @@ acidification_volume <-
         "Loss of sat. volume\n(% preind. vol.)"
       )
     )
-  ) 
+  )
 
 
 acidification_volume %>%
@@ -6463,9 +6285,9 @@ acidification_volume %>%
     nudge_x = 4
   ) +
   scale_color_viridis_d(name = expression(atop(Ω[arag], threshold)),
-                        end = 0.95) +
+                        end = 1) +
   scale_fill_viridis_d(name = expression(atop(Ω[arag], threshold)),
-                       end = 0.95) +
+                       end = 1) +
   scale_shape_manual(values = seq(21, 25, 1),
                      name = expression(atop(Ω[arag], threshold))) +
   theme(
@@ -6495,15 +6317,13 @@ rm(
   acidification_saturation_horizon_levels,
   acidification_saturation_horizon_levels_change,
   acidification_volume,
-  acidification_volume_raw,
-  acidification_volume_binned_all,
-  i_acidification_volume_raw,
   p_map_biome,
   saturation_horizon,
   undersaturated,
   undersaturated_volume,
   undersaturated_volume_all
 )
+gc()
 
 ```
 
@@ -8097,7 +7917,6 @@ ggsave(
 
 
 rm(buffer_global_section_absolute,
-   acidification_global_section,
    i_buffer_global_section_absolute,
    p_global_section_H_free,
    p_global_section_OmegaAragonite,
@@ -8272,7 +8091,7 @@ acidification_profiles_biomes %>%
 
 acidification_profiles_biomes_uncertainty <-
   inner_join(biomemask,
-             acidification_trend_uncertainty_wide)
+             acidification_trend_uncertainty_delta_interval)
 
 
 # calculate regional means
@@ -8339,9 +8158,13 @@ acidification_profiles_biomes_uncertainty %>%
 
 # df <- acidification_profiles_biomes_uncertainty
 
+acidification_profiles_biomes_uncertainty_interval <-
+  additive_uncertainty(acidification_profiles_biomes_uncertainty,
+                       mode = "delta_total")[[1]]
+
 acidification_profiles_biomes_uncertainty <-
   additive_uncertainty(acidification_profiles_biomes_uncertainty,
-                       mode = "delta_total")
+                       mode = "delta_interval")
 
 acidification_profiles_biomes_uncertainty_contribution <-
   acidification_profiles_biomes_uncertainty[[2]]
@@ -8395,10 +8218,12 @@ acidification_profiles_biomes_uncertainty %>%
 
 acidification_profiles_biomes_uncertainty_contribution %>%
   filter(depth <= ocean_depth,
-         biome == "Global") %>%
+         biome == "Global",
+         variable != "pH") %>%
   mutate(contribution = fct_relevel(contribution,
                                     "combined",
-                                    after = Inf)) %>% 
+                                    after = Inf),
+         tref = paste("1800 -", tref)) %>% 
   ggplot(aes(x = sd,
              y = depth,
              col = contribution)) +
@@ -8409,10 +8234,28 @@ acidification_profiles_biomes_uncertainty_contribution %>%
              labeller = labeller(variable = x_axis_labels)) +
   coord_cartesian(expand = 0) +
   labs(y = "Depth (m)",
-       x = "Uncertainty") +
-  theme(strip.text = element_markdown()) +
+       x = "Uncertainty contribution") +
+  theme(strip.text = element_markdown(),
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        panel.spacing.x = unit(6, "mm")) +
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/profiles_total_changes_global_uncertainty_contributions.png"
+    )
+  ),
+  width = 6,
+  height = 8,
+  dpi = 600,
+  bg = "white"
+)
+
+
 
 acidification_profiles_biomes_uncertainty_contribution %>%
   filter(depth <= ocean_depth,
@@ -8431,7 +8274,8 @@ acidification_profiles_biomes_uncertainty_contribution %>%
   coord_cartesian(expand = 0) +
   labs(y = "Depth (m)",
        x = "Uncertainty 1800-2014") +
-  theme(strip.text = element_markdown()) +
+  theme(strip.text = element_markdown(),
+        panel.spacing.x = unit(6, "mm")) +
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
 
@@ -8476,7 +8320,8 @@ acidification_profiles_biomes_uncertainty_contribution %>%
 
 
 acidification_profiles_biomes_uncertainty %>%
-  filter(depth <= ocean_depth) %>%
+  filter(depth <= ocean_depth,
+         biome != "Global") %>%
   mutate(tref = as.factor(tref)) %>% 
   ggplot(aes(
     x = std_case,
@@ -8486,9 +8331,9 @@ acidification_profiles_biomes_uncertainty %>%
   )) +
   geom_ribbon(alpha = 0.3, aes(fill = tref)) +
   geom_path(aes(col = tref)) +
-  scale_color_manual(values = three_year_colors,
+  scale_color_manual(values = four_year_colors,
                      name = "Change from\n1800 to:") +
-  scale_fill_manual(values = three_year_colors,
+  scale_fill_manual(values = four_year_colors,
                     name = "Change from\n1800 to:") +
   facet_grid(biome ~ variable,
              scales = "free_x",
@@ -8499,7 +8344,9 @@ acidification_profiles_biomes_uncertainty %>%
   theme(strip.text = element_markdown(),
         strip.placement = "outside",
         strip.background.x = element_blank(),
-        axis.title.x = element_blank()) +
+        axis.title.x = element_blank(),
+        legend.title = element_blank(),
+        panel.spacing.x = unit(6, "mm")) +
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
   
@@ -8509,8 +8356,8 @@ ggsave(
       "output/supplement/profiles_total_changes_biome.png"
     )
   ),
-  width = 6,
-  height = 8,
+  width = 8,
+  height = 10,
   dpi = 600,
   bg = "white"
 )
@@ -9019,11 +8866,61 @@ buffer_profiles_biome <-
 rm(buffer_profiles_biome_regional,
    buffer_profiles_biome_global)
 
-# buffer_profiles_biome <- buffer_profiles_biome %>%
-#   mutate(tref = as.factor(tref))
-
 buffer_profiles_biome <-
   additive_uncertainty(df = buffer_profiles_biome,
+                       mode = "absolute")[[1]]
+
+```
+
+```{r compute_mean_profiles_saturation_state_biome}
+
+
+# join with 3D acidification fields
+
+acidification_profiles_biome_absolute <-
+  inner_join(biomemask,
+             acidification_trend_uncertainty_absolute)
+
+# calculate regional means
+
+acidification_profiles_biome_absolute_regional <- 
+  acidification_profiles_biome_absolute %>%
+  group_by(tref, biome, depth, MLR_basin_mask, MLR_configuration) %>%
+  summarise(
+    across(
+      .cols = all_of(buffer_variables_addition),
+      .fns = ~ wmean(.x, area),
+      .names = "{.col}_interval_mean"
+      
+    )
+  ) %>%
+  ungroup()
+
+# calculate global means
+
+acidification_profiles_biome_absolute_global <-
+  acidification_profiles_biome_absolute %>%
+  mutate(biome = "Global") %>%
+  group_by(tref, biome, depth, MLR_basin_mask, MLR_configuration) %>%
+  summarise(across(
+    .cols = all_of(buffer_variables_addition),
+    .fns = ~ wmean(.x, area),
+    .names = "{.col}_interval_mean"
+    
+  )) %>%
+  ungroup()
+
+# join global and regional profiles
+  
+acidification_profiles_biome_absolute <-
+  bind_rows(acidification_profiles_biome_absolute_global,
+            acidification_profiles_biome_absolute_regional)
+  
+rm(acidification_profiles_biome_absolute_regional,
+   acidification_profiles_biome_absolute_global)
+
+acidification_profiles_biome_absolute <-
+  additive_uncertainty(df = acidification_profiles_biome_absolute,
                        mode = "absolute")[[1]]
 
 ```
@@ -9458,27 +9355,23 @@ rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 ```{r profiles_incremental_change}
 
 
-acidification_profiles_biomes %>%
-  filter(str_detect(variable, "_delta_interval")) %>%
-  mutate(variable = str_remove(variable, "_delta_interval")) %>%
+acidification_profiles_biomes_uncertainty_interval %>%
   filter(depth <= ocean_depth,
          variable %in% c("OmegaAragonite", "H_free", "tco2")) %>%
   group_by(biome, depth, variable) %>% 
-  mutate(tref = paste(lag(tref),"-",tref)) %>% 
+  mutate(tref = paste(lag(tref, default = 1800),"-",tref)) %>% 
   ungroup() %>% 
-  filter(tref != "NA - 1800") %>% 
   ggplot() +
   geom_ribbon(aes(
-    xmin = mean - sd,
-    xmax = mean + sd,
+    xmin = std_case - sd,
+    xmax = std_case + sd,
     y = depth,
     fill = tref
   ),
   alpha = 0.3) +
-  geom_path(aes(mean,
+  geom_path(aes(std_case,
                 depth,
-                col = tref),
-            linewidth = 1.5) +
+                col = tref)) +
   scale_color_manual(values = three_year_colors) +
   scale_fill_manual(values = three_year_colors) +
   labs(y = "Depth (m)") +
@@ -9509,8 +9402,8 @@ ggsave(
       "output/supplement/profiles_incremental_changes_biome.png"
     )
   ),
-  width = 6,
-  height = 8,
+  width = 8,
+  height = 10,
   dpi = 600,
   bg = "white"
 )
@@ -10262,31 +10155,28 @@ dev.off()
 
 ```{r saturation_state_profiles_biome}
 
-acidification_profiles_biomes %>%
+acidification_profiles_biome_absolute %>%
   filter(depth <= ocean_depth,
          variable == "OmegaAragonite") %>%
+  mutate(tref = as.factor(tref)) %>% 
   ggplot() +
   geom_vline(xintercept = c(1, 1.5, 2, 3, 4),
              linewidth = 0.2) +
   geom_ribbon(aes(
-    xmin = mean - sd,
-    xmax = mean + sd,
+    xmin = std_case - sd,
+    xmax = std_case + sd,
     y = depth,
     fill = tref
   ), alpha = 0.3) +
-  geom_path(aes(mean,
+  geom_path(aes(std_case,
                 depth,
                 col = tref, 
                 linewidth = tref)) +
-  # geom_point(aes(mean,
-  #                depth,
-  #                col = tref), size = 0.1,
-  #            col = "white") +
   scale_color_manual(values = four_year_colors) +
-  scale_fill_manual(values = four_year_colors_2014) +
+  scale_fill_manual(values = four_year_colors) +
   scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)",
-       x = x_axis_labels[3]) +
+       x = x_axis_labels_absolute[3]) +
   scale_y_continuous(trans = trans_reverser("sqrt"),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
                      expand = c(0,0)) +
@@ -10553,8 +10443,8 @@ p_acid_profiles_global_omega <-
                 depth,
                 col = tref,
                 linewidth = tref)) +
-  scale_color_manual(values = three_year_colors) +
-  scale_fill_manual(values = three_year_colors) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors) +
   scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
@@ -10596,8 +10486,8 @@ p_acid_profiles_global_H_free <-
                 depth,
                 col = tref,
                 linewidth = tref)) +
-  scale_color_manual(values = three_year_colors) +
-  scale_fill_manual(values = three_year_colors) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors) +
   scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
@@ -10638,8 +10528,8 @@ p_tco2_profiles_global <-
                 depth,
                 col = tref,
                 linewidth = tref)) +
-  scale_color_manual(values = three_year_colors) +
-  scale_fill_manual(values = three_year_colors) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors) +
   scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
@@ -10800,8 +10690,8 @@ p_acid_profiles_biome <-
                 depth,
                 col = tref,
             linewidth = tref)) +
-  scale_color_manual(values = three_year_colors) +
-  scale_fill_manual(values = three_year_colors) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors) +
   scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
   labs(y = "Depth (m)") +
   theme(
