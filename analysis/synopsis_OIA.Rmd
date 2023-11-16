@@ -914,7 +914,7 @@ all_files <- list.files(path_OIA) %>%
 
 uncertainty_files <-
   all_files[!all_files %>%
-              str_detect(paste("OceanSODA",
+              str_detect(paste(#"OceanSODA",
                                "buffer",
                                "Standard case_3",
                                "merged",
@@ -3592,6 +3592,18 @@ acidification_depth_layer_total_zonal %>%
   scale_fill_manual(values = four_year_colors_1800) +
   facet_grid(depth~variable, scales = "free_x")
 
+
+acidification_depth_layer_total_trend %>%
+  filter(year %in% c(1994, 2014)) %>%
+  select(-pCO2) %>% 
+  group_by(depth, biome, variable) %>%
+  mutate(delta_total_rel_1994 = 100 * delta_total / first(delta_total)) %>%
+  ungroup() %>%
+  kable() %>%
+  kable_styling() %>%
+  scroll_box(height = "300px")
+
+
 for (i_var in OIA_variables) {
   # i_var <- OIA_variables[4]
   
@@ -3959,7 +3971,7 @@ acidification_depth_layer_total_relative %>%
     dim_row = "depth",
     dim_col = "variable",
     var = "delta_total_relative",
-    # contour_level = 20,
+    contour_level = 20,
     col_scale = "Rocket",
     legend_title = "Δ<sub>1800-2014</sub> / <br>Absolute<sub>1800</sub>",
     breaks = c(-Inf,seq(0,40,5),Inf),
@@ -4351,6 +4363,7 @@ buffer_addition_depth_layer_zonal %>%
                names_to = "variable",
                values_to = "sensitivity") %>% 
   ggplot() +
+  geom_vline(xintercept = 0) +
   geom_path(aes(sensitivity, lat, col = tref)) +
   scale_color_manual(values = four_year_colors) +
   facet_grid(depth~variable, scales = "free_x")
@@ -4628,6 +4641,14 @@ buffer_addition_depth_layer_trend %>%
   summarize(delta_sensitvity = 100 * (max(sensitivity) - min(sensitivity)) /
               min(sensitivity)) %>%
   ungroup()
+
+buffer_addition_depth_layer_trend %>%
+  arrange(year) %>% 
+  group_by(biome, depth, variable) %>%
+  mutate(delta_sensitvity = 100 * (sensitivity - first(sensitivity)) /
+              first(sensitivity)) %>%
+  ungroup() %>% 
+  arrange(depth, biome, variable, -year)
 
 rm(p_maps, p_zonal, p_trends,
    buffer_addition_depth_layer_trend,
@@ -9408,6 +9429,60 @@ ggsave(
   bg = "white"
 )
 
+acidification_profiles_biomes_uncertainty_interval %>%
+  filter(depth <= 1000,
+         variable %in% c("OmegaAragonite", "H_free", "tco2")) %>%
+  select(-sd) %>% 
+  pivot_wider(names_from = tref,
+              values_from = std_case) %>% 
+  mutate(std_case = 100 * (`2004` + `2014`) / `1994`) %>% 
+  ggplot() +
+  # geom_ribbon(aes(
+  #   xmin = std_case - sd,
+  #   xmax = std_case + sd,
+  #   y = depth,
+  #   fill = tref
+  # ),
+  # alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth)) +
+  scale_color_manual(values = three_year_colors) +
+  scale_fill_manual(values = three_year_colors) +
+  labs(y = "Depth (m)") +
+  theme(
+    axis.title.x = element_blank(),
+    legend.title = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_grid(
+    biome ~ variable,
+    scales = "free_x",
+    switch = "x",
+    labeller = labeller(variable = x_axis_labels)
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  ) +
+  coord_cartesian(xlim = c(0,60))
+
+acidification_profiles_biomes_uncertainty_interval %>%
+  filter(depth <= 1000,
+         variable %in% c("OmegaAragonite", "H_free", "tco2")) %>%
+  select(-sd) %>% 
+  pivot_wider(names_from = tref,
+              values_from = std_case) %>% 
+  mutate(std_case = 100 * (`2004` + `2014`) / `1994`) %>% 
+  group_by(biome, variable) %>% 
+  summarise(sd = sd(std_case),
+            std_case = mean(std_case))
+
+
 ```
 
 
@@ -10421,6 +10496,15 @@ buffer_profiles_biome %>%
 acidification_profiles_biomes_uncertainty <-
   acidification_profiles_biomes_uncertainty %>% 
   mutate(tref = as.factor(tref))
+
+acidification_profiles_biomes_uncertainty %>%
+  filter(biome == "Global",
+         tref == 2014) %>% 
+  group_by(variable) %>% 
+  filter(abs(std_case) == max(abs(std_case))) %>% 
+  ungroup()
+
+
 
 buffer_profiles_biome <- 
   buffer_profiles_biome %>% 
