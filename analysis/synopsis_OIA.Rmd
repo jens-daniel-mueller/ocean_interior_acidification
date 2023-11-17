@@ -914,9 +914,10 @@ all_files <- list.files(path_OIA) %>%
 
 uncertainty_files <-
   all_files[!all_files %>%
-              str_detect(paste(#"OceanSODA",
+              str_detect(paste("OceanSODA",
                                "buffer",
-                               "Standard case_3",
+                               "Standard case_3.csv",
+                               "Standard case_3_DIC",
                                "merged",
                                sep = "|"))]
 
@@ -2333,41 +2334,7 @@ additive_uncertainty <- function(df,
         mutate(tref = tref_pi)
     )
   
-  # integrate eMLR uncertainty over time
-  
-  if (mode == "delta_interval") {
-    df_factorial_eMLR_stat <-
-      df_factorial_eMLR_stat %>%
-      arrange(tref) %>%
-      group_by(across(-c(tref, sd))) %>%
-      mutate(sd = cumsum(sd)) %>%
-      ungroup()
-  }
-  
-  if (mode == "absolute") {
-    df_factorial_eMLR_stat_2004_2014 <-
-      df_factorial_eMLR_stat %>%
-      filter(tref %in% c(2004, 2014)) %>%
-      arrange(tref) %>%
-      group_by(across(-c(tref, sd))) %>%
-      mutate(sd = cumsum(sd)) %>%
-      ungroup()
-    
-    df_factorial_eMLR_stat_1800_1994 <-
-      df_factorial_eMLR_stat %>%
-      filter(tref %in% c(1800, 1994)) %>%
-      arrange(-tref) %>%
-      group_by(across(-c(tref, sd))) %>%
-      mutate(sd = cumsum(sd)) %>%
-      ungroup()
-    
-    df_factorial_eMLR_stat <-
-      bind_rows(df_factorial_eMLR_stat_1800_1994,
-                df_factorial_eMLR_stat_2004_2014)
-  }
-  
-  
-  
+ 
   # df_factorial_eMLR_stat %>%
   #   mutate(tref = as.factor(tref)) %>%
   #   ggplot(aes(sd, lat, col = tref)) +
@@ -2386,6 +2353,39 @@ additive_uncertainty <- function(df,
         mutate(contribution = "CO2 system climatology")
     )
   
+  
+   # integrate uncertainties over time
+  
+  if (mode == "delta_interval") {
+    df_factorial <-
+      df_factorial %>%
+      arrange(tref) %>%
+      group_by(across(-c(tref, sd))) %>%
+      mutate(sd = sqrt(cumsum(sd^2))) %>%
+      ungroup()
+  }
+  
+  if (mode == "absolute") {
+    df_factorial_2004_2014 <-
+      df_factorial %>%
+      filter(tref %in% c(2004, 2014)) %>%
+      arrange(tref) %>%
+      group_by(across(-c(tref, sd))) %>%
+      mutate(sd = sqrt(cumsum(sd^2))) %>%
+      ungroup()
+    
+    df_factorial_1800_1994 <-
+      df_factorial %>%
+      filter(tref %in% c(1800, 1994)) %>%
+      arrange(-tref) %>%
+      group_by(across(-c(tref, sd))) %>%
+      mutate(sd = sqrt(cumsum(sd^2))) %>%
+      ungroup()
+    
+    df_factorial <-
+      bind_rows(df_factorial_1800_1994,
+                df_factorial_2004_2014)
+  }
 
   # combine eMLR and CO2 system uncertainty
   
