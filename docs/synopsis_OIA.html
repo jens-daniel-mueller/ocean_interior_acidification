@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree3c67d950c02e42c750485d28fc67cc0ef319977btargetblank3c67d95a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreea6ada15a046f4be07edbcf637c0061d461e4280dtargetblanka6ada15a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/3c67d950c02e42c750485d28fc67cc0ef319977b" target="_blank">3c67d95</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/a6ada15a046f4be07edbcf637c0061d461e4280d" target="_blank">a6ada15</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree3c67d950c02e42c750485d28fc67cc0ef319977btargetblank3c67d95a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreea6ada15a046f4be07edbcf637c0061d461e4280dtargetblanka6ada15a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/3c67d950c02e42c750485d28fc67cc0ef319977b" target="_blank">3c67d95</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/a6ada15a046f4be07edbcf637c0061d461e4280d" target="_blank">a6ada15</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -629,6 +629,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/a6ada15a046f4be07edbcf637c0061d461e4280d/analysis/synopsis_OIA.Rmd" target="_blank">a6ada15</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+<td>
+2 sigma uncertainty for cant
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/synopsis_OIA.html" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2100,8 +2134,8 @@ buffer_variables_addition &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used   (Mb)
-Ncells    3138823  167.7    5595948   298.9    4905498  262.0
-Vcells 1222409409 9326.3 1529116682 11666.3 1222467374 9326.7</code></pre>
+Ncells    3138842  167.7    5595975   298.9    4905517  262.0
+Vcells 1222409957 9326.3 1529117471 11666.3 1222467922 9326.7</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   bind_rows(acidification_trend_uncertainty,
             acidification_trend %&gt;%
@@ -2112,8 +2146,8 @@ acidification_trend &lt;- acidification_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140395   167.8    5595948   298.9    4905498   262.0
-Vcells 1316796038 10046.4 2697747165 20582.2 2427605187 18521.2</code></pre>
+Ncells    3140414   167.8    5595975   298.9    4905517   262.0
+Vcells 1316796586 10046.4 2697747822 20582.2 2427605735 18521.2</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2123,8 +2157,8 @@ Vcells 1316796038 10046.4 2697747165 20582.2 2427605187 18521.2</code></pre>
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140429   167.8    5595948   298.9    4905498   262.0
-Vcells 1316796118 10046.4 2697747165 20582.2 2427605187 18521.2</code></pre>
+Ncells    3140448   167.8    5595975   298.9    4905517   262.0
+Vcells 1316796666 10046.4 2697747822 20582.2 2427605735 18521.2</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2232,8 +2266,8 @@ acidification_trend_uncertainty_delta_total &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140656  167.8    5595948   298.9    4905498   262.0
-Vcells 1260293804 9615.3 2697747165 20582.2 2427605187 18521.2</code></pre>
+Ncells    3140675  167.8    5595975   298.9    4905517   262.0
+Vcells 1260294352 9615.3 2697747822 20582.2 2427605735 18521.2</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -3125,7 +3159,8 @@ CO2_climatology_uncertainty &lt;-
 <div id="additive-computation" class="section level2">
 <h2>Additive computation</h2>
 <pre class="r"><code>additive_uncertainty &lt;- function(df,
-                                 mode = &quot;delta_interval&quot;) {
+                                 mode = &quot;delta_interval&quot;,
+                                 cant_sigma = 2) {
   
   scaling_pi &lt;- 2
   
@@ -3177,9 +3212,10 @@ CO2_climatology_uncertainty &lt;-
   
   # df_CO2_stat %&gt;%
   #   mutate(tref = as.factor(tref)) %&gt;%
-  #   ggplot(aes(sd, lat, col = tref)) +
+  #   ggplot(aes(sd, depth, col = tref)) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = &quot;free_x&quot;)
   
   # uncertainty due to regional clustering in eMLR method
@@ -3243,10 +3279,11 @@ CO2_climatology_uncertainty &lt;-
   
   # df_regional %&gt;%
   #   mutate(tref = as.factor(tref)) %&gt;%
-  #   ggplot(aes(delta_value, lat, col = tref,
+  #   ggplot(aes(delta_value, depth, col = tref,
   #              group = interaction(MLR_basin_mask, tref))) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = &quot;free_x&quot;)
   
   
@@ -3257,6 +3294,14 @@ CO2_climatology_uncertainty &lt;-
     summarise(sd = mean(abs(delta_value))) %&gt;%
     ungroup()
   
+  
+  # df_regional_stat %&gt;%
+  #   mutate(tref = as.factor(tref)) %&gt;%
+  #   ggplot(aes(sd, depth, col = tref)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = &quot;free_x&quot;)
   
   # uncertainty due to configuration of the eMLR method
   
@@ -3304,10 +3349,11 @@ CO2_climatology_uncertainty &lt;-
   
   # df_configuration %&gt;%
   #   mutate(tref = as.factor(tref)) %&gt;%
-  #   ggplot(aes(delta_value, lat, col = tref,
+  #   ggplot(aes(delta_value, depth, col = tref,
   #              group = interaction(MLR_configuration, tref))) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = &quot;free_x&quot;)
   
   df_configuration &lt;-
@@ -3329,6 +3375,22 @@ CO2_climatology_uncertainty &lt;-
     summarise(sd = sqrt(sum(sd ^ 2, na.rm = TRUE))) %&gt;%
     ungroup()
   
+  
+  # df_factorial_eMLR_stat %&gt;%
+  #   mutate(tref = as.factor(tref)) %&gt;%
+  #   ggplot(aes(sd, depth, col = tref)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = &quot;free_x&quot;)
+  
+  # Multiply with target sigma range
+  
+  df_factorial_eMLR_stat &lt;-
+    df_factorial_eMLR_stat %&gt;% 
+    mutate(sd = sd * cant_sigma)
+  
+  
   # Scale eMLR uncertainty for the initial reference year
   
   df_factorial_eMLR_stat &lt;-
@@ -3347,9 +3409,10 @@ CO2_climatology_uncertainty &lt;-
  
   # df_factorial_eMLR_stat %&gt;%
   #   mutate(tref = as.factor(tref)) %&gt;%
-  #   ggplot(aes(sd, lat, col = tref)) +
+  #   ggplot(aes(sd, depth, col = tref)) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = &quot;free_x&quot;)
   
   
@@ -3363,6 +3426,13 @@ CO2_climatology_uncertainty &lt;-
         mutate(contribution = &quot;CO2 system climatology&quot;)
     )
   
+  # df_factorial %&gt;%
+  #   mutate(tref = as.factor(tref)) %&gt;%
+  #   ggplot(aes(sd, depth, col = tref, linetype = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #              scales = &quot;free_x&quot;)
   
    # integrate uncertainties over time
   
@@ -3396,6 +3466,14 @@ CO2_climatology_uncertainty &lt;-
       bind_rows(df_factorial_1800_1994,
                 df_factorial_2004_2014)
   }
+  
+  # df_factorial %&gt;%
+  #   mutate(tref = as.factor(tref)) %&gt;%
+  #   ggplot(aes(sd, depth, col = tref, linetype = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = &quot;free_x&quot;)
 
   # combine eMLR and CO2 system uncertainty
   
@@ -3410,6 +3488,24 @@ CO2_climatology_uncertainty &lt;-
     bind_rows(df_factorial_stat %&gt;%
                 mutate(contribution = &quot;combined&quot;),
               df_factorial)
+  
+  # df_factorial %&gt;%
+  #   mutate(tref = as.factor(tref)) %&gt;%
+  #   ggplot(aes(sd, depth, col = tref, linetype = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = &quot;free_x&quot;)
+  
+  # df_factorial %&gt;%
+  #   filter(biome == &quot;Global&quot;) %&gt;% 
+  #   mutate(tref = as.factor(tref)) %&gt;%
+  #   ggplot(aes(sd, depth, col = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(tref ~ variable,
+  #               scales = &quot;free_x&quot;)
+  
   
   if (mode == &quot;delta_interval&quot;) {
     df_std_case &lt;-
@@ -4720,6 +4816,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-3.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-3.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -4788,7 +4895,7 @@ H_free
 1.0802045
 </td>
 <td style="text-align:right;">
-0.1143997
+0.1205609
 </td>
 <td style="text-align:right;">
 100.00000
@@ -4811,7 +4918,7 @@ OmegaAragonite
 -0.4111926
 </td>
 <td style="text-align:right;">
-0.0063632
+0.0114393
 </td>
 <td style="text-align:right;">
 100.00000
@@ -4834,7 +4941,7 @@ pH
 -0.0767921
 </td>
 <td style="text-align:right;">
-0.0028292
+0.0034079
 </td>
 <td style="text-align:right;">
 100.00000
@@ -4857,7 +4964,7 @@ tco2
 42.4442874
 </td>
 <td style="text-align:right;">
-0.5652631
+1.1305261
 </td>
 <td style="text-align:right;">
 100.00000
@@ -4880,7 +4987,7 @@ H_free
 1.7191432
 </td>
 <td style="text-align:right;">
-0.1260059
+0.1329926
 </td>
 <td style="text-align:right;">
 159.14980
@@ -4903,7 +5010,7 @@ OmegaAragonite
 -0.6099696
 </td>
 <td style="text-align:right;">
-0.0070831
+0.0127722
 </td>
 <td style="text-align:right;">
 148.34157
@@ -4926,7 +5033,7 @@ pH
 -0.1166998
 </td>
 <td style="text-align:right;">
-0.0030682
+0.0037316
 </td>
 <td style="text-align:right;">
 151.96848
@@ -4949,7 +5056,7 @@ tco2
 63.2206172
 </td>
 <td style="text-align:right;">
-0.6319833
+1.2639666
 </td>
 <td style="text-align:right;">
 148.94965
@@ -4972,7 +5079,7 @@ H_free
 1.2838086
 </td>
 <td style="text-align:right;">
-0.0476257
+0.0605907
 </td>
 <td style="text-align:right;">
 100.00000
@@ -4995,7 +5102,7 @@ OmegaAragonite
 -0.4833822
 </td>
 <td style="text-align:right;">
-0.0063725
+0.0125198
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5018,7 +5125,7 @@ pH
 -0.1005000
 </td>
 <td style="text-align:right;">
-0.0018398
+0.0030890
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5041,7 +5148,7 @@ tco2
 51.8026543
 </td>
 <td style="text-align:right;">
-0.6819439
+1.3638877
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5064,7 +5171,7 @@ H_free
 1.9404202
 </td>
 <td style="text-align:right;">
-0.0517005
+0.0665337
 </td>
 <td style="text-align:right;">
 151.14560
@@ -5087,7 +5194,7 @@ OmegaAragonite
 -0.6745391
 </td>
 <td style="text-align:right;">
-0.0071108
+0.0139905
 </td>
 <td style="text-align:right;">
 139.54570
@@ -5110,7 +5217,7 @@ pH
 -0.1444447
 </td>
 <td style="text-align:right;">
-0.0020142
+0.0034283
 </td>
 <td style="text-align:right;">
 143.72607
@@ -5133,7 +5240,7 @@ tco2
 72.7108319
 </td>
 <td style="text-align:right;">
-0.7624364
+1.5248728
 </td>
 <td style="text-align:right;">
 140.36121
@@ -5156,7 +5263,7 @@ H_free
 1.1774335
 </td>
 <td style="text-align:right;">
-0.1340785
+0.1625057
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5179,7 +5286,7 @@ OmegaAragonite
 -0.3442976
 </td>
 <td style="text-align:right;">
-0.0125449
+0.0241091
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5202,7 +5309,7 @@ pH
 -0.0831152
 </td>
 <td style="text-align:right;">
-0.0043561
+0.0070626
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5225,7 +5332,7 @@ tco2
 37.7394668
 </td>
 <td style="text-align:right;">
-1.3421515
+2.6843031
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5248,7 +5355,7 @@ H_free
 1.9938466
 </td>
 <td style="text-align:right;">
-0.1526043
+0.1839210
 </td>
 <td style="text-align:right;">
 169.33836
@@ -5271,7 +5378,7 @@ OmegaAragonite
 -0.5285291
 </td>
 <td style="text-align:right;">
-0.0140521
+0.0269686
 </td>
 <td style="text-align:right;">
 153.50937
@@ -5294,7 +5401,7 @@ pH
 -0.1328150
 </td>
 <td style="text-align:right;">
-0.0048347
+0.0078743
 </td>
 <td style="text-align:right;">
 159.79642
@@ -5317,7 +5424,7 @@ tco2
 58.5517348
 </td>
 <td style="text-align:right;">
-1.5005710
+3.0011421
 </td>
 <td style="text-align:right;">
 155.14722
@@ -5340,7 +5447,7 @@ H_free
 1.1730437
 </td>
 <td style="text-align:right;">
-0.1965501
+0.2033074
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5363,7 +5470,7 @@ OmegaAragonite
 -0.3185732
 </td>
 <td style="text-align:right;">
-0.0086536
+0.0122407
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5386,7 +5493,7 @@ pH
 -0.0849196
 </td>
 <td style="text-align:right;">
-0.0051448
+0.0060053
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5409,7 +5516,7 @@ tco2
 36.4319434
 </td>
 <td style="text-align:right;">
-0.6364386
+1.2728772
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5432,7 +5539,7 @@ H_free
 1.8431186
 </td>
 <td style="text-align:right;">
-0.2155948
+0.2232903
 </td>
 <td style="text-align:right;">
 157.12275
@@ -5455,7 +5562,7 @@ OmegaAragonite
 -0.4608579
 </td>
 <td style="text-align:right;">
-0.0095238
+0.0135790
 </td>
 <td style="text-align:right;">
 144.66311
@@ -5478,7 +5585,7 @@ pH
 -0.1271582
 </td>
 <td style="text-align:right;">
-0.0055352
+0.0065293
 </td>
 <td style="text-align:right;">
 149.73945
@@ -5501,7 +5608,7 @@ tco2
 53.2515160
 </td>
 <td style="text-align:right;">
-0.7115600
+1.4231200
 </td>
 <td style="text-align:right;">
 146.16710
@@ -5524,7 +5631,7 @@ H_free
 0.9559767
 </td>
 <td style="text-align:right;">
-0.0881729
+0.0948406
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5547,7 +5654,7 @@ OmegaAragonite
 -0.4474299
 </td>
 <td style="text-align:right;">
-0.0073293
+0.0141891
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5570,7 +5677,7 @@ pH
 -0.0733096
 </td>
 <td style="text-align:right;">
-0.0024537
+0.0032961
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5593,7 +5700,7 @@ tco2
 44.9364088
 </td>
 <td style="text-align:right;">
-0.7122872
+1.4245744
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5616,7 +5723,7 @@ H_free
 1.5335835
 </td>
 <td style="text-align:right;">
-0.0975231
+0.1050528
 </td>
 <td style="text-align:right;">
 160.42059
@@ -5639,7 +5746,7 @@ OmegaAragonite
 -0.6706144
 </td>
 <td style="text-align:right;">
-0.0081865
+0.0158598
 </td>
 <td style="text-align:right;">
 149.88147
@@ -5662,7 +5769,7 @@ pH
 -0.1123341
 </td>
 <td style="text-align:right;">
-0.0026864
+0.0036430
 </td>
 <td style="text-align:right;">
 153.23238
@@ -5685,7 +5792,7 @@ tco2
 67.5264940
 </td>
 <td style="text-align:right;">
-0.7963613
+1.5927226
 </td>
 <td style="text-align:right;">
 150.27123
@@ -5708,7 +5815,7 @@ H_free
 1.2818360
 </td>
 <td style="text-align:right;">
-0.1305003
+0.1763804
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5731,7 +5838,7 @@ OmegaAragonite
 -0.4106020
 </td>
 <td style="text-align:right;">
-0.0153283
+0.0303384
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5754,7 +5861,7 @@ pH
 -0.0743367
 </td>
 <td style="text-align:right;">
-0.0036238
+0.0064065
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5777,7 +5884,7 @@ tco2
 41.6235691
 </td>
 <td style="text-align:right;">
-1.5641300
+3.1282600
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5800,7 +5907,7 @@ H_free
 2.0088455
 </td>
 <td style="text-align:right;">
-0.1432678
+0.1952570
 </td>
 <td style="text-align:right;">
 156.71626
@@ -5823,7 +5930,7 @@ OmegaAragonite
 -0.6013356
 </td>
 <td style="text-align:right;">
-0.0171265
+0.0339138
 </td>
 <td style="text-align:right;">
 146.45217
@@ -5846,7 +5953,7 @@ pH
 -0.1114112
 </td>
 <td style="text-align:right;">
-0.0040026
+0.0071352
 </td>
 <td style="text-align:right;">
 149.87381
@@ -5869,7 +5976,7 @@ tco2
 61.2036763
 </td>
 <td style="text-align:right;">
-1.7487505
+3.4975010
 </td>
 <td style="text-align:right;">
 147.04091
@@ -5892,7 +5999,7 @@ H_free
 1.4159497
 </td>
 <td style="text-align:right;">
-0.1395929
+0.1872925
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5915,7 +6022,7 @@ OmegaAragonite
 -0.2362118
 </td>
 <td style="text-align:right;">
-0.0077140
+0.0143711
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5938,7 +6045,7 @@ pH
 -0.0658722
 </td>
 <td style="text-align:right;">
-0.0029679
+0.0051727
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5961,7 +6068,7 @@ tco2
 28.3190920
 </td>
 <td style="text-align:right;">
-0.9178843
+1.8357686
 </td>
 <td style="text-align:right;">
 100.00000
@@ -5984,7 +6091,7 @@ H_free
 2.0404939
 </td>
 <td style="text-align:right;">
-0.1491977
+0.2043290
 </td>
 <td style="text-align:right;">
 144.10780
@@ -6007,7 +6114,7 @@ OmegaAragonite
 -0.3367891
 </td>
 <td style="text-align:right;">
-0.0085336
+0.0160188
 </td>
 <td style="text-align:right;">
 142.57927
@@ -6030,7 +6137,7 @@ pH
 -0.0943941
 </td>
 <td style="text-align:right;">
-0.0032557
+0.0057477
 </td>
 <td style="text-align:right;">
 143.29878
@@ -6053,7 +6160,7 @@ tco2
 40.3643050
 </td>
 <td style="text-align:right;">
-1.0262259
+2.0524517
 </td>
 <td style="text-align:right;">
 142.53390
@@ -6076,7 +6183,7 @@ H_free
 1.4355749
 </td>
 <td style="text-align:right;">
-0.0817154
+0.1542391
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6099,7 +6206,7 @@ OmegaAragonite
 -0.3658094
 </td>
 <td style="text-align:right;">
-0.0142962
+0.0285477
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6122,7 +6229,7 @@ pH
 -0.0928839
 </td>
 <td style="text-align:right;">
-0.0042101
+0.0083297
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6145,7 +6252,7 @@ tco2
 42.6948743
 </td>
 <td style="text-align:right;">
-1.7343886
+3.4687771
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6168,7 +6275,7 @@ H_free
 1.9305371
 </td>
 <td style="text-align:right;">
-0.0904003
+0.1719377
 </td>
 <td style="text-align:right;">
 134.47833
@@ -6191,7 +6298,7 @@ OmegaAragonite
 -0.4675746
 </td>
 <td style="text-align:right;">
-0.0159787
+0.0319149
 </td>
 <td style="text-align:right;">
 127.81921
@@ -6214,7 +6321,7 @@ pH
 -0.1209355
 </td>
 <td style="text-align:right;">
-0.0046964
+0.0093076
 </td>
 <td style="text-align:right;">
 130.20074
@@ -6237,7 +6344,7 @@ tco2
 54.8051561
 </td>
 <td style="text-align:right;">
-1.9391054
+3.8782107
 </td>
 <td style="text-align:right;">
 128.36472
@@ -6260,7 +6367,7 @@ H_free
 2.1813988
 </td>
 <td style="text-align:right;">
-0.3533282
+0.6655902
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6283,7 +6390,7 @@ OmegaAragonite
 -0.1739390
 </td>
 <td style="text-align:right;">
-0.0148456
+0.0288721
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6306,7 +6413,7 @@ pH
 -0.0725595
 </td>
 <td style="text-align:right;">
-0.0081545
+0.0162037
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6329,7 +6436,7 @@ tco2
 25.1918008
 </td>
 <td style="text-align:right;">
-2.5562418
+5.1124836
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6352,7 +6459,7 @@ H_free
 2.7754829
 </td>
 <td style="text-align:right;">
-0.3903032
+0.7416525
 </td>
 <td style="text-align:right;">
 127.23409
@@ -6375,7 +6482,7 @@ OmegaAragonite
 -0.2313756
 </td>
 <td style="text-align:right;">
-0.0165028
+0.0322313
 </td>
 <td style="text-align:right;">
 133.02118
@@ -6398,7 +6505,7 @@ pH
 -0.0947071
 </td>
 <td style="text-align:right;">
-0.0091068
+0.0181111
 </td>
 <td style="text-align:right;">
 130.52330
@@ -6421,7 +6528,7 @@ tco2
 33.0225799
 </td>
 <td style="text-align:right;">
-2.8579652
+5.7159304
 </td>
 <td style="text-align:right;">
 131.08463
@@ -6444,7 +6551,7 @@ H_free
 0.9889302
 </td>
 <td style="text-align:right;">
-0.1421579
+0.1722235
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6467,7 +6574,7 @@ OmegaAragonite
 -0.1691222
 </td>
 <td style="text-align:right;">
-0.0085855
+0.0156519
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6490,7 +6597,7 @@ pH
 -0.0545852
 </td>
 <td style="text-align:right;">
-0.0035981
+0.0059153
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6513,7 +6620,7 @@ tco2
 21.2917545
 </td>
 <td style="text-align:right;">
-0.9938540
+1.9877081
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6536,7 +6643,7 @@ H_free
 1.4562031
 </td>
 <td style="text-align:right;">
-0.1517440
+0.1866583
 </td>
 <td style="text-align:right;">
 147.25034
@@ -6559,7 +6666,7 @@ OmegaAragonite
 -0.2349080
 </td>
 <td style="text-align:right;">
-0.0094837
+0.0174364
 </td>
 <td style="text-align:right;">
 138.89843
@@ -6582,7 +6689,7 @@ pH
 -0.0778864
 </td>
 <td style="text-align:right;">
-0.0039115
+0.0065464
 </td>
 <td style="text-align:right;">
 142.68791
@@ -6605,7 +6712,7 @@ tco2
 29.8706087
 </td>
 <td style="text-align:right;">
-1.1111626
+2.2223252
 </td>
 <td style="text-align:right;">
 140.29191
@@ -6628,7 +6735,7 @@ H_free
 1.2704551
 </td>
 <td style="text-align:right;">
-0.1176400
+0.1605151
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6651,7 +6758,7 @@ OmegaAragonite
 -0.2808592
 </td>
 <td style="text-align:right;">
-0.0086062
+0.0166150
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6674,7 +6781,7 @@ pH
 -0.0680715
 </td>
 <td style="text-align:right;">
-0.0030369
+0.0053645
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6697,7 +6804,7 @@ tco2
 32.1054434
 </td>
 <td style="text-align:right;">
-1.0150761
+2.0301522
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6720,7 +6827,7 @@ H_free
 1.9373611
 </td>
 <td style="text-align:right;">
-0.1276115
+0.1766129
 </td>
 <td style="text-align:right;">
 152.49347
@@ -6743,7 +6850,7 @@ OmegaAragonite
 -0.4128480
 </td>
 <td style="text-align:right;">
-0.0095841
+0.0185565
 </td>
 <td style="text-align:right;">
 146.99465
@@ -6766,7 +6873,7 @@ pH
 -0.1015268
 </td>
 <td style="text-align:right;">
-0.0033496
+0.0059719
 </td>
 <td style="text-align:right;">
 149.14717
@@ -6789,7 +6896,7 @@ tco2
 47.3045086
 </td>
 <td style="text-align:right;">
-1.1348896
+2.2697792
 </td>
 <td style="text-align:right;">
 147.34108
@@ -6812,7 +6919,7 @@ H_free
 2.0197957
 </td>
 <td style="text-align:right;">
-0.2247698
+0.3421392
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6835,7 +6942,7 @@ OmegaAragonite
 -0.1824046
 </td>
 <td style="text-align:right;">
-0.0100463
+0.0187094
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6858,7 +6965,7 @@ pH
 -0.0662199
 </td>
 <td style="text-align:right;">
-0.0041771
+0.0080039
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6881,7 +6988,7 @@ tco2
 24.1318038
 </td>
 <td style="text-align:right;">
-1.3206234
+2.6412467
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6904,7 +7011,7 @@ H_free
 2.7020008
 </td>
 <td style="text-align:right;">
-0.2400396
+0.3752216
 </td>
 <td style="text-align:right;">
 133.77595
@@ -6927,7 +7034,7 @@ OmegaAragonite
 -0.2423934
 </td>
 <td style="text-align:right;">
-0.0110750
+0.0208338
 </td>
 <td style="text-align:right;">
 132.88776
@@ -6950,7 +7057,7 @@ pH
 -0.0880979
 </td>
 <td style="text-align:right;">
-0.0046293
+0.0089274
 </td>
 <td style="text-align:right;">
 133.03839
@@ -6973,7 +7080,7 @@ tco2
 32.0513781
 </td>
 <td style="text-align:right;">
-1.4765018
+2.9530036
 </td>
 <td style="text-align:right;">
 132.81800
@@ -6996,7 +7103,7 @@ H_free
 0.4955305
 </td>
 <td style="text-align:right;">
-0.0946690
+0.1762965
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7019,7 +7126,7 @@ OmegaAragonite
 -0.0517169
 </td>
 <td style="text-align:right;">
-0.0043068
+0.0084423
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7042,7 +7149,7 @@ pH
 -0.0206757
 </td>
 <td style="text-align:right;">
-0.0024253
+0.0047722
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7065,7 +7172,7 @@ tco2
 7.6423071
 </td>
 <td style="text-align:right;">
-0.7635858
+1.5271717
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7088,7 +7195,7 @@ H_free
 0.7757616
 </td>
 <td style="text-align:right;">
-0.1056972
+0.1970272
 </td>
 <td style="text-align:right;">
 156.55173
@@ -7111,7 +7218,7 @@ OmegaAragonite
 -0.0758022
 </td>
 <td style="text-align:right;">
-0.0048117
+0.0094370
 </td>
 <td style="text-align:right;">
 146.57142
@@ -7134,7 +7241,7 @@ pH
 -0.0314314
 </td>
 <td style="text-align:right;">
-0.0027079
+0.0053336
 </td>
 <td style="text-align:right;">
 152.02080
@@ -7157,7 +7264,7 @@ tco2
 11.4011247
 </td>
 <td style="text-align:right;">
-0.8537149
+1.7074298
 </td>
 <td style="text-align:right;">
 149.18433
@@ -7180,7 +7287,7 @@ H_free
 1.2426902
 </td>
 <td style="text-align:right;">
-0.0585769
+0.1090172
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7203,7 +7310,7 @@ OmegaAragonite
 -0.2091256
 </td>
 <td style="text-align:right;">
-0.0074776
+0.0149175
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7226,7 +7333,7 @@ pH
 -0.0703502
 </td>
 <td style="text-align:right;">
-0.0027161
+0.0053669
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7249,7 +7356,7 @@ tco2
 29.2778179
 </td>
 <td style="text-align:right;">
-1.0592100
+2.1184200
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7272,7 +7379,7 @@ H_free
 1.6276032
 </td>
 <td style="text-align:right;">
-0.0645883
+0.1214023
 </td>
 <td style="text-align:right;">
 130.97417
@@ -7295,7 +7402,7 @@ OmegaAragonite
 -0.2632351
 </td>
 <td style="text-align:right;">
-0.0083558
+0.0166760
 </td>
 <td style="text-align:right;">
 125.87415
@@ -7318,7 +7425,7 @@ pH
 -0.0900264
 </td>
 <td style="text-align:right;">
-0.0030288
+0.0059964
 </td>
 <td style="text-align:right;">
 127.96891
@@ -7341,7 +7448,7 @@ tco2
 37.0468263
 </td>
 <td style="text-align:right;">
-1.1842328
+2.3684655
 </td>
 <td style="text-align:right;">
 126.53548
@@ -7364,7 +7471,7 @@ H_free
 0.8474434
 </td>
 <td style="text-align:right;">
-0.4408703
+0.8792549
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7387,7 +7494,7 @@ OmegaAragonite
 -0.0224875
 </td>
 <td style="text-align:right;">
-0.0099857
+0.0199010
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7410,7 +7517,7 @@ pH
 -0.0178219
 </td>
 <td style="text-align:right;">
-0.0086831
+0.0173662
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7433,7 +7540,7 @@ tco2
 5.3709097
 </td>
 <td style="text-align:right;">
-2.6233062
+5.2466125
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7456,7 +7563,7 @@ H_free
 0.8122746
 </td>
 <td style="text-align:right;">
-0.4925640
+0.9828644
 </td>
 <td style="text-align:right;">
 95.85001
@@ -7479,7 +7586,7 @@ OmegaAragonite
 -0.0223816
 </td>
 <td style="text-align:right;">
-0.0111545
+0.0222450
 </td>
 <td style="text-align:right;">
 99.52896
@@ -7502,7 +7609,7 @@ pH
 -0.0173281
 </td>
 <td style="text-align:right;">
-0.0097081
+0.0194161
 </td>
 <td style="text-align:right;">
 97.22925
@@ -7525,7 +7632,7 @@ tco2
 5.2165425
 </td>
 <td style="text-align:right;">
-2.9329455
+5.8658911
 </td>
 <td style="text-align:right;">
 97.12586
@@ -7548,7 +7655,7 @@ H_free
 0.4344953
 </td>
 <td style="text-align:right;">
-0.0979682
+0.1657563
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7571,7 +7678,7 @@ OmegaAragonite
 -0.0441343
 </td>
 <td style="text-align:right;">
-0.0065561
+0.0128402
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7594,7 +7701,7 @@ pH
 -0.0190084
 </td>
 <td style="text-align:right;">
-0.0031944
+0.0062380
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7617,7 +7724,7 @@ tco2
 6.7085165
 </td>
 <td style="text-align:right;">
-1.0459929
+2.0919859
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7640,7 +7747,7 @@ H_free
 0.6787279
 </td>
 <td style="text-align:right;">
-0.1081104
+0.1844847
 </td>
 <td style="text-align:right;">
 156.21065
@@ -7663,7 +7770,7 @@ OmegaAragonite
 -0.0655445
 </td>
 <td style="text-align:right;">
-0.0073149
+0.0143482
 </td>
 <td style="text-align:right;">
 148.51172
@@ -7686,7 +7793,7 @@ pH
 -0.0290140
 </td>
 <td style="text-align:right;">
-0.0035611
+0.0069691
 </td>
 <td style="text-align:right;">
 152.63778
@@ -7709,7 +7816,7 @@ tco2
 10.1291463
 </td>
 <td style="text-align:right;">
-1.1694557
+2.3389113
 </td>
 <td style="text-align:right;">
 150.98936
@@ -7732,7 +7839,7 @@ H_free
 0.5139740
 </td>
 <td style="text-align:right;">
-0.0917326
+0.1697440
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7755,7 +7862,7 @@ OmegaAragonite
 -0.0612562
 </td>
 <td style="text-align:right;">
-0.0047324
+0.0093094
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7778,7 +7885,7 @@ pH
 -0.0230548
 </td>
 <td style="text-align:right;">
-0.0025379
+0.0049834
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7801,7 +7908,7 @@ tco2
 8.7626009
 </td>
 <td style="text-align:right;">
-0.8102068
+1.6204137
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7824,7 +7931,7 @@ H_free
 0.8498827
 </td>
 <td style="text-align:right;">
-0.1030058
+0.1900207
 </td>
 <td style="text-align:right;">
 165.35520
@@ -7847,7 +7954,7 @@ OmegaAragonite
 -0.0913113
 </td>
 <td style="text-align:right;">
-0.0052945
+0.0104101
 </td>
 <td style="text-align:right;">
 149.06459
@@ -7870,7 +7977,7 @@ pH
 -0.0361012
 </td>
 <td style="text-align:right;">
-0.0028343
+0.0055701
 </td>
 <td style="text-align:right;">
 156.58896
@@ -7893,7 +8000,7 @@ tco2
 13.3763999
 </td>
 <td style="text-align:right;">
-0.9058388
+1.8116775
 </td>
 <td style="text-align:right;">
 152.65331
@@ -7916,7 +8023,7 @@ H_free
 0.3427270
 </td>
 <td style="text-align:right;">
-0.2347497
+0.4679896
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7939,7 +8046,7 @@ OmegaAragonite
 -0.0248389
 </td>
 <td style="text-align:right;">
-0.0112144
+0.0224109
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7962,7 +8069,7 @@ pH
 -0.0116469
 </td>
 <td style="text-align:right;">
-0.0063977
+0.0127904
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7985,7 +8092,7 @@ tco2
 3.9311936
 </td>
 <td style="text-align:right;">
-2.0551796
+4.1103592
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8008,7 +8115,7 @@ H_free
 0.5737358
 </td>
 <td style="text-align:right;">
-0.2625521
+0.5232754
 </td>
 <td style="text-align:right;">
 167.40314
@@ -8031,7 +8138,7 @@ OmegaAragonite
 -0.0383162
 </td>
 <td style="text-align:right;">
-0.0125390
+0.0250566
 </td>
 <td style="text-align:right;">
 154.25880
@@ -8054,7 +8161,7 @@ pH
 -0.0188135
 </td>
 <td style="text-align:right;">
-0.0071527
+0.0143000
 </td>
 <td style="text-align:right;">
 161.53255
@@ -8077,7 +8184,7 @@ tco2
 6.2679386
 </td>
 <td style="text-align:right;">
-2.2977606
+4.5955212
 </td>
 <td style="text-align:right;">
 159.44111
@@ -8100,7 +8207,7 @@ H_free
 0.0349345
 </td>
 <td style="text-align:right;">
-0.0449729
+0.0899126
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8123,7 +8230,7 @@ OmegaAragonite
 -0.0048729
 </td>
 <td style="text-align:right;">
-0.0021908
+0.0043814
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8146,7 +8253,7 @@ pH
 -0.0020209
 </td>
 <td style="text-align:right;">
-0.0014422
+0.0028838
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8169,7 +8276,7 @@ tco2
 0.8254906
 </td>
 <td style="text-align:right;">
-0.4842240
+0.9684480
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8192,7 +8299,7 @@ H_free
 0.1362549
 </td>
 <td style="text-align:right;">
-0.0509876
+0.1008805
 </td>
 <td style="text-align:right;">
 390.02959
@@ -8215,7 +8322,7 @@ OmegaAragonite
 -0.0123603
 </td>
 <td style="text-align:right;">
-0.0024543
+0.0049010
 </td>
 <td style="text-align:right;">
 253.65231
@@ -8238,7 +8345,7 @@ pH
 -0.0061647
 </td>
 <td style="text-align:right;">
-0.0016152
+0.0032256
 </td>
 <td style="text-align:right;">
 305.05029
@@ -8261,7 +8368,7 @@ tco2
 2.3041135
 </td>
 <td style="text-align:right;">
-0.5413789
+1.0827578
 </td>
 <td style="text-align:right;">
 279.12051
@@ -8284,7 +8391,7 @@ H_free
 0.7655212
 </td>
 <td style="text-align:right;">
-0.0731280
+0.1430659
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8307,7 +8414,7 @@ OmegaAragonite
 -0.0927015
 </td>
 <td style="text-align:right;">
-0.0075517
+0.0150918
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8330,7 +8437,7 @@ pH
 -0.0405521
 </td>
 <td style="text-align:right;">
-0.0035184
+0.0070148
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8353,7 +8460,7 @@ tco2
 16.3115227
 </td>
 <td style="text-align:right;">
-1.3536760
+2.7073520
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8376,7 +8483,7 @@ H_free
 1.0011295
 </td>
 <td style="text-align:right;">
-0.0813987
+0.1597683
 </td>
 <td style="text-align:right;">
 130.77749
@@ -8399,7 +8506,7 @@ OmegaAragonite
 -0.1177862
 </td>
 <td style="text-align:right;">
-0.0084417
+0.0168725
 </td>
 <td style="text-align:right;">
 127.05962
@@ -8422,7 +8529,7 @@ pH
 -0.0521959
 </td>
 <td style="text-align:right;">
-0.0039310
+0.0078414
 </td>
 <td style="text-align:right;">
 128.71320
@@ -8445,7 +8552,7 @@ tco2
 20.8356213
 </td>
 <td style="text-align:right;">
-1.5134558
+3.0269116
 </td>
 <td style="text-align:right;">
 127.73560
@@ -8468,7 +8575,7 @@ H_free
 -0.0353504
 </td>
 <td style="text-align:right;">
-0.2462709
+0.4925111
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8491,7 +8598,7 @@ OmegaAragonite
 0.0009075
 </td>
 <td style="text-align:right;">
-0.0069564
+0.0139125
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8514,7 +8621,7 @@ pH
 0.0008089
 </td>
 <td style="text-align:right;">
-0.0060400
+0.0120799
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8537,7 +8644,7 @@ tco2
 -0.2471526
 </td>
 <td style="text-align:right;">
-1.8685143
+3.7370287
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8560,7 +8667,7 @@ H_free
 -0.2231603
 </td>
 <td style="text-align:right;">
-0.2755350
+0.5507421
 </td>
 <td style="text-align:right;">
 631.28134
@@ -8583,7 +8690,7 @@ OmegaAragonite
 0.0062109
 </td>
 <td style="text-align:right;">
-0.0077796
+0.0155557
 </td>
 <td style="text-align:right;">
 684.36854
@@ -8606,7 +8713,7 @@ pH
 0.0054357
 </td>
 <td style="text-align:right;">
-0.0067530
+0.0135058
 </td>
 <td style="text-align:right;">
 671.94879
@@ -8629,7 +8736,7 @@ tco2
 -1.6792040
 </td>
 <td style="text-align:right;">
-2.0890625
+4.1781251
 </td>
 <td style="text-align:right;">
 679.42001
@@ -8652,7 +8759,7 @@ H_free
 0.0433144
 </td>
 <td style="text-align:right;">
-0.0730808
+0.1460054
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8675,7 +8782,7 @@ OmegaAragonite
 -0.0026308
 </td>
 <td style="text-align:right;">
-0.0043101
+0.0086191
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8698,7 +8805,7 @@ pH
 -0.0016676
 </td>
 <td style="text-align:right;">
-0.0027420
+0.0054835
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8721,7 +8828,7 @@ tco2
 0.5617624
 </td>
 <td style="text-align:right;">
-0.9277341
+1.8554682
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8744,7 +8851,7 @@ H_free
 0.1793469
 </td>
 <td style="text-align:right;">
-0.0832256
+0.1640045
 </td>
 <td style="text-align:right;">
 414.05851
@@ -8767,7 +8874,7 @@ OmegaAragonite
 -0.0109080
 </td>
 <td style="text-align:right;">
-0.0048273
+0.0096407
 </td>
 <td style="text-align:right;">
 414.62365
@@ -8790,7 +8897,7 @@ pH
 -0.0068245
 </td>
 <td style="text-align:right;">
-0.0030705
+0.0061331
 </td>
 <td style="text-align:right;">
 409.23206
@@ -8813,7 +8920,7 @@ tco2
 2.3120704
 </td>
 <td style="text-align:right;">
-1.0372382
+2.0744765
 </td>
 <td style="text-align:right;">
 411.57443
@@ -8836,7 +8943,7 @@ H_free
 0.0166315
 </td>
 <td style="text-align:right;">
-0.0450602
+0.0901203
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8859,7 +8966,7 @@ OmegaAragonite
 -0.0041453
 </td>
 <td style="text-align:right;">
-0.0023586
+0.0047172
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8882,7 +8989,7 @@ pH
 -0.0014337
 </td>
 <td style="text-align:right;">
-0.0015059
+0.0030117
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8905,7 +9012,7 @@ tco2
 0.6456526
 </td>
 <td style="text-align:right;">
-0.5100556
+1.0201111
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8928,7 +9035,7 @@ H_free
 0.1401687
 </td>
 <td style="text-align:right;">
-0.0513210
+0.1012319
 </td>
 <td style="text-align:right;">
 842.79184
@@ -8951,7 +9058,7 @@ OmegaAragonite
 -0.0128336
 </td>
 <td style="text-align:right;">
-0.0026430
+0.0052770
 </td>
 <td style="text-align:right;">
 309.59504
@@ -8974,7 +9081,7 @@ pH
 -0.0062995
 </td>
 <td style="text-align:right;">
-0.0016870
+0.0033688
 </td>
 <td style="text-align:right;">
 439.37501
@@ -8997,7 +9104,7 @@ tco2
 2.3756408
 </td>
 <td style="text-align:right;">
-0.5702595
+1.1405189
 </td>
 <td style="text-align:right;">
 367.94413
@@ -9020,7 +9127,7 @@ H_free
 0.0298295
 </td>
 <td style="text-align:right;">
-0.0813921
+0.1627292
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9043,7 +9150,7 @@ OmegaAragonite
 -0.0026829
 </td>
 <td style="text-align:right;">
-0.0042969
+0.0085934
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9066,7 +9173,7 @@ pH
 -0.0012630
 </td>
 <td style="text-align:right;">
-0.0027191
+0.0054379
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9089,7 +9196,7 @@ tco2
 0.4678752
 </td>
 <td style="text-align:right;">
-0.9257155
+1.8514311
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9112,7 +9219,7 @@ H_free
 0.0974617
 </td>
 <td style="text-align:right;">
-0.0910787
+0.1819766
 </td>
 <td style="text-align:right;">
 326.72902
@@ -9135,7 +9242,7 @@ OmegaAragonite
 -0.0077724
 </td>
 <td style="text-align:right;">
-0.0048047
+0.0096080
 </td>
 <td style="text-align:right;">
 289.69753
@@ -9158,7 +9265,7 @@ pH
 -0.0039927
 </td>
 <td style="text-align:right;">
-0.0030403
+0.0060799
 </td>
 <td style="text-align:right;">
 316.14117
@@ -9181,7 +9288,7 @@ tco2
 1.4574424
 </td>
 <td style="text-align:right;">
-1.0349814
+2.0699629
 </td>
 <td style="text-align:right;">
 311.50236
@@ -9349,8 +9456,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4695531   250.8    8642654   461.6    8642654   461.6
-Vcells 1780197543 13581.9 3238231836 24705.8 3238222946 24705.7</code></pre>
+Ncells    4695622   250.8    8664941   462.8    8664941   462.8
+Vcells 1780199496 13581.9 3238234785 24705.8 3238224289 24705.7</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -10310,6 +10417,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-2.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-2.png" target="_blank">d4bda4d</a>
 </td>
 <td>
@@ -10367,6 +10485,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-3.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-3.png" target="_blank">d4bda4d</a>
 </td>
 <td>
@@ -10415,6 +10544,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-4.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-4.png" target="_blank">5e2311c</a>
@@ -10486,6 +10626,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-5.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-5.png" target="_blank">5e2311c</a>
@@ -10742,7 +10893,7 @@ buffer_addition_depth_layer_trend %&gt;%
  1 A: 0 … Glob…  2014 H_free       0.0352       0.00569    396.            50.4 
  2 A: 0 … Glob…  2004 H_free       0.0327       0.00383    375.            39.9 
  3 A: 0 … Glob…  1994 H_free       0.0306       0.00349    357.            30.9 
- 4 A: 0 … Glob…  1800 H_free       0.0234       0.00425    282.             0   
+ 4 A: 0 … Glob…  1800 H_free       0.0234       0.00426    282.             0   
  5 A: 0 … Glob…  2014 OmegaAr…    -0.00940      0.000163   396.            -3.09
  6 A: 0 … Glob…  2004 OmegaAr…    -0.00947      0.000110   375.            -2.44
  7 A: 0 … Glob…  1994 OmegaAr…    -0.00952      0.000101   357.            -1.88
@@ -10762,8 +10913,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4856029   259.4    8642654   461.6    8642654   461.6
-Vcells 1721830180 13136.6 3238231836 24705.8 3238222946 24705.7</code></pre>
+Ncells    4856109   259.4    8664941   462.8    8664941   462.8
+Vcells 1721831686 13136.6 3238234785 24705.8 3238224289 24705.7</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -11357,8 +11508,8 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4595981   245.5    8642654   461.6    8642654   461.6
-Vcells 1884609612 14378.5 3238231836 24705.8 3238222946 24705.7</code></pre>
+Ncells    4596911   245.6    8664941   462.8    8664941   462.8
+Vcells 1884611800 14378.5 3238234785 24705.8 3238224289 24705.7</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
   acidification_volume_raw %&gt;%
   filter(tref == 1994,
@@ -11442,8 +11593,8 @@ acidification_bottom_raw &lt;-
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4621696   246.9    8642654   461.6    8642654   461.6
-Vcells 2309431144 17619.6 3885958203 29647.6 3238222946 24705.7</code></pre>
+Ncells    4621830   246.9    8664941   462.8    8664941   462.8
+Vcells 2309432900 17619.6 3885961742 29647.6 3238224289 24705.7</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -11534,6 +11685,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-2.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-2.png" target="_blank">d4bda4d</a>
 </td>
 <td>
@@ -11577,6 +11739,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-3.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-3.png" target="_blank">d4bda4d</a>
@@ -11640,6 +11813,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-4.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-4.png" target="_blank">5e2311c</a>
@@ -11953,6 +12137,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -12183,6 +12378,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -12230,8 +12436,8 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4903648   261.9    8642654   461.6    8642654   461.6
-Vcells 1693420834 12919.8 3885958203 29647.6 3885863581 29646.8</code></pre>
+Ncells    4903858   261.9    8664941   462.8    8664941   462.8
+Vcells 1693422390 12919.8 3885961742 29647.6 3885865337 29646.8</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -13872,6 +14078,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/saturation_volume_changes-1.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ee9c7e1feefb087e4e78f1b1c71a9798d4c388ea/docs/figure/synopsis_OIA.Rmd/saturation_volume_changes-1.png" target="_blank">ee9c7e1</a>
 </td>
 <td>
@@ -13940,8 +14157,8 @@ rm(
 )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4675778   249.8    8642654   461.6    8642654   461.6
-Vcells 1693275753 12918.7 3885958203 29647.6 3885863581 29646.8</code></pre>
+Ncells    4675126   249.7    8664941   462.8    8664941   462.8
+Vcells 1693277306 12918.7 3885961742 29647.6 3885865337 29646.8</code></pre>
 </div>
 </div>
 <div id="zonal-sections" class="section level1">
@@ -16261,6 +16478,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-1.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-1.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -16292,8 +16520,9 @@ acidification_profiles_biomes_uncertainty_interval &lt;-
                        mode = &quot;delta_total&quot;)[[1]]
 
 acidification_profiles_biomes_uncertainty &lt;-
-  additive_uncertainty(acidification_profiles_biomes_uncertainty,
-                       mode = &quot;delta_interval&quot;)
+  additive_uncertainty(df = acidification_profiles_biomes_uncertainty,
+                       mode = &quot;delta_interval&quot;,
+                       cant_sigma = 2)
 
 acidification_profiles_biomes_uncertainty_contribution &lt;-
   acidification_profiles_biomes_uncertainty[[2]]
@@ -16341,6 +16570,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-2.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-2.png" target="_blank">5e2311c</a>
@@ -16408,6 +16648,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-3.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-3.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -16471,6 +16722,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-4.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-4.png" target="_blank">5e2311c</a>
@@ -16548,6 +16810,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-5.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-5.png" target="_blank">5e2311c</a>
@@ -16637,6 +16910,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-6.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-6.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -16713,6 +16997,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-7.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-7.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -16775,6 +17070,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-8.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-8.png" target="_blank">5e2311c</a>
@@ -16857,6 +17163,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-9.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-9.png" target="_blank">5e2311c</a>
@@ -17359,7 +17676,8 @@ rm(buffer_profiles_biome_regional,
 
 buffer_profiles_biome &lt;-
   additive_uncertainty(df = buffer_profiles_biome,
-                       mode = &quot;absolute&quot;)[[1]]</code></pre>
+                       mode = &quot;absolute&quot;,
+                       cant_sigma = 2)[[1]]</code></pre>
 <pre class="r"><code># join with 3D acidification fields
 
 acidification_profiles_biome_absolute &lt;-
@@ -17406,7 +17724,8 @@ rm(acidification_profiles_biome_absolute_regional,
 
 acidification_profiles_biome_absolute &lt;-
   additive_uncertainty(df = acidification_profiles_biome_absolute,
-                       mode = &quot;absolute&quot;)[[1]]</code></pre>
+                       mode = &quot;absolute&quot;,
+                       cant_sigma = 2)[[1]]</code></pre>
 </div>
 <div id="incremental-changes-3" class="section level2">
 <h2>Incremental changes</h2>
@@ -17870,6 +18189,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-1.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-1.png" target="_blank">5e2311c</a>
@@ -18810,6 +19140,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/saturation_state_profiles_biome-1.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ee9c7e1feefb087e4e78f1b1c71a9798d4c388ea/docs/figure/synopsis_OIA.Rmd/saturation_state_profiles_biome-1.png" target="_blank">ee9c7e1</a>
 </td>
 <td>
@@ -19079,10 +19420,10 @@ acidification_profiles_biomes_uncertainty %&gt;%
 <pre><code># A tibble: 4 × 6
   biome  depth variable       tref  std_case      sd
   &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;          &lt;fct&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-1 Global     0 OmegaAragonite 2014    -0.652 0.00315
-2 Global     0 tco2           2014    65.9   0.0178 
-3 Global   100 pH             2014    -0.119 0.00286
-4 Global   250 H_free         2014     2.22  0.165  </code></pre>
+1 Global     0 OmegaAragonite 2014    -0.652 0.00317
+2 Global     0 tco2           2014    65.9   0.0355 
+3 Global   100 pH             2014    -0.119 0.00426
+4 Global   250 H_free         2014     2.22  0.203  </code></pre>
 <pre class="r"><code>buffer_profiles_biome &lt;- 
   buffer_profiles_biome %&gt;% 
   mutate(tref = as.factor(tref))
@@ -19341,6 +19682,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/merged_profiles_global-1.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/merged_profiles_global-1.png" target="_blank">5e2311c</a>
 </td>
 <td>
@@ -19517,6 +19869,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/merged_profiles_biome-1.png" target="_blank">16d4cf1</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/5e2311c5b07dceaf19f05fa9cc1897efb2caeb4c/docs/figure/synopsis_OIA.Rmd/merged_profiles_biome-1.png" target="_blank">5e2311c</a>
