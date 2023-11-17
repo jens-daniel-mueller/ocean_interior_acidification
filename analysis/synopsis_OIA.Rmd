@@ -2115,7 +2115,8 @@ CO2_climatology_uncertainty <-
 
 
 additive_uncertainty <- function(df,
-                                 mode = "delta_interval") {
+                                 mode = "delta_interval",
+                                 cant_sigma = 2) {
   
   scaling_pi <- 2
   
@@ -2167,9 +2168,10 @@ additive_uncertainty <- function(df,
   
   # df_CO2_stat %>%
   #   mutate(tref = as.factor(tref)) %>%
-  #   ggplot(aes(sd, lat, col = tref)) +
+  #   ggplot(aes(sd, depth, col = tref)) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = "free_x")
   
   # uncertainty due to regional clustering in eMLR method
@@ -2233,10 +2235,11 @@ additive_uncertainty <- function(df,
   
   # df_regional %>%
   #   mutate(tref = as.factor(tref)) %>%
-  #   ggplot(aes(delta_value, lat, col = tref,
+  #   ggplot(aes(delta_value, depth, col = tref,
   #              group = interaction(MLR_basin_mask, tref))) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = "free_x")
   
   
@@ -2247,6 +2250,14 @@ additive_uncertainty <- function(df,
     summarise(sd = mean(abs(delta_value))) %>%
     ungroup()
   
+  
+  # df_regional_stat %>%
+  #   mutate(tref = as.factor(tref)) %>%
+  #   ggplot(aes(sd, depth, col = tref)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = "free_x")
   
   # uncertainty due to configuration of the eMLR method
   
@@ -2294,10 +2305,11 @@ additive_uncertainty <- function(df,
   
   # df_configuration %>%
   #   mutate(tref = as.factor(tref)) %>%
-  #   ggplot(aes(delta_value, lat, col = tref,
+  #   ggplot(aes(delta_value, depth, col = tref,
   #              group = interaction(MLR_configuration, tref))) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = "free_x")
   
   df_configuration <-
@@ -2319,6 +2331,22 @@ additive_uncertainty <- function(df,
     summarise(sd = sqrt(sum(sd ^ 2, na.rm = TRUE))) %>%
     ungroup()
   
+  
+  # df_factorial_eMLR_stat %>%
+  #   mutate(tref = as.factor(tref)) %>%
+  #   ggplot(aes(sd, depth, col = tref)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = "free_x")
+  
+  # Multiply with target sigma range
+  
+  df_factorial_eMLR_stat <-
+    df_factorial_eMLR_stat %>% 
+    mutate(sd = sd * cant_sigma)
+  
+  
   # Scale eMLR uncertainty for the initial reference year
   
   df_factorial_eMLR_stat <-
@@ -2337,9 +2365,10 @@ additive_uncertainty <- function(df,
  
   # df_factorial_eMLR_stat %>%
   #   mutate(tref = as.factor(tref)) %>%
-  #   ggplot(aes(sd, lat, col = tref)) +
+  #   ggplot(aes(sd, depth, col = tref)) +
   #   geom_path() +
-  #   facet_grid(depth ~ variable,
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
   #               scales = "free_x")
   
   
@@ -2353,6 +2382,13 @@ additive_uncertainty <- function(df,
         mutate(contribution = "CO2 system climatology")
     )
   
+  # df_factorial %>%
+  #   mutate(tref = as.factor(tref)) %>%
+  #   ggplot(aes(sd, depth, col = tref, linetype = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #              scales = "free_x")
   
    # integrate uncertainties over time
   
@@ -2386,6 +2422,14 @@ additive_uncertainty <- function(df,
       bind_rows(df_factorial_1800_1994,
                 df_factorial_2004_2014)
   }
+  
+  # df_factorial %>%
+  #   mutate(tref = as.factor(tref)) %>%
+  #   ggplot(aes(sd, depth, col = tref, linetype = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = "free_x")
 
   # combine eMLR and CO2 system uncertainty
   
@@ -2400,6 +2444,24 @@ additive_uncertainty <- function(df,
     bind_rows(df_factorial_stat %>%
                 mutate(contribution = "combined"),
               df_factorial)
+  
+  # df_factorial %>%
+  #   mutate(tref = as.factor(tref)) %>%
+  #   ggplot(aes(sd, depth, col = tref, linetype = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(biome ~ variable,
+  #               scales = "free_x")
+  
+  # df_factorial %>%
+  #   filter(biome == "Global") %>% 
+  #   mutate(tref = as.factor(tref)) %>%
+  #   ggplot(aes(sd, depth, col = contribution)) +
+  #   geom_path() +
+  #   scale_y_reverse() +
+  #   facet_grid(tref ~ variable,
+  #               scales = "free_x")
+  
   
   if (mode == "delta_interval") {
     df_std_case <-
@@ -8184,8 +8246,9 @@ acidification_profiles_biomes_uncertainty_interval <-
                        mode = "delta_total")[[1]]
 
 acidification_profiles_biomes_uncertainty <-
-  additive_uncertainty(acidification_profiles_biomes_uncertainty,
-                       mode = "delta_interval")
+  additive_uncertainty(df = acidification_profiles_biomes_uncertainty,
+                       mode = "delta_interval",
+                       cant_sigma = 2)
 
 acidification_profiles_biomes_uncertainty_contribution <-
   acidification_profiles_biomes_uncertainty[[2]]
@@ -8889,7 +8952,8 @@ rm(buffer_profiles_biome_regional,
 
 buffer_profiles_biome <-
   additive_uncertainty(df = buffer_profiles_biome,
-                       mode = "absolute")[[1]]
+                       mode = "absolute",
+                       cant_sigma = 2)[[1]]
 
 ```
 
@@ -8942,7 +9006,8 @@ rm(acidification_profiles_biome_absolute_regional,
 
 acidification_profiles_biome_absolute <-
   additive_uncertainty(df = acidification_profiles_biome_absolute,
-                       mode = "absolute")[[1]]
+                       mode = "absolute",
+                       cant_sigma = 2)[[1]]
 
 ```
 
