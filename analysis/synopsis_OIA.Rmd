@@ -3688,14 +3688,14 @@ for (i_var in OIA_variables) {
       dim_row = "depth",
       dim_col = "tref",
       var = "delta_total",
-      col_scale = "Rocket",
+      col_scale = "RdPu",
       legend_title = i_legend_title,
       breaks = i_breaks,
       n_labels = 2,
       legend_position = "top"
     ) &
     theme(strip.text = element_blank())
-
+  
   p_zonal <-
     acidification_depth_layer_total_zonal %>%
     filter(variable == i_var) %>%
@@ -3985,7 +3985,7 @@ for (i_var in OIA_variables) {
       dim_col = "tref",
       var = "delta_total_relative",
       # contour_level = i_contour_level,
-      col_scale = "Rocket",
+      col_scale = "RdPu",
       legend_title = i_legend_title,
       breaks = i_breaks,
       legend_position = "right"
@@ -4034,7 +4034,7 @@ acidification_depth_layer_total_relative %>%
     dim_col = "variable",
     var = "delta_total_relative",
     contour_level = 20,
-    col_scale = "Rocket",
+    col_scale = "RdPu",
     legend_title = "Δ<sub>1800-2014</sub> / <br>Absolute<sub>1800</sub>",
     breaks = c(-Inf,seq(0,40,5),Inf),
     legend_position = "right"
@@ -5236,12 +5236,69 @@ for (i_var in OIA_variables) {
       acidification_volume_binned
   }
   
+  all_labels_breaks <- labels_breaks(i_var)
+  i_breaks        <- unlist(all_labels_breaks[1])
+  i_contour_level <- unlist(all_labels_breaks[2])
+  i_legend_title  <- unlist(all_labels_breaks[3])
+  
+  p_map <-
+    i_acidification_bottom_raw %>%
+    filter(
+      tref == "2014",
+      MLR_basin_mask == MLR_basin_mask_reference,
+      MLR_configuration == MLR_configuration_reference
+    ) %>%
+    select(lon, lat, delta_total) %>%
+    p_map_mdim_robinson(
+      var = "delta_total",
+      col_scale = "RdPu",
+      legend_title = i_legend_title,
+      breaks = i_breaks,
+      n_labels = 2,
+      legend_position = "top"
+    ) &
+    theme(strip.text = element_blank())
+  
+  if (i_var == "tco2") {
+    p_map_tco2 <- p_map
+  }
+  
+  if (i_var == "H_free") {
+    p_map_H_free <- p_map
+  }
+  
+  if (i_var == "OmegaAragonite") {
+    p_map_OmegaAragonite <- p_map
+  }
   
 }
 
 rm(acidification_volume_binned,
    acidification_bottom_binned)
 # rm(acidification_volume_binned_all)
+
+
+
+
+print(wrap_plots(p_map_OmegaAragonite,
+                 p_map_H_free,
+                 p_map_tco2,
+                 ncol = 1))
+
+ggsave(
+  here::here(
+    paste0(
+      "output/main/maps_bottom_acidification.png"
+    )
+  ),
+  width = 4,
+  height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
+
+
 
 
 acidification_volume_binned_all %>% 
@@ -7427,7 +7484,7 @@ rm(acidification_global_section_incremental,
 
 ## Total changes
 
-```{r global_section_total_change}
+```{r global_section_total_change, fig.asp=1.5}
 
 # subset total change sections
 
@@ -7475,7 +7532,7 @@ rm(absolute_global_section_total)
 # print incremental sections
 
 for (i_var in OIA_variables) {
-  # i_var <- OIA_variables[1]
+  # i_var <- OIA_variables[3]
   
   # subset OIA variable
   
@@ -7497,7 +7554,7 @@ for (i_var in OIA_variables) {
       var = "delta_total",
       title_text = "A   1800 - 1994",
       legend_title = i_legend_title,
-      col_scale = "rocket",
+      col_scale = "RdPu",
       breaks = i_breaks,
       n_labels = 2,
       subtitle_text = NULL,
@@ -7510,7 +7567,7 @@ for (i_var in OIA_variables) {
     p_section_global(
       var = "delta_total",
       legend_title = i_legend_title,
-      col_scale = "rocket",
+      col_scale = "RdPu",
       title_text = "B   1800 - 2004",
       subtitle_text = NULL,
       plot_slabs = "n",
@@ -7524,7 +7581,7 @@ for (i_var in OIA_variables) {
     p_section_global(
       var = "delta_total",
       legend_title = i_legend_title,
-      col_scale = "rocket",
+      col_scale = "RdPu",
       title_text = "C   1800 - 2014",
       subtitle_text = NULL,
       plot_slabs = "n",
@@ -7609,8 +7666,8 @@ ggsave(
       "output/main/global_sections_all_variables_total_changes.png"
     )
   ),
-  width = 6,
-  height = 8,
+  width = 5,
+  height = 7,
   dpi = 600,
   bg = "white"
 )
@@ -7623,7 +7680,7 @@ rm(acidification_global_section_total,
 
 ## Absolute state
 
-```{r global_section_absolute_state}
+```{r global_section_absolute_state, fig.asp=1.5}
 
 # subset absolute value sections
 
@@ -7870,8 +7927,8 @@ ggsave(
       "output/main/global_sections_all_variables_absolute.png"
     )
   ),
-  width = 6,
-  height = 8,
+  width = 5,
+  height = 7,
   dpi = 600,
   bg = "white"
 )
