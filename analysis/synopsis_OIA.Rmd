@@ -6003,13 +6003,13 @@ p_sat_absolute <-
   
 acidification_saturation_horizon_levels_change <-
 acidification_saturation_horizon_levels %>%
-  filter(tref %in% c(1800, 2014),
+  filter(#tref %in% c(1800, 2014),
          mineral == "Aragonite") %>%
   select(-c(mineral)) %>%
   arrange(tref) %>%
   group_by(lat, lon, sat_level) %>%
   mutate(n = n()) %>%
-  filter(n == 2) %>%
+  filter(n == 4) %>%
   mutate(delta_depth = depth - first(depth),
          delta_depth = if_else(delta_depth == 0,
                                NA,
@@ -6018,13 +6018,15 @@ acidification_saturation_horizon_levels %>%
   ungroup() %>%
   filter(tref != 1800) %>%
   drop_na() %>%
-  select(lon, lat, period, sat_level, delta_depth) 
+  select(lon, lat, tref, period, sat_level, delta_depth) 
 
 
 
 p_sat_change <- 
   acidification_saturation_horizon_levels_change %>%
-  filter(sat_level %in% c(1,2,4)) %>% 
+  filter(sat_level %in% c(1,2,4),
+         tref == 2014) %>% 
+  select(-tref) %>% 
   mutate(delta_depth = -delta_depth) %>% 
   p_map_mdim_robinson(
     dim_row = "sat_level",
@@ -6057,7 +6059,7 @@ p_sat_absolute <-
   relocate(lon) %>%
   filter(tref == 2014,
          mineral == "Aragonite",
-         !sat_level %in% c(1,2,4),
+         !sat_level %in% c(1.5,3,5),
          depth != 0) %>%
   select(-c(tref, mineral)) %>%
   p_map_mdim_robinson(
@@ -6071,7 +6073,9 @@ p_sat_absolute <-
   
 p_sat_change <- 
   acidification_saturation_horizon_levels_change %>%
-  filter(!sat_level %in% c(1,2,4)) %>% 
+  filter(!sat_level %in% c(1.5,3,5),
+         tref == 2014) %>% 
+  select(-tref) %>% 
   mutate(delta_depth = -delta_depth) %>% 
   p_map_mdim_robinson(
     dim_row = "sat_level",
@@ -6123,6 +6127,26 @@ inner_join(
   kable_styling() %>%
   scroll_box(height = "300px")
 
+
+inner_join(
+  acidification_saturation_horizon_levels %>%
+    relocate(lon) %>%
+    filter(mineral == "Aragonite",
+           sat_level < 5),
+  basinmask
+) %>%
+  group_by(basin, tref, sat_level, mineral) %>%
+  summarise(depth = weighted.mean(depth, area)) %>%
+  ungroup() %>%
+  mutate(sat_level = as.factor(sat_level)) %>%
+  ggplot(aes(tref, depth,
+             col = sat_level, fill = sat_level)) +
+  geom_path() +
+  geom_point(shape = 21, col = "grey20") +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  facet_wrap( ~ basin)
+
 inner_join(acidification_saturation_horizon_levels_change,
            basinmask) %>% 
   group_by(basin, period, sat_level) %>%
@@ -6132,6 +6156,19 @@ inner_join(acidification_saturation_horizon_levels_change,
   kable_styling() %>%
   scroll_box(height = "300px")
 
+inner_join(acidification_saturation_horizon_levels_change,
+           basinmask) %>% 
+  group_by(basin, tref, sat_level) %>%
+  summarise(delta_depth = weighted.mean(delta_depth, area)) %>%
+  ungroup() %>% 
+  mutate(sat_level = as.factor(sat_level)) %>% 
+  ggplot(aes(tref, delta_depth, 
+             col = sat_level, fill = sat_level)) +
+  geom_path() +
+  geom_point(shape = 21, col = "grey20") +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  facet_wrap(~ basin)
 
 
 ```
