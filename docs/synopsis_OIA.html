@@ -384,7 +384,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">17 November, 2023</h4>
+<h4 class="date">19 November, 2023</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-11-17
+<strong>Last updated:</strong> 2023-11-19
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree33cb6ae749848a9506f8c3b962050659ea99c4f4targetblank33cb6aea">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef6e5effa5a3b1755bbb8a4d78aad76580d073dc8targetblankf6e5effa">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/33cb6ae749848a9506f8c3b962050659ea99c4f4" target="_blank">33cb6ae</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f6e5effa5a3b1755bbb8a4d78aad76580d073dc8" target="_blank">f6e5eff</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree33cb6ae749848a9506f8c3b962050659ea99c4f4targetblank33cb6aea"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef6e5effa5a3b1755bbb8a4d78aad76580d073dc8targetblankf6e5effa"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/33cb6ae749848a9506f8c3b962050659ea99c4f4" target="_blank">33cb6ae</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f6e5effa5a3b1755bbb8a4d78aad76580d073dc8" target="_blank">f6e5eff</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -629,6 +629,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f6e5effa5a3b1755bbb8a4d78aad76580d073dc8/analysis/synopsis_OIA.Rmd" target="_blank">f6e5eff</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-19
+</td>
+<td>
+trends in saturation horizon plotted
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/synopsis_OIA.html" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2168,8 +2202,8 @@ buffer_variables_addition &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used   (Mb)
-Ncells    3138886  167.7    5596078   298.9    4905561  262.0
-Vcells 1222410437 9326.3 1529118162 11666.3 1222468402 9326.7</code></pre>
+Ncells    3138902  167.7    5596101   298.9    4905577  262.0
+Vcells 1222410860 9326.3 1529118771 11666.3 1222468825 9326.7</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   bind_rows(acidification_trend_uncertainty,
             acidification_trend %&gt;%
@@ -2180,8 +2214,8 @@ acidification_trend &lt;- acidification_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140458   167.8    5596078   298.9    4905561   262.0
-Vcells 1316797066 10046.4 2697748398 20582.2 2427606215 18521.2</code></pre>
+Ncells    3140474   167.8    5596101   298.9    4905577   262.0
+Vcells 1316797489 10046.4 2697748906 20582.2 2427606638 18521.2</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2191,8 +2225,8 @@ Vcells 1316797066 10046.4 2697748398 20582.2 2427606215 18521.2</code></pre>
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140492   167.8    5596078   298.9    4905561   262.0
-Vcells 1316797146 10046.4 2697748398 20582.2 2427606215 18521.2</code></pre>
+Ncells    3140508   167.8    5596101   298.9    4905577   262.0
+Vcells 1316797569 10046.4 2697748906 20582.2 2427606638 18521.2</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2300,8 +2334,8 @@ acidification_trend_uncertainty_delta_total &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140719  167.8    5596078   298.9    4905561   262.0
-Vcells 1260294832 9615.3 2697748398 20582.2 2427606215 18521.2</code></pre>
+Ncells    3140735  167.8    5596101   298.9    4905577   262.0
+Vcells 1260295251 9615.3 2697748906 20582.2 2427606638 18521.2</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -9501,8 +9535,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4695666   250.8    8664824   462.8    8664824   462.8
-Vcells 1780199975 13581.9 3238235404 24705.8 3238224808 24705.7</code></pre>
+Ncells    4695682   250.8    8664858   462.8    8664858   462.8
+Vcells 1780200398 13581.9 3238235964 24705.8 3238225215 24705.7</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -9834,6 +9868,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_relative-1.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ee9c7e1feefb087e4e78f1b1c71a9798d4c388ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_relative-1.png" target="_blank">ee9c7e1</a>
@@ -10980,8 +11025,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4856153   259.4    8664824   462.8    8664824   462.8
-Vcells 1721832203 13136.6 3238235404 24705.8 3238224808 24705.7</code></pre>
+Ncells    4856169   259.4    8664858   462.8    8664858   462.8
+Vcells 1721832659 13136.6 3238235964 24705.8 3238225215 24705.7</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -11575,8 +11620,8 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4597223   245.6    8664824   462.8    8664824   462.8
-Vcells 1884614437 14378.5 3238235404 24705.8 3238224808 24705.7</code></pre>
+Ncells    4597239   245.6    8664858   462.8    8664858   462.8
+Vcells 1884614897 14378.5 3238235964 24705.8 3238225215 24705.7</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
   acidification_volume_raw %&gt;%
   filter(tref == 1994,
@@ -11660,8 +11705,8 @@ acidification_bottom_raw &lt;-
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4622136   246.9    8664824   462.8    8664824   462.8
-Vcells 2309435527 17619.6 3885962484 29647.6 3238224808 24705.7</code></pre>
+Ncells    4622152   246.9    8664858   462.8    8664858   462.8
+Vcells 2309435987 17619.6 3885963156 29647.6 3238225215 24705.7</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -11785,6 +11830,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-2.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-2.png" target="_blank">16d4cf1</a>
 </td>
 <td>
@@ -11857,6 +11913,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-3.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/16d4cf1bcc42b822c5e6b8abdc9d1133471ab269/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-3.png" target="_blank">16d4cf1</a>
 </td>
 <td>
@@ -11911,6 +11978,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-4.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-4.png" target="_blank">9fbb9cd</a>
@@ -12007,6 +12085,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">9fbb9cd</a>
@@ -12342,6 +12431,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">9fbb9cd</a>
 </td>
 <td>
@@ -12570,6 +12670,43 @@ p_vol &lt;-
 
 p_vol</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/acidification_volumes_bottom-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-acidification_volumes_bottom-7">
+Past versions of acidification_volumes_bottom-7.png
+</button>
+</p>
+<div id="fig-acidification_volumes_bottom-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-7.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     &quot;output/supplement/acidification_bottom_area_binned.png&quot;
@@ -12593,8 +12730,8 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    )
 gc()</code></pre>
 <pre><code>             used  (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4941932   264    8664824   462.8    8664824   462.8
-Vcells 1695934965 12939 3885962484 29647.6 3879990476 29602.0</code></pre>
+Ncells    4941948   264    8664858   462.8    8664858   462.8
+Vcells 1695935425 12939 3885963156 29647.6 3879990936 29602.0</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -12798,13 +12935,13 @@ for(i_sat_level in c(5, 4, 3, 2, 1.5, 1)) {
   
 acidification_saturation_horizon_levels_change &lt;-
 acidification_saturation_horizon_levels %&gt;%
-  filter(tref %in% c(1800, 2014),
+  filter(#tref %in% c(1800, 2014),
          mineral == &quot;Aragonite&quot;) %&gt;%
   select(-c(mineral)) %&gt;%
   arrange(tref) %&gt;%
   group_by(lat, lon, sat_level) %&gt;%
   mutate(n = n()) %&gt;%
-  filter(n == 2) %&gt;%
+  filter(n == 4) %&gt;%
   mutate(delta_depth = depth - first(depth),
          delta_depth = if_else(delta_depth == 0,
                                NA,
@@ -12813,13 +12950,15 @@ acidification_saturation_horizon_levels %&gt;%
   ungroup() %&gt;%
   filter(tref != 1800) %&gt;%
   drop_na() %&gt;%
-  select(lon, lat, period, sat_level, delta_depth) 
+  select(lon, lat, tref, period, sat_level, delta_depth) 
 
 
 
 p_sat_change &lt;- 
   acidification_saturation_horizon_levels_change %&gt;%
-  filter(sat_level %in% c(1,2,4)) %&gt;% 
+  filter(sat_level %in% c(1,2,4),
+         tref == 2014) %&gt;% 
+  select(-tref) %&gt;% 
   mutate(delta_depth = -delta_depth) %&gt;% 
   p_map_mdim_robinson(
     dim_row = &quot;sat_level&quot;,
@@ -12911,7 +13050,7 @@ p_sat_absolute &lt;-
   relocate(lon) %&gt;%
   filter(tref == 2014,
          mineral == &quot;Aragonite&quot;,
-         !sat_level %in% c(1,2,4),
+         !sat_level %in% c(1.5,3,5),
          depth != 0) %&gt;%
   select(-c(tref, mineral)) %&gt;%
   p_map_mdim_robinson(
@@ -12925,7 +13064,9 @@ p_sat_absolute &lt;-
   
 p_sat_change &lt;- 
   acidification_saturation_horizon_levels_change %&gt;%
-  filter(!sat_level %in% c(1,2,4)) %&gt;% 
+  filter(!sat_level %in% c(1.5,3,5),
+         tref == 2014) %&gt;% 
+  select(-tref) %&gt;% 
   mutate(delta_depth = -delta_depth) %&gt;% 
   p_map_mdim_robinson(
     dim_row = &quot;sat_level&quot;,
@@ -13469,6 +13610,25 @@ Aragonite
 </tbody>
 </table>
 </div>
+<pre class="r"><code>inner_join(
+  acidification_saturation_horizon_levels %&gt;%
+    relocate(lon) %&gt;%
+    filter(mineral == &quot;Aragonite&quot;,
+           sat_level &lt; 5),
+  basinmask
+) %&gt;%
+  group_by(basin, tref, sat_level, mineral) %&gt;%
+  summarise(depth = weighted.mean(depth, area)) %&gt;%
+  ungroup() %&gt;%
+  mutate(sat_level = as.factor(sat_level)) %&gt;%
+  ggplot(aes(tref, depth,
+             col = sat_level, fill = sat_level)) +
+  geom_path() +
+  geom_point(shape = 21, col = &quot;grey20&quot;) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  facet_wrap( ~ basin)</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/mean_basin_horizon-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>inner_join(acidification_saturation_horizon_levels_change,
            basinmask) %&gt;% 
   group_by(basin, period, sat_level) %&gt;%
@@ -13497,6 +13657,146 @@ delta_depth
 </tr>
 </thead>
 <tbody>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-47.91190
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-33.43538
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-35.22046
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-41.01503
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-60.44445
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-55.99184
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-42.08636
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-44.63682
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-49.93827
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-67.29835
+</td>
+</tr>
 <tr>
 <td style="text-align:left;">
 N. Pacific
@@ -13565,6 +13865,174 @@ N. Pacific
 </td>
 <td style="text-align:right;">
 -67.54253
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-364.81352
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-217.55118
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-112.61735
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-75.93670
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-60.84410
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+-11.81064
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-403.63235
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-248.37094
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-133.43850
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-95.24284
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-75.64532
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+N. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+-11.81064
 </td>
 </tr>
 <tr>
@@ -13656,6 +14124,146 @@ N. Atlantic
 Indian
 </td>
 <td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-134.88641
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-93.36552
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-111.46151
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-51.65846
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-46.04851
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-170.03603
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-115.82970
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-135.72829
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-60.22491
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-46.74703
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Indian
+</td>
+<td style="text-align:left;">
 1800 - 2014
 </td>
 <td style="text-align:right;">
@@ -13719,6 +14327,146 @@ Indian
 </td>
 <td style="text-align:right;">
 -47.33872
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-82.46952
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-100.32102
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-68.47769
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-49.44949
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-66.34265
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-112.27838
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-129.87486
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-82.78641
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-62.81070
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Pacific
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-81.76727
 </td>
 </tr>
 <tr>
@@ -13796,6 +14544,146 @@ S. Pacific
 S. Atlantic
 </td>
 <td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-409.07284
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-117.27360
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-72.06271
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-52.25443
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 1994
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-60.90831
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+-449.83804
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+-134.11875
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+-87.02722
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+-64.54514
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
+1800 - 2004
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+-67.74800
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+S. Atlantic
+</td>
+<td style="text-align:left;">
 1800 - 2014
 </td>
 <td style="text-align:right;">
@@ -13864,6 +14752,20 @@ S. Atlantic
 </tbody>
 </table>
 </div>
+<pre class="r"><code>inner_join(acidification_saturation_horizon_levels_change,
+           basinmask) %&gt;% 
+  group_by(basin, tref, sat_level) %&gt;%
+  summarise(delta_depth = weighted.mean(delta_depth, area)) %&gt;%
+  ungroup() %&gt;% 
+  mutate(sat_level = as.factor(sat_level)) %&gt;% 
+  ggplot(aes(tref, delta_depth, 
+             col = sat_level, fill = sat_level)) +
+  geom_path() +
+  geom_point(shape = 21, col = &quot;grey20&quot;) +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  facet_wrap(~ basin)</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/mean_basin_horizon-2.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="zonal-mean-horizon" class="section level2">
 <h2>Zonal mean horizon</h2>
@@ -14325,8 +15227,8 @@ rm(
 )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4682034   250.1    8664826   462.8    8664826   462.8
-Vcells 1693370565 12919.4 3885962484 29647.6 3885163241 29641.5</code></pre>
+Ncells    4682409   250.1    8664858   462.8    8664858   462.8
+Vcells 1693373156 12919.5 3885963156 29647.6 3883582941 29629.4</code></pre>
 </div>
 </div>
 <div id="zonal-sections" class="section level1">
@@ -15458,6 +16360,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-1.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_total_change-1.png" target="_blank">d4bda4d</a>
 </td>
 <td>
@@ -15505,6 +16418,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-2.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_total_change-2.png" target="_blank">d4bda4d</a>
@@ -15556,6 +16480,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-3.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_total_change-3.png" target="_blank">d4bda4d</a>
 </td>
 <td>
@@ -15603,6 +16538,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-4.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_total_change-4.png" target="_blank">d4bda4d</a>
@@ -15672,6 +16618,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-5.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_total_change-5.png" target="_blank">d4bda4d</a>
@@ -15873,6 +16830,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-1.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-1.png" target="_blank">d4bda4d</a>
 </td>
 <td>
@@ -15920,6 +16888,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-2.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-2.png" target="_blank">d4bda4d</a>
@@ -15971,6 +16950,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-3.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-3.png" target="_blank">d4bda4d</a>
 </td>
 <td>
@@ -16018,6 +17008,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-4.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-4.png" target="_blank">d4bda4d</a>
@@ -16172,6 +17173,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-5.png" target="_blank">906b19e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d4bda4d17ff4ad00ebffae1a0350b7b3949fb8c6/docs/figure/synopsis_OIA.Rmd/global_section_absolute_state-5.png" target="_blank">d4bda4d</a>
