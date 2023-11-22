@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree2f73f80f8b3c20a7c9dd49497275d1c4d8efff85targetblank2f73f80a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef8ac017dd5386cbed7f782f1ab68be4e1eadabfftargetblankf8ac017a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/2f73f80f8b3c20a7c9dd49497275d1c4d8efff85" target="_blank">2f73f80</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f8ac017dd5386cbed7f782f1ab68be4e1eadabff" target="_blank">f8ac017</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree2f73f80f8b3c20a7c9dd49497275d1c4d8efff85targetblank2f73f80a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreef8ac017dd5386cbed7f782f1ab68be4e1eadabfftargetblankf8ac017a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/2f73f80f8b3c20a7c9dd49497275d1c4d8efff85" target="_blank">2f73f80</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/f8ac017dd5386cbed7f782f1ab68be4e1eadabff" target="_blank">f8ac017</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -629,6 +629,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/f8ac017dd5386cbed7f782f1ab68be4e1eadabff/analysis/synopsis_OIA.Rmd" target="_blank">f8ac017</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+<td>
+trends in saturation horizon cleaned
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/d866c338f441b5b130c2ee7e6061d724634949ec/docs/synopsis_OIA.html" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2236,8 +2270,8 @@ buffer_variables_addition &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used   (Mb)
-Ncells    3139031  167.7    5597665   299.0    5469644  292.2
-Vcells 1222412694 9326.3 1529121412 11666.3 1222470659 9326.8</code></pre>
+Ncells    3138968  167.7    5598381   299.0    5598381  299.0
+Vcells 1222413066 9326.3 1529121948 11666.3 1222471031 9326.8</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   bind_rows(acidification_trend_uncertainty,
             acidification_trend %&gt;%
@@ -2248,8 +2282,8 @@ acidification_trend &lt;- acidification_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140603   167.8    5597665   299.0    5469644   292.2
-Vcells 1316799323 10046.4 2697751107 20582.3 2427608472 18521.2</code></pre>
+Ncells    3140540   167.8    5598381   299.0    5598381   299.0
+Vcells 1316799695 10046.4 2697751553 20582.3 2427608844 18521.2</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2259,8 +2293,8 @@ Vcells 1316799323 10046.4 2697751107 20582.3 2427608472 18521.2</code></pre>
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140637   167.8    5597665   299.0    5469644   292.2
-Vcells 1316799403 10046.4 2697751107 20582.3 2427608472 18521.2</code></pre>
+Ncells    3140574   167.8    5598381   299.0    5598381   299.0
+Vcells 1316799775 10046.4 2697751553 20582.3 2427608844 18521.2</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2368,8 +2402,8 @@ acidification_trend_uncertainty_delta_total &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140864  167.8    5597665   299.0    5469644   292.2
-Vcells 1260297089 9615.4 2697751107 20582.3 2427608472 18521.2</code></pre>
+Ncells    3140801  167.8    5598381   299.0    5598381   299.0
+Vcells 1260297461 9615.4 2697751553 20582.3 2427608844 18521.2</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -9583,8 +9617,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4696002   250.8    8628025   460.8    8628025   460.8
-Vcells 1780203420 13581.9 3238239186 24705.9 3238227681 24705.8</code></pre>
+Ncells    4695731   250.8    8661511   462.6    8661511   462.6
+Vcells 1780203741 13581.9 3238239645 24705.9 3238228058 24705.8</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -10684,6 +10718,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-4.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-4.png" target="_blank">9fbb9cd</a>
 </td>
 <td>
@@ -10775,6 +10820,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-5.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-5.png" target="_blank">9fbb9cd</a>
@@ -11073,8 +11129,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4856889   259.4    8628025   460.8    8628025   460.8
-Vcells 1721835760 13136.6 3238239186 24705.9 3238227681 24705.8</code></pre>
+Ncells    4856128   259.4    8661511   462.6    8661511   462.6
+Vcells 1721835898 13136.6 3238239645 24705.9 3238228058 24705.8</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -11668,8 +11724,8 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4596737   245.5    8628025   460.8    8628025   460.8
-Vcells 1884617473 14378.5 3238239186 24705.9 3238227681 24705.8</code></pre>
+Ncells    4597099   245.6    8661511   462.6    8661511   462.6
+Vcells 1884617841 14378.5 3238239645 24705.9 3238228058 24705.8</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
   acidification_volume_raw %&gt;%
   filter(tref == 1994,
@@ -11753,8 +11809,8 @@ acidification_bottom_raw &lt;-
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4622453   246.9    8628025   460.8    8628025   460.8
-Vcells 2309439004 17619.7 3885967023 29647.6 3238227681 24705.8</code></pre>
+Ncells    4622623   246.9    8661511   462.6    8661511   462.6
+Vcells 2309439880 17619.7 3885967574 29647.6 3238228058 24705.8</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -12135,6 +12191,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">906b19e</a>
 </td>
 <td>
@@ -12479,6 +12546,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">906b19e</a>
 </td>
 <td>
@@ -12742,6 +12820,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-7.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-7.png" target="_blank">906b19e</a>
 </td>
 <td>
@@ -12778,8 +12867,8 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    )
 gc()</code></pre>
 <pre><code>             used  (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4941974   264    8628025   460.8    8628025   460.8
-Vcells 1695938776 12939 3885967023 29647.6 3879993951 29602.1</code></pre>
+Ncells    4941836   264    8661511   462.6    8661511   462.6
+Vcells 1695938817 12939 3885967574 29647.6 3879994827 29602.1</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -13048,6 +13137,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ee9c7e1feefb087e4e78f1b1c71a9798d4c388ea/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-1.png" target="_blank">ee9c7e1</a>
 </td>
 <td>
@@ -13153,6 +13253,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-2.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7b8ad9a12f081fce6a69b597ce2dfb8bfdb84b69/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-2.png" target="_blank">7b8ad9a</a>
@@ -13291,6 +13402,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7b8ad9a12f081fce6a69b597ce2dfb8bfdb84b69/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-1.png" target="_blank">7b8ad9a</a>
 </td>
 <td>
@@ -13333,6 +13455,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-2.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/7b8ad9a12f081fce6a69b597ce2dfb8bfdb84b69/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-2.png" target="_blank">7b8ad9a</a>
@@ -16950,6 +17083,43 @@ Upwelling regions
   scale_fill_viridis_d() +
   facet_wrap(~ biome)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/mean_basin_horizon-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_basin_horizon-3">
+Past versions of mean_basin_horizon-3.png
+</button>
+</p>
+<div id="fig-mean_basin_horizon-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-3.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>acidification_saturation_horizon_levels_biome %&gt;%
   filter(sat_level %in% c(1,3,4)) %&gt;% 
   mutate(sat_level = as.factor(sat_level)) %&gt;%
@@ -16963,6 +17133,43 @@ Upwelling regions
   scale_fill_viridis_d() +
   facet_wrap(~ biome)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/mean_basin_horizon-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_basin_horizon-4">
+Past versions of mean_basin_horizon-4.png
+</button>
+</p>
+<div id="fig-mean_basin_horizon-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-4.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>acidification_saturation_horizon_levels_biome %&gt;%
   filter(sat_level %in% c(1,3,4)) %&gt;% 
   mutate(sat_level = as.factor(sat_level)) %&gt;%
@@ -16976,6 +17183,43 @@ Upwelling regions
   scale_fill_viridis_d() +
   facet_wrap(~ biome)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/mean_basin_horizon-5.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_basin_horizon-5">
+Past versions of mean_basin_horizon-5.png
+</button>
+</p>
+<div id="fig-mean_basin_horizon-5" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-5.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># Changes in saturation horizon by biome
 
 
@@ -19227,6 +19471,43 @@ acidification_saturation_horizon_levels_change_biome %&gt;%
   scale_fill_viridis_d() +
   facet_wrap(. ~ biome)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/mean_basin_horizon-6.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_basin_horizon-6">
+Past versions of mean_basin_horizon-6.png
+</button>
+</p>
+<div id="fig-mean_basin_horizon-6" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-6.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>acidification_saturation_horizon_levels_change_biome %&gt;% 
   filter(tref == 2014) %&gt;% 
   ggplot(aes(
@@ -19242,6 +19523,43 @@ acidification_saturation_horizon_levels_change_biome %&gt;%
   scale_fill_viridis_d() +
   facet_wrap( ~ biome)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/mean_basin_horizon-7.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-mean_basin_horizon-7">
+Past versions of mean_basin_horizon-7.png
+</button>
+</p>
+<div id="fig-mean_basin_horizon-7" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-7.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 <div id="volume-incl-uncertainty" class="section level2">
 <h2>Volume incl uncertainty</h2>
@@ -19370,6 +19688,43 @@ saturation_horizon_uncertainty_all_biome_area_fraction %&gt;%
   scale_shape_manual(values = 21:24) +
   facet_grid(sat_level ~ biome)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/saturation_level_changes-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-saturation_level_changes-1">
+Past versions of saturation_level_changes-1.png
+</button>
+</p>
+<div id="fig-saturation_level_changes-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>saturation_horizon_uncertainty_all_biome_area_fraction &lt;-
   additive_uncertainty(
     df = saturation_horizon_uncertainty_all_biome_area_fraction %&gt;%
@@ -19400,6 +19755,43 @@ saturation_horizon_uncertainty_all_biome_area_fraction %&gt;%
   scale_shape_manual(values = 21:24) +
   facet_grid(sat_level ~ biome)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/saturation_level_changes-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-saturation_level_changes-2">
+Past versions of saturation_level_changes-2.png
+</button>
+</p>
+<div id="fig-saturation_level_changes-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-2.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>saturation_horizon_uncertainty_all_biome &lt;-
   saturation_horizon_uncertainty_all_biome_raw %&gt;%
   group_by(biome, tref, pCO2, sat_level, MLR_basin_mask, MLR_configuration) %&gt;%
@@ -19418,7 +19810,7 @@ saturation_horizon_uncertainty_all_biome %&gt;%
   drop_na() %&gt;% 
   filter(biome %in% c(&quot;Global&quot;,
                       &quot;Southern\nOcean&quot;),
-         sat_level %in% c(1,3,4)) %&gt;% 
+         sat_level %in% c(1,3,3.5,4)) %&gt;% 
   mutate(sat_level = as.factor(sat_level)) %&gt;%
   ggplot(aes(
     pCO2,
@@ -19426,13 +19818,50 @@ saturation_horizon_uncertainty_all_biome %&gt;%
     ymin = std_case - sd,
     ymax = std_case + sd
   )) +
-  geom_ribbon(aes(fill = sat_level), alpha = 0.3) +
-  geom_path(aes(col = sat_level)) +
-  geom_point(aes(fill = sat_level), shape = 21, col = &quot;grey20&quot;) +
+  geom_ribbon(aes(fill = variable), alpha = 0.3) +
+  geom_path(aes(col = variable)) +
+  geom_point(aes(fill = variable), shape = 21, col = &quot;grey20&quot;) +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
-  facet_grid(variable ~ biome)</code></pre>
+  facet_grid(sat_level ~ biome, scales = &quot;free_y&quot;)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/saturation_level_changes-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-saturation_level_changes-3">
+Past versions of saturation_level_changes-3.png
+</button>
+</p>
+<div id="fig-saturation_level_changes-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-3.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>saturation_horizon_uncertainty_all_biome %&gt;%
   drop_na() %&gt;%
   filter(biome %in% c(&quot;Global&quot;,
@@ -22577,6 +23006,80 @@ depth
 </tbody>
 </table>
 </div>
+<pre class="r"><code># saturation horizons per biome
+
+saturation_horizon_uncertainty_all_biome_raw &lt;-
+  inner_join(
+    saturation_horizon_uncertainty_all %&gt;%
+      filter(depth != 0) %&gt;% 
+      select(-OmegaAragonite),
+    biomemask
+  )
+
+saturation_horizon_uncertainty_all_biome_raw &lt;-
+  bind_rows(
+    saturation_horizon_uncertainty_all_biome_raw,
+    inner_join(
+      saturation_horizon_uncertainty_all %&gt;%
+      filter(depth != 0) %&gt;% 
+      select(-OmegaAragonite),
+      biomemask %&gt;%
+        mutate(biome = &quot;Global&quot;)
+    )
+  )
+
+saturation_horizon_uncertainty_all_biome_raw &lt;-
+  right_join(co2_atm_reccap2 %&gt;% rename(tref = year),
+             saturation_horizon_uncertainty_all_biome_raw)
+
+saturation_horizon_uncertainty_all_biome_raw %&gt;%
+  filter(MLR_configuration == MLR_configuration_reference,
+         MLR_basin_mask == MLR_basin_mask_reference,
+         biome == &quot;Global&quot;,
+         sat_level == 3) %&gt;% 
+  select(lon, lat, tref, depth) %&gt;% 
+  p_map_mdim_robinson(
+    dim_row = &quot;tref&quot;,
+    var = &quot;depth&quot;,
+    breaks = seq(0,500,100),
+    col_scale = &quot;mako&quot;
+  )</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/surface_saturated_area_decline-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>saturation_horizon_uncertainty_all_biome_surface &lt;-
+saturation_horizon_uncertainty_all_biome_raw %&gt;%
+  group_by(tref, pCO2, biome, sat_level, MLR_configuration, MLR_basin_mask) %&gt;% 
+  summarise(area = sum(area)) %&gt;% 
+  ungroup() %&gt;% 
+  group_by(biome, sat_level, MLR_configuration, MLR_basin_mask) %&gt;% 
+  arrange(tref) %&gt;% 
+  mutate(area_change = 100 * (area - first(area)) / first(area),
+         n = n()) %&gt;% 
+  ungroup() %&gt;% 
+  filter(n == 4) %&gt;% 
+  select(-n)
+
+
+saturation_horizon_uncertainty_all_biome_surface %&gt;% 
+  ggplot(aes(pCO2, area_change)) +
+  geom_path(aes(group = interaction(MLR_configuration, MLR_basin_mask))) +
+  facet_grid(sat_level ~ biome)</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/surface_saturated_area_decline-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>saturation_horizon_uncertainty_all_biome_surface %&gt;% 
+  filter(biome == &quot;Global&quot;,
+         tref == 2014) %&gt;% 
+  group_by(sat_level) %&gt;% 
+  summarise(area_change = mean(area_change)) %&gt;% 
+  ungroup()</code></pre>
+<pre><code># A tibble: 7 × 2
+  sat_level area_change
+      &lt;dbl&gt;       &lt;dbl&gt;
+1       1          1.39
+2       1.5       -6.03
+3       2        -11.3 
+4       3        -19.6 
+5       3.5      -47.4 
+6       4        -94.7 
+7       5        -53.1 </code></pre>
 <pre class="r"><code>volume_total &lt;-
   ocean_volume_integration_depth %&gt;%
   filter(depth_integration == ocean_depth) %&gt;%
@@ -22642,7 +23145,6 @@ acidification_volume &lt;-
 acidification_volume &lt;-
   acidification_volume %&gt;%
   filter(
-    sat_level %in% c(1, 2, 3, 4),
     estimate %in% c(
       &quot;volume_relative_to_total_volume&quot;,
       &quot;volume_loss_cumulative_relative_to_total_volume&quot;,
@@ -22679,14 +23181,6 @@ co2_atm_level &lt;- acidification_volume %&gt;%
 acidification_volume &lt;-
   acidification_volume %&gt;%
   rename(estimate = variable) %&gt;%
-  filter(
-    sat_level %in% c(1, 1.5, 2, 3, 4),
-    estimate %in% c(
-      &quot;volume_relative_to_total_volume&quot;,
-      &quot;volume_loss_cumulative_relative_to_total_volume&quot;,
-      &quot;volume_loss_cumulative_relative_to_preind_volume&quot;
-    )
-  ) %&gt;%
   mutate(
     sat_level = as.factor(sat_level),
     estimate = case_when(
@@ -22709,6 +23203,7 @@ acidification_volume &lt;-
 
 
 acidification_volume %&gt;%
+  filter(sat_level %in% c(1,2,3,4)) %&gt;% 
   ggplot(aes(
     x = pCO2,
     y = std_case,
@@ -22755,7 +23250,7 @@ acidification_volume %&gt;%
                         end = 0.9) +
   scale_fill_viridis_d(name = expression(atop(Ω[arag], threshold)),
                        end = 0.9) +
-  scale_shape_manual(values = seq(21, 25, 1),
+  scale_shape_manual(values = 21:27,
                      name = expression(atop(Ω[arag], threshold))) +
   theme(
     axis.title.y = element_blank(),
@@ -22769,6 +23264,43 @@ acidification_volume %&gt;%
              scales = &quot;free_y&quot;,
              switch = &quot;y&quot;)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/volume_loss-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-volume_loss-1">
+Past versions of volume_loss-1.png
+</button>
+</p>
+<div id="fig-volume_loss-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/volume_loss-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(&quot;output/main/volume_omega_saturation_global.png&quot;),
   width = 4,
@@ -22778,7 +23310,1720 @@ acidification_volume %&gt;%
 )
 
 
-rm(
+acidification_volume %&gt;%
+  kable() %&gt;%
+  kable_styling() %&gt;%
+  scroll_box(height = &quot;300px&quot;)</code></pre>
+<div
+style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:300px; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+tref
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+pCO2
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+sat_level
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+estimate
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+sd
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+std_case
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+4.8394997
+</td>
+<td style="text-align:right;">
+35.8972793
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+1.2782043
+</td>
+<td style="text-align:right;">
+16.2058362
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.8782530
+</td>
+<td style="text-align:right;">
+9.9159995
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.4091258
+</td>
+<td style="text-align:right;">
+4.2417968
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3196777
+</td>
+<td style="text-align:right;">
+2.6033681
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3478086
+</td>
+<td style="text-align:right;">
+1.2915051
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+282.4533
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0128228
+</td>
+<td style="text-align:right;">
+0.0003288
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+3.4450610
+</td>
+<td style="text-align:right;">
+-10.9200477
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.7764466
+</td>
+<td style="text-align:right;">
+-3.9200000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+5.5877220
+</td>
+<td style="text-align:right;">
+31.9772793
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+2.1486770
+</td>
+<td style="text-align:right;">
+-21.5063439
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.1273209
+</td>
+<td style="text-align:right;">
+-3.4852829
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+1.3334639
+</td>
+<td style="text-align:right;">
+12.7205534
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.8985770
+</td>
+<td style="text-align:right;">
+-24.5443418
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.1441696
+</td>
+<td style="text-align:right;">
+-2.4338168
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.7439962
+</td>
+<td style="text-align:right;">
+7.4821827
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+1.6164163
+</td>
+<td style="text-align:right;">
+-32.4761019
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0667228
+</td>
+<td style="text-align:right;">
+-1.3775703
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3436539
+</td>
+<td style="text-align:right;">
+2.8642266
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+7.2762990
+</td>
+<td style="text-align:right;">
+-44.6568353
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0420804
+</td>
+<td style="text-align:right;">
+-1.1625818
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3595040
+</td>
+<td style="text-align:right;">
+1.4407863
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+11.8357811
+</td>
+<td style="text-align:right;">
+-78.6312090
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.1171636
+</td>
+<td style="text-align:right;">
+-1.0155261
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.2390935
+</td>
+<td style="text-align:right;">
+0.2759790
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+1948.4246571
+</td>
+<td style="text-align:right;">
+-100.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0140812
+</td>
+<td style="text-align:right;">
+-0.0003288
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+356.7467
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0064131
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+3.4249327
+</td>
+<td style="text-align:right;">
+-14.2897239
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.6090878
+</td>
+<td style="text-align:right;">
+-5.1296221
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+5.4342909
+</td>
+<td style="text-align:right;">
+30.7676572
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+2.2714244
+</td>
+<td style="text-align:right;">
+-26.2409700
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0484066
+</td>
+<td style="text-align:right;">
+-4.2525686
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+1.3112451
+</td>
+<td style="text-align:right;">
+11.9532676
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.8347622
+</td>
+<td style="text-align:right;">
+-30.0163970
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.1803053
+</td>
+<td style="text-align:right;">
+-2.9764258
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.7000827
+</td>
+<td style="text-align:right;">
+6.9395737
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+2.2198375
+</td>
+<td style="text-align:right;">
+-39.8500981
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0739781
+</td>
+<td style="text-align:right;">
+-1.6903602
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3373046
+</td>
+<td style="text-align:right;">
+2.5514366
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+8.2026623
+</td>
+<td style="text-align:right;">
+-55.0490126
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0340255
+</td>
+<td style="text-align:right;">
+-1.4331284
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3525557
+</td>
+<td style="text-align:right;">
+1.1702397
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+9.5629567
+</td>
+<td style="text-align:right;">
+-91.0237883
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.1870001
+</td>
+<td style="text-align:right;">
+-1.1755769
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.1722125
+</td>
+<td style="text-align:right;">
+0.1159282
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+1948.4243672
+</td>
+<td style="text-align:right;">
+-100.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0142880
+</td>
+<td style="text-align:right;">
+-0.0003288
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+375.3583
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0064071
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+3.5191294
+</td>
+<td style="text-align:right;">
+-17.6769989
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.5424305
+</td>
+<td style="text-align:right;">
+-6.3455617
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+5.3022500
+</td>
+<td style="text-align:right;">
+29.5517177
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+2.5764357
+</td>
+<td style="text-align:right;">
+-30.8899476
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0803380
+</td>
+<td style="text-align:right;">
+-5.0059743
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+1.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+1.3001182
+</td>
+<td style="text-align:right;">
+11.1998619
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+0.9166352
+</td>
+<td style="text-align:right;">
+-35.0175541
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.2321795
+</td>
+<td style="text-align:right;">
+-3.4723405
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.6535940
+</td>
+<td style="text-align:right;">
+6.4436590
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+3.2568358
+</td>
+<td style="text-align:right;">
+-48.2959538
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0792571
+</td>
+<td style="text-align:right;">
+-2.0486162
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3427225
+</td>
+<td style="text-align:right;">
+2.1931806
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+9.0561101
+</td>
+<td style="text-align:right;">
+-66.7375446
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0350432
+</td>
+<td style="text-align:right;">
+-1.7374239
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+3.5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.3407976
+</td>
+<td style="text-align:right;">
+0.8659441
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+5.7494274
+</td>
+<td style="text-align:right;">
+-97.6912436
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.2602897
+</td>
+<td style="text-align:right;">
+-1.2616874
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0964785
+</td>
+<td style="text-align:right;">
+0.0298177
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% preind. vol.)
+</td>
+<td style="text-align:right;">
+1948.4243571
+</td>
+<td style="text-align:right;">
+-100.0000000
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Loss of sat. volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0143343
+</td>
+<td style="text-align:right;">
+-0.0003288
+</td>
+</tr>
+<tr>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+395.7317
+</td>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+Saturated volume (% total vol.)
+</td>
+<td style="text-align:right;">
+0.0064068
+</td>
+<td style="text-align:right;">
+0.0000000
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>rm(
   acidification_saturation_horizon,
   acidification_saturation_horizon_levels,
   acidification_saturation_horizon_levels_change,
@@ -22791,8 +25036,8 @@ rm(
 )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4682143   250.1   11278471   602.4   11278471   602.4
-Vcells 1910857726 14578.7 3885967023 29647.6 3885582619 29644.7</code></pre>
+Ncells    4682632   250.1   11260934   601.4   11260934   601.4
+Vcells 1910868830 14578.8 3885967574 29647.6 3885660091 29645.3</code></pre>
 </div>
 </div>
 <div id="zonal-sections" class="section level1">
@@ -27023,6 +29268,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-1.png" target="_blank">9fbb9cd</a>
 </td>
 <td>
@@ -27983,6 +30239,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/saturation_state_profiles_biome-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/saturation_state_profiles_biome-1.png" target="_blank">9fbb9cd</a>
 </td>
 <td>
@@ -28536,6 +30803,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/merged_profiles_global-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/merged_profiles_global-1.png" target="_blank">9fbb9cd</a>
 </td>
 <td>
@@ -28734,6 +31012,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/merged_profiles_biome-1.png" target="_blank">d866c33</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-22
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/9fbb9cd4960424c16436db21a5c5a9c91fda8fe8/docs/figure/synopsis_OIA.Rmd/merged_profiles_biome-1.png" target="_blank">9fbb9cd</a>
