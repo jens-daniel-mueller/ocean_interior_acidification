@@ -6520,7 +6520,7 @@ saturation_horizon_uncertainty_all_biome %>%
   drop_na() %>% 
   filter(biome %in% c("Global",
                       "Southern\nOcean"),
-         sat_level %in% c(1,3,4)) %>% 
+         sat_level %in% c(1,3,3.5,4)) %>% 
   mutate(sat_level = as.factor(sat_level)) %>%
   ggplot(aes(
     pCO2,
@@ -6528,12 +6528,12 @@ saturation_horizon_uncertainty_all_biome %>%
     ymin = std_case - sd,
     ymax = std_case + sd
   )) +
-  geom_ribbon(aes(fill = sat_level), alpha = 0.3) +
-  geom_path(aes(col = sat_level)) +
-  geom_point(aes(fill = sat_level), shape = 21, col = "grey20") +
+  geom_ribbon(aes(fill = variable), alpha = 0.3) +
+  geom_path(aes(col = variable)) +
+  geom_point(aes(fill = variable), shape = 21, col = "grey20") +
   scale_color_viridis_d() +
   scale_fill_viridis_d() +
-  facet_grid(variable ~ biome)
+  facet_grid(sat_level ~ biome, scales = "free_y")
 
 saturation_horizon_uncertainty_all_biome %>%
   drop_na() %>%
@@ -6542,6 +6542,76 @@ saturation_horizon_uncertainty_all_biome %>%
   kable() %>%
   kable_styling() %>%
   scroll_box(height = "300px")
+```
+
+
+```{r surface_saturated_area_decline}
+
+# saturation horizons per biome
+
+saturation_horizon_uncertainty_all_biome_raw <-
+  inner_join(
+    saturation_horizon_uncertainty_all %>%
+      filter(depth != 0) %>% 
+      select(-OmegaAragonite),
+    biomemask
+  )
+
+saturation_horizon_uncertainty_all_biome_raw <-
+  bind_rows(
+    saturation_horizon_uncertainty_all_biome_raw,
+    inner_join(
+      saturation_horizon_uncertainty_all %>%
+      filter(depth != 0) %>% 
+      select(-OmegaAragonite),
+      biomemask %>%
+        mutate(biome = "Global")
+    )
+  )
+
+saturation_horizon_uncertainty_all_biome_raw <-
+  right_join(co2_atm_reccap2 %>% rename(tref = year),
+             saturation_horizon_uncertainty_all_biome_raw)
+
+saturation_horizon_uncertainty_all_biome_raw %>%
+  filter(MLR_configuration == MLR_configuration_reference,
+         MLR_basin_mask == MLR_basin_mask_reference,
+         biome == "Global",
+         sat_level == 3) %>% 
+  select(lon, lat, tref, depth) %>% 
+  p_map_mdim_robinson(
+    dim_row = "tref",
+    var = "depth",
+    breaks = seq(0,500,100),
+    col_scale = "mako"
+  )
+
+saturation_horizon_uncertainty_all_biome_surface <-
+saturation_horizon_uncertainty_all_biome_raw %>%
+  group_by(tref, pCO2, biome, sat_level, MLR_configuration, MLR_basin_mask) %>% 
+  summarise(area = sum(area)) %>% 
+  ungroup() %>% 
+  group_by(biome, sat_level, MLR_configuration, MLR_basin_mask) %>% 
+  arrange(tref) %>% 
+  mutate(area_change = 100 * (area - first(area)) / first(area),
+         n = n()) %>% 
+  ungroup() %>% 
+  filter(n == 4) %>% 
+  select(-n)
+
+
+saturation_horizon_uncertainty_all_biome_surface %>% 
+  ggplot(aes(pCO2, area_change)) +
+  geom_path(aes(group = interaction(MLR_configuration, MLR_basin_mask))) +
+  facet_grid(sat_level ~ biome)
+
+saturation_horizon_uncertainty_all_biome_surface %>% 
+  filter(biome == "Global",
+         tref == 2014) %>% 
+  group_by(sat_level) %>% 
+  summarise(area_change = mean(area_change)) %>% 
+  ungroup()
+
 ```
 
 
@@ -6613,7 +6683,6 @@ acidification_volume <-
 acidification_volume <-
   acidification_volume %>%
   filter(
-    sat_level %in% c(1, 2, 3, 4),
     estimate %in% c(
       "volume_relative_to_total_volume",
       "volume_loss_cumulative_relative_to_total_volume",
@@ -6650,14 +6719,6 @@ co2_atm_level <- acidification_volume %>%
 acidification_volume <-
   acidification_volume %>%
   rename(estimate = variable) %>%
-  filter(
-    sat_level %in% c(1, 1.5, 2, 3, 4),
-    estimate %in% c(
-      "volume_relative_to_total_volume",
-      "volume_loss_cumulative_relative_to_total_volume",
-      "volume_loss_cumulative_relative_to_preind_volume"
-    )
-  ) %>%
   mutate(
     sat_level = as.factor(sat_level),
     estimate = case_when(
@@ -6680,6 +6741,7 @@ acidification_volume <-
 
 
 acidification_volume %>%
+  filter(sat_level %in% c(1,2,3,4)) %>% 
   ggplot(aes(
     x = pCO2,
     y = std_case,
@@ -6726,7 +6788,7 @@ acidification_volume %>%
                         end = 0.9) +
   scale_fill_viridis_d(name = expression(atop(Ω[arag], threshold)),
                        end = 0.9) +
-  scale_shape_manual(values = seq(21, 25, 1),
+  scale_shape_manual(values = 21:27,
                      name = expression(atop(Ω[arag], threshold))) +
   theme(
     axis.title.y = element_blank(),
@@ -6748,6 +6810,12 @@ ggsave(
   dpi = 600,
   bg = "white"
 )
+
+
+acidification_volume %>%
+  kable() %>%
+  kable_styling() %>%
+  scroll_box(height = "300px")
 
 
 rm(
