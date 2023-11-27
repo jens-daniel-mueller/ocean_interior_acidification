@@ -5999,6 +5999,26 @@ for(i_sat_level in c(5, 4, 3.5, 3, 2, 1.5, 1)) {
 
 # rm(acidification_saturation_horizon_levels)
 
+
+acidification_saturation_horizon_levels %>%
+  ggplot(aes(depth)) +
+  geom_vline(xintercept = 1000) +
+  geom_histogram() +
+  facet_grid(tref ~ sat_level) +
+  scale_y_log10()
+
+saturation_horizon_outlier <-
+  acidification_saturation_horizon_levels %>%
+  filter(depth >= 1000 &
+           mineral == "Aragonite" &
+           sat_level >= 3.5) %>%
+  distinct(lat, lon, sat_level,
+           mineral)
+
+acidification_saturation_horizon_levels <-
+  anti_join(acidification_saturation_horizon_levels,
+            saturation_horizon_outlier)
+
 p_sat_absolute <- 
   acidification_saturation_horizon_levels %>%
   relocate(lon) %>%
@@ -6016,20 +6036,20 @@ p_sat_absolute <-
     breaks = seq(0, 3000, 200)
   )
   
+
 acidification_saturation_horizon_levels_change <-
-acidification_saturation_horizon_levels %>%
-  filter(#tref %in% c(1800, 2014),
-         mineral == "Aragonite") %>%
+  acidification_saturation_horizon_levels %>%
+  filter(mineral == "Aragonite") %>%
   select(-c(mineral)) %>%
   arrange(tref) %>%
   group_by(lat, lon, sat_level) %>%
-  mutate(n = n()) %>%
-  filter(n == 4) %>%
-  mutate(delta_depth = depth - first(depth),
-         delta_depth = if_else(delta_depth == 0,
-                               NA,
-                               delta_depth),
-         period = paste(first(tref), "-", tref)) %>%
+  mutate(
+    delta_depth = depth - first(depth),
+    delta_depth = if_else(delta_depth == 0,
+                          NA,
+                          delta_depth),
+    period = paste(first(tref), "-", tref)
+  ) %>%
   ungroup() %>%
   filter(tref != 1800) %>%
   drop_na() %>%
@@ -6037,12 +6057,13 @@ acidification_saturation_horizon_levels %>%
 
 
 
-p_sat_change <- 
+p_sat_change <-
   acidification_saturation_horizon_levels_change %>%
   filter(sat_level %in% c(1,3,4),
          tref == 2014) %>% 
   select(-tref) %>% 
   mutate(delta_depth = -delta_depth) %>% 
+  select(-period) %>% 
   p_map_mdim_robinson(
     dim_row = "sat_level",
     # dim_col = "mineral",
@@ -6139,7 +6160,6 @@ acidification_saturation_horizon_levels_biome_raw <-
 acidification_saturation_horizon_levels_biome_raw <-
   bind_rows(
     acidification_saturation_horizon_levels_biome_raw,
-    
     inner_join(
       acidification_saturation_horizon_levels %>%
         relocate(lon) %>%
@@ -6195,6 +6215,8 @@ acidification_saturation_horizon_levels_biome_raw %>%
   facet_grid(~ sat_level)
 
 
+# Horizon medians and quantiles
+
 acidification_saturation_horizon_levels_biome <-
   acidification_saturation_horizon_levels_biome_raw %>%
   group_by(biome, tref, pCO2, sat_level) %>%
@@ -6202,11 +6224,18 @@ acidification_saturation_horizon_levels_biome <-
     depth_01 = quantile(depth, 0.1, na.rm = TRUE),
     depth_025 = quantile(depth, 0.25, na.rm = TRUE),
     depth_sd = wsd(depth, area),
-    depth = wmean(depth, area)
+    depth = wmean(depth, area),
+    grid_cells = n()
   ) %>%
   ungroup()
 
 acidification_saturation_horizon_levels_biome %>%
+  filter(biome %in% c("Global",
+                      "Southern\nOcean"),
+         tref %in% c(1800,2014),
+         sat_level %in% c(1,3,3.5,4,5)) %>% 
+  select(biome, sat_level, tref, depth, depth_sd, depth_01, grid_cells) %>% 
+  arrange(biome, sat_level, tref) %>% 
   kable() %>%
   kable_styling() %>%
   scroll_box(height = "300px")
@@ -6257,14 +6286,16 @@ acidification_saturation_horizon_levels_biome %>%
 
 # Changes in saturation horizon by biome
 
-
 acidification_saturation_horizon_levels_change_biome <-
   inner_join(acidification_saturation_horizon_levels_change,
              biomemask) %>%
-  group_by(biome, period, tref, sat_level) %>%
+  group_by(biome, tref, sat_level) %>%
   summarise(
+    delta_depth_01 = quantile(delta_depth, 0.1, na.rm = TRUE),
+    delta_depth_025 = quantile(delta_depth, 0.25, na.rm = TRUE),
     delta_depth_sd = wsd(delta_depth, area),
-    delta_depth = wmean(delta_depth, area)
+    delta_depth = wmean(delta_depth, area),
+    delta_grid_cells = n()
   ) %>%
   ungroup()
 
@@ -6276,8 +6307,11 @@ acidification_saturation_horizon_levels_change_global <-
   ) %>%
   group_by(biome, period, tref, sat_level) %>%
   summarise(
+    delta_depth_01 = quantile(delta_depth, 0.1, na.rm = TRUE),
+    delta_depth_025 = quantile(delta_depth, 0.25, na.rm = TRUE),
     delta_depth_sd = wsd(delta_depth, area),
-    delta_depth = wmean(delta_depth, area)
+    delta_depth = wmean(delta_depth, area),
+    delta_grid_cells = n()
   ) %>%
   ungroup()
 
@@ -6292,10 +6326,48 @@ acidification_saturation_horizon_levels_change_biome <-
 rm(acidification_saturation_horizon_levels_change_global)
 
 
-acidification_saturation_horizon_levels_change_biome %>%
+full_join(
+  acidification_saturation_horizon_levels_biome,
+  acidification_saturation_horizon_levels_change_biome
+) %>%
+  filter(
+    biome %in% c("Global",
+                 "Southern\nOcean"),
+    tref %in% c(1800, 2014),
+    sat_level %in% c(1, 3, 3.5, 4)
+  ) %>%
+  select(biome, sat_level, tref,
+         depth, depth_sd, depth_01,
+         delta_depth, delta_depth_sd, delta_depth_01,
+         grid_cells, delta_grid_cells) %>%
+  arrange(biome, sat_level, tref) %>% 
   kable() %>%
   kable_styling() %>%
   scroll_box(height = "300px")
+
+
+full_join(
+  acidification_saturation_horizon_levels_biome,
+  acidification_saturation_horizon_levels_change_biome
+) %>%
+  filter(
+    tref %in% c(1800, 2014)
+  ) %>%
+  select(biome, sat_level, tref,
+         depth, depth_sd, depth_01,
+         delta_depth, delta_depth_sd, delta_depth_01,
+         grid_cells, delta_grid_cells) %>%
+  group_by(biome, sat_level) %>% 
+  mutate(delta_depth_horizons = depth - first(depth)) %>% 
+  ungroup() %>% 
+  mutate(sat_level = as.factor(sat_level)) %>% 
+  ggplot(aes(delta_depth_horizons, delta_depth, fill = sat_level)) +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  scale_fill_viridis_d() +
+  geom_point(shape = 21) +
+  coord_equal() +
+  facet_wrap(~ biome)
 
 acidification_saturation_horizon_levels_change_biome <-
   right_join(co2_atm_reccap2 %>% rename(tref = year),
@@ -6502,6 +6574,14 @@ saturation_horizon_uncertainty_all_biome_area_fraction %>%
   facet_grid(sat_level ~ biome)
 
 
+saturation_horizon_uncertainty_all_biome_raw %>%
+  ggplot(aes(depth)) +
+  geom_vline(xintercept = 1000) +
+  geom_histogram() +
+  facet_grid(tref ~ sat_level) +
+  scale_y_log10()
+
+
 saturation_horizon_uncertainty_all_biome <-
   saturation_horizon_uncertainty_all_biome_raw %>%
   group_by(biome, tref, pCO2, sat_level, MLR_basin_mask, MLR_configuration) %>%
@@ -6513,8 +6593,22 @@ saturation_horizon_uncertainty_all_biome <-
   ungroup()
 
 saturation_horizon_uncertainty_all_biome <-
-  additive_uncertainty(df = saturation_horizon_uncertainty_all_biome,
+  additive_uncertainty(df = saturation_horizon_uncertainty_all_biome %>% 
+                         select(-pCO2),
                        mode = "absolute")[[1]]
+
+# join accurate depth estimate with approximated uncertainty
+
+saturation_horizon_uncertainty_all_biome <-
+  full_join(
+    saturation_horizon_uncertainty_all_biome %>%
+      select(-std_case),
+    acidification_saturation_horizon_levels_biome %>%
+      select(-c(depth_sd, grid_cells)) %>%
+      pivot_longer(contains("depth"),
+                   names_to = "variable",
+                   values_to = "std_case")
+  )
 
 saturation_horizon_uncertainty_all_biome %>%
   drop_na() %>% 
@@ -6535,13 +6629,166 @@ saturation_horizon_uncertainty_all_biome %>%
   scale_fill_viridis_d() +
   facet_grid(sat_level ~ biome, scales = "free_y")
 
+saturation_horizon_uncertainty_all_biome_combined <-
 saturation_horizon_uncertainty_all_biome %>%
-  drop_na() %>%
-  filter(biome %in% c("Global",
-                      "Southern\nOcean")) %>%
+  filter(
+    biome %in% c("Global",
+                 "Southern\nOcean"),
+    tref %in% c(1800, 2014),
+    sat_level %in% c(1, 3, 3.5, 4)
+  ) %>%
+  mutate(value = paste(round(std_case,1), "±", round(sd,1))) %>% 
+  select(-c(pCO2, sd, std_case)) %>% 
+  pivot_wider(names_from = variable,
+              values_from = value)
+
+saturation_horizon_uncertainty_all_biome_combined %>% 
+  arrange(biome, sat_level, tref) %>% 
   kable() %>%
   kable_styling() %>%
   scroll_box(height = "300px")
+
+saturation_horizon_uncertainty_all_biome %>%
+  filter(
+    biome %in% c("Global",
+                 "Southern\nOcean"),
+    tref %in% c(1800, 2014),
+    sat_level %in% c(1, 3, 3.5, 4)
+  ) %>%
+  mutate(value = paste(round(std_case,1), "±", round(sd,1))) %>% 
+  select(-c(pCO2, sd, std_case)) %>% 
+  pivot_wider(names_from = variable,
+              values_from = value) %>% 
+  arrange(biome, sat_level, tref) %>% 
+  kable() %>%
+  kable_styling() %>%
+  scroll_box(height = "300px")
+
+
+# determine uncertainty for changes in saturation horizon
+
+
+saturation_horizon_uncertainty_all_biome_change <-
+  saturation_horizon_uncertainty_all_biome_raw %>%
+  group_by(biome, tref, pCO2, sat_level, MLR_basin_mask, MLR_configuration) %>%
+  summarise(
+    depth_01_interval_mean = quantile(depth, 0.1, na.rm = TRUE),
+    depth_025_interval_mean = quantile(depth, 0.25, na.rm = TRUE),
+    depth_interval_mean = wmean(depth, area)
+  ) %>%
+  ungroup()
+
+
+saturation_horizon_uncertainty_all_biome_change <-
+  bind_rows(
+    expand_grid(
+      saturation_horizon_uncertainty_all_biome_change %>%
+        filter(tref == 1800,
+               MLR_configuration == MLR_configuration_reference) %>%
+        select(-c(MLR_basin_mask, MLR_configuration)),
+      saturation_horizon_uncertainty_all_biome_change %>%
+        filter(tref == 1994,
+               !str_detect(MLR_configuration, "DIC")) %>%
+        distinct(MLR_basin_mask, MLR_configuration)
+    ),
+    saturation_horizon_uncertainty_all_biome_change
+  )
+  
+
+
+
+
+saturation_horizon_uncertainty_all_biome_change %>%
+  filter(biome %in% c("Global",
+                      "Southern\nOcean"),
+         sat_level %in% c(1,3,3.5,4)) %>% 
+  mutate(sat_level = as.factor(sat_level)) %>%
+  ggplot(aes(
+    pCO2,
+    depth_interval_mean,
+    group = interaction(MLR_configuration, MLR_basin_mask)
+  )) +
+  geom_path(data = . %>% filter(!str_detect(MLR_configuration, "DIC")),
+            aes(col = "CO2 uncertainty")) +
+  geom_path(data = . %>% filter(str_detect(MLR_configuration, "DIC")),
+            aes(col = "eMLR uncertainty")) +
+  facet_grid(sat_level ~ biome, scales = "free_y")
+
+
+saturation_horizon_uncertainty_all_biome_change  <-
+saturation_horizon_uncertainty_all_biome_change  %>% 
+  arrange(tref) %>% 
+  group_by(biome, sat_level, MLR_basin_mask, MLR_configuration) %>%
+  mutate(
+    depth_01_interval_mean = depth_01_interval_mean - first(depth_01_interval_mean),
+    depth_025_interval_mean = depth_025_interval_mean - first(depth_025_interval_mean),
+    depth_interval_mean =  depth_interval_mean - first(depth_interval_mean)
+  ) %>%
+  ungroup()
+
+saturation_horizon_uncertainty_all_biome_change <-
+  additive_uncertainty(df = saturation_horizon_uncertainty_all_biome_change %>% 
+                         select(-pCO2))[[1]]
+
+# join accurate depth estimate with approximated uncertainty
+
+saturation_horizon_uncertainty_all_biome_change <-
+  right_join(
+    saturation_horizon_uncertainty_all_biome_change %>%
+      select(-std_case),
+    acidification_saturation_horizon_levels_change_biome %>%
+      select(-c(delta_depth_sd, delta_grid_cells, period)) %>%
+      pivot_longer(contains("depth"),
+                   names_to = "variable",
+                   values_to = "std_case") %>% 
+      mutate(variable = str_remove(variable, "delta_"))
+  )
+
+saturation_horizon_uncertainty_all_biome_change %>%
+  drop_na() %>% 
+  filter(biome %in% c("Global",
+                      "Southern\nOcean"),
+         sat_level %in% c(1,3,3.5,4)) %>% 
+  mutate(sat_level = as.factor(sat_level)) %>%
+  ggplot(aes(
+    pCO2,
+    std_case,
+    ymin = std_case - sd,
+    ymax = std_case + sd
+  )) +
+  geom_ribbon(aes(fill = variable), alpha = 0.3) +
+  geom_path(aes(col = variable)) +
+  geom_point(aes(fill = variable), shape = 21, col = "grey20") +
+  scale_color_viridis_d() +
+  scale_fill_viridis_d() +
+  facet_grid(sat_level ~ biome, scales = "free_y")
+
+saturation_horizon_uncertainty_all_biome_change_combined <-
+saturation_horizon_uncertainty_all_biome_change %>%
+  filter(
+    biome %in% c("Global",
+                 "Southern\nOcean"),
+    tref %in% c(1800, 2014),
+    sat_level %in% c(1, 3, 3.5, 4)
+  ) %>%
+  mutate(value = paste(round(std_case,1), "±", round(sd,1))) %>% 
+  select(-c(pCO2, sd, std_case)) %>% 
+  pivot_wider(names_from = variable,
+              values_from = value)
+  
+full_join(
+  saturation_horizon_uncertainty_all_biome_change_combined %>%
+    pivot_longer(contains("depth"),
+                 values_to = "delta_depth"),
+  saturation_horizon_uncertainty_all_biome_combined %>%
+    pivot_longer(contains("depth"),
+                 values_to = "depth")
+) %>% arrange(biome, sat_level, name, tref) %>%
+  kable() %>%
+  kable_styling() %>%
+  scroll_box(height = "300px")
+
+
 ```
 
 
