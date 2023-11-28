@@ -5302,7 +5302,7 @@ print(wrap_plots(p_map_OmegaAragonite,
 ggsave(
   here::here(
     paste0(
-      "output/main/maps_bottom_acidification.png"
+      "output/supplement/maps_bottom_acidification.png"
     )
   ),
   width = 4,
@@ -5804,7 +5804,7 @@ p_vol
 
 ggsave(
   here::here(
-    "output/supplement/acidification_bottom_area_binned.png"
+    "output/main/acidification_bottom_area_binned.png"
   ),
   width = 4,
   height = 9,
@@ -6067,7 +6067,7 @@ p_sat_change <-
   p_map_mdim_robinson(
     dim_row = "sat_level",
     # dim_col = "mineral",
-    col_scale = "RdPu",
+    col_scale = "Rocket",
     var = "delta_depth",
     legend_title = paste0("Shoaling<br>saturation<br>horizon<br>1800-2014<br>(m)"),
     legend_position = "right",
@@ -6095,7 +6095,7 @@ p_sat_absolute <-
   relocate(lon) %>%
   filter(tref == 2014,
          mineral == "Aragonite",
-         sat_level %in% c(1.5,2,3.5,5),
+         sat_level %in% c(1.5,2,3.5),
          depth != 0) %>%
   select(-c(tref, mineral)) %>%
   p_map_mdim_robinson(
@@ -6109,13 +6109,13 @@ p_sat_absolute <-
   
 p_sat_change <- 
   acidification_saturation_horizon_levels_change %>%
-  filter(sat_level %in% c(1.5,2,3.5,5),
+  filter(sat_level %in% c(1.5,2,3.5),
          tref == 2014) %>% 
   select(-tref) %>% 
   mutate(delta_depth = -delta_depth) %>% 
   p_map_mdim_robinson(
     dim_row = "sat_level",
-    col_scale = "RdPu",
+    col_scale = "Rocket",
     var = "delta_depth",
     legend_title = paste0("Shoaling<br>saturation<br>horizon<br>1800-2014<br>(m)"),
     legend_position = "right",
@@ -6132,7 +6132,7 @@ ggsave(
     )
   ),
   width = 8,
-  height = 7,
+  height = 5,
   dpi = 600,
   bg = "white"
 )
@@ -9035,17 +9035,6 @@ acidification_profiles_biomes_uncertainty_contribution %>%
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
 
 
-ggsave(
-  here::here(
-    paste0(
-      "output/supplement/profiles_total_changes_biome_uncertainty_contributions.png"
-    )
-  ),
-  width = 8,
-  height = 8,
-  dpi = 600,
-  bg = "white"
-)
 
 acidification_profiles_biomes_uncertainty_contribution %>% 
   filter(depth <= ocean_depth,
