@@ -4405,6 +4405,74 @@ rm(
 
 ```
 
+### Pteropod shell dissolution
+
+```{r depth_layer_absolute_pteropod}
+
+# subset total change sections
+
+acidification_depth_layer_pteropod <-
+  acidification_depth_layer %>%
+  select(tref, depth, lon, lat, OmegaAragonite)
+
+
+acidification_depth_layer_pteropod <- 
+  acidification_depth_layer_pteropod %>% 
+  mutate(shell_dissolution = -66.29*log(OmegaAragonite)+61.21)
+  
+  
+
+acidification_depth_layer_pteropod <- 
+  acidification_depth_layer_pteropod %>% 
+  select(-OmegaAragonite) %>%
+  relocate(lon, lat)
+
+
+p_ptero_abs <-
+  acidification_depth_layer_pteropod %>%
+  filter(depth %in% c("A: 0 - 100 m", "B: 100 - 500 m"),
+         tref == 2014) %>%
+  select(-tref) %>%
+  p_map_mdim_robinson(
+    var = "shell_dissolution",
+    dim_row = "depth",
+    legend_title = "Pteropod shell<br>dissolution 2014 (%)",
+    breaks = c(-Inf, seq(10, 90, 10), Inf)
+  )
+
+p_ptero_change <-
+acidification_depth_layer_pteropod %>%
+  filter(depth %in% c("A: 0 - 100 m", "B: 100 - 500 m")) %>%  
+  arrange(tref) %>% 
+  group_by(lon, lat, depth) %>% 
+  mutate(shell_dissolution = shell_dissolution - first(shell_dissolution)) %>%   ungroup() %>% 
+  filter(tref == 2014) %>%
+  select(-tref) %>% 
+  p_map_mdim_robinson(
+    var = "shell_dissolution",
+    dim_row = "depth",
+    legend_title = "ΔPteropod shell<br>dissolution 1800 - 2014 (%)",
+    col_scale = "RdPu",
+    breaks = c(-Inf,seq(2,18,2),Inf)
+  ) &
+  theme(strip.text = element_blank())
+
+p_ptero_abs + p_ptero_change
+
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/maps_depth_layer_pteropod_dissolution.png"
+    )
+  ),
+  width = 10,
+  height = 5,
+  dpi = 600,
+  bg = "white"
+)
+
+```
+
 ## Buffer variables
 
 ### Absolute state
@@ -6099,7 +6167,6 @@ for(i_sat_level in c(5, 4, 3.5, 3, 2, 1.5, 1)) {
 
 # rm(acidification_saturation_horizon_levels)
 
-
 acidification_saturation_horizon_levels %>%
   ggplot(aes(depth)) +
   geom_vline(xintercept = 1000) +
@@ -6119,7 +6186,7 @@ acidification_saturation_horizon_levels <-
   anti_join(acidification_saturation_horizon_levels,
             saturation_horizon_outlier)
 
-p_sat_absolute <- 
+p_sat_absolute <-
   acidification_saturation_horizon_levels %>%
   relocate(lon) %>%
   filter(tref == 2014,
@@ -6130,6 +6197,8 @@ p_sat_absolute <-
   p_map_mdim_robinson(
     dim_row = "sat_level",
     var = "depth",
+    # contour_level = 10,
+    # contour_col = "grey20",
     legend_title = paste0("Saturation<br>horizon<br>2014<br>(m)"),
     legend_position = "left",
     col_scale = "mako",
