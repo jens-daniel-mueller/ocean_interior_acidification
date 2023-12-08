@@ -384,7 +384,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">28 November, 2023</h4>
+<h4 class="date">08 December, 2023</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2023-11-28
+<strong>Last updated:</strong> 2023-12-08
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree02cc323c2e98138ef65ca73672e686c7d3a77198targetblank02cc323a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreed91d9828cb8b57dd2b7b3ca1dece4eb7a2d4a745targetblankd91d982a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/02cc323c2e98138ef65ca73672e686c7d3a77198" target="_blank">02cc323</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/d91d9828cb8b57dd2b7b3ca1dece4eb7a2d4a745" target="_blank">d91d982</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree02cc323c2e98138ef65ca73672e686c7d3a77198targetblank02cc323a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreed91d9828cb8b57dd2b7b3ca1dece4eb7a2d4a745targetblankd91d982a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/02cc323c2e98138ef65ca73672e686c7d3a77198" target="_blank">02cc323</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/d91d9828cb8b57dd2b7b3ca1dece4eb7a2d4a745" target="_blank">d91d982</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -580,7 +580,11 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    data/14_001_WCMC001_ColdCorals2017_v5_1/
     Ignored:    output/
+
+Untracked files:
+    Untracked:  code/read_cwc_data.R
 
 Unstaged changes:
     Modified:   code/Workflowr_project_managment.R
@@ -629,6 +633,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d91d9828cb8b57dd2b7b3ca1dece4eb7a2d4a745/analysis/synopsis_OIA.Rmd" target="_blank">d91d982</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-12-08
+</td>
+<td>
+added CWC analysis
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/2b89eb5ceceec65d877e29128d90d177027b047f/docs/synopsis_OIA.html" target="_blank">2b89eb5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2338,8 +2376,8 @@ buffer_variables_addition &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used   (Mb)
-Ncells    3139179  167.7    5593131   298.8    4904786  262.0
-Vcells 1222415208 9326.3 1529125032 11666.3 1222473173 9326.8</code></pre>
+Ncells    3139358  167.7    5598344   299.0    5471576  292.3
+Vcells 1222417030 9326.4 1529127656 11666.4 1222474995 9326.8</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   bind_rows(acidification_trend_uncertainty,
             acidification_trend %&gt;%
@@ -2350,8 +2388,8 @@ acidification_trend &lt;- acidification_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140751   167.8    5593131   298.8    4904786   262.0
-Vcells 1316801837 10046.5 2697754124 20582.3 2427610986 18521.3</code></pre>
+Ncells    3140930   167.8    5598344   299.0    5471576   292.3
+Vcells 1316803659 10046.5 2697756310 20582.3 2427612808 18521.3</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2361,8 +2399,8 @@ Vcells 1316801837 10046.5 2697754124 20582.3 2427610986 18521.3</code></pre>
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3140785   167.8    5593131   298.8    4904786   262.0
-Vcells 1316801917 10046.5 2697754124 20582.3 2427610986 18521.3</code></pre>
+Ncells    3140964   167.8    5598344   299.0    5471576   292.3
+Vcells 1316803739 10046.5 2697756310 20582.3 2427612808 18521.3</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2470,8 +2508,8 @@ acidification_trend_uncertainty_delta_total &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3141012  167.8    5593131   298.8    4904786   262.0
-Vcells 1260299603 9615.4 2697754124 20582.3 2427610986 18521.3</code></pre>
+Ncells    3141191  167.8    5598344   299.0    5471576   292.3
+Vcells 1260301425 9615.4 2697756310 20582.3 2427612808 18521.3</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -3216,6 +3254,139 @@ map +
 # )
 
 rm(TS_product_stations)</code></pre>
+</div>
+<div id="cwc-occurence" class="section level2">
+<h2>CWC occurence</h2>
+<pre class="r"><code>cwc &lt;- st_read(
+  here::here(
+    &quot;data/14_001_WCMC001_ColdCorals2017_v5_1/01_Data/WCMC001_ColdCorals2017_Pt_v5_1.shp&quot;))</code></pre>
+<pre><code>Reading layer `WCMC001_ColdCorals2017_Pt_v5_1&#39; from data source 
+  `/UP_home/jenmueller/Projects/ocean_interior_acidification/data/14_001_WCMC001_ColdCorals2017_v5_1/01_Data/WCMC001_ColdCorals2017_Pt_v5_1.shp&#39; 
+  using driver `ESRI Shapefile&#39;
+Simple feature collection with 15432 features and 17 fields
+Geometry type: MULTIPOINT
+Dimension:     XY
+Bounding box:  xmin: -180 ymin: -78.91667 xmax: 180 ymax: 81.45
+Geodetic CRS:  WGS 84</code></pre>
+<pre class="r"><code>cwc_coordinates &lt;-
+st_coordinates(cwc) %&gt;%
+  as_tibble() %&gt;%
+  group_by(L1) %&gt;%
+  summarise(X = mean(X),
+            Y = mean(Y)) %&gt;% 
+  ungroup() %&gt;% 
+  select(lon = X,
+         lat = Y,
+         -L1) %&gt;%
+  mutate(lon = if_else(lon &lt; 20, lon +360, lon))
+
+cwc_coordinates %&gt;%
+  ggplot(aes(lon, lat)) +
+  geom_point() +
+  coord_quickmap()</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/read_cwc_data-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cwc_depth &lt;-
+  cwc %&gt;%
+  as_tibble() %&gt;%
+  select(DEPTH_MIN, DEPTH_MAX, FAMILY, GENUS, SPECIES)
+
+cwc &lt;- 
+bind_cols(cwc_coordinates,
+          cwc_depth)
+rm(cwc_coordinates,
+          cwc_depth)
+
+cwc &lt;-
+  cwc %&gt;% distinct()
+
+cwc &lt;-
+  m_grid_horizontal(cwc)
+
+
+cwc %&gt;% 
+  count(FAMILY) %&gt;% 
+  arrange(desc(n))</code></pre>
+<pre><code># A tibble: 88 × 2
+   FAMILY               n
+   &lt;chr&gt;            &lt;int&gt;
+ 1 Caryophylliidae   2540
+ 2 Primnoidae        2361
+ 3 Plexauridae       1386
+ 4 Isididae          1022
+ 5 Not Reported       646
+ 6 Ellisellidae       526
+ 7 Chrysogorgiidae    514
+ 8 Oculinidae         513
+ 9 Alcyoniidae        456
+10 Acanthogorgiidae   383
+# ℹ 78 more rows</code></pre>
+<pre class="r"><code>cwc %&gt;% 
+  count(GENUS) %&gt;% 
+  arrange(desc(n))</code></pre>
+<pre><code># A tibble: 376 × 2
+   GENUS             n
+   &lt;chr&gt;         &lt;int&gt;
+ 1 Lophelia       1538
+ 2 Not Reported    623
+ 3 Madrepora       467
+ 4 Thouarella      417
+ 5 Desmophyllum    377
+ 6 Acanella        356
+ 7 Umbellula       351
+ 8 Chrysogorgia    345
+ 9 Acanthogorgia   304
+10 Narella         304
+# ℹ 366 more rows</code></pre>
+<pre class="r"><code>cwc %&gt;% 
+  count(SPECIES) %&gt;% 
+  arrange(desc(n)) %&gt;% 
+  filter(SPECIES %in% c(&quot;Lophelia pertusa&quot;,
+                        &quot;Madrepora oculata&quot;,
+                        &quot;Goniocorella dumosa&quot;,
+                        &quot;Oculina varicosa&quot;,
+                        &quot;Enallopsammia profunda&quot;,
+                        &quot;Solenosmilia variabilis&quot;))</code></pre>
+<pre><code># A tibble: 6 × 2
+  SPECIES                     n
+  &lt;chr&gt;                   &lt;int&gt;
+1 Lophelia pertusa         1517
+2 Madrepora oculata         399
+3 Solenosmilia variabilis   212
+4 Goniocorella dumosa        56
+5 Oculina varicosa           14
+6 Enallopsammia profunda      8</code></pre>
+<pre class="r"><code>cwc &lt;-
+  cwc %&gt;%
+  filter(SPECIES %in% c(&quot;Lophelia pertusa&quot;,
+                        &quot;Madrepora oculata&quot;,
+                        &quot;Goniocorella dumosa&quot;,
+                        &quot;Oculina varicosa&quot;,
+                        &quot;Enallopsammia profunda&quot;,
+                        &quot;Solenosmilia variabilis&quot;))
+  # group_by(lon, lat) %&gt;%
+  # summarise(DEPTH_MIN = min(DEPTH_MIN),
+  #           DEPTH_MAX = max(DEPTH_MAX)) %&gt;%
+  # ungroup()
+
+
+cwc %&gt;%
+  ggplot(aes(lon, lat, fill = DEPTH_MAX)) +
+  geom_tile() +
+  scale_fill_viridis_c() +
+  coord_quickmap()</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/read_cwc_data-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cwc %&gt;%
+  ggplot(aes(DEPTH_MAX)) +
+  geom_histogram()</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/read_cwc_data-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cwc %&gt;%
+  ggplot(aes(DEPTH_MIN)) +
+  geom_histogram()</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/read_cwc_data-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cwc %&gt;%
+  ggplot(aes(DEPTH_MAX - DEPTH_MIN)) +
+  geom_histogram()</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/read_cwc_data-5.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="ocean-volumes" class="section level1">
@@ -9685,8 +9856,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4695851   250.8    8245654   440.4    8245654   440.4
-Vcells 1780205698 13581.9 3238242153 24705.9 3234877431 24680.2</code></pre>
+Ncells    4745654   253.5    7931762   423.7    7931762   423.7
+Vcells 1780335135 13582.9 3237387572 24699.4 3235886403 24687.9</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -11197,8 +11368,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4857490   259.5    8245654   440.4    8245654   440.4
-Vcells 1721838469 13136.6 3238242153 24705.9 3234877431 24680.2</code></pre>
+Ncells    4871911   260.2    7931762   423.7    7931762   423.7
+Vcells 1721882690 13137.0 3237387572 24699.4 3235886403 24687.9</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -11792,17 +11963,18 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4597238   245.6    8245654   440.4    8245654   440.4
-Vcells 1884619750 14378.6 3238242153 24705.9 3234877431 24680.2</code></pre>
+Ncells    4608958   246.2    7931762   423.7    7931762   423.7
+Vcells 1884659418 14378.9 3237387572 24699.4 3235886403 24687.9</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
-  acidification_volume_raw %&gt;%
-  filter(tref == 1994,
+  acidification_trend_uncertainty_delta_total %&gt;%
+  filter(depth &lt;= 600,
+         tref == 1994,
          MLR_basin_mask == MLR_basin_mask_reference,
          MLR_configuration == MLR_configuration_reference) %&gt;% 
   group_by(lon, lat) %&gt;%
   filter(depth == max(depth)) %&gt;%
   ungroup() %&gt;%
-  filter(depth != depth_integration_acidification)
+  filter(depth != 600)
 
 acidification_bottom_area %&gt;% 
   ggplot(aes(lon, lat, fill = depth)) +
@@ -11877,8 +12049,8 @@ acidification_bottom_raw &lt;-
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4623037   246.9    8245654   440.4    8245654   440.4
-Vcells 2309442289 17619.7 3885970583 29647.7 3234877431 24680.2</code></pre>
+Ncells    4631783   247.4    7931762   423.7    7931762   423.7
+Vcells 2309793670 17622.4 3884945086 29639.8 3235886403 24687.9</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -12935,8 +13107,8 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4940800   263.9    8245654   440.4    8245654   440.4
-Vcells 1695938914 12939.0 3885970583 29647.7 3879997236 29602.1</code></pre>
+Ncells    4949420   264.4    7931762   423.7    7931762   423.7
+Vcells 1695985702 12939.4 3884945086 29639.8 3880627634 29606.9</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -13307,6 +13479,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/2b89eb5ceceec65d877e29128d90d177027b047f/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-2.png" target="_blank">2b89eb5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-28
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4ec0a9ff2f21e9f57fc03c92a7aabccfc4e07f72/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-2.png" target="_blank">4ec0a9f</a>
 </td>
 <td>
@@ -13434,6 +13617,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/2b89eb5ceceec65d877e29128d90d177027b047f/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-3.png" target="_blank">2b89eb5</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2023-11-28
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4ec0a9ff2f21e9f57fc03c92a7aabccfc4e07f72/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-3.png" target="_blank">4ec0a9f</a>
@@ -19313,9 +19507,192 @@ Saturated volume (% total vol.)
 )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4690940   250.6   12758980   681.5   15948725   851.8
-Vcells 1910871658 14578.8 3885970583 29647.7 3885696237 29645.6</code></pre>
+Ncells    4695084   250.8   15471727   826.3   15471727   826.3
+Vcells 1910908830 14579.1 3884945086 29639.8 3884884994 29639.4</code></pre>
 </div>
+</div>
+<div id="cwc-saturation-state" class="section level1">
+<h1>CWC saturation state</h1>
+<pre class="r"><code>i_var &lt;- &quot;OmegaAragonite&quot;
+
+all_labels_breaks &lt;- labels_breaks(i_var)
+i_breaks        &lt;- unlist(all_labels_breaks[1])
+i_legend_title  &lt;- unlist(all_labels_breaks[3])
+
+all_labels_breaks &lt;- labels_breaks_absolute(i_var)
+i_breaks_abs        &lt;- unlist(all_labels_breaks[1])
+i_legend_title_abs  &lt;- unlist(all_labels_breaks[3])
+
+
+cwc_saturation_state &lt;-
+  inner_join(cwc %&gt;% mutate(obs_id = row_number()),
+             acidification_trend,
+             relationship = &quot;many-to-many&quot;)
+
+ggplot() +
+  geom_raster(data = acidification_trend %&gt;% distinct(lon, lat),
+              aes(lon, lat),
+              fill = &quot;grey70&quot;) +
+  geom_raster(data = cwc %&gt;% distinct(lon, lat),
+              aes(lon, lat),
+              fill = &quot;red&quot;) +
+  coord_quickmap()</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/cwc_saturation_state-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>cwc_saturation_state &lt;-
+  cwc_saturation_state %&gt;%
+  filter(depth &lt;= DEPTH_MAX)
+
+cwc_saturation_state &lt;-
+  cwc_saturation_state %&gt;%
+  group_by(lon, lat, tref, obs_id) %&gt;%
+  filter(depth == max(depth)) %&gt;%
+  ungroup()
+
+
+cwc_saturation_state %&gt;% 
+  select(lon, lat, tref, depth) %&gt;% 
+  group_by(lon, lat, tref) %&gt;% 
+  summarise(depth = max(depth)) %&gt;% 
+  ungroup() %&gt;% 
+  p_map_mdim_robinson(
+    var = &quot;depth&quot;,
+    dim_row = &quot;tref&quot;,
+    col_scale = &quot;mako&quot;,
+    legend_position = &quot;left&quot;,
+    breaks = seq(0, 3000, 200)
+  )</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/cwc_saturation_state-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p_lat &lt;-
+  cwc_saturation_state %&gt;%
+  filter(tref %in% c(1800, 2014)) %&gt;%
+  mutate(tref = as.factor(tref)) %&gt;%
+  ggplot() +
+  geom_hline(yintercept = 1) +
+  geom_point(aes(lat, OmegaAragonite, col = tref),
+             alpha = 0.5) +
+  labs(x = &quot;Latitude (°N)&quot;,
+       y = i_legend_title_abs) +
+  scale_color_manual(values = four_year_colors[c(1, 4)]) +
+  theme(
+    axis.title.y = element_markdown(),
+    legend.title = element_blank(),
+    legend.position = c(0.1, 0.85)
+  )
+
+p_omega &lt;- 
+cwc_saturation_state %&gt;%
+  filter(tref != 1800) %&gt;%
+  mutate(tref = as.factor(tref)) %&gt;%
+  ggplot() +
+  geom_vline(xintercept = 1) +
+  geom_point(aes(OmegaAragonite, OmegaAragonite_delta_total,
+                 col = tref),
+             alpha = 0.5) +
+  labs(x = i_legend_title_abs,
+       y = i_legend_title) +
+  scale_color_manual(values = three_year_colors,
+                     name = &quot;Change from\n1800 to&quot;) +
+  theme(
+    axis.title.x = element_markdown(),
+    axis.title.y = element_markdown(),
+    legend.position = c(0.8, 0.8)
+  )
+
+p_depth_delta &lt;-
+  cwc_saturation_state %&gt;%
+  filter(tref != 1800) %&gt;%
+  mutate(tref = as.factor(tref)) %&gt;%
+  ggplot() +
+  geom_vline(xintercept = 0) +
+  geom_point(aes(OmegaAragonite_delta_total, depth,
+                 col = tref),
+             alpha = 0.5) +
+  labs(x = i_legend_title,
+       y = &quot;Depth (m)&quot;) +
+  scale_y_reverse() +
+  scale_x_reverse() +
+  scale_color_manual(values = three_year_colors,
+                     name = &quot;Change from\n1800 to&quot;) +
+  theme(axis.title.x = element_markdown(),
+        legend.position = c(0.8, 0.4))
+
+p_depth_abs &lt;-
+  cwc_saturation_state %&gt;%
+  filter(tref != 1800) %&gt;%
+  mutate(tref = as.factor(tref)) %&gt;%
+  ggplot() +
+  geom_vline(xintercept = 1) +
+  geom_point(aes(OmegaAragonite, depth,
+                 col = tref),
+             alpha = 0.5) +
+  labs(x = i_legend_title_abs,
+       y = &quot;Depth (m)&quot;) +
+  scale_y_reverse() +
+  scale_color_manual(values = three_year_colors,
+                     name = &quot;Change from\n1800 to&quot;) +
+  theme(axis.title.x = element_markdown(),
+        legend.position = c(0.8, 0.4))
+
+
+p_lat + p_omega + p_depth_abs + p_depth_delta</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/cwc_saturation_state-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(
+    paste0(
+      &quot;output/supplement/cwc.png&quot;
+    )
+  ),
+  width = 10,
+  height = 8,
+  dpi = 600,
+  bg = &quot;white&quot;
+)
+
+cwc_saturation_state %&gt;% 
+  # select(tref, OmegaAragonite, lon, lat, obs_id) %&gt;% 
+  mutate(saturation = if_else(OmegaAragonite &gt; 1,
+                              &quot;saturated&quot;,
+                              &quot;undersaturated&quot;)) %&gt;% 
+  count(saturation, tref) %&gt;% 
+  group_by(tref) %&gt;% 
+  mutate(fraction = 100 * n / sum(n)) %&gt;% 
+  ungroup() %&gt;% 
+  filter(saturation == &quot;undersaturated&quot;)</code></pre>
+<pre><code># A tibble: 4 × 4
+  saturation      tref     n fraction
+  &lt;chr&gt;          &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt;
+1 undersaturated  1800    32     2.70
+2 undersaturated  1994    53     4.48
+3 undersaturated  2004    58     4.90
+4 undersaturated  2014    61     5.16</code></pre>
+<pre class="r"><code>cwc_saturation_state %&gt;% 
+  select(tref, OmegaAragonite, lon, lat, obs_id) %&gt;% 
+  mutate(saturation = if_else(OmegaAragonite &gt; 2,
+                              &quot;saturated&quot;,
+                              &quot;undersaturated&quot;)) %&gt;% 
+  count(saturation, tref) %&gt;% 
+  group_by(tref) %&gt;% 
+  mutate(fraction = 100 * n / sum(n)) %&gt;% 
+  ungroup() %&gt;% 
+  filter(saturation == &quot;undersaturated&quot;)</code></pre>
+<pre><code># A tibble: 4 × 4
+  saturation      tref     n fraction
+  &lt;chr&gt;          &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt;
+1 undersaturated  1800   323     27.3
+2 undersaturated  1994   502     42.4
+3 undersaturated  2004   567     47.9
+4 undersaturated  2014   660     55.8</code></pre>
+<pre class="r"><code>cwc_saturation_state %&gt;% 
+  group_by(tref) %&gt;% 
+  summarise(OmegaAragonite = mean(OmegaAragonite)) %&gt;% 
+  ungroup()</code></pre>
+<pre><code># A tibble: 4 × 2
+   tref OmegaAragonite
+  &lt;dbl&gt;          &lt;dbl&gt;
+1  1800           2.58
+2  1994           2.20
+3  2004           2.13
+4  2014           2.06</code></pre>
 </div>
 <div id="zonal-sections" class="section level1">
 <h1>Zonal sections</h1>
