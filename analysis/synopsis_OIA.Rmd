@@ -1936,6 +1936,105 @@ rm(TS_product_stations)
 
 ```
 
+## CWC occurence
+
+```{r read_cwc_data}
+
+
+cwc <- st_read(
+  here::here(
+    "data/14_001_WCMC001_ColdCorals2017_v5_1/01_Data/WCMC001_ColdCorals2017_Pt_v5_1.shp"))
+
+
+cwc_coordinates <-
+st_coordinates(cwc) %>%
+  as_tibble() %>%
+  group_by(L1) %>%
+  summarise(X = mean(X),
+            Y = mean(Y)) %>% 
+  ungroup() %>% 
+  select(lon = X,
+         lat = Y,
+         -L1) %>%
+  mutate(lon = if_else(lon < 20, lon +360, lon))
+
+cwc_coordinates %>%
+  ggplot(aes(lon, lat)) +
+  geom_point() +
+  coord_quickmap()
+
+cwc_depth <-
+  cwc %>%
+  as_tibble() %>%
+  select(DEPTH_MIN, DEPTH_MAX, FAMILY, GENUS, SPECIES)
+
+cwc <- 
+bind_cols(cwc_coordinates,
+          cwc_depth)
+rm(cwc_coordinates,
+          cwc_depth)
+
+cwc <-
+  cwc %>% distinct()
+
+cwc <-
+  m_grid_horizontal(cwc)
+
+
+cwc %>% 
+  count(FAMILY) %>% 
+  arrange(desc(n))
+
+cwc %>% 
+  count(GENUS) %>% 
+  arrange(desc(n))
+
+cwc %>% 
+  count(SPECIES) %>% 
+  arrange(desc(n)) %>% 
+  filter(SPECIES %in% c("Lophelia pertusa",
+                        "Madrepora oculata",
+                        "Goniocorella dumosa",
+                        "Oculina varicosa",
+                        "Enallopsammia profunda",
+                        "Solenosmilia variabilis"))
+
+cwc <-
+  cwc %>%
+  filter(SPECIES %in% c("Lophelia pertusa",
+                        "Madrepora oculata",
+                        "Goniocorella dumosa",
+                        "Oculina varicosa",
+                        "Enallopsammia profunda",
+                        "Solenosmilia variabilis"))
+  # group_by(lon, lat) %>%
+  # summarise(DEPTH_MIN = min(DEPTH_MIN),
+  #           DEPTH_MAX = max(DEPTH_MAX)) %>%
+  # ungroup()
+
+
+cwc %>%
+  ggplot(aes(lon, lat, fill = DEPTH_MAX)) +
+  geom_tile() +
+  scale_fill_viridis_c() +
+  coord_quickmap()
+
+cwc %>%
+  ggplot(aes(DEPTH_MAX)) +
+  geom_histogram()
+
+cwc %>%
+  ggplot(aes(DEPTH_MIN)) +
+  geom_histogram()
+
+cwc %>%
+  ggplot(aes(DEPTH_MAX - DEPTH_MIN)) +
+  geom_histogram()
+
+
+```
+
+
 
 # Ocean volumes
 
@@ -5154,14 +5253,15 @@ gc()
 
 
 acidification_bottom_area <-
-  acidification_volume_raw %>%
-  filter(tref == 1994,
+  acidification_trend_uncertainty_delta_total %>%
+  filter(depth <= 600,
+         tref == 1994,
          MLR_basin_mask == MLR_basin_mask_reference,
          MLR_configuration == MLR_configuration_reference) %>% 
   group_by(lon, lat) %>%
   filter(depth == max(depth)) %>%
   ungroup() %>%
-  filter(depth != depth_integration_acidification)
+  filter(depth != 600)
 
 acidification_bottom_area %>% 
   ggplot(aes(lon, lat, fill = depth)) +
@@ -7081,6 +7181,174 @@ gc()
 
 ```
 
+# CWC saturation state
+
+```{r cwc_saturation_state}
+
+i_var <- "OmegaAragonite"
+
+all_labels_breaks <- labels_breaks(i_var)
+i_breaks        <- unlist(all_labels_breaks[1])
+i_legend_title  <- unlist(all_labels_breaks[3])
+
+all_labels_breaks <- labels_breaks_absolute(i_var)
+i_breaks_abs        <- unlist(all_labels_breaks[1])
+i_legend_title_abs  <- unlist(all_labels_breaks[3])
+
+
+cwc_saturation_state <-
+  inner_join(cwc %>% mutate(obs_id = row_number()),
+             acidification_trend,
+             relationship = "many-to-many")
+
+ggplot() +
+  geom_raster(data = acidification_trend %>% distinct(lon, lat),
+              aes(lon, lat),
+              fill = "grey70") +
+  geom_raster(data = cwc %>% distinct(lon, lat),
+              aes(lon, lat),
+              fill = "red") +
+  coord_quickmap()
+
+
+cwc_saturation_state <-
+  cwc_saturation_state %>%
+  filter(depth <= DEPTH_MAX)
+
+cwc_saturation_state <-
+  cwc_saturation_state %>%
+  group_by(lon, lat, tref, obs_id) %>%
+  filter(depth == max(depth)) %>%
+  ungroup()
+
+
+cwc_saturation_state %>% 
+  select(lon, lat, tref, depth) %>% 
+  group_by(lon, lat, tref) %>% 
+  summarise(depth = max(depth)) %>% 
+  ungroup() %>% 
+  p_map_mdim_robinson(
+    var = "depth",
+    dim_row = "tref",
+    col_scale = "mako",
+    legend_position = "left",
+    breaks = seq(0, 3000, 200)
+  )
+
+p_lat <-
+  cwc_saturation_state %>%
+  filter(tref %in% c(1800, 2014)) %>%
+  mutate(tref = as.factor(tref)) %>%
+  ggplot() +
+  geom_hline(yintercept = 1) +
+  geom_point(aes(lat, OmegaAragonite, col = tref),
+             alpha = 0.5) +
+  labs(x = "Latitude (°N)",
+       y = i_legend_title_abs) +
+  scale_color_manual(values = four_year_colors[c(1, 4)]) +
+  theme(
+    axis.title.y = element_markdown(),
+    legend.title = element_blank(),
+    legend.position = c(0.1, 0.85)
+  )
+
+p_omega <- 
+cwc_saturation_state %>%
+  filter(tref != 1800) %>%
+  mutate(tref = as.factor(tref)) %>%
+  ggplot() +
+  geom_vline(xintercept = 1) +
+  geom_point(aes(OmegaAragonite, OmegaAragonite_delta_total,
+                 col = tref),
+             alpha = 0.5) +
+  labs(x = i_legend_title_abs,
+       y = i_legend_title) +
+  scale_color_manual(values = three_year_colors,
+                     name = "Change from\n1800 to") +
+  theme(
+    axis.title.x = element_markdown(),
+    axis.title.y = element_markdown(),
+    legend.position = c(0.8, 0.8)
+  )
+
+p_depth_delta <-
+  cwc_saturation_state %>%
+  filter(tref != 1800) %>%
+  mutate(tref = as.factor(tref)) %>%
+  ggplot() +
+  geom_vline(xintercept = 0) +
+  geom_point(aes(OmegaAragonite_delta_total, depth,
+                 col = tref),
+             alpha = 0.5) +
+  labs(x = i_legend_title,
+       y = "Depth (m)") +
+  scale_y_reverse() +
+  scale_x_reverse() +
+  scale_color_manual(values = three_year_colors,
+                     name = "Change from\n1800 to") +
+  theme(axis.title.x = element_markdown(),
+        legend.position = c(0.8, 0.4))
+
+p_depth_abs <-
+  cwc_saturation_state %>%
+  filter(tref != 1800) %>%
+  mutate(tref = as.factor(tref)) %>%
+  ggplot() +
+  geom_vline(xintercept = 1) +
+  geom_point(aes(OmegaAragonite, depth,
+                 col = tref),
+             alpha = 0.5) +
+  labs(x = i_legend_title_abs,
+       y = "Depth (m)") +
+  scale_y_reverse() +
+  scale_color_manual(values = three_year_colors,
+                     name = "Change from\n1800 to") +
+  theme(axis.title.x = element_markdown(),
+        legend.position = c(0.8, 0.4))
+
+
+p_lat + p_omega + p_depth_abs + p_depth_delta
+
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/cwc.png"
+    )
+  ),
+  width = 10,
+  height = 8,
+  dpi = 600,
+  bg = "white"
+)
+
+cwc_saturation_state %>% 
+  # select(tref, OmegaAragonite, lon, lat, obs_id) %>% 
+  mutate(saturation = if_else(OmegaAragonite > 1,
+                              "saturated",
+                              "undersaturated")) %>% 
+  count(saturation, tref) %>% 
+  group_by(tref) %>% 
+  mutate(fraction = 100 * n / sum(n)) %>% 
+  ungroup() %>% 
+  filter(saturation == "undersaturated")
+
+cwc_saturation_state %>% 
+  select(tref, OmegaAragonite, lon, lat, obs_id) %>% 
+  mutate(saturation = if_else(OmegaAragonite > 2,
+                              "saturated",
+                              "undersaturated")) %>% 
+  count(saturation, tref) %>% 
+  group_by(tref) %>% 
+  mutate(fraction = 100 * n / sum(n)) %>% 
+  ungroup() %>% 
+  filter(saturation == "undersaturated")
+
+cwc_saturation_state %>% 
+  group_by(tref) %>% 
+  summarise(OmegaAragonite = mean(OmegaAragonite)) %>% 
+  ungroup()
+
+```
 
 
 # Zonal sections
