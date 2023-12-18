@@ -1945,18 +1945,17 @@ cwc <- st_read(
   here::here(
     "data/14_001_WCMC001_ColdCorals2017_v5_1/01_Data/WCMC001_ColdCorals2017_Pt_v5_1.shp"))
 
-
 cwc_coordinates <-
-st_coordinates(cwc) %>%
+  st_coordinates(cwc) %>%
   as_tibble() %>%
   group_by(L1) %>%
   summarise(X = mean(X),
-            Y = mean(Y)) %>% 
-  ungroup() %>% 
+            Y = mean(Y)) %>%
+  ungroup() %>%
   select(lon = X,
          lat = Y,
          -L1) %>%
-  mutate(lon = if_else(lon < 20, lon +360, lon))
+  mutate(lon = if_else(lon < 20, lon + 360, lon))
 
 cwc_coordinates %>%
   ggplot(aes(lon, lat)) +
@@ -1968,36 +1967,10 @@ cwc_depth <-
   as_tibble() %>%
   select(DEPTH_MIN, DEPTH_MAX, FAMILY, GENUS, SPECIES)
 
-cwc <- 
-bind_cols(cwc_coordinates,
-          cwc_depth)
-rm(cwc_coordinates,
-          cwc_depth)
-
 cwc <-
-  cwc %>% distinct()
+  bind_cols(cwc_coordinates,
+            cwc_depth)
 
-cwc <-
-  m_grid_horizontal(cwc)
-
-
-cwc %>% 
-  count(FAMILY) %>% 
-  arrange(desc(n))
-
-cwc %>% 
-  count(GENUS) %>% 
-  arrange(desc(n))
-
-cwc %>% 
-  count(SPECIES) %>% 
-  arrange(desc(n)) %>% 
-  filter(SPECIES %in% c("Lophelia pertusa",
-                        "Madrepora oculata",
-                        "Goniocorella dumosa",
-                        "Oculina varicosa",
-                        "Enallopsammia profunda",
-                        "Solenosmilia variabilis"))
 
 cwc <-
   cwc %>%
@@ -2007,10 +1980,43 @@ cwc <-
                         "Oculina varicosa",
                         "Enallopsammia profunda",
                         "Solenosmilia variabilis"))
-  # group_by(lon, lat) %>%
-  # summarise(DEPTH_MIN = min(DEPTH_MIN),
-  #           DEPTH_MAX = max(DEPTH_MAX)) %>%
-  # ungroup()
+
+
+cwc %>% 
+  distinct(lon, lat)
+
+cwc %>% 
+  count(SPECIES, DEPTH_MAX) %>% 
+  arrange(DEPTH_MAX)
+
+
+cwc <-
+  cwc %>%
+  group_by(lon, lat) %>%
+  summarise(DEPTH_MAX = mean(DEPTH_MAX),
+            DEPTH_MIN = mean(DEPTH_MIN)) %>%
+  ungroup()
+
+
+rm(cwc_coordinates,
+   cwc_depth)
+
+
+
+
+cwc <-
+  m_grid_horizontal(cwc)
+
+
+cwc %>% 
+  distinct(lon, lat)
+
+cwc %>% 
+  count(DEPTH_MAX)
+
+cwc <-
+  cwc %>%
+  filter(DEPTH_MAX >= 50)
 
 
 cwc %>%
@@ -2021,15 +2027,19 @@ cwc %>%
 
 cwc %>%
   ggplot(aes(DEPTH_MAX)) +
-  geom_histogram()
+  geom_histogram(breaks = seq(-51,5000,50))
 
 cwc %>%
   ggplot(aes(DEPTH_MIN)) +
-  geom_histogram()
+  geom_histogram(breaks = seq(-51,5000,50))
 
 cwc %>%
   ggplot(aes(DEPTH_MAX - DEPTH_MIN)) +
-  geom_histogram()
+  geom_histogram(breaks = seq(-51,5000,50))
+
+cwc %>% 
+  filter(DEPTH_MAX - DEPTH_MIN > 500) %>% 
+  count()
 
 
 ```
@@ -4420,6 +4430,7 @@ acidification_depth_layer_pteropod <-
   acidification_depth_layer_pteropod %>% 
   mutate(shell_dissolution = -66.29*log(OmegaAragonite)+61.21)
   
+-66.29*log(2)+61.21
   
 
 acidification_depth_layer_pteropod <- 
@@ -4462,7 +4473,7 @@ p_ptero_abs + p_ptero_change
 ggsave(
   here::here(
     paste0(
-      "output/supplement/maps_depth_layer_pteropod_dissolution.png"
+      "output/main/maps_depth_layer_pteropod_dissolution.png"
     )
   ),
   width = 10,
@@ -4470,6 +4481,120 @@ ggsave(
   dpi = 600,
   bg = "white"
 )
+
+acidification_depth_layer_pteropod <-
+  acidification_trend %>%
+  filter(tref %in% c(1800, 2014),
+         depth <= 500) %>%
+  select(lon, lat, depth, tref, OmegaAragonite) %>%
+  group_by(lon, lat) %>%
+  mutate(max_depth = max(depth)) %>%
+  ungroup() %>%
+  filter(max_depth == 500) %>%
+  select(-max_depth)
+    
+
+
+acidification_depth_layer_pteropod <-
+  full_join(
+    expand_grid(
+      acidification_depth_layer_pteropod %>%
+        distinct(lon, lat, tref),
+      depth = seq(0, 500, 5)
+    ),
+    acidification_depth_layer_pteropod
+  )
+
+acidification_depth_layer_pteropod <-
+acidification_depth_layer_pteropod %>%
+  group_by(lon, lat, tref) %>%
+  mutate(OmegaAragonite = spline(depth, OmegaAragonite,
+                                 method = "natural",
+                                 xout = depth)$y) %>%
+  ungroup()
+
+
+acidification_depth_layer_pteropod %>% 
+  ggplot(aes(OmegaAragonite)) +
+  geom_histogram()
+
+
+acidification_depth_layer_pteropod <-
+acidification_depth_layer_pteropod %>%
+  mutate(depth = cut(
+    depth,
+    c(0, 100, 500),
+    c("A: 0 - 100 m", "B: 100 - 500 m"),
+    include.lowest = TRUE
+  ))
+
+acidification_depth_layer_pteropod <-
+  acidification_depth_layer_pteropod %>%
+  # mutate(saturation = if_else(OmegaAragonite >= 1,
+  #                             "saturated",
+  #                             "undersaturated")) %>%
+  group_by(lon, lat, tref, depth) %>%
+  summarise(undersaturated = sum(OmegaAragonite < 1),
+            total = n()) %>% 
+  ungroup()
+
+acidification_depth_layer_pteropod <-
+  acidification_depth_layer_pteropod %>%
+  mutate(x = undersaturated / total) %>%
+  mutate(shell_dissolution = 100 * (exp(3.67 * x - 1.66)) / (1 + exp(3.67 * x - 1.66))) %>% 
+  select(lon, lat, tref, depth, shell_dissolution)
+
+
+# x = seq(0,1,0.1)
+# (exp(3.67 * x - 1.66)) / (1 + exp(3.67 * x - 1.66))
+
+acidification_depth_layer_pteropod %>% 
+  ggplot(aes(shell_dissolution)) +
+  geom_histogram()
+
+
+p_ptero_abs <-
+  acidification_depth_layer_pteropod %>%
+  filter(depth %in% c("A: 0 - 100 m", "B: 100 - 500 m"),
+         tref == 2014) %>%
+  select(-tref) %>%
+  p_map_mdim_robinson(
+    var = "shell_dissolution",
+    dim_row = "depth",
+    legend_title = "Pteropod shell<br>dissolution 2014 (%)",
+    breaks = c(-Inf, seq(10, 90, 10), Inf)
+  )
+
+# p_ptero_change <-
+acidification_depth_layer_pteropod %>%
+  filter(depth %in% c("A: 0 - 100 m", "B: 100 - 500 m")) %>%  
+  arrange(tref) %>% 
+  group_by(lon, lat, depth) %>% 
+  mutate(shell_dissolution = shell_dissolution - first(shell_dissolution)) %>%   ungroup() %>% 
+  filter(tref == 2014) %>%
+  select(-tref) %>% 
+  p_map_mdim_robinson(
+    var = "shell_dissolution",
+    dim_row = "depth",
+    legend_title = "ΔPteropod shell<br>dissolution 1800 - 2014 (%)",
+    col_scale = "RdPu",
+    breaks = c(-Inf,seq(2,18,2),Inf)
+  ) &
+  theme(strip.text = element_blank())
+
+p_ptero_abs + p_ptero_change
+
+# ggsave(
+#   here::here(
+#     paste0(
+#       "output/supplement/maps_depth_layer_pteropod_dissolution_B14.png"
+#     )
+#   ),
+#   width = 10,
+#   height = 5,
+#   dpi = 600,
+#   bg = "white"
+# )
 
 ```
 
@@ -7264,33 +7389,80 @@ all_labels_breaks <- labels_breaks_absolute(i_var)
 i_breaks_abs        <- unlist(all_labels_breaks[1])
 i_legend_title_abs  <- unlist(all_labels_breaks[3])
 
+cwc %>% 
+  distinct(lon, lat, DEPTH_MAX)
 
 cwc_saturation_state <-
-  inner_join(cwc %>% mutate(obs_id = row_number()),
-             acidification_trend,
-             relationship = "many-to-many")
+  inner_join(
+    cwc %>% 
+      distinct(lat, lon, DEPTH_MAX) %>% 
+      mutate(obs_id = row_number()) %>%
+      rename(depth = DEPTH_MAX),
+    acidification_trend %>% distinct(lat, lon, tref),
+    relationship = "many-to-many"
+  )
+  
+cwc_saturation_state <-
+  full_join(
+    cwc_saturation_state,
+    acidification_trend %>%
+      select(tref, lon, lat, depth, OmegaAragonite)
+  )
+
+
+cwc_saturation_state <-
+  cwc_saturation_state %>%
+  arrange(depth) %>%
+  group_by(lon, lat) %>%
+  mutate(cwc_absence = all(is.na(obs_id))) %>%
+  ungroup() %>%
+  filter(cwc_absence != TRUE) %>%
+  select(-cwc_absence)
+
+
+cwc_saturation_state <-
+  cwc_saturation_state %>%
+  arrange(lat, lon, tref, depth)
+
+
+cwc_saturation_state <-
+  cwc_saturation_state %>%
+  group_by(lon, lat, tref) %>%
+  mutate(OmegaAragonite =
+           approxfun(depth,
+                     OmegaAragonite,
+                     rule = 1)(depth)) %>%
+  ungroup() %>% 
+  filter(!is.na(obs_id))
+
 
 ggplot() +
-  geom_raster(data = acidification_trend %>% distinct(lon, lat),
+  geom_raster(data = acidification_trend %>% distinct(lon, lat, depth),
+              aes(lon, lat, fill = depth)) +
+  geom_raster(data = cwc_saturation_state %>% 
+                filter(!is.na(OmegaAragonite)) %>% 
+                distinct(lon, lat),
               aes(lon, lat),
-              fill = "grey70") +
-  geom_raster(data = cwc %>% distinct(lon, lat),
+              fill = "orange") +
+  geom_raster(data = cwc_saturation_state %>% 
+                filter(is.na(OmegaAragonite)) %>% 
+                distinct(lon, lat),
               aes(lon, lat),
               fill = "red") +
+  scale_fill_grayC() +
   coord_quickmap()
 
 
 cwc_saturation_state <-
   cwc_saturation_state %>%
-  filter(depth <= DEPTH_MAX)
-
-cwc_saturation_state <-
-  cwc_saturation_state %>%
-  group_by(lon, lat, tref, obs_id) %>%
-  filter(depth == max(depth)) %>%
-  ungroup()
+  filter(!is.na(OmegaAragonite))
 
 
+
+
+cwc_saturation_state %>% 
+  count(tref)
+  
 cwc_saturation_state %>% 
   select(lon, lat, tref, depth) %>% 
   group_by(lon, lat, tref) %>% 
@@ -7320,6 +7492,42 @@ p_lat <-
     legend.title = element_blank(),
     legend.position = c(0.1, 0.85)
   )
+
+p_dist <-
+cwc_saturation_state %>%
+  mutate(tref = as.factor(tref)) %>%
+  ggplot() +
+  geom_hline(yintercept = 1) +
+  geom_violin(aes(tref, OmegaAragonite, col = tref, fill = tref),
+              alpha = 0.2) +
+  geom_point(
+    aes(tref, OmegaAragonite, col = tref),
+    fill = "transparent",
+    shape = 21,
+    position = position_jitter(width = 0.2)
+  ) +
+  labs(y = i_legend_title_abs) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors) +
+  guides() +
+  theme(
+    axis.title.y = element_markdown(),
+    axis.title.x = element_blank(),
+    axis.text.x = element_blank(),
+    axis.ticks.x = element_blank(),
+    legend.title = element_blank(),
+    legend.background = element_rect(fill = "transparent"),
+    legend.position = c(0.6, 0.93),
+    legend.direction = "horizontal"
+  )
+
+
+cwc_saturation_state <-
+  cwc_saturation_state %>%
+  arrange(tref) %>%
+  group_by(lat, lon, depth, obs_id) %>%
+  mutate(OmegaAragonite_delta_total = OmegaAragonite - first(OmegaAragonite)) %>%
+  ungroup()
 
 p_omega <- 
 cwc_saturation_state %>%
@@ -7376,12 +7584,12 @@ p_depth_abs <-
         legend.position = c(0.8, 0.4))
 
 
-p_lat + p_omega + p_depth_abs + p_depth_delta
+p_dist + p_omega + p_depth_abs + p_depth_delta
 
 ggsave(
   here::here(
     paste0(
-      "output/supplement/cwc.png"
+      "output/main/cwc.png"
     )
   ),
   width = 10,
