@@ -49,7 +49,7 @@ labels_breaks <- function(i_var) {
   }
   
   if (i_var == "pH") {
-    i_breaks <- c(-Inf, seq(-0.12, 0, 0.02), Inf)
+    i_breaks <- c(-Inf, seq(-0.14, 0, 0.02), Inf)
     i_contour_level <- -0.08
     i_legend_title <- "ΔpH<sub>T</sub>"
     i_contour_level_abs <- 8
@@ -7529,23 +7529,23 @@ cwc_saturation_state <-
   mutate(OmegaAragonite_delta_total = OmegaAragonite - first(OmegaAragonite)) %>%
   ungroup()
 
-p_omega <- 
+p_omega <-
 cwc_saturation_state %>%
-  filter(tref != 1800) %>%
+  filter(tref == 2014) %>%
   mutate(tref = as.factor(tref)) %>%
   ggplot() +
   geom_vline(xintercept = 1) +
   geom_point(aes(OmegaAragonite, OmegaAragonite_delta_total,
                  col = tref),
              alpha = 0.5) +
-  labs(x = i_legend_title_abs,
-       y = i_legend_title) +
-  scale_color_manual(values = three_year_colors,
+  labs(x = paste(i_legend_title_abs, "(2014)"),
+       y = paste(i_legend_title,"(1800-2014)")) +
+  scale_color_manual(values = three_year_colors[3],
                      name = "Change from\n1800 to") +
   theme(
     axis.title.x = element_markdown(),
     axis.title.y = element_markdown(),
-    legend.position = c(0.8, 0.8)
+    legend.position = "none"
   )
 
 p_depth_delta <-
@@ -7568,7 +7568,7 @@ p_depth_delta <-
 
 p_depth_abs <-
   cwc_saturation_state %>%
-  filter(tref != 1800) %>%
+  filter(tref %in% c(1800, 2014)) %>%
   mutate(tref = as.factor(tref)) %>%
   ggplot() +
   geom_vline(xintercept = 1) +
@@ -7578,13 +7578,13 @@ p_depth_abs <-
   labs(x = i_legend_title_abs,
        y = "Depth (m)") +
   scale_y_reverse() +
-  scale_color_manual(values = three_year_colors,
-                     name = "Change from\n1800 to") +
+  scale_color_manual(values = four_year_colors[c(1,4)]) +
   theme(axis.title.x = element_markdown(),
+        legend.title = element_blank(),
         legend.position = c(0.8, 0.4))
 
 
-p_dist + p_omega + p_depth_abs + p_depth_delta
+p_lat + p_omega + p_depth_abs + p_depth_delta
 
 ggsave(
   here::here(
@@ -7622,7 +7622,9 @@ cwc_saturation_state %>%
 
 cwc_saturation_state %>% 
   group_by(tref) %>% 
-  summarise(OmegaAragonite = mean(OmegaAragonite)) %>% 
+  summarise(OmegaAragonite_mean = mean(OmegaAragonite),
+            OmegaAragonite_sd = sd(OmegaAragonite),
+            OmegaAragonite_IQR = IQR(OmegaAragonite)) %>% 
   ungroup()
 
 ```
@@ -8756,6 +8758,10 @@ for (i_var in OIA_variables) {
     p_global_section_H_free <- p_global_section_period3
   }
   
+  if(i_var == "pH"){
+    p_global_section_pH <- p_global_section_period3
+  }
+  
   if(i_var == "OmegaAragonite"){
     p_global_section_OmegaAragonite <- p_global_section_period3
   }
@@ -8812,6 +8818,12 @@ print(
         axis.text.x = element_blank(),
         title = element_blank()
       ),
+    p_global_section_pH &
+      theme(
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        title = element_blank()
+      ),
     p_global_section_tco2 &
       theme(axis.text.x.top = element_blank(),
             title = element_blank()),
@@ -8826,7 +8838,7 @@ ggsave(
     )
   ),
   width = 5,
-  height = 7,
+  height = 9,
   dpi = 600,
   bg = "white"
 )
@@ -9020,6 +9032,13 @@ for (i_var in OIA_variables) {
     i_contour_level_abs <- i_contour_level
   }
   
+  if (i_var == "pH") {
+    i_contour_level <- c(#5
+      8
+                         )
+    i_contour_level_abs <- i_contour_level
+  }
+  
   if (i_var == "OmegaAragonite") {
     i_contour_level <- c(1
                          # , 4
@@ -9052,6 +9071,10 @@ for (i_var in OIA_variables) {
     p_global_section_H_free <- p_global_section_period3
   }
   
+  if(i_var == "pH"){
+    p_global_section_pH <- p_global_section_period3
+  }
+  
   if(i_var == "OmegaAragonite"){
     p_global_section_OmegaAragonite <- p_global_section_period3
   }
@@ -9073,6 +9096,12 @@ print(
         axis.text.x = element_blank(),
         title = element_blank()
       ),
+    p_global_section_pH &
+      theme(
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        title = element_blank()
+      ),
     p_global_section_tco2 &
       theme(axis.text.x.top = element_blank(),
             title = element_blank()),
@@ -9087,7 +9116,7 @@ ggsave(
     )
   ),
   width = 5,
-  height = 7,
+  height = 9,
   dpi = 600,
   bg = "white"
 )
@@ -10222,7 +10251,6 @@ acidification_profiles_biome_absolute <-
 
 ```{r profiles_DIC_dCant_temp_change, eval=FALSE}
 
-
 DIC_dCant_temp_profiles <-
   DIC_dCant_temp_profiles %>%
   pivot_longer(contains("_delta_interval"),
@@ -10648,7 +10676,7 @@ rm(dCant_temp_profiles, dCant_temp_profiles_min_max)
 
 acidification_profiles_biomes_uncertainty_interval %>%
   filter(depth <= ocean_depth,
-         variable %in% c("OmegaAragonite", "H_free", "tco2")) %>%
+         variable %in% c("OmegaAragonite", "H_free", "tco2", "pH")) %>%
   group_by(biome, depth, variable) %>% 
   mutate(tref = paste(lag(tref, default = 1800),"-",tref)) %>% 
   ungroup() %>% 
@@ -10672,7 +10700,8 @@ acidification_profiles_biomes_uncertainty_interval %>%
     strip.text.x = element_markdown(),
     legend.key.width = unit(1, "cm"),
     strip.background.x = element_blank(),
-    strip.placement = "outside"
+    strip.placement = "outside",
+    legend.position = "top"
   ) +
   facet_grid(
     biome ~ variable,
@@ -10693,8 +10722,8 @@ ggsave(
       "output/supplement/profiles_incremental_changes_biome.png"
     )
   ),
-  width = 8,
-  height = 10,
+  width = 9,
+  height = 11,
   dpi = 600,
   bg = "white"
 )
@@ -11865,6 +11894,49 @@ p_acid_profiles_global_H_free <-
     expand = c(0, 0)
   )
 
+
+p_acid_profiles_global_pH <-
+  acidification_profiles_biomes_uncertainty %>%
+  filter(biome == "Global",
+         variable %in% c("pH")) %>%
+  mutate(variable = factor(variable, levels = c("OmegaAragonite", "H_free", "tco2", "pH"))) %>%
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ),
+  alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref,
+                linewidth = tref)) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.position = "none",
+    axis.title.x = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_wrap(
+    . ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels),
+    strip.position = "bottom", ncol = 1
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
 p_tco2_profiles_global <-
   acidification_profiles_biomes_uncertainty %>%
   filter(biome == "Global",
@@ -11998,15 +12070,64 @@ buffer_profiles_biome %>%
     expand = c(0, 0)
   )
 
+
+p_buffer_profiles_global_pH <-
+buffer_profiles_biome %>%
+  filter(biome == "Global",
+         variable %in% c("pH")) %>%
+  mutate(variable = factor(variable, levels = c(
+    "OmegaAragonite", "H_free", "pH"
+  ))) %>%
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ),
+  alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref,
+            linewidth = tref)) +
+  scale_color_manual(values = four_year_colors) +
+  scale_fill_manual(values = four_year_colors) +
+      scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
+  labs(y = "Depth (m)") +
+  theme(
+    legend.position = "none",
+    axis.title = element_blank(),
+    axis.text.y = element_blank(),
+    strip.text.x = element_markdown(),
+    legend.key.width = unit(1, "cm"),
+    strip.background.x = element_blank(),
+    strip.placement = "outside"
+  ) +
+  facet_wrap(
+    . ~ variable,
+    scales = "free_x",
+    labeller = labeller(variable = x_axis_labels_buffer_variables_addition),
+    strip.position = "bottom", ncol = 1
+  ) +
+  scale_y_continuous(
+    trans = trans_reverser("sqrt"),
+    breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+    limits = c(3000, 0),
+    expand = c(0, 0)
+  )
+
 layout <-
   "ACE
-BDF"
+BDF
+GHF"
 
 p_acid_profiles_global_omega +
   p_acid_profiles_global_H_free +
   p_buffer_profiles_global_omega +
   p_buffer_profiles_global_H_free +  p_tco2_profiles_global +
   guide_area() +
+  p_acid_profiles_global_pH +
+  p_buffer_profiles_global_pH +
   plot_layout(guides = 'collect',
               design = layout)
 
@@ -12017,7 +12138,7 @@ ggsave(
     )
   ),
   width = 7,
-  height = 6,
+  height = 8,
   dpi = 600,
   bg = "white"
 )
