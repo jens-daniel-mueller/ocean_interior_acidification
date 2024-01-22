@@ -926,9 +926,25 @@ cant_uncertainty_files <-
   uncertainty_files[!uncertainty_files %>%
                       str_detect(c("DIC_addition.csv"))]
 
+cant_uncertainty_files <-
+  cant_uncertainty_files[!cant_uncertainty_files %>%
+                      str_detect(c("low DIC high TA"))]
+
+cant_uncertainty_files <-
+  cant_uncertainty_files[!cant_uncertainty_files %>%
+                      str_detect(c("high DIC low TA"))]
+
 buffer_uncertainty_files <-
   uncertainty_files[uncertainty_files %>%
                       str_detect(c("DIC_addition.csv"))]
+
+buffer_uncertainty_files <-
+  buffer_uncertainty_files[buffer_uncertainty_files %>%
+                      str_detect(c("low DIC high TA"))]
+
+buffer_uncertainty_files <-
+  buffer_uncertainty_files[!buffer_uncertainty_files %>%
+                      str_detect(c("high DIC low TA"))]
 
 # buffer_uncertainty_files <-
 #   buffer_uncertainty_files[buffer_uncertainty_files %>%
