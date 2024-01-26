@@ -526,7 +526,7 @@ path_preprocessing_model    <-
   paste0(path_root, "/model/preprocessing/")
 
 path_reccap2 <-
-  "/nfs/kryo/work/updata/reccap2/"
+  "/nfs/kryo/work/datasets/gridded/ocean/interior/reccap2/supplementary/"
 
 path_ungrd_3d_ocn <- "/nfs/kryo/work/datasets/ungridded/interior/ocean"
 
@@ -718,7 +718,7 @@ longhurst %>%
 ```{r read_biomemask}
 
 biomemask <-
-  read_ncdf(paste(path_reccap2, "RECCAP2_region_masks_all_v20220620.nc", sep = "")) %>%
+  read_ncdf(paste(path_reccap2, "RECCAP2_region_masks_all_v20221025.nc", sep = "")) %>%
   as_tibble()
 
 biomemask <- biomemask %>%
@@ -2287,7 +2287,7 @@ additive_uncertainty <- function(df,
   df_CO2_stat <-
     df_CO2 %>%
     group_by(across(-delta_value)) %>%
-    summarise(sd = sd(delta_value)) %>%
+    summarise(sd = mean(abs(delta_value))) %>%
     ungroup()
 
   
