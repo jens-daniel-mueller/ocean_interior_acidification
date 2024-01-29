@@ -6500,7 +6500,7 @@ p_sat_absolute <-
     var = "depth",
     # contour_level = 10,
     # contour_col = "grey20",
-    legend_title = paste0("Saturation<br>horizon<br>2014<br>(m)"),
+    legend_title = paste0("Depth of<br>isosurface<br>2014<br>(m)"),
     legend_position = "left",
     col_scale = "mako",
     breaks = seq(0, 3000, 200)
@@ -6559,7 +6559,7 @@ p_sat_change <-
     # dim_col = "mineral",
     col_scale = "Rocket",
     var = "delta_depth",
-    legend_title = paste0("Shoaling<br>saturation<br>horizon<br>1800-2014<br>(m)"),
+    legend_title = paste0("Shoaling of<br>isosurface<br>1800-2014<br>(m)"),
     legend_position = "right",
     breaks = c(-Inf, seq(0, 300, 50), Inf)
   ) &
@@ -6591,7 +6591,7 @@ p_sat_absolute <-
   p_map_mdim_robinson(
     dim_row = "sat_level",
     var = "depth",
-    legend_title = paste0("Saturation<br>horizon<br>2014<br>(m)"),
+    legend_title = paste0("Depth of<br>isosurface<br>2014<br>(m)"),
     legend_position = "left",
     col_scale = "mako",
     breaks = seq(0, 3000, 200)
@@ -6607,7 +6607,7 @@ p_sat_change <-
     dim_row = "sat_level",
     col_scale = "Rocket",
     var = "delta_depth",
-    legend_title = paste0("Shoaling<br>saturation<br>horizon<br>1800-2014<br>(m)"),
+    legend_title = paste0("Shoaling of<br>isosurface<br>1800-2014<br>(m)"),
     legend_position = "right",
     breaks = c(-Inf, seq(0, 300, 50), Inf)
   ) &
@@ -7017,10 +7017,6 @@ for (i_sat_level in c(5, 4, 3.5, 3, 2, 1.5, 1)) {
 ```
 
 ```{r saturation_level_changes}
-
-saturation_horizon_uncertainty_all %>% 
-  count(MLR_basin_mask, MLR_configuration)
-
 
 # saturation horizons per biome
 
@@ -7554,17 +7550,17 @@ acidification_volume <-
     sat_level = as.factor(sat_level),
     estimate = case_when(
       estimate == "volume_relative_to_total_volume" ~
-        "Saturated volume\n(% total vol.)",
+        "Saturated volume\n(% of top 3000m)",
       estimate == "volume_loss_cumulative_relative_to_total_volume" ~
-        "Loss of sat. volume\n(% total vol.)",
+        "Loss of sat. volume\n(% of top 3000m)",
       estimate == "volume_loss_cumulative_relative_to_preind_volume" ~
         "Loss of sat. volume\n(% preind. vol.)"
     ),
     estimate = factor(
       estimate,
       levels = c(
-        "Saturated volume\n(% total vol.)",
-        "Loss of sat. volume\n(% total vol.)",
+        "Saturated volume\n(% of top 3000m)",
+        "Loss of sat. volume\n(% of top 3000m)",
         "Loss of sat. volume\n(% preind. vol.)"
       )
     )
@@ -7631,7 +7627,10 @@ acidification_volume %>%
   ) +
   facet_grid(estimate ~ .,
              scales = "free_y",
-             switch = "y")
+             switch = "y") +
+  facetted_pos_scales(
+    y = list(NULL, NULL, scale_y_continuous(limits = c(-100,0), expand = c(0.11,0.11)))
+  )
 
 
 ggsave(
@@ -7845,9 +7844,6 @@ cwc_saturation_state <-
   cwc_saturation_state %>%
   filter(!is.na(OmegaAragonite))
 
-
-
-
 cwc_saturation_state %>% 
   count(tref)
   
@@ -7864,8 +7860,7 @@ cwc_saturation_state %>%
     breaks = seq(0, 3000, 200)
   )
 
-p_lat <-
-  cwc_saturation_state %>%
+cwc_saturation_state %>%
   filter(tref %in% c(1800, 2014)) %>%
   mutate(tref = as.factor(tref)) %>%
   ggplot() +
@@ -7881,8 +7876,8 @@ p_lat <-
     legend.position = c(0.1, 0.85)
   )
 
-p_dist <-
-cwc_saturation_state %>%
+p_cwc_distro <-
+  cwc_saturation_state %>%
   mutate(tref = as.factor(tref)) %>%
   ggplot() +
   geom_hline(yintercept = 1) +
@@ -7901,11 +7896,10 @@ cwc_saturation_state %>%
   theme(
     axis.title.y = element_markdown(),
     axis.title.x = element_blank(),
-    axis.text.x = element_blank(),
-    axis.ticks.x = element_blank(),
     legend.title = element_blank(),
     legend.background = element_rect(fill = "transparent"),
-    legend.position = c(0.6, 0.93),
+    legend.position = "none",
+    # legend.position = c(0.6, 0.93),
     legend.direction = "horizontal"
   )
 
@@ -7917,7 +7911,7 @@ cwc_saturation_state <-
   mutate(OmegaAragonite_delta_total = OmegaAragonite - first(OmegaAragonite)) %>%
   ungroup()
 
-p_omega <-
+# p_omega <-
 cwc_saturation_state %>%
   filter(tref == 2014) %>%
   mutate(tref = as.factor(tref)) %>%
@@ -7936,7 +7930,7 @@ cwc_saturation_state %>%
     legend.position = "none"
   )
 
-p_depth_delta <-
+# p_depth_delta <-
   cwc_saturation_state %>%
   filter(tref != 1800) %>%
   mutate(tref = as.factor(tref)) %>%
@@ -7954,37 +7948,45 @@ p_depth_delta <-
   theme(axis.title.x = element_markdown(),
         legend.position = c(0.8, 0.4))
 
-p_depth_abs <-
-  cwc_saturation_state %>%
-  filter(tref %in% c(1800, 2014)) %>%
-  mutate(tref = as.factor(tref)) %>%
-  ggplot() +
-  geom_vline(xintercept = 1) +
-  geom_point(aes(OmegaAragonite, depth,
-                 col = tref),
-             alpha = 0.5) +
-  labs(x = i_legend_title_abs,
-       y = "Depth (m)") +
-  scale_y_reverse() +
-  scale_color_manual(values = four_year_colors[c(1,4)]) +
-  theme(axis.title.x = element_markdown(),
-        legend.title = element_blank(),
-        legend.position = c(0.8, 0.4))
 
-
-p_lat + p_omega + p_depth_abs + p_depth_delta
-
-ggsave(
-  here::here(
-    paste0(
-      "output/main/cwc.png"
+  p_cwc_depth_abs <-
+    cwc_saturation_state %>%
+    filter(tref %in% c(1800, 2014)) %>%
+    mutate(tref = as.factor(tref)) %>%
+    ggplot() +
+    geom_vline(xintercept = 1) +
+    geom_point(aes(OmegaAragonite, depth,
+                   col = tref),
+               alpha = 0.5) +
+    labs(x = i_legend_title_abs,
+         y = "Depth (m)",
+         title = "Cold water coral locations") +
+    scale_color_manual(values = four_year_colors[c(1, 4)]) +
+    theme(
+      axis.title.x = element_markdown(),
+      legend.title = element_blank(),
+      legend.position = c(0.8, 0.4)
+    ) +
+    scale_y_continuous(
+      trans = trans_reverser("sqrt"),
+      breaks = c(0, 100, 500, seq(1500, 5000, 1000)),
+      limits = c(3000, 0),
+      expand = c(0, 0)
     )
-  ),
-  width = 10,
-  height = 8,
-  dpi = 600,
-  bg = "white"
-)
+
+p_cwc_depth_abs / p_cwc_distro
+
+# ggsave(
+#   here::here(
+#     paste0(
+#       "output/main/cwc.png"
+#     )
+#   ),
+#   width = 10,
+#   height = 8,
+#   dpi = 600,
+#   bg = "white"
+# )
 
 cwc_saturation_state %>% 
   # select(tref, OmegaAragonite, lon, lat, obs_id) %>% 
@@ -9556,7 +9558,7 @@ buffer_global_section_absolute <-
               values_from = mean,
               values_fn = mean)
 
-for (i_var in OIA_variables_core) {
+for (i_var in c("pH", "OmegaAragonite", "H_free")) {
   # i_var <- OIA_variables_core[1]
   
   # subset OIA variable
@@ -9597,6 +9599,10 @@ for (i_var in OIA_variables_core) {
     p_global_section_OmegaAragonite <- p_global_section_period3
   }
   
+  if(i_var == "pH"){
+    p_global_section_pH <- p_global_section_period3
+  }
+  
 }
 
 
@@ -9614,6 +9620,12 @@ print(
         axis.text.x = element_blank(),
         title = element_blank()
       ),
+    p_global_section_pH &
+      theme(
+        axis.title.x = element_blank(),
+        axis.text.x = element_blank(),
+        title = element_blank()
+      ),
     ncol = 1
   )
 )
@@ -9625,7 +9637,7 @@ ggsave(
     )
   ),
   width = 6,
-  height = 5.5,
+  height = 8,
   dpi = 600,
   bg = "white"
 )
@@ -9660,6 +9672,7 @@ acidification_profiles <-
               select(-contains("temp"))) %>%
   drop_na() %>%
   relocate(tref)
+
 
 # calculate regional means
 
@@ -10588,6 +10601,10 @@ acidification_profiles_biome_absolute <-
   inner_join(biomemask,
              acidification_trend_uncertainty_absolute)
 
+acidification_profiles_biome_absolute <-
+  acidification_profiles_biome_absolute %>%
+  mutate(shell_dissolution = -66.29 * log(OmegaAragonite) + 61.21)
+
 # calculate regional means
 
 acidification_profiles_biome_absolute_regional <- 
@@ -10595,7 +10612,7 @@ acidification_profiles_biome_absolute_regional <-
   group_by(tref, biome, depth, MLR_basin_mask, MLR_configuration) %>%
   summarise(
     across(
-      .cols = all_of(buffer_variables_addition),
+      .cols = all_of(c(buffer_variables_addition, "shell_dissolution")),
       .fns = ~ wmean(.x, area),
       .names = "{.col}_interval_mean"
       
@@ -10610,7 +10627,7 @@ acidification_profiles_biome_absolute_global <-
   mutate(biome = "Global") %>%
   group_by(tref, biome, depth, MLR_basin_mask, MLR_configuration) %>%
   summarise(across(
-    .cols = all_of(buffer_variables_addition),
+    .cols = all_of(c(buffer_variables_addition, "shell_dissolution")),
     .fns = ~ wmean(.x, area),
     .names = "{.col}_interval_mean"
     
@@ -10626,10 +10643,29 @@ acidification_profiles_biome_absolute <-
 rm(acidification_profiles_biome_absolute_regional,
    acidification_profiles_biome_absolute_global)
 
+
+# change in shell dissolution
+
+acidification_profiles_biome_absolute_change <-
+  acidification_profiles_biome_absolute %>%
+  arrange(tref) %>%
+  group_by(biome, depth, MLR_basin_mask, MLR_configuration) %>%
+  mutate(across(contains("interval_mean"), ~ .x - first(.x))) %>%
+  ungroup()
+
+
+
+acidification_profiles_biome_absolute_change_test <-
+  additive_uncertainty(df = acidification_profiles_biome_absolute_change)[[1]]
+
 acidification_profiles_biome_absolute <-
   additive_uncertainty(df = acidification_profiles_biome_absolute,
                        mode = "absolute",
                        cant_sigma = 2)[[1]]
+
+
+
+
 
 ```
 
@@ -11922,7 +11958,7 @@ acidification_profiles_biome_absolute %>%
          variable == "OmegaAragonite") %>%
   mutate(tref = as.factor(tref)) %>% 
   ggplot() +
-  geom_vline(xintercept = c(1, 1.5, 2, 3, 4),
+  geom_vline(xintercept = c(1, 2, 3, 4),
              linewidth = 0.2) +
   geom_ribbon(aes(
     xmin = std_case - sd,
@@ -11955,6 +11991,97 @@ ggsave(
   ),
   width = 7,
   height = 6,
+  dpi = 600,
+  bg = "white"
+)
+
+
+```
+
+### Bio Impact
+
+```{r bio_impact_profiles_biome}
+
+p_ptero_abs <- 
+acidification_profiles_biome_absolute %>%
+  filter(depth <= 500,
+         variable == "shell_dissolution") %>%
+  mutate(tref = as.factor(tref),
+         std_case = if_else(std_case < 0, 0, std_case)) %>% 
+  filter(biome %in% c("Southern\nOcean", "Upwelling\nregions"),
+         tref != 2004) %>% 
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ), alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref, 
+                linewidth = tref)) +
+  scale_color_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_fill_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
+  scale_y_reverse(expand = c(0,0)) +
+  labs(y = "Depth (m)",
+       x = "Pteropod shell dissolution (%)") +
+  theme(legend.title = element_blank(),
+        legend.position = c(0.88,0.85),
+        legend.background = element_rect(fill = "transparent"),
+        axis.title.x = element_markdown()) +
+  facet_wrap(~ biome)
+
+p_ptero_change <-
+acidification_profiles_biome_absolute %>%
+  filter(depth <= 500,
+         variable == "shell_dissolution") %>%
+  mutate(tref = as.factor(tref),
+         std_case = if_else(std_case < 0, 0, std_case)) %>% 
+  group_by(biome, depth, variable) %>%
+  mutate(std_case = std_case - first(std_case)) %>% 
+  ungroup() %>% 
+  filter(biome %in% c("Southern\nOcean", "Upwelling\nregions"),
+         tref %in% c(1994, 2014)) %>% 
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ), alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref, 
+                linewidth = tref)) +
+  scale_color_manual(values = three_year_colors[c(1,3)]) +
+  scale_fill_manual(values = three_year_colors[c(1, 3)]) +
+  scale_discrete_manual("linewidth", values = c(0.5, rep(1, 3))) +
+  scale_y_reverse(expand = c(0, 0)) +
+  labs(y = "Depth (m)",
+       x = "Δ Pteropod shell dissolution since 1800 (%)") +
+  theme(
+    legend.title = element_blank(),
+    legend.position = "none",
+    strip.background = element_blank(),
+    strip.text.x = element_blank(),
+    axis.title.x = element_markdown()
+  ) +
+  facet_wrap( ~ biome)
+
+
+p_cwc_depth_abs + p_ptero_abs + p_cwc_distro + p_ptero_change
+  
+
+ggsave(
+  here::here(
+    paste0(
+      "output/main/cwc_pteropod.png"
+    )
+  ),
+  width = 8,
+  height = 8,
   dpi = 600,
   bg = "white"
 )
@@ -12648,8 +12775,6 @@ ggsave(
 )
 
 ```
-
-
 
 ## Time series stations
 
