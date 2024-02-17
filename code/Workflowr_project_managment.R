@@ -38,10 +38,10 @@ wflow_publish(here::here(
     "index.Rmd",
     "synopsis_OIA.Rmd")
 ),
-message = "rerun with new OIA reconstructions for uncertainty")
+message = "figures finalized")
 
 # commit regular changes (locally) and rebuild site
-wflow_publish(all = TRUE, message = "calculated saturated volume")
+wflow_publish(all = TRUE, message = "created presentation plots")
 
 # commit changes including _site.yml (locally) and rebuild site
 wflow_publish(c("analysis/*Rmd"), message = "rerun with new OIA reconstructions for uncertainty", republish = TRUE)
