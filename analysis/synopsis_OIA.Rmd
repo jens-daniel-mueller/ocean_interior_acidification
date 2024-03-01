@@ -6626,6 +6626,42 @@ ggsave(
   dpi = 600,
   bg = "white"
 )
+  
+
+
+acidification_saturation_horizon_levels_change %>%
+  filter(sat_level %in% c(1),
+         tref == 2014) %>% 
+  select(-tref) %>% 
+  mutate(delta_depth = -delta_depth) %>% 
+  p_map_mdim_robinson(
+    dim_row = "sat_level",
+    col_scale = "Rocket",
+    var = "delta_depth",
+    legend_title = paste0("Shoaling of Ω<sub>arag</sub>=1<br>(m)"),
+    legend_position = "top",
+    breaks = c(-Inf, seq(0, 300, 50), Inf)
+  ) +
+  geom_label(aes(
+    label = "1800 - 2014",
+    x = lon_lim[1] * 0.95,
+    y = lat_lim[2] * 0.85
+  ),
+  hjust = 0) &
+  theme(strip.text = element_blank())
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/maps_saturation_horizon_change_aragonite_1.png"
+    )
+  ),
+  width = 5,
+  height = 4,
+  dpi = 600,
+  bg = "white"
+)
 
 
 rm(p_sat_absolute, p_sat_change)
@@ -12153,6 +12189,189 @@ ggsave(
   ),
   width = 8,
   height = 8,
+  dpi = 600,
+  bg = "white"
+)
+
+
+```
+
+```{r bio_impact_profiles_biome_presentation}
+
+
+p_omega_abs <-
+acidification_profiles_biome_absolute %>%
+  filter(depth <= 500,
+         variable == "OmegaAragonite",
+         biome %in% c("Southern\nOcean", "Upwelling\nregions"),
+         tref != 2004) %>%
+  mutate(tref = as.factor(tref)) %>% 
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ), alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref, 
+                linewidth = tref)) +
+  scale_color_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_fill_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
+  scale_y_reverse(expand = c(0,0)) +
+  labs(y = "Depth (m)",
+       x = x_axis_labels_absolute[3]) +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.7, 0.85),
+    legend.background = element_rect(fill = "transparent"),
+    strip.background = element_blank(),
+    strip.text = element_blank(),
+    axis.title.x = element_markdown()
+  ) +
+  facet_grid(biome ~ .)
+
+p_omega_change <-
+  acidification_profiles_biomes_uncertainty %>%
+  filter(variable %in% c("OmegaAragonite"),
+         depth <= 500,
+         variable == "OmegaAragonite",
+         biome %in% c("Southern\nOcean", "Upwelling\nregions"),
+         tref != 2004) %>%
+      mutate(tref = as.factor(tref)) %>% 
+  mutate(variable = factor(variable, levels = c("OmegaAragonite", "H_free", "tco2"))) %>%
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ),
+  alpha = 0.2) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref,
+            linewidth = tref)) +
+  scale_color_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_fill_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
+  scale_y_reverse(expand = c(0,0)) +
+  labs(y = "Depth (m)",
+       x = x_axis_labels[3]) +
+  theme(
+    legend.position = "none",
+    legend.background = element_rect(fill = "transparent"),
+    strip.background = element_blank(),
+    strip.text = element_blank(),
+    axis.title.x = element_markdown(),
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank()
+  ) +
+  facet_grid(biome ~ .)
+
+p_omega_abs | p_omega_change
+
+
+ggsave(
+  here::here(
+    paste0(
+      "output/main/pteropod_presentation_omega.png"
+    )
+  ),
+  width = 4,
+  height = 5,
+  dpi = 600,
+  bg = "white"
+)
+
+p_ptero_abs <-
+acidification_profiles_biome_absolute %>%
+  filter(depth <= 500,
+         variable == "shell_dissolution") %>%
+  mutate(tref = as.factor(tref),
+         std_case = if_else(std_case < 0, 0, std_case)) %>% 
+  filter(biome %in% c("Southern\nOcean", "Upwelling\nregions"),
+         tref != 2004) %>% 
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ), alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref, 
+                linewidth = tref)) +
+  scale_color_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_fill_manual(values = four_year_colors[c(1,2,4)]) +
+  scale_discrete_manual("linewidth", values = c(0.5,rep(1,3))) +
+  scale_y_reverse(expand = c(0,0)) +
+  labs(y = "Depth (m)",
+       x = "Shell diss. (%)") +
+  theme(
+    legend.title = element_blank(),
+    legend.position = c(0.3, 0.15),
+    legend.background = element_rect(fill = "transparent"),
+    strip.background = element_blank(),
+    strip.text = element_blank(),
+    axis.title.x = element_markdown()
+  ) +
+  facet_grid(biome ~ .)
+
+p_ptero_change <-
+acidification_profiles_biome_absolute %>%
+  filter(depth <= 500,
+         variable == "shell_dissolution") %>%
+  mutate(tref = as.factor(tref),
+         std_case = if_else(std_case < 0, 0, std_case)) %>% 
+  group_by(biome, depth, variable) %>%
+  mutate(std_case = std_case - first(std_case)) %>% 
+  ungroup() %>% 
+  filter(biome %in% c("Southern\nOcean", "Upwelling\nregions"),
+         tref %in% c(1994, 2014)) %>% 
+  ggplot() +
+  geom_ribbon(aes(
+    xmin = std_case - sd,
+    xmax = std_case + sd,
+    y = depth,
+    fill = tref
+  ), alpha = 0.3) +
+  geom_path(aes(std_case,
+                depth,
+                col = tref, 
+                linewidth = tref)) +
+  scale_color_manual(values = three_year_colors[c(1,3)]) +
+  scale_fill_manual(values = three_year_colors[c(1, 3)]) +
+  scale_discrete_manual("linewidth", values = c(0.5, rep(1, 3))) +
+  scale_y_reverse(expand = c(0, 0)) +
+  labs(y = "Depth (m)",
+       x = "Δ Shell diss. (%)") +
+  theme(
+    axis.title.y = element_blank(),
+    axis.text.y = element_blank(),
+    legend.position = "none",
+    legend.background = element_rect(fill = "transparent"),
+    strip.background = element_blank(),
+    strip.text = element_blank(),
+    axis.title.x = element_markdown()
+  ) +
+  facet_grid(biome ~ .)
+
+
+p_ptero_abs | p_ptero_change
+  
+
+ggsave(
+  here::here(
+    paste0(
+      "output/main/pteropod_presentation_shell.png"
+    )
+  ),
+  width = 4,
+  height = 5,
   dpi = 600,
   bg = "white"
 )

@@ -41,7 +41,7 @@ wflow_publish(here::here(
 message = "figures finalized")
 
 # commit regular changes (locally) and rebuild site
-wflow_publish(all = TRUE, message = "created presentation plots")
+wflow_publish(all = TRUE, message = "saturation horizon change plot")
 
 # commit changes including _site.yml (locally) and rebuild site
 wflow_publish(c("analysis/*Rmd"), message = "rerun with new OIA reconstructions for uncertainty", republish = TRUE)
