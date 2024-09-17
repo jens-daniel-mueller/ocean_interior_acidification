@@ -384,7 +384,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">01 March, 2024</h4>
+<h4 class="date">17 September, 2024</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-03-01
+<strong>Last updated:</strong> 2024-09-17
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree5e9d00df17ffbfb94043fcb227d68d58afaf0361targetblank5e9d00da">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bddtargetblank8c6dfeca">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/5e9d00df17ffbfb94043fcb227d68d58afaf0361" target="_blank">5e9d00d</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bdd" target="_blank">8c6dfec</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree5e9d00df17ffbfb94043fcb227d68d58afaf0361targetblank5e9d00da"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bddtargetblank8c6dfeca"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/5e9d00df17ffbfb94043fcb227d68d58afaf0361" target="_blank">5e9d00d</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bdd" target="_blank">8c6dfec</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -585,6 +585,9 @@ Ignored files:
 
 Untracked files:
     Untracked:  code/read_cwc_data.R
+
+Unstaged changes:
+    Modified:   code/Workflowr_project_managment.R
 
 </code></pre>
 <p>
@@ -630,6 +633,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bdd/analysis/synopsis_OIA.Rmd" target="_blank">8c6dfec</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-17
+</td>
+<td>
+figures revision
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/ba47c9e4557b09a02fa84a0db00509e4a38ee972/docs/synopsis_OIA.html" target="_blank">ba47c9e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-03-01
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2695,8 +2732,8 @@ buffer_variables_addition &lt;-
 
 gc()</code></pre>
 <pre><code>             used   (Mb) gc trigger   (Mb)   max used   (Mb)
-Ncells    3161668  168.9    5641035  301.3    5544323  296.1
-Vcells 1018583563 7771.2 1231535848 9395.9 1018641484 7771.7</code></pre>
+Ncells    3162251  168.9    5642845  301.4    5429070  290.0
+Vcells 1018585372 7771.2 1231538453 9395.9 1018643293 7771.7</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   bind_rows(acidification_trend_uncertainty,
             acidification_trend %&gt;%
@@ -2706,9 +2743,9 @@ acidification_trend &lt;- acidification_trend %&gt;%
   select(-c(MLR_basin_mask, MLR_configuration))
 
 gc()</code></pre>
-<pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3163240  169.0    5641035   301.3    5544323   296.1
-Vcells 1112970191 8491.3 2196061038 16754.7 2016136214 15381.9</code></pre>
+<pre><code>             used   (Mb) gc trigger    (Mb)   max used  (Mb)
+Ncells    3163823  169.0    5642845   301.4    5429070   290
+Vcells 1112972000 8491.4 2196063209 16754.7 2016138023 15382</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2716,9 +2753,9 @@ Vcells 1112970191 8491.3 2196061038 16754.7 2016136214 15381.9</code></pre>
          all_of(OIA_variables))
 
 gc()</code></pre>
-<pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3163274  169.0    5641035   301.3    5544323   296.1
-Vcells 1112970270 8491.3 2196061038 16754.7 2016136214 15381.9</code></pre>
+<pre><code>             used   (Mb) gc trigger    (Mb)   max used  (Mb)
+Ncells    3163857  169.0    5642845   301.4    5429070   290
+Vcells 1112972078 8491.4 2196063209 16754.7 2016138023 15382</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2825,9 +2862,9 @@ acidification_trend_uncertainty_delta_total &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_merged_delta_total.csv&quot;))
 
 gc()</code></pre>
-<pre><code>             used   (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3163510  169.0    5641035   301.3    5544323   296.1
-Vcells 1123187109 8569.3 2196061038 16754.7 2016136214 15381.9</code></pre>
+<pre><code>             used   (Mb) gc trigger    (Mb)   max used  (Mb)
+Ncells    3164093  169.0    5642845   301.4    5429070   290
+Vcells 1123188917 8569.3 2196063209 16754.7 2016138023 15382</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -10717,8 +10754,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    5021102   268.2    7806981   417.0    7806981   417.0
-Vcells 1614555300 12318.1 2635353245 20106.2 2635350997 20106.2</code></pre>
+Ncells    5022367   268.3    8391434   448.2    8391434   448.2
+Vcells 1614558373 12318.2 2635355850 20106.2 2635355277 20106.2</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -12713,8 +12750,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4899474   261.7    7806981   417.0    7806981   417.0
-Vcells 1520961530 11604.1 2635353245 20106.2 2635350997 20106.2</code></pre>
+Ncells    4899178   261.7    8391434   448.2    8391434   448.2
+Vcells 1520702548 11602.1 2635355850 20106.2 2635355277 20106.2</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -13308,8 +13345,8 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4639244   247.8    7806981   417.0    7806981   417.0
-Vcells 1656354657 12637.0 2635353245 20106.2 2635350997 20106.2</code></pre>
+Ncells    4642638   248.0    8391434   448.2    8391434   448.2
+Vcells 1656099440 12635.1 2635355850 20106.2 2635355277 20106.2</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
   acidification_trend_uncertainty_delta_total %&gt;%
   filter(depth &lt;= 600,
@@ -13404,9 +13441,9 @@ acidification_bottom_raw &lt;-
                names_to = &quot;variable&quot;,
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
-<pre><code>             used    (Mb) gc trigger  (Mb)   max used    (Mb)
-Ncells    4662996   249.1    7806981   417    7806981   417.0
-Vcells 2020758363 15417.2 3162503894 24128 2635350997 20106.2</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells    4665414   249.2    8391434   448.2    8391434   448.2
+Vcells 2020501677 15415.3 3162507020 24128.1 2635355277 20106.2</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -14627,9 +14664,9 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    i_acidification_bottom_raw
    )
 gc()</code></pre>
-<pre><code>             used    (Mb) gc trigger  (Mb)   max used    (Mb)
-Ncells    4980460   266.0    7806981   417    7806981   417.0
-Vcells 1495123991 11406.9 3162503894 24128 3160304604 24111.3</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells    4983381   266.2    8391434   448.2    8391434   448.2
+Vcells 1494868353 11405.0 3162507020 24128.1 3160047919 24109.3</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -15242,6 +15279,43 @@ acidification_saturation_horizon_levels_change %&gt;%
   hjust = 0) &amp;
   theme(strip.text = element_blank())</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/saturation_horizon_maps-4.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-saturation_horizon_maps-4">
+Past versions of saturation_horizon_maps-4.png
+</button>
+</p>
+<div id="fig-saturation_horizon_maps-4" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba47c9e4557b09a02fa84a0db00509e4a38ee972/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-4.png" target="_blank">ba47c9e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-03-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     paste0(
@@ -20736,7 +20810,6 @@ co2_atm_level &lt;- acidification_volume %&gt;%
   pull() %&gt;%
   round()
 
-
 acidification_volume &lt;-
   acidification_volume %&gt;%
   rename(estimate = variable) %&gt;%
@@ -20744,18 +20817,18 @@ acidification_volume &lt;-
     sat_level = as.factor(sat_level),
     estimate = case_when(
       estimate == &quot;volume_relative_to_total_volume&quot; ~
-        &quot;Saturated volume\n(% of top 3000m)&quot;,
+        &quot;Saturated volume\nrelative to total volume (%)&quot;,
       estimate == &quot;volume_loss_cumulative_relative_to_total_volume&quot; ~
-        &quot;Loss of sat. volume\n(% of top 3000m)&quot;,
+        &quot;Loss of\nsatured volume\nrelative to total volume (%)&quot;,
       estimate == &quot;volume_loss_cumulative_relative_to_preind_volume&quot; ~
-        &quot;Loss of sat. volume\n(% preind. vol.)&quot;
+        &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;
     ),
     estimate = factor(
       estimate,
       levels = c(
-        &quot;Saturated volume\n(% of top 3000m)&quot;,
-        &quot;Loss of sat. volume\n(% of top 3000m)&quot;,
-        &quot;Loss of sat. volume\n(% preind. vol.)&quot;
+        &quot;Saturated volume\nrelative to total volume (%)&quot;,
+        &quot;Loss of\nsatured volume\nrelative to total volume (%)&quot;,
+        &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;
       )
     )
   )
@@ -20786,7 +20859,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of sat. volume\n(% preind. vol.)&quot;,
+        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref != 1800
       ),
@@ -20797,7 +20870,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of sat. volume\n(% preind. vol.)&quot;,
+        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref == 1800
       ),
@@ -20907,7 +20980,7 @@ jens-daniel-mueller
 
 acidification_volume %&gt;%
   filter(sat_level %in% c(1,3,4),
-         estimate == &quot;Loss of sat. volume\n(% preind. vol.)&quot; ) %&gt;% 
+         estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot; ) %&gt;% 
   ggplot(aes(
     x = pCO2,
     y = std_case,
@@ -20931,7 +21004,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of sat. volume\n(% preind. vol.)&quot;,
+        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref != 1800
       ),
@@ -20942,7 +21015,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of sat. volume\n(% preind. vol.)&quot;,
+        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref == 1800
       ),
@@ -21005,7 +21078,7 @@ jens-daniel-mueller
 </div>
 <pre class="r"><code>ggsave(
   here::here(&quot;output/main/volume_omega_saturation_global_presentation.png&quot;),
-  width = 4,
+  width = 4.2,
   height = 3,
   dpi = 600,
   bg = &quot;white&quot;
@@ -21053,7 +21126,8 @@ std_case
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21073,7 +21147,7 @@ Loss of sat. volume (% preind. vol.)
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21093,7 +21167,7 @@ Loss of sat. volume (% of top 3000m)
 1
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 2.8314993
@@ -21113,7 +21187,8 @@ Saturated volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21133,7 +21208,7 @@ Loss of sat. volume (% preind. vol.)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21153,7 +21228,7 @@ Loss of sat. volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.7463859
@@ -21173,7 +21248,8 @@ Saturated volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21193,7 +21269,7 @@ Loss of sat. volume (% preind. vol.)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21213,7 +21289,7 @@ Loss of sat. volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.5255042
@@ -21233,7 +21309,8 @@ Saturated volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21253,7 +21330,7 @@ Loss of sat. volume (% preind. vol.)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21273,7 +21350,7 @@ Loss of sat. volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.2411972
@@ -21293,7 +21370,8 @@ Saturated volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21313,7 +21391,7 @@ Loss of sat. volume (% preind. vol.)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21333,7 +21411,7 @@ Loss of sat. volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1802367
@@ -21353,7 +21431,8 @@ Saturated volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21373,7 +21452,7 @@ Loss of sat. volume (% preind. vol.)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21393,7 +21472,7 @@ Loss of sat. volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1982262
@@ -21413,7 +21492,8 @@ Saturated volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21433,7 +21513,7 @@ Loss of sat. volume (% preind. vol.)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21453,7 +21533,7 @@ Loss of sat. volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0009088
@@ -21473,7 +21553,8 @@ Saturated volume (% of top 3000m)
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 2.3224142
@@ -21493,7 +21574,7 @@ Loss of sat. volume (% preind. vol.)
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.5477130
@@ -21513,7 +21594,7 @@ Loss of sat. volume (% of top 3000m)
 1
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 3.3480034
@@ -21533,7 +21614,8 @@ Saturated volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1.5039560
@@ -21553,7 +21635,7 @@ Loss of sat. volume (% preind. vol.)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1264812
@@ -21573,7 +21655,7 @@ Loss of sat. volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.8076544
@@ -21593,7 +21675,8 @@ Saturated volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.6429477
@@ -21613,7 +21696,7 @@ Loss of sat. volume (% preind. vol.)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0923693
@@ -21633,7 +21716,7 @@ Loss of sat. volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.4461431
@@ -21653,7 +21736,8 @@ Saturated volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.8053891
@@ -21673,7 +21757,7 @@ Loss of sat. volume (% preind. vol.)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0458800
@@ -21693,7 +21777,7 @@ Loss of sat. volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1962676
@@ -21713,7 +21797,8 @@ Saturated volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 4.1393048
@@ -21733,7 +21818,7 @@ Loss of sat. volume (% preind. vol.)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0273137
@@ -21753,7 +21838,7 @@ Loss of sat. volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.2055256
@@ -21773,7 +21858,8 @@ Saturated volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 7.0498674
@@ -21793,7 +21879,7 @@ Loss of sat. volume (% preind. vol.)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0635815
@@ -21813,7 +21899,7 @@ Loss of sat. volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1358758
@@ -21833,7 +21919,8 @@ Saturated volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1948.4243571
@@ -21853,7 +21940,7 @@ Loss of sat. volume (% preind. vol.)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0064710
@@ -21873,7 +21960,7 @@ Loss of sat. volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0064068
@@ -21893,7 +21980,8 @@ Saturated volume (% of top 3000m)
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 2.3306168
@@ -21913,7 +22001,7 @@ Loss of sat. volume (% preind. vol.)
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.4459741
@@ -21933,7 +22021,7 @@ Loss of sat. volume (% of top 3000m)
 1
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 3.2745334
@@ -21953,7 +22041,8 @@ Saturated volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1.4907111
@@ -21973,7 +22062,7 @@ Loss of sat. volume (% preind. vol.)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0513423
@@ -21993,7 +22082,7 @@ Loss of sat. volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.7913282
@@ -22013,7 +22102,8 @@ Saturated volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.4194139
@@ -22033,7 +22123,7 @@ Loss of sat. volume (% preind. vol.)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1160859
@@ -22053,7 +22143,7 @@ Loss of sat. volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.4098501
@@ -22073,7 +22163,8 @@ Saturated volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1.0074036
@@ -22093,7 +22184,7 @@ Loss of sat. volume (% preind. vol.)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0538721
@@ -22113,7 +22204,7 @@ Loss of sat. volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1874432
@@ -22133,7 +22224,8 @@ Saturated volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 4.7653442
@@ -22153,7 +22245,7 @@ Loss of sat. volume (% preind. vol.)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0244743
@@ -22173,7 +22265,7 @@ Loss of sat. volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.2039043
@@ -22193,7 +22285,8 @@ Saturated volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 4.9594532
@@ -22213,7 +22306,7 @@ Loss of sat. volume (% preind. vol.)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1140763
@@ -22233,7 +22326,7 @@ Loss of sat. volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0846178
@@ -22253,7 +22346,8 @@ Saturated volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1948.4243571
@@ -22273,7 +22367,7 @@ Loss of sat. volume (% preind. vol.)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0064710
@@ -22293,7 +22387,7 @@ Loss of sat. volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0064068
@@ -22313,7 +22407,8 @@ Saturated volume (% of top 3000m)
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 2.4124130
@@ -22333,7 +22428,7 @@ Loss of sat. volume (% preind. vol.)
 1
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.4332641
@@ -22353,7 +22448,7 @@ Loss of sat. volume (% of top 3000m)
 1
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 3.1868576
@@ -22373,7 +22468,8 @@ Saturated volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1.7575499
@@ -22393,7 +22489,7 @@ Loss of sat. volume (% preind. vol.)
 1.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0836819
@@ -22413,7 +22509,7 @@ Loss of sat. volume (% of top 3000m)
 1.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.7963834
@@ -22433,7 +22529,8 @@ Saturated volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.6125690
@@ -22453,7 +22550,7 @@ Loss of sat. volume (% preind. vol.)
 2
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1491195
@@ -22473,7 +22570,7 @@ Loss of sat. volume (% of top 3000m)
 2
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.3859325
@@ -22493,7 +22590,8 @@ Saturated volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1.6397776
@@ -22513,7 +22611,7 @@ Loss of sat. volume (% preind. vol.)
 3
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0626041
@@ -22533,7 +22631,7 @@ Loss of sat. volume (% of top 3000m)
 3
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1892308
@@ -22553,7 +22651,8 @@ Saturated volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 5.6074630
@@ -22573,7 +22672,7 @@ Loss of sat. volume (% preind. vol.)
 3.5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0350201
@@ -22593,7 +22692,7 @@ Loss of sat. volume (% of top 3000m)
 3.5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.2051874
@@ -22613,7 +22712,8 @@ Saturated volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 2.6277011
@@ -22633,7 +22733,7 @@ Loss of sat. volume (% preind. vol.)
 4
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1586343
@@ -22653,7 +22753,7 @@ Loss of sat. volume (% of top 3000m)
 4
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0404438
@@ -22673,7 +22773,8 @@ Saturated volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% preind. vol.)
+<p>Loss of saturated volume</p>
+relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 1948.4243571
@@ -22693,7 +22794,7 @@ Loss of sat. volume (% preind. vol.)
 5
 </td>
 <td style="text-align:left;">
-Loss of sat. volume (% of top 3000m)
+Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0064710
@@ -22713,7 +22814,7 @@ Loss of sat. volume (% of top 3000m)
 5
 </td>
 <td style="text-align:left;">
-Saturated volume (% of top 3000m)
+Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0064068
@@ -22738,8 +22839,8 @@ Saturated volume (% of top 3000m)
 )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4779567   255.3   12987111   693.6   12987111   693.6
-Vcells 1675494882 12783.1 3162503894 24128.0 3162228688 24125.9</code></pre>
+Ncells    4781488   255.4   14457540   772.2   14457540   772.2
+Vcells 1675237933 12781.1 3163212194 24133.4 3163212194 24133.4</code></pre>
 </div>
 </div>
 <div id="summary-table" class="section level1">
@@ -29227,6 +29328,43 @@ p_omega_change &lt;-
 
 p_omega_abs | p_omega_change</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-bio_impact_profiles_biome_presentation-1">
+Past versions of bio_impact_profiles_biome_presentation-1.png
+</button>
+</p>
+<div id="fig-bio_impact_profiles_biome_presentation-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba47c9e4557b09a02fa84a0db00509e4a38ee972/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-1.png" target="_blank">ba47c9e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-03-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     paste0(
@@ -29316,6 +29454,43 @@ acidification_profiles_biome_absolute %&gt;%
 
 p_ptero_abs | p_ptero_change</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-bio_impact_profiles_biome_presentation-2">
+Past versions of bio_impact_profiles_biome_presentation-2.png
+</button>
+</p>
+<div id="fig-bio_impact_profiles_biome_presentation-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba47c9e4557b09a02fa84a0db00509e4a38ee972/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-2.png" target="_blank">ba47c9e</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-03-01
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>ggsave(
   here::here(
     paste0(
@@ -31217,7 +31392,7 @@ other attached packages:
  [4] lubridate_1.9.0     timechange_0.1.1    ggnewscale_0.4.8   
  [7] ggtext_0.1.2        seacarb_3.3.1       SolveSAPHE_2.1.0   
 [10] oce_1.7-10          gsw_1.1-1           stars_0.6-0        
-[13] abind_1.4-5         ggh4x_0.2.3         khroma_1.9.0       
+[13] abind_1.4-5         ggh4x_0.2.8         khroma_1.9.0       
 [16] terra_1.7-65        sf_1.0-9            rnaturalearth_0.1.0
 [19] geomtextpath_0.1.1  colorspace_2.0-3    marelac_2.1.10     
 [22] shape_1.4.6         ggforce_0.4.1       metR_0.13.0        
