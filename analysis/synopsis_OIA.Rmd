@@ -918,6 +918,7 @@ uncertainty_files <-
                                "buffer",
                                "Standard case_3.csv",
                                "Standard case_3_DIC",
+                               "dCant",
                                "merged",
                                sep = "|"))]
 
@@ -926,25 +927,25 @@ cant_uncertainty_files <-
   uncertainty_files[!uncertainty_files %>%
                       str_detect(c("DIC_addition.csv"))]
 
-cant_uncertainty_files <-
-  cant_uncertainty_files[!cant_uncertainty_files %>%
-                      str_detect(c("low DIC high TA"))]
-
-cant_uncertainty_files <-
-  cant_uncertainty_files[!cant_uncertainty_files %>%
-                      str_detect(c("high DIC low TA"))]
+# cant_uncertainty_files <-
+#   cant_uncertainty_files[!cant_uncertainty_files %>%
+#                       str_detect(c("low DIC high TA"))]
+# 
+# cant_uncertainty_files <-
+#   cant_uncertainty_files[!cant_uncertainty_files %>%
+#                       str_detect(c("high DIC low TA"))]
 
 buffer_uncertainty_files <-
   uncertainty_files[uncertainty_files %>%
                       str_detect(c("DIC_addition.csv"))]
 
-buffer_uncertainty_files <-
-  buffer_uncertainty_files[!buffer_uncertainty_files %>%
-                      str_detect(c("low DIC high TA"))]
-
-buffer_uncertainty_files <-
-  buffer_uncertainty_files[!buffer_uncertainty_files %>%
-                      str_detect(c("high DIC low TA"))]
+# buffer_uncertainty_files <-
+#   buffer_uncertainty_files[!buffer_uncertainty_files %>%
+#                       str_detect(c("low DIC high TA"))]
+# 
+# buffer_uncertainty_files <-
+#   buffer_uncertainty_files[!buffer_uncertainty_files %>%
+#                       str_detect(c("high DIC low TA"))]
 
 # buffer_uncertainty_files <-
 #   buffer_uncertainty_files[buffer_uncertainty_files %>%
@@ -998,7 +999,8 @@ acidification_trend_uncertainty <-
 gc()
 
 acidification_trend_uncertainty <-
-  bind_rows(acidification_trend_uncertainty,
+  bind_rows(acidification_trend_uncertainty %>%
+              select(-c(talk, temp, sal, phosphate, silicate)),
             acidification_trend %>%
               select(-c(talk, temp, sal, phosphate, silicate)))
 
@@ -1312,7 +1314,7 @@ buffer_variables <-
 
 ### Temperature driver
 
-```{r read_OIA_temperature_driven, eval=FALSE}
+```{r read_OIA_temperature_driven}
 
 temperature_trend <-
   read_csv(paste0(path_OIA, "OIA_dCant + temp_3.csv"))
@@ -1338,7 +1340,7 @@ dCant_trend <-
   inner_join(
     acidification_trend %>%
       filter(tref %in% c(2004, 2014)) %>%
-      select(lon, lat, depth, tref, basin_AIP, contains("delta")),
+      select(lon, lat, depth, tref, contains("delta")),
     dCant_temp_trend_depth_grid
   )
 
@@ -1346,7 +1348,7 @@ temperature_trend <-
   inner_join(
     temperature_trend %>%
       filter(tref %in% c(2004, 2014)) %>%
-      select(lon, lat, depth, tref, basin_AIP, contains("delta")),
+      select(lon, lat, depth, tref, contains("delta")),
     dCant_temp_trend_depth_grid
   )
 
@@ -1702,7 +1704,6 @@ ALOHA <-
 
 
 ```
-
 
 ```{r read_BATS, eval=FALSE}
 
@@ -2226,12 +2227,16 @@ MLR_configuration_uncertainty <-
   MLR_configuration_all[!MLR_configuration_all %>%
                           str_detect(paste(MLR_configuration_reference,
                                            "DIC",
+                                           " TA",
+                                           "GLODAP",
                                            sep = "|"))]
 
 CO2_climatology_uncertainty <-
   MLR_configuration_all[MLR_configuration_all %>%
-                          str_detect("DIC")]
-
+                          str_detect(paste("DIC",
+                                           " TA",
+                                           "GLODAP",
+                                           sep = "|"))]
 ```
 
 ## Additive computation
@@ -2251,14 +2256,14 @@ additive_uncertainty <- function(df,
   df_CO2_uncertainty <-
     df %>%
     filter(MLR_basin_mask == MLR_basin_mask_reference,
-           str_detect(MLR_configuration, "DIC")) %>%
+           MLR_configuration %in% CO2_climatology_uncertainty) %>%
     pivot_wider(
       names_from = MLR_configuration,
       values_from = contains("_interval_mean"),
       names_sep = "-"
     ) %>%
     pivot_longer(
-      all_of(contains("DIC")),
+      all_of(contains(CO2_climatology_uncertainty)),
       names_to = c("variable", "MLR_configuration"),
       names_sep = "-",
       values_to = "value"
@@ -7238,7 +7243,7 @@ saturation_horizon_uncertainty_all_biome_change <-
         select(-c(MLR_basin_mask, MLR_configuration)),
       saturation_horizon_uncertainty_all_biome_change %>%
         filter(tref == 1994,
-               !str_detect(MLR_configuration, "DIC")) %>%
+               !(MLR_configuration %in% CO2_climatology_uncertainty)) %>%
         distinct(MLR_basin_mask, MLR_configuration)
     ),
     saturation_horizon_uncertainty_all_biome_change
@@ -7256,9 +7261,9 @@ saturation_horizon_uncertainty_all_biome_change %>%
     depth_interval_mean,
     group = interaction(MLR_configuration, MLR_basin_mask)
   )) +
-  geom_path(data = . %>% filter(!str_detect(MLR_configuration, "DIC")),
+  geom_path(data = . %>% filter(!(MLR_configuration %in% CO2_climatology_uncertainty)),
             aes(col = "CO2 uncertainty")) +
-  geom_path(data = . %>% filter(str_detect(MLR_configuration, "DIC")),
+  geom_path(data = . %>% filter(MLR_configuration %in% CO2_climatology_uncertainty),
             aes(col = "eMLR uncertainty")) +
   facet_grid(sat_level ~ biome, scales = "free_y")
 
@@ -7587,16 +7592,16 @@ acidification_volume <-
       estimate == "volume_relative_to_total_volume" ~
         "Saturated volume\nrelative to total volume (%)",
       estimate == "volume_loss_cumulative_relative_to_total_volume" ~
-        "Loss of\nsatured volume\nrelative to total volume (%)",
+        "Loss of satured volume\nrelative to total volume (%)",
       estimate == "volume_loss_cumulative_relative_to_preind_volume" ~
-        "Loss of saturated volume\n\nrelative preindustrial volume (%)"
+        "Loss of saturated volume\nrelative preindustrial volume (%)"
     ),
     estimate = factor(
       estimate,
       levels = c(
         "Saturated volume\nrelative to total volume (%)",
-        "Loss of\nsatured volume\nrelative to total volume (%)",
-        "Loss of saturated volume\n\nrelative preindustrial volume (%)"
+        "Loss of satured volume\nrelative to total volume (%)",
+        "Loss of saturated volume\nrelative preindustrial volume (%)"
       )
     )
   )
@@ -7627,7 +7632,7 @@ acidification_volume %>%
   geom_text(
     data = . %>%
       filter(
-        estimate == "Loss of saturated volume\n\nrelative preindustrial volume (%)",
+        estimate == "Loss of saturated volume\nrelative preindustrial volume (%)",
         sat_level == 4,
         tref != 1800
       ),
@@ -7638,7 +7643,7 @@ acidification_volume %>%
   geom_text(
     data = . %>%
       filter(
-        estimate == "Loss of saturated volume\n\nrelative preindustrial volume (%)",
+        estimate == "Loss of saturated volume\nrelative preindustrial volume (%)",
         sat_level == 4,
         tref == 1800
       ),
@@ -7679,7 +7684,7 @@ ggsave(
 
 acidification_volume %>%
   filter(sat_level %in% c(1,3,4),
-         estimate == "Loss of saturated volume\n\nrelative preindustrial volume (%)" ) %>% 
+         estimate == "Loss of saturated volume\nrelative preindustrial volume (%)" ) %>% 
   ggplot(aes(
     x = pCO2,
     y = std_case,
@@ -7703,7 +7708,7 @@ acidification_volume %>%
   geom_text(
     data = . %>%
       filter(
-        estimate == "Loss of saturated volume\n\nrelative preindustrial volume (%)",
+        estimate == "Loss of saturated volume\nrelative preindustrial volume (%)",
         sat_level == 4,
         tref != 1800
       ),
@@ -7714,7 +7719,7 @@ acidification_volume %>%
   geom_text(
     data = . %>%
       filter(
-        estimate == "Loss of saturated volume\n\nrelative preindustrial volume (%)",
+        estimate == "Loss of saturated volume\nrelative preindustrial volume (%)",
         sat_level == 4,
         tref == 1800
       ),
