@@ -384,7 +384,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">17 September, 2024</h4>
+<h4 class="date">24 September, 2024</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-09-17
+<strong>Last updated:</strong> 2024-09-24
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bddtargetblank8c6dfeca">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8ea28193c105509c17fde206efdd9de84e158231targetblank8ea2819a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bdd" target="_blank">8c6dfec</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8ea28193c105509c17fde206efdd9de84e158231" target="_blank">8ea2819</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bddtargetblank8c6dfeca"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8ea28193c105509c17fde206efdd9de84e158231targetblank8ea2819a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8c6dfec0d8badf05dcb216e0ff7b4d9cdf654bdd" target="_blank">8c6dfec</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8ea28193c105509c17fde206efdd9de84e158231" target="_blank">8ea2819</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -580,6 +580,7 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    data/14_001_WCMC001_ColdCorals2017_v5_1/
     Ignored:    output/
 
@@ -587,6 +588,7 @@ Untracked files:
     Untracked:  code/read_cwc_data.R
 
 Unstaged changes:
+    Modified:   analysis/compute_OIA.Rmd
     Modified:   code/Workflowr_project_managment.R
 
 </code></pre>
@@ -633,6 +635,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/8ea28193c105509c17fde206efdd9de84e158231/analysis/synopsis_OIA.Rmd" target="_blank">8ea2819</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+<td>
+included WOA ST in uncertainty budget
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/1dfb835ab3b33199388c07db95914b147f160ddd/docs/synopsis_OIA.html" target="_blank">1dfb835</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2672,6 +2708,7 @@ uncertainty_files &lt;-
                                &quot;buffer&quot;,
                                &quot;Standard case_3.csv&quot;,
                                &quot;Standard case_3_DIC&quot;,
+                               &quot;dCant&quot;,
                                &quot;merged&quot;,
                                sep = &quot;|&quot;))]
 
@@ -2680,25 +2717,25 @@ cant_uncertainty_files &lt;-
   uncertainty_files[!uncertainty_files %&gt;%
                       str_detect(c(&quot;DIC_addition.csv&quot;))]
 
-cant_uncertainty_files &lt;-
-  cant_uncertainty_files[!cant_uncertainty_files %&gt;%
-                      str_detect(c(&quot;low DIC high TA&quot;))]
-
-cant_uncertainty_files &lt;-
-  cant_uncertainty_files[!cant_uncertainty_files %&gt;%
-                      str_detect(c(&quot;high DIC low TA&quot;))]
+# cant_uncertainty_files &lt;-
+#   cant_uncertainty_files[!cant_uncertainty_files %&gt;%
+#                       str_detect(c(&quot;low DIC high TA&quot;))]
+# 
+# cant_uncertainty_files &lt;-
+#   cant_uncertainty_files[!cant_uncertainty_files %&gt;%
+#                       str_detect(c(&quot;high DIC low TA&quot;))]
 
 buffer_uncertainty_files &lt;-
   uncertainty_files[uncertainty_files %&gt;%
                       str_detect(c(&quot;DIC_addition.csv&quot;))]
 
-buffer_uncertainty_files &lt;-
-  buffer_uncertainty_files[!buffer_uncertainty_files %&gt;%
-                      str_detect(c(&quot;low DIC high TA&quot;))]
-
-buffer_uncertainty_files &lt;-
-  buffer_uncertainty_files[!buffer_uncertainty_files %&gt;%
-                      str_detect(c(&quot;high DIC low TA&quot;))]
+# buffer_uncertainty_files &lt;-
+#   buffer_uncertainty_files[!buffer_uncertainty_files %&gt;%
+#                       str_detect(c(&quot;low DIC high TA&quot;))]
+# 
+# buffer_uncertainty_files &lt;-
+#   buffer_uncertainty_files[!buffer_uncertainty_files %&gt;%
+#                       str_detect(c(&quot;high DIC low TA&quot;))]
 
 # buffer_uncertainty_files &lt;-
 #   buffer_uncertainty_files[buffer_uncertainty_files %&gt;%
@@ -2731,11 +2768,12 @@ buffer_variables_addition &lt;-
   read_csv(paste0(path_OIA, cant_uncertainty_files))
 
 gc()</code></pre>
-<pre><code>             used   (Mb) gc trigger   (Mb)   max used   (Mb)
-Ncells    3162251  168.9    5642845  301.4    5429070  290.0
-Vcells 1018585372 7771.2 1231538453 9395.9 1018643293 7771.7</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells    3162186   168.9    5642690   301.4    5428967   290.0
+Vcells 1546159451 11796.3 2037444648 15544.5 1546217627 11796.8</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
-  bind_rows(acidification_trend_uncertainty,
+  bind_rows(acidification_trend_uncertainty %&gt;%
+              select(-c(talk, temp, sal, phosphate, silicate)),
             acidification_trend %&gt;%
               select(-c(talk, temp, sal, phosphate, silicate)))
 
@@ -2743,9 +2781,9 @@ acidification_trend &lt;- acidification_trend %&gt;%
   select(-c(MLR_basin_mask, MLR_configuration))
 
 gc()</code></pre>
-<pre><code>             used   (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3163823  169.0    5642845   301.4    5429070   290
-Vcells 1112972000 8491.4 2196063209 16754.7 2016138023 15382</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
+Ncells    3162121   168.9    5642690   301.4    5428967   290
+Vcells 1418762859 10824.4 3012632621 22984.6 2849503454 21740</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2753,9 +2791,9 @@ Vcells 1112972000 8491.4 2196063209 16754.7 2016138023 15382</code></pre>
          all_of(OIA_variables))
 
 gc()</code></pre>
-<pre><code>             used   (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3163857  169.0    5642845   301.4    5429070   290
-Vcells 1112972078 8491.4 2196063209 16754.7 2016138023 15382</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
+Ncells    3162151   168.9    5642690   301.4    5428967   290
+Vcells 1418762929 10824.4 3012632621 22984.6 2849503454 21740</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2862,9 +2900,9 @@ acidification_trend_uncertainty_delta_total &lt;-
   read_csv(paste0(path_OIA, &quot;OIA_merged_delta_total.csv&quot;))
 
 gc()</code></pre>
-<pre><code>             used   (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3164093  169.0    5642845   301.4    5429070   290
-Vcells 1123188917 8569.3 2196063209 16754.7 2016138023 15382</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
+Ncells    3162470   168.9    5642690   301.4    5428967   290
+Vcells 1395435069 10646.4 3012632621 22984.6 2849503454 21740</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -3028,7 +3066,7 @@ dCant_trend &lt;-
   inner_join(
     acidification_trend %&gt;%
       filter(tref %in% c(2004, 2014)) %&gt;%
-      select(lon, lat, depth, tref, basin_AIP, contains(&quot;delta&quot;)),
+      select(lon, lat, depth, tref, contains(&quot;delta&quot;)),
     dCant_temp_trend_depth_grid
   )
 
@@ -3036,7 +3074,7 @@ temperature_trend &lt;-
   inner_join(
     temperature_trend %&gt;%
       filter(tref %in% c(2004, 2014)) %&gt;%
-      select(lon, lat, depth, tref, basin_AIP, contains(&quot;delta&quot;)),
+      select(lon, lat, depth, tref, contains(&quot;delta&quot;)),
     dCant_temp_trend_depth_grid
   )
 
@@ -4142,11 +4180,16 @@ MLR_configuration_uncertainty &lt;-
   MLR_configuration_all[!MLR_configuration_all %&gt;%
                           str_detect(paste(MLR_configuration_reference,
                                            &quot;DIC&quot;,
+                                           &quot; TA&quot;,
+                                           &quot;GLODAP&quot;,
                                            sep = &quot;|&quot;))]
 
 CO2_climatology_uncertainty &lt;-
   MLR_configuration_all[MLR_configuration_all %&gt;%
-                          str_detect(&quot;DIC&quot;)]</code></pre>
+                          str_detect(paste(&quot;DIC&quot;,
+                                           &quot; TA&quot;,
+                                           &quot;GLODAP&quot;,
+                                           sep = &quot;|&quot;))]</code></pre>
 </div>
 <div id="additive-computation" class="section level2">
 <h2>Additive computation</h2>
@@ -4161,14 +4204,14 @@ CO2_climatology_uncertainty &lt;-
   df_CO2_uncertainty &lt;-
     df %&gt;%
     filter(MLR_basin_mask == MLR_basin_mask_reference,
-           str_detect(MLR_configuration, &quot;DIC&quot;)) %&gt;%
+           MLR_configuration %in% CO2_climatology_uncertainty) %&gt;%
     pivot_wider(
       names_from = MLR_configuration,
       values_from = contains(&quot;_interval_mean&quot;),
       names_sep = &quot;-&quot;
     ) %&gt;%
     pivot_longer(
-      all_of(contains(&quot;DIC&quot;)),
+      all_of(contains(CO2_climatology_uncertainty)),
       names_to = c(&quot;variable&quot;, &quot;MLR_configuration&quot;),
       names_sep = &quot;-&quot;,
       values_to = &quot;value&quot;
@@ -6193,7 +6236,7 @@ H_free
 1.0802045
 </td>
 <td style="text-align:right;">
-0.0768866
+0.0664606
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6216,7 +6259,7 @@ OmegaAragonite
 -0.4111926
 </td>
 <td style="text-align:right;">
-0.0110967
+0.0110798
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6239,7 +6282,7 @@ pH
 -0.0767921
 </td>
 <td style="text-align:right;">
-0.0026142
+0.0024758
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6285,7 +6328,7 @@ H_free
 1.7191432
 </td>
 <td style="text-align:right;">
-0.0850490
+0.0736548
 </td>
 <td style="text-align:right;">
 159.14980
@@ -6308,7 +6351,7 @@ OmegaAragonite
 -0.6099696
 </td>
 <td style="text-align:right;">
-0.0124033
+0.0123830
 </td>
 <td style="text-align:right;">
 148.34157
@@ -6331,7 +6374,7 @@ pH
 -0.1166998
 </td>
 <td style="text-align:right;">
-0.0028929
+0.0027475
 </td>
 <td style="text-align:right;">
 151.96848
@@ -6377,7 +6420,7 @@ H_free
 1.2838086
 </td>
 <td style="text-align:right;">
-0.0498371
+0.0497770
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6400,7 +6443,7 @@ OmegaAragonite
 -0.4833822
 </td>
 <td style="text-align:right;">
-0.0124656
+0.0124725
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6423,7 +6466,7 @@ pH
 -0.1005000
 </td>
 <td style="text-align:right;">
-0.0029379
+0.0029132
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6469,7 +6512,7 @@ H_free
 1.9404202
 </td>
 <td style="text-align:right;">
-0.0552124
+0.0551229
 </td>
 <td style="text-align:right;">
 151.14560
@@ -6492,7 +6535,7 @@ OmegaAragonite
 -0.6745391
 </td>
 <td style="text-align:right;">
-0.0139350
+0.0139415
 </td>
 <td style="text-align:right;">
 139.54570
@@ -6515,7 +6558,7 @@ pH
 -0.1444447
 </td>
 <td style="text-align:right;">
-0.0032763
+0.0032515
 </td>
 <td style="text-align:right;">
 143.72607
@@ -6561,7 +6604,7 @@ H_free
 1.1774335
 </td>
 <td style="text-align:right;">
-0.1291738
+0.1209760
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6584,7 +6627,7 @@ OmegaAragonite
 -0.3442976
 </td>
 <td style="text-align:right;">
-0.0238849
+0.0238591
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6607,7 +6650,7 @@ pH
 -0.0831152
 </td>
 <td style="text-align:right;">
-0.0066479
+0.0065470
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6653,7 +6696,7 @@ H_free
 1.9938466
 </td>
 <td style="text-align:right;">
-0.1454867
+0.1359084
 </td>
 <td style="text-align:right;">
 169.33836
@@ -6676,7 +6719,7 @@ OmegaAragonite
 -0.5285291
 </td>
 <td style="text-align:right;">
-0.0267102
+0.0266769
 </td>
 <td style="text-align:right;">
 153.50937
@@ -6699,7 +6742,7 @@ pH
 -0.1328150
 </td>
 <td style="text-align:right;">
-0.0074251
+0.0073155
 </td>
 <td style="text-align:right;">
 159.79642
@@ -6745,7 +6788,7 @@ H_free
 1.1730437
 </td>
 <td style="text-align:right;">
-0.1203230
+0.1048553
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6768,7 +6811,7 @@ OmegaAragonite
 -0.3185732
 </td>
 <td style="text-align:right;">
-0.0106398
+0.0104914
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6791,7 +6834,7 @@ pH
 -0.0849196
 </td>
 <td style="text-align:right;">
-0.0044015
+0.0041636
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6837,7 +6880,7 @@ H_free
 1.8431186
 </td>
 <td style="text-align:right;">
-0.1324427
+0.1156633
 </td>
 <td style="text-align:right;">
 157.12275
@@ -6860,7 +6903,7 @@ OmegaAragonite
 -0.4608579
 </td>
 <td style="text-align:right;">
-0.0118646
+0.0117027
 </td>
 <td style="text-align:right;">
 144.66311
@@ -6883,7 +6926,7 @@ pH
 -0.1271582
 </td>
 <td style="text-align:right;">
-0.0048503
+0.0046045
 </td>
 <td style="text-align:right;">
 149.73945
@@ -6929,7 +6972,7 @@ H_free
 0.9559767
 </td>
 <td style="text-align:right;">
-0.0632766
+0.0555759
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6952,7 +6995,7 @@ OmegaAragonite
 -0.4474299
 </td>
 <td style="text-align:right;">
-0.0140650
+0.0140670
 </td>
 <td style="text-align:right;">
 100.00000
@@ -6975,7 +7018,7 @@ pH
 -0.0733096
 </td>
 <td style="text-align:right;">
-0.0027884
+0.0027036
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7021,7 +7064,7 @@ H_free
 1.5335835
 </td>
 <td style="text-align:right;">
-0.0702458
+0.0617863
 </td>
 <td style="text-align:right;">
 160.42059
@@ -7044,7 +7087,7 @@ OmegaAragonite
 -0.6706144
 </td>
 <td style="text-align:right;">
-0.0157250
+0.0157260
 </td>
 <td style="text-align:right;">
 149.88147
@@ -7067,7 +7110,7 @@ pH
 -0.1123341
 </td>
 <td style="text-align:right;">
-0.0031030
+0.0030128
 </td>
 <td style="text-align:right;">
 153.23238
@@ -7113,7 +7156,7 @@ H_free
 1.2818360
 </td>
 <td style="text-align:right;">
-0.1513385
+0.1450828
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7136,7 +7179,7 @@ OmegaAragonite
 -0.4106020
 </td>
 <td style="text-align:right;">
-0.0302607
+0.0302532
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7159,7 +7202,7 @@ pH
 -0.0743367
 </td>
 <td style="text-align:right;">
-0.0061960
+0.0061602
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7205,7 +7248,7 @@ H_free
 2.0088455
 </td>
 <td style="text-align:right;">
-0.1684550
+0.1617842
 </td>
 <td style="text-align:right;">
 156.71626
@@ -7228,7 +7271,7 @@ OmegaAragonite
 -0.6013356
 </td>
 <td style="text-align:right;">
-0.0338313
+0.0338230
 </td>
 <td style="text-align:right;">
 146.45217
@@ -7251,7 +7294,7 @@ pH
 -0.1114112
 </td>
 <td style="text-align:right;">
-0.0069187
+0.0068819
 </td>
 <td style="text-align:right;">
 149.87381
@@ -7294,10 +7337,10 @@ Global
 H_free
 </td>
 <td style="text-align:right;">
-1.4159497
+1.4159535
 </td>
 <td style="text-align:right;">
-0.1615996
+0.1527862
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7317,10 +7360,10 @@ Global
 OmegaAragonite
 </td>
 <td style="text-align:right;">
--0.2362118
+-0.2362126
 </td>
 <td style="text-align:right;">
-0.0141343
+0.0140698
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7340,10 +7383,10 @@ Global
 pH
 </td>
 <td style="text-align:right;">
--0.0658722
+-0.0658725
 </td>
 <td style="text-align:right;">
-0.0049934
+0.0049454
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7363,10 +7406,10 @@ Global
 tco2
 </td>
 <td style="text-align:right;">
-28.3190920
+28.3191892
 </td>
 <td style="text-align:right;">
-1.8357686
+1.8359071
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7386,13 +7429,13 @@ Global
 H_free
 </td>
 <td style="text-align:right;">
-2.0404939
+2.0404971
 </td>
 <td style="text-align:right;">
-0.1784828
+0.1697200
 </td>
 <td style="text-align:right;">
-144.10780
+144.10763
 </td>
 </tr>
 <tr>
@@ -7409,13 +7452,13 @@ Global
 OmegaAragonite
 </td>
 <td style="text-align:right;">
--0.3367891
+-0.3367899
 </td>
 <td style="text-align:right;">
-0.0157849
+0.0157216
 </td>
 <td style="text-align:right;">
-142.57927
+142.57913
 </td>
 </tr>
 <tr>
@@ -7432,13 +7475,13 @@ Global
 pH
 </td>
 <td style="text-align:right;">
--0.0943941
+-0.0943943
 </td>
 <td style="text-align:right;">
-0.0055697
+0.0055222
 </td>
 <td style="text-align:right;">
-143.29878
+143.29857
 </td>
 </tr>
 <tr>
@@ -7455,13 +7498,13 @@ Global
 tco2
 </td>
 <td style="text-align:right;">
-40.3643050
+40.3643962
 </td>
 <td style="text-align:right;">
-2.0524517
+2.0526066
 </td>
 <td style="text-align:right;">
-142.53390
+142.53373
 </td>
 </tr>
 <tr>
@@ -7481,7 +7524,7 @@ H_free
 1.4355749
 </td>
 <td style="text-align:right;">
-0.1522895
+0.1516932
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7504,7 +7547,7 @@ OmegaAragonite
 -0.3658094
 </td>
 <td style="text-align:right;">
-0.0285380
+0.0285358
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7527,7 +7570,7 @@ pH
 -0.0928839
 </td>
 <td style="text-align:right;">
-0.0083105
+0.0083050
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7573,7 +7616,7 @@ H_free
 1.9305371
 </td>
 <td style="text-align:right;">
-0.1700665
+0.1694947
 </td>
 <td style="text-align:right;">
 134.47833
@@ -7596,7 +7639,7 @@ OmegaAragonite
 -0.4675746
 </td>
 <td style="text-align:right;">
-0.0319057
+0.0319035
 </td>
 <td style="text-align:right;">
 127.81921
@@ -7619,7 +7662,7 @@ pH
 -0.1209355
 </td>
 <td style="text-align:right;">
-0.0092895
+0.0092843
 </td>
 <td style="text-align:right;">
 130.20074
@@ -7665,7 +7708,7 @@ H_free
 2.1813988
 </td>
 <td style="text-align:right;">
-0.6570490
+0.6539288
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7688,7 +7731,7 @@ OmegaAragonite
 -0.1739390
 </td>
 <td style="text-align:right;">
-0.0287049
+0.0286440
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7711,7 +7754,7 @@ pH
 -0.0725595
 </td>
 <td style="text-align:right;">
-0.0161811
+0.0161749
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7757,7 +7800,7 @@ H_free
 2.7754829
 </td>
 <td style="text-align:right;">
-0.7335900
+0.7306566
 </td>
 <td style="text-align:right;">
 127.23409
@@ -7780,7 +7823,7 @@ OmegaAragonite
 -0.2313756
 </td>
 <td style="text-align:right;">
-0.0320735
+0.0320162
 </td>
 <td style="text-align:right;">
 133.02118
@@ -7803,7 +7846,7 @@ pH
 -0.0947071
 </td>
 <td style="text-align:right;">
-0.0180892
+0.0180832
 </td>
 <td style="text-align:right;">
 130.52330
@@ -7846,10 +7889,10 @@ Southern Ocean
 H_free
 </td>
 <td style="text-align:right;">
-0.9889302
+0.9889503
 </td>
 <td style="text-align:right;">
-0.1361614
+0.1251823
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7869,10 +7912,10 @@ Southern Ocean
 OmegaAragonite
 </td>
 <td style="text-align:right;">
--0.1691222
+-0.1691264
 </td>
 <td style="text-align:right;">
-0.0152951
+0.0152121
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7892,10 +7935,10 @@ Southern Ocean
 pH
 </td>
 <td style="text-align:right;">
--0.0545852
+-0.0545865
 </td>
 <td style="text-align:right;">
-0.0055939
+0.0055173
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7915,10 +7958,10 @@ Southern Ocean
 tco2
 </td>
 <td style="text-align:right;">
-21.2917545
+21.2922636
 </td>
 <td style="text-align:right;">
-1.9877081
+1.9877038
 </td>
 <td style="text-align:right;">
 100.00000
@@ -7938,13 +7981,13 @@ Southern Ocean
 H_free
 </td>
 <td style="text-align:right;">
-1.4562031
+1.4562198
 </td>
 <td style="text-align:right;">
-0.1496317
+0.1385174
 </td>
 <td style="text-align:right;">
-147.25034
+147.24904
 </td>
 </tr>
 <tr>
@@ -7961,13 +8004,13 @@ Southern Ocean
 OmegaAragonite
 </td>
 <td style="text-align:right;">
--0.2349080
+-0.2349123
 </td>
 <td style="text-align:right;">
-0.0170788
+0.0169959
 </td>
 <td style="text-align:right;">
-138.89843
+138.89749
 </td>
 </tr>
 <tr>
@@ -7984,13 +8027,13 @@ Southern Ocean
 pH
 </td>
 <td style="text-align:right;">
--0.0778864
+-0.0778877
 </td>
 <td style="text-align:right;">
-0.0062300
+0.0061552
 </td>
 <td style="text-align:right;">
-142.68791
+142.68663
 </td>
 </tr>
 <tr>
@@ -8007,13 +8050,13 @@ Southern Ocean
 tco2
 </td>
 <td style="text-align:right;">
-29.8706087
+29.8710863
 </td>
 <td style="text-align:right;">
-2.2223252
+2.2223204
 </td>
 <td style="text-align:right;">
-140.29191
+140.29080
 </td>
 </tr>
 <tr>
@@ -8033,7 +8076,7 @@ H_free
 1.2704551
 </td>
 <td style="text-align:right;">
-0.1400764
+0.1328700
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8056,7 +8099,7 @@ OmegaAragonite
 -0.2808592
 </td>
 <td style="text-align:right;">
-0.0164831
+0.0164486
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8079,7 +8122,7 @@ pH
 -0.0680715
 </td>
 <td style="text-align:right;">
-0.0052011
+0.0051544
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8125,7 +8168,7 @@ H_free
 1.9373611
 </td>
 <td style="text-align:right;">
-0.1553755
+0.1479422
 </td>
 <td style="text-align:right;">
 152.49347
@@ -8148,7 +8191,7 @@ OmegaAragonite
 -0.4128480
 </td>
 <td style="text-align:right;">
-0.0184218
+0.0183865
 </td>
 <td style="text-align:right;">
 146.99465
@@ -8171,7 +8214,7 @@ pH
 -0.1015268
 </td>
 <td style="text-align:right;">
-0.0058054
+0.0057579
 </td>
 <td style="text-align:right;">
 149.14717
@@ -8217,7 +8260,7 @@ H_free
 2.0197957
 </td>
 <td style="text-align:right;">
-0.3153346
+0.3063754
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8240,7 +8283,7 @@ OmegaAragonite
 -0.1824046
 </td>
 <td style="text-align:right;">
-0.0184087
+0.0183140
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8263,7 +8306,7 @@ pH
 -0.0662199
 </td>
 <td style="text-align:right;">
-0.0079269
+0.0079064
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8309,7 +8352,7 @@ H_free
 2.7020008
 </td>
 <td style="text-align:right;">
-0.3495661
+0.3410724
 </td>
 <td style="text-align:right;">
 133.77595
@@ -8332,7 +8375,7 @@ OmegaAragonite
 -0.2423934
 </td>
 <td style="text-align:right;">
-0.0205494
+0.0204601
 </td>
 <td style="text-align:right;">
 132.88776
@@ -8355,7 +8398,7 @@ pH
 -0.0880979
 </td>
 <td style="text-align:right;">
-0.0088549
+0.0088356
 </td>
 <td style="text-align:right;">
 133.03839
@@ -8401,7 +8444,7 @@ H_free
 0.4955305
 </td>
 <td style="text-align:right;">
-0.1734478
+0.1725491
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8424,7 +8467,7 @@ OmegaAragonite
 -0.0517169
 </td>
 <td style="text-align:right;">
-0.0084057
+0.0083948
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8447,7 +8490,7 @@ pH
 -0.0206757
 </td>
 <td style="text-align:right;">
-0.0047554
+0.0047506
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8493,7 +8536,7 @@ H_free
 0.7757616
 </td>
 <td style="text-align:right;">
-0.1938961
+0.1929018
 </td>
 <td style="text-align:right;">
 156.55173
@@ -8516,7 +8559,7 @@ OmegaAragonite
 -0.0758022
 </td>
 <td style="text-align:right;">
-0.0093973
+0.0093854
 </td>
 <td style="text-align:right;">
 146.57142
@@ -8539,7 +8582,7 @@ pH
 -0.0314314
 </td>
 <td style="text-align:right;">
-0.0053160
+0.0053110
 </td>
 <td style="text-align:right;">
 152.02080
@@ -8585,7 +8628,7 @@ H_free
 1.2426902
 </td>
 <td style="text-align:right;">
-0.1072801
+0.1067113
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8608,7 +8651,7 @@ OmegaAragonite
 -0.2091256
 </td>
 <td style="text-align:right;">
-0.0149094
+0.0149073
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8631,7 +8674,7 @@ pH
 -0.0703502
 </td>
 <td style="text-align:right;">
-0.0053530
+0.0053490
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8677,7 +8720,7 @@ H_free
 1.6276032
 </td>
 <td style="text-align:right;">
-0.1197527
+0.1192142
 </td>
 <td style="text-align:right;">
 130.97417
@@ -8700,7 +8743,7 @@ OmegaAragonite
 -0.2632351
 </td>
 <td style="text-align:right;">
-0.0166685
+0.0166664
 </td>
 <td style="text-align:right;">
 125.87415
@@ -8723,7 +8766,7 @@ pH
 -0.0900264
 </td>
 <td style="text-align:right;">
-0.0059834
+0.0059796
 </td>
 <td style="text-align:right;">
 127.96891
@@ -8769,7 +8812,7 @@ H_free
 0.8474434
 </td>
 <td style="text-align:right;">
-0.8787515
+0.8785741
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8792,7 +8835,7 @@ OmegaAragonite
 -0.0224875
 </td>
 <td style="text-align:right;">
-0.0198869
+0.0198816
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8861,7 +8904,7 @@ H_free
 0.8122746
 </td>
 <td style="text-align:right;">
-0.9824060
+0.9822447
 </td>
 <td style="text-align:right;">
 95.85001
@@ -8884,7 +8927,7 @@ OmegaAragonite
 -0.0223816
 </td>
 <td style="text-align:right;">
-0.0222323
+0.0222275
 </td>
 <td style="text-align:right;">
 99.52896
@@ -8953,7 +8996,7 @@ H_free
 0.4344953
 </td>
 <td style="text-align:right;">
-0.1585318
+0.1564961
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8976,7 +9019,7 @@ OmegaAragonite
 -0.0441343
 </td>
 <td style="text-align:right;">
-0.0127807
+0.0127650
 </td>
 <td style="text-align:right;">
 100.00000
@@ -8999,7 +9042,7 @@ pH
 -0.0190084
 </td>
 <td style="text-align:right;">
-0.0062049
+0.0061966
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9045,7 +9088,7 @@ H_free
 0.6787279
 </td>
 <td style="text-align:right;">
-0.1769349
+0.1748100
 </td>
 <td style="text-align:right;">
 156.21065
@@ -9068,7 +9111,7 @@ OmegaAragonite
 -0.0655445
 </td>
 <td style="text-align:right;">
-0.0142866
+0.0142703
 </td>
 <td style="text-align:right;">
 148.51172
@@ -9091,7 +9134,7 @@ pH
 -0.0290140
 </td>
 <td style="text-align:right;">
-0.0069354
+0.0069271
 </td>
 <td style="text-align:right;">
 152.63778
@@ -9137,7 +9180,7 @@ H_free
 0.5139740
 </td>
 <td style="text-align:right;">
-0.1667688
+0.1657765
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9160,7 +9203,7 @@ OmegaAragonite
 -0.0612562
 </td>
 <td style="text-align:right;">
-0.0092766
+0.0092664
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9183,7 +9226,7 @@ pH
 -0.0230548
 </td>
 <td style="text-align:right;">
-0.0049639
+0.0049580
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9229,7 +9272,7 @@ H_free
 0.8498827
 </td>
 <td style="text-align:right;">
-0.1865522
+0.1853878
 </td>
 <td style="text-align:right;">
 165.35520
@@ -9252,7 +9295,7 @@ OmegaAragonite
 -0.0913113
 </td>
 <td style="text-align:right;">
-0.0103724
+0.0103605
 </td>
 <td style="text-align:right;">
 149.06459
@@ -9275,7 +9318,7 @@ pH
 -0.0361012
 </td>
 <td style="text-align:right;">
-0.0055493
+0.0055429
 </td>
 <td style="text-align:right;">
 156.58896
@@ -9321,7 +9364,7 @@ H_free
 0.3427270
 </td>
 <td style="text-align:right;">
-0.4676728
+0.4675765
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9344,7 +9387,7 @@ OmegaAragonite
 -0.0248389
 </td>
 <td style="text-align:right;">
-0.0224071
+0.0224060
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9367,7 +9410,7 @@ pH
 -0.0116469
 </td>
 <td style="text-align:right;">
-0.0127893
+0.0127890
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9413,7 +9456,7 @@ H_free
 0.5737358
 </td>
 <td style="text-align:right;">
-0.5228939
+0.5227749
 </td>
 <td style="text-align:right;">
 167.40314
@@ -9436,7 +9479,7 @@ OmegaAragonite
 -0.0383162
 </td>
 <td style="text-align:right;">
-0.0250521
+0.0250507
 </td>
 <td style="text-align:right;">
 154.25880
@@ -9459,7 +9502,7 @@ pH
 -0.0188135
 </td>
 <td style="text-align:right;">
-0.0142988
+0.0142985
 </td>
 <td style="text-align:right;">
 161.53255
@@ -9505,7 +9548,7 @@ H_free
 0.0349345
 </td>
 <td style="text-align:right;">
-0.0899058
+0.0899035
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9597,7 +9640,7 @@ H_free
 0.1362549
 </td>
 <td style="text-align:right;">
-0.1006505
+0.1005785
 </td>
 <td style="text-align:right;">
 390.02959
@@ -9620,7 +9663,7 @@ OmegaAragonite
 -0.0123603
 </td>
 <td style="text-align:right;">
-0.0048994
+0.0048989
 </td>
 <td style="text-align:right;">
 253.65231
@@ -9643,7 +9686,7 @@ pH
 -0.0061647
 </td>
 <td style="text-align:right;">
-0.0032246
+0.0032243
 </td>
 <td style="text-align:right;">
 305.05029
@@ -9689,7 +9732,7 @@ H_free
 0.7655212
 </td>
 <td style="text-align:right;">
-0.1424017
+0.1422107
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9712,7 +9755,7 @@ OmegaAragonite
 -0.0927015
 </td>
 <td style="text-align:right;">
-0.0150893
+0.0150887
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9735,7 +9778,7 @@ pH
 -0.0405521
 </td>
 <td style="text-align:right;">
-0.0070101
+0.0070088
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9781,7 +9824,7 @@ H_free
 1.0011295
 </td>
 <td style="text-align:right;">
-0.1591388
+0.1589580
 </td>
 <td style="text-align:right;">
 130.77749
@@ -9804,7 +9847,7 @@ OmegaAragonite
 -0.1177862
 </td>
 <td style="text-align:right;">
-0.0168701
+0.0168696
 </td>
 <td style="text-align:right;">
 127.05962
@@ -9827,7 +9870,7 @@ pH
 -0.0521959
 </td>
 <td style="text-align:right;">
-0.0078371
+0.0078358
 </td>
 <td style="text-align:right;">
 128.71320
@@ -9873,7 +9916,7 @@ H_free
 -0.0353504
 </td>
 <td style="text-align:right;">
-0.4925048
+0.4925027
 </td>
 <td style="text-align:right;">
 100.00000
@@ -9965,7 +10008,7 @@ H_free
 -0.2231603
 </td>
 <td style="text-align:right;">
-0.5506752
+0.5506523
 </td>
 <td style="text-align:right;">
 631.28134
@@ -9988,7 +10031,7 @@ OmegaAragonite
 0.0062109
 </td>
 <td style="text-align:right;">
-0.0155550
+0.0155547
 </td>
 <td style="text-align:right;">
 684.36854
@@ -10057,7 +10100,7 @@ H_free
 0.0433144
 </td>
 <td style="text-align:right;">
-0.1459724
+0.1459627
 </td>
 <td style="text-align:right;">
 100.00000
@@ -10103,7 +10146,7 @@ pH
 -0.0016676
 </td>
 <td style="text-align:right;">
-0.0054834
+0.0054833
 </td>
 <td style="text-align:right;">
 100.00000
@@ -10149,7 +10192,7 @@ H_free
 0.1793469
 </td>
 <td style="text-align:right;">
-0.1634732
+0.1633295
 </td>
 <td style="text-align:right;">
 414.05851
@@ -10172,7 +10215,7 @@ OmegaAragonite
 -0.0109080
 </td>
 <td style="text-align:right;">
-0.0096378
+0.0096370
 </td>
 <td style="text-align:right;">
 414.62365
@@ -10195,7 +10238,7 @@ pH
 -0.0068245
 </td>
 <td style="text-align:right;">
-0.0061314
+0.0061310
 </td>
 <td style="text-align:right;">
 409.23206
@@ -10287,7 +10330,7 @@ pH
 -0.0014337
 </td>
 <td style="text-align:right;">
-0.0030117
+0.0030116
 </td>
 <td style="text-align:right;">
 100.00000
@@ -10333,7 +10376,7 @@ H_free
 0.1401687
 </td>
 <td style="text-align:right;">
-0.1009396
+0.1008416
 </td>
 <td style="text-align:right;">
 842.79184
@@ -10356,7 +10399,7 @@ OmegaAragonite
 -0.0128336
 </td>
 <td style="text-align:right;">
-0.0052752
+0.0052746
 </td>
 <td style="text-align:right;">
 309.59504
@@ -10379,7 +10422,7 @@ pH
 -0.0062995
 </td>
 <td style="text-align:right;">
-0.0033678
+0.0033674
 </td>
 <td style="text-align:right;">
 439.37501
@@ -10425,7 +10468,7 @@ H_free
 0.0298295
 </td>
 <td style="text-align:right;">
-0.1627176
+0.1627142
 </td>
 <td style="text-align:right;">
 100.00000
@@ -10517,7 +10560,7 @@ H_free
 0.0974617
 </td>
 <td style="text-align:right;">
-0.1819393
+0.1819271
 </td>
 <td style="text-align:right;">
 326.72902
@@ -10563,7 +10606,7 @@ pH
 -0.0039927
 </td>
 <td style="text-align:right;">
-0.0060798
+0.0060797
 </td>
 <td style="text-align:right;">
 316.14117
@@ -10754,8 +10797,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    5022367   268.3    8391434   448.2    8391434   448.2
-Vcells 1614558373 12318.2 2635355850 20106.2 2635355277 20106.2</code></pre>
+Ncells    5021866   268.2    8682934   463.8    8682934   463.8
+Vcells 2078769501 15859.8 3617034840 27595.8 3617034840 27595.8</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -12727,16 +12770,16 @@ buffer_addition_depth_layer_trend %&gt;%
 <pre><code># A tibble: 288 × 8
    depth  biome  year variable sensitivity sensitivity_sd  pCO2 delta_sensitvity
    &lt;fct&gt;  &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;          &lt;dbl&gt;          &lt;dbl&gt; &lt;dbl&gt;            &lt;dbl&gt;
- 1 A: 0 … Glob…  2014 H_free       0.0352       0.00319    396.            50.4 
- 2 A: 0 … Glob…  2004 H_free       0.0327       0.00214    375.            39.9 
- 3 A: 0 … Glob…  1994 H_free       0.0306       0.00196    357.            30.9 
- 4 A: 0 … Glob…  1800 H_free       0.0234       0.00238    282.             0   
- 5 A: 0 … Glob…  2014 OmegaAr…    -0.00940      0.0000861  396.            -3.09
- 6 A: 0 … Glob…  2004 OmegaAr…    -0.00947      0.0000578  375.            -2.44
- 7 A: 0 … Glob…  1994 OmegaAr…    -0.00952      0.0000526  357.            -1.88
- 8 A: 0 … Glob…  1800 OmegaAr…    -0.00970      0.0000635  282.             0   
- 9 A: 0 … Glob…  2014 pH          -0.00203      0.0000597  396.            14.0 
-10 A: 0 … Glob…  2004 pH          -0.00198      0.0000413  375.            11.4 
+ 1 A: 0 … Glob…  2014 H_free       0.0352       0.00252    396.            50.4 
+ 2 A: 0 … Glob…  2004 H_free       0.0327       0.00169    375.            39.9 
+ 3 A: 0 … Glob…  1994 H_free       0.0306       0.00154    357.            30.9 
+ 4 A: 0 … Glob…  1800 H_free       0.0234       0.00188    282.             0   
+ 5 A: 0 … Glob…  2014 OmegaAr…    -0.00940      0.0000741  396.            -3.09
+ 6 A: 0 … Glob…  2004 OmegaAr…    -0.00947      0.0000501  375.            -2.44
+ 7 A: 0 … Glob…  1994 OmegaAr…    -0.00952      0.0000462  357.            -1.88
+ 8 A: 0 … Glob…  1800 OmegaAr…    -0.00970      0.0000571  282.             0   
+ 9 A: 0 … Glob…  2014 pH          -0.00203      0.0000481  396.            14.0 
+10 A: 0 … Glob…  2004 pH          -0.00198      0.0000333  375.            11.4 
 # ℹ 278 more rows</code></pre>
 <pre class="r"><code>rm(p_maps, p_zonal, p_trends,
    buffer_addition_depth_layer_trend,
@@ -12750,8 +12793,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4899178   261.7    8391434   448.2    8391434   448.2
-Vcells 1520702548 11602.1 2635355850 20106.2 2635355277 20106.2</code></pre>
+Ncells    4911068   262.3    8682934   463.8    8682934   463.8
+Vcells 1957708228 14936.2 3617034840 27595.8 3617034840 27595.8</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -13345,8 +13388,8 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4642638   248.0    8391434   448.2    8391434   448.2
-Vcells 1656099440 12635.1 2635355850 20106.2 2635355277 20106.2</code></pre>
+Ncells    4644224   248.1    8682934   463.8    8682934   463.8
+Vcells 2134173374 16282.5 3617034840 27595.8 3617034840 27595.8</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
   acidification_trend_uncertainty_delta_total %&gt;%
   filter(depth &lt;= 600,
@@ -13442,8 +13485,8 @@ acidification_bottom_raw &lt;-
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4665414   249.2    8391434   448.2    8391434   448.2
-Vcells 2020501677 15415.3 3162507020 24128.1 2635355277 20106.2</code></pre>
+Ncells    4666015   249.2    8682934   463.8    8682934   463.8
+Vcells 2589667096 19757.6 4340521808 33115.6 3617034840 27595.8</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -14665,8 +14708,8 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4983381   266.2    8391434   448.2    8391434   448.2
-Vcells 1494868353 11405.0 3162507020 24128.1 3160047919 24109.3</code></pre>
+Ncells    4981429   266.1    8682934   463.8    8682934   463.8
+Vcells 1931781459 14738.4 4340521808 33115.6 4333648012 33063.2</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -14693,14 +14736,14 @@ acidification_saturation_horizon %&gt;%
 <pre><code># A tibble: 8 × 3
    tref mineral    `n()`
   &lt;dbl&gt; &lt;chr&gt;      &lt;int&gt;
-1  1800 Aragonite 943832
-2  1800 Calcite   943832
-3  1994 Aragonite 943832
-4  1994 Calcite   943832
-5  2004 Aragonite 943832
-6  2004 Calcite   943832
-7  2014 Aragonite 943832
-8  2014 Calcite   943832</code></pre>
+1  1800 Aragonite 943827
+2  1800 Calcite   943827
+3  1994 Aragonite 943827
+4  1994 Calcite   943827
+5  2004 Aragonite 943827
+6  2004 Calcite   943827
+7  2014 Aragonite 943827
+8  2014 Calcite   943827</code></pre>
 <pre class="r"><code>bathymetry &lt;-
   acidification_saturation_horizon %&gt;%
   group_by(lat, lon, tref, mineral) %&gt;%
@@ -15570,13 +15613,13 @@ Global
 1800
 </td>
 <td style="text-align:right;">
-939.23067
+939.22406
 </td>
 <td style="text-align:right;">
-632.33164
+632.33765
 </td>
 <td style="text-align:right;">
-295.056418
+295.010777
 </td>
 <td style="text-align:right;">
 33166
@@ -15593,10 +15636,10 @@ Global
 2014
 </td>
 <td style="text-align:right;">
-728.40661
+728.40001
 </td>
 <td style="text-align:right;">
-542.81166
+542.81610
 </td>
 <td style="text-align:right;">
 196.722937
@@ -15800,10 +15843,10 @@ Southern Ocean
 1800
 </td>
 <td style="text-align:right;">
-978.55034
+978.51529
 </td>
 <td style="text-align:right;">
-224.34762
+224.44371
 </td>
 <td style="text-align:right;">
 633.568599
@@ -15823,10 +15866,10 @@ Southern Ocean
 2014
 </td>
 <td style="text-align:right;">
-704.28187
+704.24682
 </td>
 <td style="text-align:right;">
-283.53143
+283.57358
 </td>
 <td style="text-align:right;">
 250.000000
@@ -16247,13 +16290,13 @@ Global
 1800
 </td>
 <td style="text-align:right;">
-939.23067
+939.22406
 </td>
 <td style="text-align:right;">
-632.33164
+632.33765
 </td>
 <td style="text-align:right;">
-295.056418
+295.010777
 </td>
 <td style="text-align:right;">
 NA
@@ -16282,10 +16325,10 @@ Global
 2014
 </td>
 <td style="text-align:right;">
-728.40661
+728.40001
 </td>
 <td style="text-align:right;">
-542.81166
+542.81610
 </td>
 <td style="text-align:right;">
 196.722937
@@ -16527,10 +16570,10 @@ Southern Ocean
 1800
 </td>
 <td style="text-align:right;">
-978.55034
+978.51529
 </td>
 <td style="text-align:right;">
-224.34762
+224.44371
 </td>
 <td style="text-align:right;">
 633.568599
@@ -16562,10 +16605,10 @@ Southern Ocean
 2014
 </td>
 <td style="text-align:right;">
-704.28187
+704.24682
 </td>
 <td style="text-align:right;">
-283.53143
+283.57358
 </td>
 <td style="text-align:right;">
 250.000000
@@ -17422,13 +17465,13 @@ Global
 1.0
 </td>
 <td style="text-align:left;">
-295 ± 163
+295 ± 160
 </td>
 <td style="text-align:left;">
-500 ± 71
+500 ± 57
 </td>
 <td style="text-align:left;">
-939 ± 133
+939 ± 94
 </td>
 </tr>
 <tr>
@@ -17442,13 +17485,13 @@ Global
 1.0
 </td>
 <td style="text-align:left;">
-229 ± 156
+229 ± 155
 </td>
 <td style="text-align:left;">
-397 ± 50
+397 ± 40
 </td>
 <td style="text-align:left;">
-789 ± 93
+789 ± 66
 </td>
 </tr>
 <tr>
@@ -17462,13 +17505,13 @@ Global
 1.0
 </td>
 <td style="text-align:left;">
-212 ± 50
+212 ± 40
 </td>
 <td style="text-align:left;">
-385 ± 210
+385 ± 213
 </td>
 <td style="text-align:left;">
-761 ± 93
+761 ± 66
 </td>
 </tr>
 <tr>
@@ -17482,13 +17525,13 @@ Global
 1.0
 </td>
 <td style="text-align:left;">
-197 ± 71
+197 ± 50
 </td>
 <td style="text-align:left;">
-353 ± 233
+353 ± 221
 </td>
 <td style="text-align:left;">
-728 ± 127
+728 ± 90
 </td>
 </tr>
 <tr>
@@ -17502,13 +17545,13 @@ Global
 1.5
 </td>
 <td style="text-align:left;">
-98 ± 18
+98 ± 11
 </td>
 <td style="text-align:left;">
 175 ± 0
 </td>
 <td style="text-align:left;">
-448 ± 29
+448 ± 20
 </td>
 </tr>
 <tr>
@@ -17522,13 +17565,13 @@ Global
 1.5
 </td>
 <td style="text-align:left;">
-51 ± 12
+51 ± 5
 </td>
 <td style="text-align:left;">
 130 ± 0
 </td>
 <td style="text-align:left;">
-358 ± 19
+358 ± 12
 </td>
 </tr>
 <tr>
@@ -17548,7 +17591,7 @@ Global
 130 ± 0
 </td>
 <td style="text-align:left;">
-344 ± 17
+344 ± 10
 </td>
 </tr>
 <tr>
@@ -17568,7 +17611,7 @@ Global
 134 ± 0
 </td>
 <td style="text-align:left;">
-332 ± 23
+332 ± 14
 </td>
 </tr>
 <tr>
@@ -17582,13 +17625,13 @@ Global
 2.0
 </td>
 <td style="text-align:left;">
-68 ± 12
+68 ± 5
 </td>
 <td style="text-align:left;">
 132 ± 0
 </td>
 <td style="text-align:left;">
-298 ± 15
+298 ± 9
 </td>
 </tr>
 <tr>
@@ -17602,13 +17645,13 @@ Global
 2.0
 </td>
 <td style="text-align:left;">
-55 ± 12
+55 ± 5
 </td>
 <td style="text-align:left;">
 107 ± 0
 </td>
 <td style="text-align:left;">
-242 ± 11
+242 ± 7
 </td>
 </tr>
 <tr>
@@ -17622,13 +17665,13 @@ Global
 2.0
 </td>
 <td style="text-align:left;">
-54 ± 12
+54 ± 5
 </td>
 <td style="text-align:left;">
-101 ± 12
+101 ± 5
 </td>
 <td style="text-align:left;">
-229 ± 10
+229 ± 6
 </td>
 </tr>
 <tr>
@@ -17642,13 +17685,13 @@ Global
 2.0
 </td>
 <td style="text-align:left;">
-54 ± 18
+54 ± 7
 </td>
 <td style="text-align:left;">
-98 ± 18
+98 ± 11
 </td>
 <td style="text-align:left;">
-218 ± 14
+218 ± 8
 </td>
 </tr>
 <tr>
@@ -17662,13 +17705,13 @@ Global
 3.0
 </td>
 <td style="text-align:left;">
-47 ± 12
+47 ± 5
 </td>
 <td style="text-align:left;">
 81 ± 0
 </td>
 <td style="text-align:left;">
-156 ± 7
+156 ± 4
 </td>
 </tr>
 <tr>
@@ -17688,7 +17731,7 @@ Global
 68 ± 0
 </td>
 <td style="text-align:left;">
-120 ± 5
+120 ± 3
 </td>
 </tr>
 <tr>
@@ -17708,7 +17751,7 @@ Global
 66 ± 0
 </td>
 <td style="text-align:left;">
-111 ± 5
+111 ± 3
 </td>
 </tr>
 <tr>
@@ -17728,7 +17771,7 @@ Global
 61 ± 0
 </td>
 <td style="text-align:left;">
-101 ± 8
+101 ± 5
 </td>
 </tr>
 <tr>
@@ -17742,13 +17785,13 @@ Global
 3.5
 </td>
 <td style="text-align:left;">
-40 ± 15
+40 ± 12
 </td>
 <td style="text-align:left;">
-66 ± 12
+66 ± 10
 </td>
 <td style="text-align:left;">
-111 ± 9
+111 ± 6
 </td>
 </tr>
 <tr>
@@ -17762,13 +17805,13 @@ Global
 3.5
 </td>
 <td style="text-align:left;">
-27 ± 15
+27 ± 12
 </td>
 <td style="text-align:left;">
-48 ± 12
+48 ± 10
 </td>
 <td style="text-align:left;">
-79 ± 7
+79 ± 5
 </td>
 </tr>
 <tr>
@@ -17782,13 +17825,13 @@ Global
 3.5
 </td>
 <td style="text-align:left;">
-23 ± 15
+23 ± 8
 </td>
 <td style="text-align:left;">
-42 ± 12
+42 ± 5
 </td>
 <td style="text-align:left;">
-72 ± 7
+72 ± 5
 </td>
 </tr>
 <tr>
@@ -17802,13 +17845,13 @@ Global
 3.5
 </td>
 <td style="text-align:left;">
-18 ± 16
+18 ± 9
 </td>
 <td style="text-align:left;">
-34 ± 16
+34 ± 9
 </td>
 <td style="text-align:left;">
-64 ± 9
+64 ± 6
 </td>
 </tr>
 <tr>
@@ -17822,13 +17865,13 @@ Global
 4.0
 </td>
 <td style="text-align:left;">
-23 ± 15
+23 ± 8
 </td>
 <td style="text-align:left;">
-43 ± 23
+43 ± 16
 </td>
 <td style="text-align:left;">
-73 ± 10
+73 ± 7
 </td>
 </tr>
 <tr>
@@ -17845,10 +17888,10 @@ Global
 12 ± 0
 </td>
 <td style="text-align:left;">
-20 ± 19
+20 ± 16
 </td>
 <td style="text-align:left;">
-47 ± 8
+47 ± 5
 </td>
 </tr>
 <tr>
@@ -17865,10 +17908,10 @@ Global
 12 ± 0
 </td>
 <td style="text-align:left;">
-19 ± 5
+19 ± 6
 </td>
 <td style="text-align:left;">
-47 ± 8
+47 ± 5
 </td>
 </tr>
 <tr>
@@ -17882,13 +17925,13 @@ Global
 4.0
 </td>
 <td style="text-align:left;">
-10 ± 6
+10 ± 7
 </td>
 <td style="text-align:left;">
-14 ± 5
+14 ± 6
 </td>
 <td style="text-align:left;">
-35 ± 15
+35 ± 12
 </td>
 </tr>
 <tr>
@@ -17988,7 +18031,7 @@ North Atlantic
 1500 ± 0
 </td>
 <td style="text-align:left;">
-2085 ± 99
+2085 ± 73
 </td>
 </tr>
 <tr>
@@ -18008,7 +18051,7 @@ North Atlantic
 1500 ± 0
 </td>
 <td style="text-align:left;">
-1962 ± 96
+1962 ± 72
 </td>
 </tr>
 <tr>
@@ -18028,7 +18071,7 @@ North Atlantic
 1500 ± 0
 </td>
 <td style="text-align:left;">
-1914 ± 22
+1914 ± 11
 </td>
 </tr>
 <tr>
@@ -18048,7 +18091,7 @@ North Atlantic
 1500 ± 0
 </td>
 <td style="text-align:left;">
-1896 ± 30
+1896 ± 17
 </td>
 </tr>
 <tr>
@@ -18062,13 +18105,13 @@ North Atlantic
 1.5
 </td>
 <td style="text-align:left;">
-300 ± 50
+300 ± 20
 </td>
 <td style="text-align:left;">
-996 ± 130
+996 ± 126
 </td>
 <td style="text-align:left;">
-1005 ± 33
+1005 ± 24
 </td>
 </tr>
 <tr>
@@ -18085,10 +18128,10 @@ North Atlantic
 250 ± 0
 </td>
 <td style="text-align:left;">
-449 ± 130
+449 ± 126
 </td>
 <td style="text-align:left;">
-607 ± 21
+607 ± 16
 </td>
 </tr>
 <tr>
@@ -18102,13 +18145,13 @@ North Atlantic
 1.5
 </td>
 <td style="text-align:left;">
-150 ± 50
+150 ± 40
 </td>
 <td style="text-align:left;">
-353 ± 50
+353 ± 40
 </td>
 <td style="text-align:left;">
-550 ± 21
+550 ± 16
 </td>
 </tr>
 <tr>
@@ -18122,13 +18165,13 @@ North Atlantic
 1.5
 </td>
 <td style="text-align:left;">
-112 ± 80
+112 ± 64
 </td>
 <td style="text-align:left;">
-292 ± 50
+292 ± 40
 </td>
 <td style="text-align:left;">
-504 ± 34
+504 ± 27
 </td>
 </tr>
 <tr>
@@ -18145,10 +18188,10 @@ North Atlantic
 110 ± 0
 </td>
 <td style="text-align:left;">
-200 ± 12
+200 ± 10
 </td>
 <td style="text-align:left;">
-407 ± 16
+407 ± 11
 </td>
 </tr>
 <tr>
@@ -18165,10 +18208,10 @@ North Atlantic
 39 ± 0
 </td>
 <td style="text-align:left;">
-50 ± 12
+50 ± 10
 </td>
 <td style="text-align:left;">
-210 ± 9
+210 ± 6
 </td>
 </tr>
 <tr>
@@ -18182,13 +18225,13 @@ North Atlantic
 2.0
 </td>
 <td style="text-align:left;">
-32 ± 10
+32 ± 8
 </td>
 <td style="text-align:left;">
 45 ± 0
 </td>
 <td style="text-align:left;">
-179 ± 11
+179 ± 7
 </td>
 </tr>
 <tr>
@@ -18202,13 +18245,13 @@ North Atlantic
 2.0
 </td>
 <td style="text-align:left;">
-27 ± 10
+27 ± 9
 </td>
 <td style="text-align:left;">
 43 ± 0
 </td>
 <td style="text-align:left;">
-160 ± 15
+160 ± 9
 </td>
 </tr>
 <tr>
@@ -18222,13 +18265,13 @@ North Atlantic
 3.0
 </td>
 <td style="text-align:left;">
-17 ± 5
+17 ± 4
 </td>
 <td style="text-align:left;">
 34 ± 0
 </td>
 <td style="text-align:left;">
-73 ± 5
+73 ± 3
 </td>
 </tr>
 <tr>
@@ -18248,7 +18291,7 @@ North Atlantic
 14 ± 0
 </td>
 <td style="text-align:left;">
-30 ± 1
+30 ± 2
 </td>
 </tr>
 <tr>
@@ -18268,7 +18311,7 @@ North Atlantic
 13 ± 0
 </td>
 <td style="text-align:left;">
-29 ± 4
+29 ± 5
 </td>
 </tr>
 <tr>
@@ -18282,13 +18325,13 @@ North Atlantic
 3.0
 </td>
 <td style="text-align:left;">
-8 ± 0
+8 ± 2
 </td>
 <td style="text-align:left;">
 11 ± 0
 </td>
 <td style="text-align:left;">
-13 ± 5
+13 ± 6
 </td>
 </tr>
 <tr>
@@ -18348,7 +18391,7 @@ North Pacific
 164 ± 0
 </td>
 <td style="text-align:left;">
-320 ± 14
+320 ± 9
 </td>
 </tr>
 <tr>
@@ -18368,7 +18411,7 @@ North Pacific
 131 ± 0
 </td>
 <td style="text-align:left;">
-280 ± 10
+280 ± 7
 </td>
 </tr>
 <tr>
@@ -18382,13 +18425,13 @@ North Pacific
 1.0
 </td>
 <td style="text-align:left;">
-104 ± 12
+104 ± 5
 </td>
 <td style="text-align:left;">
-122 ± 12
+122 ± 10
 </td>
 <td style="text-align:left;">
-272 ± 13
+272 ± 8
 </td>
 </tr>
 <tr>
@@ -18402,13 +18445,13 @@ North Pacific
 1.0
 </td>
 <td style="text-align:left;">
-93 ± 28
+93 ± 16
 </td>
 <td style="text-align:left;">
-112 ± 12
+112 ± 10
 </td>
 <td style="text-align:left;">
-263 ± 19
+263 ± 13
 </td>
 </tr>
 <tr>
@@ -18422,13 +18465,13 @@ North Pacific
 1.5
 </td>
 <td style="text-align:left;">
-71 ± 12
+71 ± 10
 </td>
 <td style="text-align:left;">
-88 ± 12
+88 ± 10
 </td>
 <td style="text-align:left;">
-219 ± 14
+219 ± 10
 </td>
 </tr>
 <tr>
@@ -18445,10 +18488,10 @@ North Pacific
 41 ± 0
 </td>
 <td style="text-align:left;">
-54 ± 12
+54 ± 10
 </td>
 <td style="text-align:left;">
-175 ± 9
+175 ± 7
 </td>
 </tr>
 <tr>
@@ -18462,13 +18505,13 @@ North Pacific
 1.5
 </td>
 <td style="text-align:left;">
-31 ± 10
+31 ± 8
 </td>
 <td style="text-align:left;">
-46 ± 12
+46 ± 5
 </td>
 <td style="text-align:left;">
-164 ± 10
+164 ± 7
 </td>
 </tr>
 <tr>
@@ -18482,13 +18525,13 @@ North Pacific
 1.5
 </td>
 <td style="text-align:left;">
-27 ± 14
+27 ± 11
 </td>
 <td style="text-align:left;">
-40 ± 12
+40 ± 5
 </td>
 <td style="text-align:left;">
-154 ± 14
+154 ± 10
 </td>
 </tr>
 <tr>
@@ -18502,13 +18545,13 @@ North Pacific
 2.0
 </td>
 <td style="text-align:left;">
-29 ± 11
+29 ± 10
 </td>
 <td style="text-align:left;">
 40 ± 0
 </td>
 <td style="text-align:left;">
-140 ± 14
+140 ± 9
 </td>
 </tr>
 <tr>
@@ -18522,13 +18565,13 @@ North Pacific
 2.0
 </td>
 <td style="text-align:left;">
-17 ± 5
+17 ± 4
 </td>
 <td style="text-align:left;">
 26 ± 0
 </td>
 <td style="text-align:left;">
-97 ± 10
+97 ± 7
 </td>
 </tr>
 <tr>
@@ -18545,10 +18588,10 @@ North Pacific
 15 ± 0
 </td>
 <td style="text-align:left;">
-22 ± 5
+22 ± 4
 </td>
 <td style="text-align:left;">
-90 ± 9
+90 ± 6
 </td>
 </tr>
 <tr>
@@ -18568,7 +18611,7 @@ North Pacific
 19 ± 7
 </td>
 <td style="text-align:left;">
-86 ± 11
+86 ± 7
 </td>
 </tr>
 <tr>
@@ -18585,10 +18628,10 @@ North Pacific
 12 ± 0
 </td>
 <td style="text-align:left;">
-20 ± 5
+20 ± 4
 </td>
 <td style="text-align:left;">
-59 ± 7
+59 ± 5
 </td>
 </tr>
 <tr>
@@ -18608,7 +18651,7 @@ North Pacific
 17 ± 0
 </td>
 <td style="text-align:left;">
-39 ± 4
+39 ± 3
 </td>
 </tr>
 <tr>
@@ -18628,7 +18671,7 @@ North Pacific
 17 ± 0
 </td>
 <td style="text-align:left;">
-34 ± 4
+34 ± 3
 </td>
 </tr>
 <tr>
@@ -18648,7 +18691,7 @@ North Pacific
 13 ± 0
 </td>
 <td style="text-align:left;">
-28 ± 8
+28 ± 6
 </td>
 </tr>
 <tr>
@@ -18693,6 +18736,26 @@ North Pacific
 </tr>
 <tr>
 <td style="text-align:left;">
+North Pacific
+</td>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:left;">
+NA ± 0
+</td>
+<td style="text-align:left;">
+NA ± 0
+</td>
+<td style="text-align:left;">
+NA ± 0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
 Southern Ocean
 </td>
 <td style="text-align:right;">
@@ -18702,13 +18765,13 @@ Southern Ocean
 1.0
 </td>
 <td style="text-align:left;">
-634 ± 407
+634 ± 297
 </td>
 <td style="text-align:left;">
-851 ± 320
+851 ± 241
 </td>
 <td style="text-align:left;">
-979 ± 314
+979 ± 229
 </td>
 </tr>
 <tr>
@@ -18722,13 +18785,13 @@ Southern Ocean
 1.0
 </td>
 <td style="text-align:left;">
-400 ± 275
+400 ± 220
 </td>
 <td style="text-align:left;">
-627 ± 250
+627 ± 180
 </td>
 <td style="text-align:left;">
-813 ± 237
+813 ± 173
 </td>
 </tr>
 <tr>
@@ -18742,13 +18805,13 @@ Southern Ocean
 1.0
 </td>
 <td style="text-align:left;">
-326 ± 250
+325 ± 200
 </td>
 <td style="text-align:left;">
-557 ± 300
+557 ± 220
 </td>
 <td style="text-align:left;">
-758 ± 234
+758 ± 170
 </td>
 </tr>
 <tr>
@@ -18762,13 +18825,13 @@ Southern Ocean
 1.0
 </td>
 <td style="text-align:left;">
-250 ± 336
+250 ± 269
 </td>
 <td style="text-align:left;">
-470 ± 407
+469 ± 304
 </td>
 <td style="text-align:left;">
-704 ± 328
+704 ± 240
 </td>
 </tr>
 <tr>
@@ -18782,13 +18845,13 @@ Southern Ocean
 1.5
 </td>
 <td style="text-align:left;">
-75 ± 20
+75 ± 14
 </td>
 <td style="text-align:left;">
-103 ± 18
+103 ± 14
 </td>
 <td style="text-align:left;">
-318 ± 45
+318 ± 30
 </td>
 </tr>
 <tr>
@@ -18802,13 +18865,13 @@ Southern Ocean
 1.5
 </td>
 <td style="text-align:left;">
-29 ± 15
+29 ± 10
 </td>
 <td style="text-align:left;">
-45 ± 12
+45 ± 10
 </td>
 <td style="text-align:left;">
-221 ± 32
+221 ± 19
 </td>
 </tr>
 <tr>
@@ -18825,10 +18888,10 @@ Southern Ocean
 20 ± 28
 </td>
 <td style="text-align:left;">
-37 ± 12
+37 ± 10
 </td>
 <td style="text-align:left;">
-214 ± 26
+214 ± 15
 </td>
 </tr>
 <tr>
@@ -18845,10 +18908,10 @@ Southern Ocean
 19 ± 28
 </td>
 <td style="text-align:left;">
-45 ± 18
+45 ± 11
 </td>
 <td style="text-align:left;">
-217 ± 39
+217 ± 22
 </td>
 </tr>
 <tr>
@@ -18862,13 +18925,13 @@ Southern Ocean
 2.0
 </td>
 <td style="text-align:left;">
-22 ± 7
+22 ± 4
 </td>
 <td style="text-align:left;">
-61 ± 26
+61 ± 16
 </td>
 <td style="text-align:left;">
-183 ± 34
+183 ± 18
 </td>
 </tr>
 <tr>
@@ -18882,13 +18945,13 @@ Southern Ocean
 2.0
 </td>
 <td style="text-align:left;">
-19 ± 5
+19 ± 2
 </td>
 <td style="text-align:left;">
-39 ± 22
+39 ± 13
 </td>
 <td style="text-align:left;">
-118 ± 26
+118 ± 15
 </td>
 </tr>
 <tr>
@@ -18905,10 +18968,10 @@ Southern Ocean
 17 ± 0
 </td>
 <td style="text-align:left;">
-33 ± 15
+33 ± 14
 </td>
 <td style="text-align:left;">
-107 ± 25
+107 ± 14
 </td>
 </tr>
 <tr>
@@ -18925,10 +18988,10 @@ Southern Ocean
 15 ± 0
 </td>
 <td style="text-align:left;">
-27 ± 21
+27 ± 16
 </td>
 <td style="text-align:left;">
-94 ± 34
+94 ± 20
 </td>
 </tr>
 <tr>
@@ -18945,10 +19008,10 @@ Southern Ocean
 11 ± 0
 </td>
 <td style="text-align:left;">
-13 ± 13
+13 ± 5
 </td>
 <td style="text-align:left;">
-55 ± 14
+55 ± 11
 </td>
 </tr>
 <tr>
@@ -18965,10 +19028,10 @@ Southern Ocean
 11 ± 0
 </td>
 <td style="text-align:left;">
-11 ± 12
+11 ± 5
 </td>
 <td style="text-align:left;">
-31 ± 12
+31 ± 9
 </td>
 </tr>
 <tr>
@@ -18982,13 +19045,13 @@ Southern Ocean
 3.0
 </td>
 <td style="text-align:left;">
-10 ± 5
+10 ± 3
 </td>
 <td style="text-align:left;">
-10 ± 0
+10 ± 2
 </td>
 <td style="text-align:left;">
-30 ± 4
+30 ± 3
 </td>
 </tr>
 <tr>
@@ -19102,13 +19165,13 @@ Subtropical Gyres
 1.0
 </td>
 <td style="text-align:left;">
-367 ± 50
+367 ± 20
 </td>
 <td style="text-align:left;">
-584 ± 50
+584 ± 40
 </td>
 <td style="text-align:left;">
-1061 ± 106
+1061 ± 73
 </td>
 </tr>
 <tr>
@@ -19128,7 +19191,7 @@ Subtropical Gyres
 525 ± 0
 </td>
 <td style="text-align:left;">
-926 ± 75
+926 ± 52
 </td>
 </tr>
 <tr>
@@ -19148,7 +19211,7 @@ Subtropical Gyres
 510 ± 0
 </td>
 <td style="text-align:left;">
-901 ± 75
+901 ± 52
 </td>
 </tr>
 <tr>
@@ -19162,13 +19225,13 @@ Subtropical Gyres
 1.0
 </td>
 <td style="text-align:left;">
-286 ± 50
+286 ± 20
 </td>
 <td style="text-align:left;">
-492 ± 50
+492 ± 40
 </td>
 <td style="text-align:left;">
-870 ± 100
+870 ± 69
 </td>
 </tr>
 <tr>
@@ -19182,13 +19245,13 @@ Subtropical Gyres
 1.5
 </td>
 <td style="text-align:left;">
-238 ± 25
+238 ± 20
 </td>
 <td style="text-align:left;">
 371 ± 0
 </td>
 <td style="text-align:left;">
-569 ± 32
+569 ± 23
 </td>
 </tr>
 <tr>
@@ -19208,7 +19271,7 @@ Subtropical Gyres
 309 ± 0
 </td>
 <td style="text-align:left;">
-474 ± 23
+474 ± 16
 </td>
 </tr>
 <tr>
@@ -19222,13 +19285,13 @@ Subtropical Gyres
 1.5
 </td>
 <td style="text-align:left;">
-193 ± 25
+193 ± 20
 </td>
 <td style="text-align:left;">
-297 ± 50
+297 ± 40
 </td>
 <td style="text-align:left;">
-453 ± 22
+453 ± 15
 </td>
 </tr>
 <tr>
@@ -19242,13 +19305,13 @@ Subtropical Gyres
 1.5
 </td>
 <td style="text-align:left;">
-185 ± 25
+185 ± 20
 </td>
 <td style="text-align:left;">
-282 ± 50
+282 ± 40
 </td>
 <td style="text-align:left;">
-432 ± 31
+432 ± 22
 </td>
 </tr>
 <tr>
@@ -19262,13 +19325,13 @@ Subtropical Gyres
 2.0
 </td>
 <td style="text-align:left;">
-176 ± 12
+176 ± 5
 </td>
 <td style="text-align:left;">
-252 ± 35
+252 ± 28
 </td>
 <td style="text-align:left;">
-387 ± 21
+387 ± 15
 </td>
 </tr>
 <tr>
@@ -19282,13 +19345,13 @@ Subtropical Gyres
 2.0
 </td>
 <td style="text-align:left;">
-133 ± 12
+133 ± 5
 </td>
 <td style="text-align:left;">
-199 ± 25
+199 ± 20
 </td>
 <td style="text-align:left;">
-314 ± 16
+314 ± 11
 </td>
 </tr>
 <tr>
@@ -19302,13 +19365,13 @@ Subtropical Gyres
 2.0
 </td>
 <td style="text-align:left;">
-124 ± 12
+124 ± 10
 </td>
 <td style="text-align:left;">
-188 ± 25
+188 ± 20
 </td>
 <td style="text-align:left;">
-296 ± 15
+296 ± 10
 </td>
 </tr>
 <tr>
@@ -19322,13 +19385,13 @@ Subtropical Gyres
 2.0
 </td>
 <td style="text-align:left;">
-112 ± 18
+112 ± 14
 </td>
 <td style="text-align:left;">
-176 ± 25
+176 ± 20
 </td>
 <td style="text-align:left;">
-278 ± 20
+278 ± 14
 </td>
 </tr>
 <tr>
@@ -19348,7 +19411,7 @@ Subtropical Gyres
 126 ± 0
 </td>
 <td style="text-align:left;">
-191 ± 10
+191 ± 6
 </td>
 </tr>
 <tr>
@@ -19368,7 +19431,7 @@ Subtropical Gyres
 95 ± 0
 </td>
 <td style="text-align:left;">
-141 ± 6
+141 ± 4
 </td>
 </tr>
 <tr>
@@ -19388,7 +19451,7 @@ Subtropical Gyres
 87 ± 0
 </td>
 <td style="text-align:left;">
-130 ± 6
+130 ± 4
 </td>
 </tr>
 <tr>
@@ -19402,13 +19465,13 @@ Subtropical Gyres
 3.0
 </td>
 <td style="text-align:left;">
-52 ± 12
+52 ± 10
 </td>
 <td style="text-align:left;">
-79 ± 12
+79 ± 5
 </td>
 <td style="text-align:left;">
-116 ± 10
+116 ± 7
 </td>
 </tr>
 <tr>
@@ -19422,13 +19485,13 @@ Subtropical Gyres
 3.5
 </td>
 <td style="text-align:left;">
-59 ± 15
+59 ± 12
 </td>
 <td style="text-align:left;">
-90 ± 12
+90 ± 5
 </td>
 <td style="text-align:left;">
-130 ± 10
+130 ± 7
 </td>
 </tr>
 <tr>
@@ -19442,13 +19505,13 @@ Subtropical Gyres
 3.5
 </td>
 <td style="text-align:left;">
-33 ± 15
+33 ± 12
 </td>
 <td style="text-align:left;">
-61 ± 12
+61 ± 5
 </td>
 <td style="text-align:left;">
-90 ± 9
+90 ± 6
 </td>
 </tr>
 <tr>
@@ -19462,13 +19525,13 @@ Subtropical Gyres
 3.5
 </td>
 <td style="text-align:left;">
-27 ± 15
+27 ± 12
 </td>
 <td style="text-align:left;">
-56 ± 12
+56 ± 10
 </td>
 <td style="text-align:left;">
-83 ± 8
+83 ± 5
 </td>
 </tr>
 <tr>
@@ -19482,13 +19545,13 @@ Subtropical Gyres
 3.5
 </td>
 <td style="text-align:left;">
-20 ± 22
+20 ± 19
 </td>
 <td style="text-align:left;">
-50 ± 20
+50 ± 21
 </td>
 <td style="text-align:left;">
-74 ± 11
+74 ± 8
 </td>
 </tr>
 <tr>
@@ -19502,13 +19565,13 @@ Subtropical Gyres
 4.0
 </td>
 <td style="text-align:left;">
-25 ± 15
+25 ± 12
 </td>
 <td style="text-align:left;">
-55 ± 20
+55 ± 16
 </td>
 <td style="text-align:left;">
-83 ± 12
+83 ± 8
 </td>
 </tr>
 <tr>
@@ -19525,10 +19588,10 @@ Subtropical Gyres
 12 ± 0
 </td>
 <td style="text-align:left;">
-22 ± 16
+22 ± 13
 </td>
 <td style="text-align:left;">
-52 ± 9
+52 ± 6
 </td>
 </tr>
 <tr>
@@ -19545,10 +19608,10 @@ Subtropical Gyres
 11 ± 0
 </td>
 <td style="text-align:left;">
-21 ± 5
+21 ± 4
 </td>
 <td style="text-align:left;">
-53 ± 8
+53 ± 5
 </td>
 </tr>
 <tr>
@@ -19562,13 +19625,13 @@ Subtropical Gyres
 4.0
 </td>
 <td style="text-align:left;">
-9 ± 5
+9 ± 6
 </td>
 <td style="text-align:left;">
-16 ± 7
+16 ± 4
 </td>
 <td style="text-align:left;">
-43 ± 15
+43 ± 12
 </td>
 </tr>
 <tr>
@@ -19662,13 +19725,13 @@ Upwelling regions
 1.0
 </td>
 <td style="text-align:left;">
-254 ± 35
+254 ± 28
 </td>
 <td style="text-align:left;">
-322 ± 119
+322 ± 118
 </td>
 <td style="text-align:left;">
-612 ± 81
+612 ± 58
 </td>
 </tr>
 <tr>
@@ -19682,13 +19745,13 @@ Upwelling regions
 1.0
 </td>
 <td style="text-align:left;">
-159 ± 25
+159 ± 20
 </td>
 <td style="text-align:left;">
-244 ± 119
+244 ± 118
 </td>
 <td style="text-align:left;">
-401 ± 37
+401 ± 26
 </td>
 </tr>
 <tr>
@@ -19702,13 +19765,13 @@ Upwelling regions
 1.0
 </td>
 <td style="text-align:left;">
-145 ± 113
+145 ± 112
 </td>
 <td style="text-align:left;">
-235 ± 25
+235 ± 20
 </td>
 <td style="text-align:left;">
-392 ± 35
+392 ± 24
 </td>
 </tr>
 <tr>
@@ -19722,13 +19785,13 @@ Upwelling regions
 1.0
 </td>
 <td style="text-align:left;">
-136 ± 116
+136 ± 114
 </td>
 <td style="text-align:left;">
-225 ± 35
+225 ± 22
 </td>
 <td style="text-align:left;">
-365 ± 48
+365 ± 34
 </td>
 </tr>
 <tr>
@@ -19745,10 +19808,10 @@ Upwelling regions
 109 ± 0
 </td>
 <td style="text-align:left;">
-157 ± 28
+157 ± 14
 </td>
 <td style="text-align:left;">
-247 ± 18
+247 ± 12
 </td>
 </tr>
 <tr>
@@ -19765,10 +19828,10 @@ Upwelling regions
 85 ± 0
 </td>
 <td style="text-align:left;">
-122 ± 12
+122 ± 10
 </td>
 <td style="text-align:left;">
-187 ± 12
+187 ± 8
 </td>
 </tr>
 <tr>
@@ -19782,13 +19845,13 @@ Upwelling regions
 1.5
 </td>
 <td style="text-align:left;">
-77 ± 12
+77 ± 10
 </td>
 <td style="text-align:left;">
 116 ± 0
 </td>
 <td style="text-align:left;">
-174 ± 11
+174 ± 8
 </td>
 </tr>
 <tr>
@@ -19802,13 +19865,13 @@ Upwelling regions
 1.5
 </td>
 <td style="text-align:left;">
-73 ± 18
+73 ± 14
 </td>
 <td style="text-align:left;">
 108 ± 0
 </td>
 <td style="text-align:left;">
-162 ± 15
+162 ± 11
 </td>
 </tr>
 <tr>
@@ -19822,13 +19885,13 @@ Upwelling regions
 2.0
 </td>
 <td style="text-align:left;">
-72 ± 12
+72 ± 5
 </td>
 <td style="text-align:left;">
-100 ± 12
+100 ± 10
 </td>
 <td style="text-align:left;">
-148 ± 8
+148 ± 6
 </td>
 </tr>
 <tr>
@@ -19848,7 +19911,7 @@ Upwelling regions
 78 ± 0
 </td>
 <td style="text-align:left;">
-117 ± 4
+117 ± 3
 </td>
 </tr>
 <tr>
@@ -19862,13 +19925,13 @@ Upwelling regions
 2.0
 </td>
 <td style="text-align:left;">
-53 ± 12
+53 ± 10
 </td>
 <td style="text-align:left;">
-74 ± 12
+74 ± 10
 </td>
 <td style="text-align:left;">
-111 ± 4
+111 ± 3
 </td>
 </tr>
 <tr>
@@ -19882,13 +19945,13 @@ Upwelling regions
 2.0
 </td>
 <td style="text-align:left;">
-50 ± 18
+50 ± 14
 </td>
 <td style="text-align:left;">
-71 ± 12
+71 ± 10
 </td>
 <td style="text-align:left;">
-106 ± 5
+106 ± 4
 </td>
 </tr>
 <tr>
@@ -19902,13 +19965,13 @@ Upwelling regions
 3.0
 </td>
 <td style="text-align:left;">
-38 ± 5
+38 ± 2
 </td>
 <td style="text-align:left;">
-58 ± 12
+58 ± 5
 </td>
 <td style="text-align:left;">
-84 ± 3
+84 ± 2
 </td>
 </tr>
 <tr>
@@ -19922,13 +19985,13 @@ Upwelling regions
 3.0
 </td>
 <td style="text-align:left;">
-33 ± 5
+33 ± 2
 </td>
 <td style="text-align:left;">
-49 ± 12
+49 ± 5
 </td>
 <td style="text-align:left;">
-72 ± 2
+72 ± 1
 </td>
 </tr>
 <tr>
@@ -19942,7 +20005,7 @@ Upwelling regions
 3.0
 </td>
 <td style="text-align:left;">
-31 ± 10
+31 ± 8
 </td>
 <td style="text-align:left;">
 46 ± 0
@@ -19962,13 +20025,13 @@ Upwelling regions
 3.0
 </td>
 <td style="text-align:left;">
-29 ± 14
+29 ± 11
 </td>
 <td style="text-align:left;">
 43 ± 0
 </td>
 <td style="text-align:left;">
-65 ± 4
+65 ± 3
 </td>
 </tr>
 <tr>
@@ -19982,13 +20045,13 @@ Upwelling regions
 3.5
 </td>
 <td style="text-align:left;">
-31 ± 11
+31 ± 9
 </td>
 <td style="text-align:left;">
 47 ± 0
 </td>
 <td style="text-align:left;">
-68 ± 4
+68 ± 3
 </td>
 </tr>
 <tr>
@@ -20002,13 +20065,13 @@ Upwelling regions
 3.5
 </td>
 <td style="text-align:left;">
-23 ± 5
+23 ± 4
 </td>
 <td style="text-align:left;">
 35 ± 0
 </td>
 <td style="text-align:left;">
-52 ± 4
+52 ± 3
 </td>
 </tr>
 <tr>
@@ -20022,13 +20085,13 @@ Upwelling regions
 3.5
 </td>
 <td style="text-align:left;">
-20 ± 5
+20 ± 4
 </td>
 <td style="text-align:left;">
-31 ± 10
+31 ± 4
 </td>
 <td style="text-align:left;">
-48 ± 4
+48 ± 3
 </td>
 </tr>
 <tr>
@@ -20042,13 +20105,13 @@ Upwelling regions
 3.5
 </td>
 <td style="text-align:left;">
-15 ± 5
+15 ± 4
 </td>
 <td style="text-align:left;">
-24 ± 10
+24 ± 4
 </td>
 <td style="text-align:left;">
-41 ± 6
+41 ± 5
 </td>
 </tr>
 <tr>
@@ -20062,13 +20125,13 @@ Upwelling regions
 4.0
 </td>
 <td style="text-align:left;">
-22 ± 5
+22 ± 4
 </td>
 <td style="text-align:left;">
 33 ± 0
 </td>
 <td style="text-align:left;">
-49 ± 7
+49 ± 5
 </td>
 </tr>
 <tr>
@@ -20088,7 +20151,7 @@ Upwelling regions
 18 ± 0
 </td>
 <td style="text-align:left;">
-31 ± 6
+31 ± 4
 </td>
 </tr>
 <tr>
@@ -20102,13 +20165,13 @@ Upwelling regions
 4.0
 </td>
 <td style="text-align:left;">
-12 ± 0
+12 ± 2
 </td>
 <td style="text-align:left;">
-17 ± 5
+17 ± 2
 </td>
 <td style="text-align:left;">
-29 ± 8
+29 ± 6
 </td>
 </tr>
 <tr>
@@ -20122,13 +20185,13 @@ Upwelling regions
 4.0
 </td>
 <td style="text-align:left;">
-11 ± 10
+11 ± 6
 </td>
 <td style="text-align:left;">
-13 ± 5
+13 ± 2
 </td>
 <td style="text-align:left;">
-19 ± 13
+19 ± 10
 </td>
 </tr>
 <tr>
@@ -20145,7 +20208,7 @@ Upwelling regions
 7 ± 0
 </td>
 <td style="text-align:left;">
-9 ± 0
+9 ± 2
 </td>
 <td style="text-align:left;">
 12 ± 9
@@ -20237,7 +20300,7 @@ saturation_horizon_uncertainty_all_biome_change &lt;-
         select(-c(MLR_basin_mask, MLR_configuration)),
       saturation_horizon_uncertainty_all_biome_change %&gt;%
         filter(tref == 1994,
-               !str_detect(MLR_configuration, &quot;DIC&quot;)) %&gt;%
+               !(MLR_configuration %in% CO2_climatology_uncertainty)) %&gt;%
         distinct(MLR_basin_mask, MLR_configuration)
     ),
     saturation_horizon_uncertainty_all_biome_change
@@ -20255,9 +20318,9 @@ saturation_horizon_uncertainty_all_biome_change %&gt;%
     depth_interval_mean,
     group = interaction(MLR_configuration, MLR_basin_mask)
   )) +
-  geom_path(data = . %&gt;% filter(!str_detect(MLR_configuration, &quot;DIC&quot;)),
+  geom_path(data = . %&gt;% filter(!(MLR_configuration %in% CO2_climatology_uncertainty)),
             aes(col = &quot;CO2 uncertainty&quot;)) +
-  geom_path(data = . %&gt;% filter(str_detect(MLR_configuration, &quot;DIC&quot;)),
+  geom_path(data = . %&gt;% filter(MLR_configuration %in% CO2_climatology_uncertainty),
             aes(col = &quot;eMLR uncertainty&quot;)) +
   facet_grid(sat_level ~ biome, scales = &quot;free_y&quot;)</code></pre>
 <p><img src="figure/synopsis_OIA.Rmd/saturation_level_changes-5.png" width="672" style="display: block; margin: auto;" /></p>
@@ -20707,12 +20770,12 @@ jens-daniel-mueller
   sat_level area_change
       &lt;dbl&gt;       &lt;dbl&gt;
 1       1          1.48
-2       1.5       -5.91
-3       2        -11.2 
-4       3        -19.7 
-5       3.5      -46.6 
-6       4        -96.3 
-7       5        -56.2 </code></pre>
+2       1.5       -5.85
+3       2        -11.3 
+4       3        -19.6 
+5       3.5      -46.7 
+6       4        -95.9 
+7       5        -57.7 </code></pre>
 <pre class="r"><code>volume_total &lt;-
   ocean_volume_integration_depth %&gt;%
   filter(depth_integration == ocean_depth) %&gt;%
@@ -20819,16 +20882,16 @@ acidification_volume &lt;-
       estimate == &quot;volume_relative_to_total_volume&quot; ~
         &quot;Saturated volume\nrelative to total volume (%)&quot;,
       estimate == &quot;volume_loss_cumulative_relative_to_total_volume&quot; ~
-        &quot;Loss of\nsatured volume\nrelative to total volume (%)&quot;,
+        &quot;Loss of satured volume\nrelative to total volume (%)&quot;,
       estimate == &quot;volume_loss_cumulative_relative_to_preind_volume&quot; ~
-        &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;
+        &quot;Loss of saturated volume\nrelative preindustrial volume (%)&quot;
     ),
     estimate = factor(
       estimate,
       levels = c(
         &quot;Saturated volume\nrelative to total volume (%)&quot;,
-        &quot;Loss of\nsatured volume\nrelative to total volume (%)&quot;,
-        &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;
+        &quot;Loss of satured volume\nrelative to total volume (%)&quot;,
+        &quot;Loss of saturated volume\nrelative preindustrial volume (%)&quot;
       )
     )
   )
@@ -20859,7 +20922,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
+        estimate == &quot;Loss of saturated volume\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref != 1800
       ),
@@ -20870,7 +20933,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
+        estimate == &quot;Loss of saturated volume\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref == 1800
       ),
@@ -20921,6 +20984,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/1dfb835ab3b33199388c07db95914b147f160ddd/docs/figure/synopsis_OIA.Rmd/volume_loss-1.png" target="_blank">1dfb835</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-17
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6e6f19a7f91d1fa3440fe98caa311efa220e7670/docs/figure/synopsis_OIA.Rmd/volume_loss-1.png" target="_blank">6e6f19a</a>
@@ -20980,7 +21054,7 @@ jens-daniel-mueller
 
 acidification_volume %&gt;%
   filter(sat_level %in% c(1,3,4),
-         estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot; ) %&gt;% 
+         estimate == &quot;Loss of saturated volume\nrelative preindustrial volume (%)&quot; ) %&gt;% 
   ggplot(aes(
     x = pCO2,
     y = std_case,
@@ -21004,7 +21078,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
+        estimate == &quot;Loss of saturated volume\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref != 1800
       ),
@@ -21015,7 +21089,7 @@ acidification_volume %&gt;%
   geom_text(
     data = . %&gt;%
       filter(
-        estimate == &quot;Loss of saturated volume\n\nrelative preindustrial volume (%)&quot;,
+        estimate == &quot;Loss of saturated volume\nrelative preindustrial volume (%)&quot;,
         sat_level == 4,
         tref == 1800
       ),
@@ -21126,8 +21200,7 @@ std_case
 1
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21170,10 +21243,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-2.8314993
+1.9948388
 </td>
 <td style="text-align:right;">
-35.8972793
+35.8971180
 </td>
 </tr>
 <tr>
@@ -21187,8 +21260,7 @@ Saturated volume relative to total volume (%)
 1.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21231,10 +21303,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.7463859
+0.5282998
 </td>
 <td style="text-align:right;">
-16.2058362
+16.2058770
 </td>
 </tr>
 <tr>
@@ -21248,8 +21320,7 @@ Saturated volume relative to total volume (%)
 2
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21292,10 +21363,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.5255042
+0.3793504
 </td>
 <td style="text-align:right;">
-9.9159995
+9.9160245
 </td>
 </tr>
 <tr>
@@ -21309,8 +21380,7 @@ Saturated volume relative to total volume (%)
 3
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21353,10 +21423,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.2411972
+0.1778393
 </td>
 <td style="text-align:right;">
-4.2417968
+4.2418075
 </td>
 </tr>
 <tr>
@@ -21370,8 +21440,7 @@ Saturated volume relative to total volume (%)
 3.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21414,10 +21483,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1802367
+0.1370382
 </td>
 <td style="text-align:right;">
-2.6033681
+2.6033746
 </td>
 </tr>
 <tr>
@@ -21431,8 +21500,7 @@ Saturated volume relative to total volume (%)
 4
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21475,10 +21543,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1982262
+0.1573869
 </td>
 <td style="text-align:right;">
-1.2915051
+1.2915084
 </td>
 </tr>
 <tr>
@@ -21492,8 +21560,7 @@ Saturated volume relative to total volume (%)
 5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21536,7 +21603,7 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0009088
+0.0009958
 </td>
 <td style="text-align:right;">
 0.0003288
@@ -21553,14 +21620,13 @@ Saturated volume relative to total volume (%)
 1
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-2.3224142
+1.7472902
 </td>
 <td style="text-align:right;">
--10.9200477
+-10.9201242
 </td>
 </tr>
 <tr>
@@ -21577,10 +21643,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.5477130
+0.4308893
 </td>
 <td style="text-align:right;">
--3.9200000
+-3.9200099
 </td>
 </tr>
 <tr>
@@ -21597,10 +21663,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-3.3480034
+2.3856375
 </td>
 <td style="text-align:right;">
-31.9772793
+31.9771082
 </td>
 </tr>
 <tr>
@@ -21614,11 +21680,10 @@ Saturated volume relative to total volume (%)
 1.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1.5039560
+1.2305194
 </td>
 <td style="text-align:right;">
 -21.5063439
@@ -21638,10 +21703,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1264812
+0.1247181
 </td>
 <td style="text-align:right;">
--3.4852829
+-3.4852916
 </td>
 </tr>
 <tr>
@@ -21658,10 +21723,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.8076544
+0.5874585
 </td>
 <td style="text-align:right;">
-12.7205534
+12.7205854
 </td>
 </tr>
 <tr>
@@ -21675,11 +21740,10 @@ Saturated volume relative to total volume (%)
 2
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-0.6429477
+0.5618730
 </td>
 <td style="text-align:right;">
 -24.5443418
@@ -21699,10 +21763,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0923693
+0.0730692
 </td>
 <td style="text-align:right;">
--2.4338168
+-2.4338229
 </td>
 </tr>
 <tr>
@@ -21719,10 +21783,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.4461431
+0.3245427
 </td>
 <td style="text-align:right;">
-7.4821827
+7.4822015
 </td>
 </tr>
 <tr>
@@ -21736,11 +21800,10 @@ Saturated volume relative to total volume (%)
 3
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-0.8053891
+0.6645887
 </td>
 <td style="text-align:right;">
 -32.4761019
@@ -21760,10 +21823,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0458800
+0.0346320
 </td>
 <td style="text-align:right;">
--1.3775703
+-1.3775737
 </td>
 </tr>
 <tr>
@@ -21780,10 +21843,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1962676
+0.1473097
 </td>
 <td style="text-align:right;">
-2.8642266
+2.8642338
 </td>
 </tr>
 <tr>
@@ -21797,11 +21860,10 @@ Saturated volume relative to total volume (%)
 3.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-4.1393048
+3.3534354
 </td>
 <td style="text-align:right;">
 -44.6568353
@@ -21821,10 +21883,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0273137
+0.0264856
 </td>
 <td style="text-align:right;">
--1.1625818
+-1.1625847
 </td>
 </tr>
 <tr>
@@ -21841,10 +21903,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.2055256
+0.1615000
 </td>
 <td style="text-align:right;">
-1.4407863
+1.4407899
 </td>
 </tr>
 <tr>
@@ -21858,11 +21920,10 @@ Saturated volume relative to total volume (%)
 4
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-7.0498674
+5.8447233
 </td>
 <td style="text-align:right;">
 -78.6312090
@@ -21882,10 +21943,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0635815
+0.0506119
 </td>
 <td style="text-align:right;">
--1.0155261
+-1.0155287
 </td>
 </tr>
 <tr>
@@ -21902,10 +21963,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1358758
+0.1107241
 </td>
 <td style="text-align:right;">
-0.2759790
+0.2759797
 </td>
 </tr>
 <tr>
@@ -21919,11 +21980,10 @@ Saturated volume relative to total volume (%)
 5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1948.4243571
+1948.4243572
 </td>
 <td style="text-align:right;">
 -100.0000000
@@ -21943,7 +22003,7 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0064710
+0.0064838
 </td>
 <td style="text-align:right;">
 -0.0003288
@@ -21963,7 +22023,7 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0064068
+0.0064069
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -21980,14 +22040,13 @@ Saturated volume relative to total volume (%)
 1
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-2.3306168
+1.7446416
 </td>
 <td style="text-align:right;">
--14.2897239
+-14.2898241
 </td>
 </tr>
 <tr>
@@ -22004,10 +22063,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.4459741
+0.3496187
 </td>
 <td style="text-align:right;">
--5.1296221
+-5.1296350
 </td>
 </tr>
 <tr>
@@ -22024,10 +22083,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-3.2745334
+2.3391267
 </td>
 <td style="text-align:right;">
-30.7676572
+30.7674830
 </td>
 </tr>
 <tr>
@@ -22041,11 +22100,10 @@ Saturated volume relative to total volume (%)
 1.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1.4907111
+1.1622654
 </td>
 <td style="text-align:right;">
 -26.2409700
@@ -22065,10 +22123,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0513423
+0.0545634
 </td>
 <td style="text-align:right;">
--4.2525686
+-4.2525793
 </td>
 </tr>
 <tr>
@@ -22085,10 +22143,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.7913282
+0.5770740
 </td>
 <td style="text-align:right;">
-11.9532676
+11.9532977
 </td>
 </tr>
 <tr>
@@ -22102,11 +22160,10 @@ Saturated volume relative to total volume (%)
 2
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-0.4194139
+0.3215277
 </td>
 <td style="text-align:right;">
 -30.0163970
@@ -22126,10 +22183,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1160859
+0.0830390
 </td>
 <td style="text-align:right;">
--2.9764258
+-2.9764333
 </td>
 </tr>
 <tr>
@@ -22146,10 +22203,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.4098501
+0.2969141
 </td>
 <td style="text-align:right;">
-6.9395737
+6.9395912
 </td>
 </tr>
 <tr>
@@ -22163,11 +22220,10 @@ Saturated volume relative to total volume (%)
 3
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1.0074036
+0.8458920
 </td>
 <td style="text-align:right;">
 -39.8500981
@@ -22187,10 +22243,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0538721
+0.0386971
 </td>
 <td style="text-align:right;">
--1.6903602
+-1.6903645
 </td>
 </tr>
 <tr>
@@ -22207,10 +22263,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1874432
+0.1426111
 </td>
 <td style="text-align:right;">
-2.5514366
+2.5514431
 </td>
 </tr>
 <tr>
@@ -22224,11 +22280,10 @@ Saturated volume relative to total volume (%)
 3.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-4.7653442
+3.8756123
 </td>
 <td style="text-align:right;">
 -55.0490126
@@ -22248,10 +22303,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0244743
+0.0253311
 </td>
 <td style="text-align:right;">
--1.4331284
+-1.4331320
 </td>
 </tr>
 <tr>
@@ -22268,10 +22323,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.2039043
+0.1615643
 </td>
 <td style="text-align:right;">
-1.1702397
+1.1702426
 </td>
 </tr>
 <tr>
@@ -22285,11 +22340,10 @@ Saturated volume relative to total volume (%)
 4
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-4.9594532
+4.1337700
 </td>
 <td style="text-align:right;">
 -91.0237883
@@ -22309,10 +22363,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1140763
+0.0883071
 </td>
 <td style="text-align:right;">
--1.1755769
+-1.1755799
 </td>
 </tr>
 <tr>
@@ -22329,10 +22383,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0846178
+0.0696638
 </td>
 <td style="text-align:right;">
-0.1159282
+0.1159285
 </td>
 </tr>
 <tr>
@@ -22346,11 +22400,10 @@ Saturated volume relative to total volume (%)
 5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1948.4243571
+1948.4243572
 </td>
 <td style="text-align:right;">
 -100.0000000
@@ -22370,7 +22423,7 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0064710
+0.0064838
 </td>
 <td style="text-align:right;">
 -0.0003288
@@ -22390,7 +22443,7 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0064068
+0.0064069
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -22407,14 +22460,13 @@ Saturated volume relative to total volume (%)
 1
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-2.4124130
+1.8883002
 </td>
 <td style="text-align:right;">
--17.6769989
+-17.6771228
 </td>
 </tr>
 <tr>
@@ -22431,10 +22483,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.4332641
+0.3864751
 </td>
 <td style="text-align:right;">
--6.3455617
+-6.3455776
 </td>
 </tr>
 <tr>
@@ -22451,10 +22503,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-3.1868576
+2.2926386
 </td>
 <td style="text-align:right;">
-29.5517177
+29.5515404
 </td>
 </tr>
 <tr>
@@ -22468,11 +22520,10 @@ Saturated volume relative to total volume (%)
 1.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1.7575499
+1.3589083
 </td>
 <td style="text-align:right;">
 -30.8899476
@@ -22492,10 +22543,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0836819
+0.0835063
 </td>
 <td style="text-align:right;">
--5.0059743
+-5.0059869
 </td>
 </tr>
 <tr>
@@ -22512,10 +22563,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.7963834
+0.5791223
 </td>
 <td style="text-align:right;">
-11.1998619
+11.1998901
 </td>
 </tr>
 <tr>
@@ -22529,11 +22580,10 @@ Saturated volume relative to total volume (%)
 2
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-0.6125690
+0.5528239
 </td>
 <td style="text-align:right;">
 -35.0175541
@@ -22553,10 +22603,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1491195
+0.1110598
 </td>
 <td style="text-align:right;">
--3.4723405
+-3.4723492
 </td>
 </tr>
 <tr>
@@ -22573,10 +22623,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.3859325
+0.2821834
 </td>
 <td style="text-align:right;">
-6.4436590
+6.4436752
 </td>
 </tr>
 <tr>
@@ -22590,11 +22640,10 @@ Saturated volume relative to total volume (%)
 3
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1.6397776
+1.4037398
 </td>
 <td style="text-align:right;">
 -48.2959538
@@ -22614,10 +22663,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0626041
+0.0495224
 </td>
 <td style="text-align:right;">
--2.0486162
+-2.0486214
 </td>
 </tr>
 <tr>
@@ -22634,10 +22683,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1892308
+0.1460227
 </td>
 <td style="text-align:right;">
-2.1931806
+2.1931861
 </td>
 </tr>
 <tr>
@@ -22651,11 +22700,10 @@ Saturated volume relative to total volume (%)
 3.5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-5.6074630
+4.6937149
 </td>
 <td style="text-align:right;">
 -66.7375446
@@ -22675,10 +22723,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0350201
+0.0382296
 </td>
 <td style="text-align:right;">
--1.7374239
+-1.7374283
 </td>
 </tr>
 <tr>
@@ -22695,10 +22743,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.2051874
+0.1669731
 </td>
 <td style="text-align:right;">
-0.8659441
+0.8659463
 </td>
 </tr>
 <tr>
@@ -22712,11 +22760,10 @@ Saturated volume relative to total volume (%)
 4
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-2.6277011
+2.2241357
 </td>
 <td style="text-align:right;">
 -97.6912436
@@ -22736,10 +22783,10 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.1586343
+0.1245741
 </td>
 <td style="text-align:right;">
--1.2616874
+-1.2616906
 </td>
 </tr>
 <tr>
@@ -22756,10 +22803,10 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0404438
+0.0338473
 </td>
 <td style="text-align:right;">
-0.0298177
+0.0298178
 </td>
 </tr>
 <tr>
@@ -22773,11 +22820,10 @@ Saturated volume relative to total volume (%)
 5
 </td>
 <td style="text-align:left;">
-<p>Loss of saturated volume</p>
-relative preindustrial volume (%)
+Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
-1948.4243571
+1948.4243572
 </td>
 <td style="text-align:right;">
 -100.0000000
@@ -22797,7 +22843,7 @@ relative preindustrial volume (%)
 Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0064710
+0.0064838
 </td>
 <td style="text-align:right;">
 -0.0003288
@@ -22817,7 +22863,7 @@ Loss of satured volume relative to total volume (%)
 Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
-0.0064068
+0.0064069
 </td>
 <td style="text-align:right;">
 0.0000000
@@ -22838,9 +22884,9 @@ Saturated volume relative to total volume (%)
   undersaturated_volume_all
 )
 gc()</code></pre>
-<pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4781488   255.4   14457540   772.2   14457540   772.2
-Vcells 1675237933 12781.1 3163212194 24133.4 3163212194 24133.4</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
+Ncells    4781446   255.4   13270903   708.8   16588628   886
+Vcells 2166516974 16529.3 4340521808 33115.6 4336250525 33083</code></pre>
 </div>
 </div>
 <div id="summary-table" class="section level1">
@@ -29714,10 +29760,10 @@ acidification_profiles_biomes_uncertainty %&gt;%
 <pre><code># A tibble: 4 × 6
   biome  depth variable       tref  std_case      sd
   &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;          &lt;fct&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-1 Global     0 OmegaAragonite 2014    -0.652 0.00132
+1 Global     0 OmegaAragonite 2014    -0.652 0.00165
 2 Global     0 tco2           2014    65.9   0.0355 
-3 Global   100 pH             2014    -0.119 0.00387
-4 Global   250 H_free         2014     2.22  0.164  </code></pre>
+3 Global   100 pH             2014    -0.119 0.00378
+4 Global   250 H_free         2014     2.22  0.151  </code></pre>
 <pre class="r"><code>buffer_profiles_biome &lt;- 
   buffer_profiles_biome %&gt;% 
   mutate(tref = as.factor(tref))
