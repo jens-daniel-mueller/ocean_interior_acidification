@@ -2648,15 +2648,15 @@ additive_uncertainty <- function(df,
   
   # determine significance
   
-  # df_stat <- df_stat %>%
-  #   mutate(
-  #     signif_single = if_else(abs(std_case) >= sd,
-  #                             1,
-  #                             0),
-  #     signif_double = if_else(abs(std_case) >= sd * 2,
-  #                             1,
-  #                             0)
-  #   )
+  df_stat <- df_stat %>%
+    mutate(
+      signif_single = if_else(abs(std_case) >= sd,
+                              1,
+                              0),
+      signif_double = if_else(abs(std_case) >= sd * 2,
+                              1,
+                              0)
+    )
   
   
   df_stat <-
@@ -3452,7 +3452,7 @@ rm(acidification_depth_layer_dCant_temp,
 
 acidification_depth_layer_incremental <-
   acidification_depth_layer %>%
-  select(lat:MLR_configuration,
+  select(lat:tref,
          contains("_delta_interval"),
          -contains("_sd")) %>%
   filter(tref %in% c(2004, 2014))
@@ -3634,6 +3634,7 @@ acidification_depth_layer_total <-
   select(lat:tref,
          contains("_delta_total"))
 
+
 # pivot data frames to long format
 
 acidification_depth_layer_total <-
@@ -3650,6 +3651,49 @@ acidification_depth_layer_uncertainty <-
   pivot_longer(all_of(OIA_variables),
                names_to = "variable",
                values_to = "delta_interval")
+
+
+
+# compute uncertainty
+
+acidification_depth_layer_uncertainty_map <-
+  m_grid_horizontal_coarse(acidification_depth_layer_uncertainty)
+
+acidification_depth_layer_uncertainty_map <-
+  acidification_depth_layer_uncertainty_map %>%
+  # head(2000) %>% 
+  pivot_wider(names_from = variable,
+              values_from = delta_interval) %>% 
+  select(-c(lat,lon)) %>%
+  rename(lat = lat_grid, lon = lon_grid) %>%
+  group_by(depth, lon, lat, tref, MLR_basin_mask, MLR_configuration) %>%
+  summarise(across(
+    .cols = all_of(OIA_variables),
+    .fns = ~ mean(.x),
+    .names = "{.col}_interval_mean"
+  ),
+  n = n()) %>%
+  ungroup() %>% 
+  filter(n == 25) %>%
+  select(-n)
+
+acidification_depth_layer_uncertainty_map <-
+  additive_uncertainty(df = acidification_depth_layer_uncertainty_map,
+                       mode = "delta_interval")[[1]]
+
+# acidification_depth_layer_uncertainty_map %>%
+#   filter(variable == "H_free") %>%
+#   ggplot(aes(lon, lat, fill = std_case)) +
+#   geom_tile() +
+#   scale_fill_batlowW(reverse = TRUE) +
+#   facet_grid(depth ~ tref)
+# 
+# acidification_depth_layer_uncertainty_map %>%
+#   filter(variable == "H_free") %>%
+#   ggplot(aes(lon, lat, fill = sd)) +
+#   geom_tile() +
+#   scale_fill_batlowW(reverse = TRUE) +
+#   facet_grid(depth ~ tref)
 
 
 ### regional mean trends
@@ -3917,10 +3961,24 @@ for (i_var in OIA_variables) {
   i_contour_level <- unlist(all_labels_breaks[2])
   i_legend_title  <- unlist(all_labels_breaks[3])
   
+  
+  i_acidification_depth_layer_uncertainty_map <-
+    acidification_depth_layer_uncertainty_map %>%
+    filter(variable == i_var)
+
+  i_acidification_depth_layer_uncertainty_map <-
+    i_acidification_depth_layer_uncertainty_map %>%
+    select(lon, lat, depth, tref, signif_single, signif_double) %>%
+    filter(tref == "2014") %>% 
+    mutate(signif_double = signif_single,
+           signif_single = 1) %>% 
+    st_as_sf(coords = c("lon", "lat"), crs = "+proj=longlat")
+  
   p_maps <-
     i_acidification_depth_layer_total %>%
     filter(tref == "2014") %>%
     p_map_mdim_robinson(
+      df_uncertainty = i_acidification_depth_layer_uncertainty_map,
       dim_row = "depth",
       dim_col = "tref",
       var = "delta_total",
@@ -8969,6 +9027,16 @@ acidification_global_section <- acidification_trend %>%
   unnest(zonal) %>% 
   ungroup()
 
+acidification_global_section_uncertainty <-
+  acidification_trend_uncertainty_delta_interval %>%
+  group_by(tref, MLR_basin_mask, MLR_configuration) %>%
+  nest() %>%
+  mutate(zonal = map(.x = data, ~m_section_global_mean_sd(.x))) %>%
+  select(-data) %>%
+  unnest(zonal) %>%
+  ungroup()
+
+
 buffer_global_section <- buffer_trend_addition %>%
   # pivot_wider(names_from = variable,
   #             values_from = sensitivity) %>% 
@@ -9190,6 +9258,44 @@ acidification_global_section_total <-
 
 rm(absolute_global_section_total)
 
+
+# compute uncertainty
+
+acidification_global_section_uncertainty <-
+  acidification_global_section_uncertainty %>%
+  select(dist,
+         depth,
+         tref,
+         MLR_basin_mask,
+         MLR_configuration,
+         contains("_mean")) %>%
+  mutate(dist_grid = as.numeric(as.character(cut(dist, seq(0,50,1), seq(0.5,50,1)))),
+  depth_grid = as.numeric(as.character(cut(
+    depth,
+    c(seq(0, 500, 100), seq(1000, 10000, 500)),
+    c(seq(50, 450, 100), seq(750, 10000, 500)),
+    right = FALSE
+  )))
+  ) %>%
+  rename_all(~ str_remove(., "_mean")) %>% 
+  group_by(dist_grid,
+           depth_grid,
+           tref,
+         MLR_basin_mask,
+         MLR_configuration) %>%
+  summarise(across(
+    .cols = all_of(OIA_variables),
+    .fns = ~ mean(.x),
+    .names = "{.col}_interval_mean"
+  )) %>%
+  ungroup() %>%
+  rename(dist = dist_grid,
+         depth = depth_grid)
+
+acidification_global_section_uncertainty <-
+  additive_uncertainty(df = acidification_global_section_uncertainty,
+                       mode = "delta_interval")[[1]]
+
 # loop over OIA variables
 # print incremental sections
 
@@ -9209,14 +9315,22 @@ for (i_var in OIA_variables) {
   i_contour_level_abs <- unlist(all_labels_breaks[4])
   i_legend_title  <- unlist(all_labels_breaks[3])
   
+  i_acidification_global_section_uncertainty <-
+    acidification_global_section_uncertainty %>%
+    filter(variable == i_var, depth <= 3000) %>%
+    mutate(signif_double = signif_single, signif_single = 1)
+  
   p_global_section_period1 <-
     i_acidification_global_section_total %>%
     filter(tref == 1994) %>%
     p_section_global(
+      df_uncertainty = i_acidification_global_section_uncertainty %>% 
+        filter(tref == 1994),   
       var = "delta_total",
       title_text = "A   1800 - 1994",
       legend_title = i_legend_title,
       col_scale = "RdPu",
+      col_uncertainty = "grey60",
       breaks = i_breaks,
       n_labels = 2,
       subtitle_text = NULL,
@@ -9227,9 +9341,12 @@ for (i_var in OIA_variables) {
     i_acidification_global_section_total %>%
     filter(tref == 2004) %>%
     p_section_global(
+            df_uncertainty = i_acidification_global_section_uncertainty %>% 
+        filter(tref == 2004),   
       var = "delta_total",
       legend_title = i_legend_title,
       col_scale = "RdPu",
+      col_uncertainty = "grey60",
       title_text = "B   1800 - 2004",
       subtitle_text = NULL,
       plot_slabs = "n",
@@ -9241,9 +9358,12 @@ for (i_var in OIA_variables) {
     i_acidification_global_section_total %>%
     filter(tref == 2014) %>%
     p_section_global(
+            df_uncertainty = i_acidification_global_section_uncertainty %>% 
+        filter(tref == 2014),   
       var = "delta_total",
       legend_title = i_legend_title,
       col_scale = "RdPu",
+      col_uncertainty = "grey60",
       title_text = "C   1800 - 2014",
       subtitle_text = NULL,
       plot_slabs = "n",
