@@ -384,7 +384,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">24 September, 2024</h4>
+<h4 class="date">25 September, 2024</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-09-24
+<strong>Last updated:</strong> 2024-09-25
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8ea28193c105509c17fde206efdd9de84e158231targetblank8ea2819a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4af890879205ba024aec753e77df593a17507653targetblank4af8908a">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8ea28193c105509c17fde206efdd9de84e158231" target="_blank">8ea2819</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4af890879205ba024aec753e77df593a17507653" target="_blank">4af8908</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree8ea28193c105509c17fde206efdd9de84e158231targetblank8ea2819a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4af890879205ba024aec753e77df593a17507653targetblank4af8908a"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/8ea28193c105509c17fde206efdd9de84e158231" target="_blank">8ea2819</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4af890879205ba024aec753e77df593a17507653" target="_blank">4af8908</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -580,7 +580,6 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
     Ignored:    data/14_001_WCMC001_ColdCorals2017_v5_1/
     Ignored:    output/
 
@@ -635,6 +634,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4af890879205ba024aec753e77df593a17507653/analysis/synopsis_OIA.Rmd" target="_blank">4af8908</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+<td>
+uncertainties added to sections and maps
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/synopsis_OIA.html" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2769,8 +2802,8 @@ buffer_variables_addition &lt;-
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3162186   168.9    5642690   301.4    5428967   290.0
-Vcells 1546159451 11796.3 2037444648 15544.5 1546217627 11796.8</code></pre>
+Ncells    3162236   168.9    5642761   301.4    5429017   290.0
+Vcells 1546160412 11796.3 2037446032 15544.5 1546218588 11796.8</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   bind_rows(acidification_trend_uncertainty %&gt;%
               select(-c(talk, temp, sal, phosphate, silicate)),
@@ -2782,8 +2815,8 @@ acidification_trend &lt;- acidification_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3162121   168.9    5642690   301.4    5428967   290
-Vcells 1418762859 10824.4 3012632621 22984.6 2849503454 21740</code></pre>
+Ncells    3162171   168.9    5642761   301.4    5429017   290
+Vcells 1418763820 10824.4 3012633774 22984.6 2849504415 21740</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2792,8 +2825,8 @@ Vcells 1418762859 10824.4 3012632621 22984.6 2849503454 21740</code></pre>
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3162151   168.9    5642690   301.4    5428967   290
-Vcells 1418762929 10824.4 3012632621 22984.6 2849503454 21740</code></pre>
+Ncells    3162201   168.9    5642761   301.4    5429017   290
+Vcells 1418763890 10824.4 3012633774 22984.6 2849504415 21740</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2901,8 +2934,8 @@ acidification_trend_uncertainty_delta_total &lt;-
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3162470   168.9    5642690   301.4    5428967   290
-Vcells 1395435069 10646.4 3012632621 22984.6 2849503454 21740</code></pre>
+Ncells    3162520   168.9    5642761   301.4    5429017   290
+Vcells 1395436034 10646.4 3012633774 22984.6 2849504415 21740</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -4596,15 +4629,15 @@ CO2_climatology_uncertainty &lt;-
   
   # determine significance
   
-  # df_stat &lt;- df_stat %&gt;%
-  #   mutate(
-  #     signif_single = if_else(abs(std_case) &gt;= sd,
-  #                             1,
-  #                             0),
-  #     signif_double = if_else(abs(std_case) &gt;= sd * 2,
-  #                             1,
-  #                             0)
-  #   )
+  df_stat &lt;- df_stat %&gt;%
+    mutate(
+      signif_single = if_else(abs(std_case) &gt;= sd,
+                              1,
+                              0),
+      signif_double = if_else(abs(std_case) &gt;= sd * 2,
+                              1,
+                              0)
+    )
   
   
   df_stat &lt;-
@@ -5368,7 +5401,7 @@ rm(acidification_depth_layer_dCant_temp,
 
 acidification_depth_layer_incremental &lt;-
   acidification_depth_layer %&gt;%
-  select(lat:MLR_configuration,
+  select(lat:tref,
          contains(&quot;_delta_interval&quot;),
          -contains(&quot;_sd&quot;)) %&gt;%
   filter(tref %in% c(2004, 2014))
@@ -5547,6 +5580,7 @@ acidification_depth_layer_total &lt;-
   select(lat:tref,
          contains(&quot;_delta_total&quot;))
 
+
 # pivot data frames to long format
 
 acidification_depth_layer_total &lt;-
@@ -5563,6 +5597,49 @@ acidification_depth_layer_uncertainty &lt;-
   pivot_longer(all_of(OIA_variables),
                names_to = &quot;variable&quot;,
                values_to = &quot;delta_interval&quot;)
+
+
+
+# compute uncertainty
+
+acidification_depth_layer_uncertainty_map &lt;-
+  m_grid_horizontal_coarse(acidification_depth_layer_uncertainty)
+
+acidification_depth_layer_uncertainty_map &lt;-
+  acidification_depth_layer_uncertainty_map %&gt;%
+  # head(2000) %&gt;% 
+  pivot_wider(names_from = variable,
+              values_from = delta_interval) %&gt;% 
+  select(-c(lat,lon)) %&gt;%
+  rename(lat = lat_grid, lon = lon_grid) %&gt;%
+  group_by(depth, lon, lat, tref, MLR_basin_mask, MLR_configuration) %&gt;%
+  summarise(across(
+    .cols = all_of(OIA_variables),
+    .fns = ~ mean(.x),
+    .names = &quot;{.col}_interval_mean&quot;
+  ),
+  n = n()) %&gt;%
+  ungroup() %&gt;% 
+  filter(n == 25) %&gt;%
+  select(-n)
+
+acidification_depth_layer_uncertainty_map &lt;-
+  additive_uncertainty(df = acidification_depth_layer_uncertainty_map,
+                       mode = &quot;delta_interval&quot;)[[1]]
+
+# acidification_depth_layer_uncertainty_map %&gt;%
+#   filter(variable == &quot;H_free&quot;) %&gt;%
+#   ggplot(aes(lon, lat, fill = std_case)) +
+#   geom_tile() +
+#   scale_fill_batlowW(reverse = TRUE) +
+#   facet_grid(depth ~ tref)
+# 
+# acidification_depth_layer_uncertainty_map %&gt;%
+#   filter(variable == &quot;H_free&quot;) %&gt;%
+#   ggplot(aes(lon, lat, fill = sd)) +
+#   geom_tile() +
+#   scale_fill_batlowW(reverse = TRUE) +
+#   facet_grid(depth ~ tref)
 
 
 ### regional mean trends
@@ -5677,6 +5754,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-1.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -5758,6 +5846,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-2.png" target="_blank">6c21706</a>
@@ -5859,6 +5958,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-3.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-3.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -5953,6 +6063,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-4.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-4.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -6017,6 +6138,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-5.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-5.png" target="_blank">6c21706</a>
@@ -6090,6 +6222,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-6.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-6.png" target="_blank">6c21706</a>
@@ -6166,6 +6309,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-7.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_absolute-7.png" target="_blank">6c21706</a>
@@ -10653,10 +10807,24 @@ tco2
   i_contour_level &lt;- unlist(all_labels_breaks[2])
   i_legend_title  &lt;- unlist(all_labels_breaks[3])
   
+  
+  i_acidification_depth_layer_uncertainty_map &lt;-
+    acidification_depth_layer_uncertainty_map %&gt;%
+    filter(variable == i_var)
+
+  i_acidification_depth_layer_uncertainty_map &lt;-
+    i_acidification_depth_layer_uncertainty_map %&gt;%
+    select(lon, lat, depth, tref, signif_single, signif_double) %&gt;%
+    filter(tref == &quot;2014&quot;) %&gt;% 
+    mutate(signif_double = signif_single,
+           signif_single = 1) %&gt;% 
+    st_as_sf(coords = c(&quot;lon&quot;, &quot;lat&quot;), crs = &quot;+proj=longlat&quot;)
+  
   p_maps &lt;-
     i_acidification_depth_layer_total %&gt;%
     filter(tref == &quot;2014&quot;) %&gt;%
     p_map_mdim_robinson(
+      df_uncertainty = i_acidification_depth_layer_uncertainty_map,
       dim_row = &quot;depth&quot;,
       dim_col = &quot;tref&quot;,
       var = &quot;delta_total&quot;,
@@ -10797,8 +10965,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    5021866   268.2    8682934   463.8    8682934   463.8
-Vcells 2078769501 15859.8 3617034840 27595.8 3617034840 27595.8</code></pre>
+Ncells    5056552   270.1    8370745   447.1    8370745   447.1
+Vcells 2084001921 15899.7 3617036116 27595.8 3617036116 27595.8</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -10949,6 +11117,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_relative_1994-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ee9c7e1feefb087e4e78f1b1c71a9798d4c388ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_relative_1994-1.png" target="_blank">ee9c7e1</a>
@@ -11130,6 +11309,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_relative-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/depth_layer_total_change_relative-1.png" target="_blank">906b19e</a>
@@ -11661,6 +11851,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/e0dc39f248d2d5729dab891982f75c18112e7f84/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-1.png" target="_blank">e0dc39f</a>
 </td>
 <td>
@@ -11744,6 +11945,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/e100884f92a75694622c775eeaf2e9213c2caeab/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-2.png" target="_blank">e100884</a>
@@ -11882,6 +12094,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-4.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/e100884f92a75694622c775eeaf2e9213c2caeab/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-4.png" target="_blank">e100884</a>
 </td>
 <td>
@@ -11919,6 +12142,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-5.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/e100884f92a75694622c775eeaf2e9213c2caeab/docs/figure/synopsis_OIA.Rmd/depth_layer_absolute_pteropod-5.png" target="_blank">e100884</a>
@@ -12107,6 +12341,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ee9c7e1feefb087e4e78f1b1c71a9798d4c388ea/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-1.png" target="_blank">ee9c7e1</a>
 </td>
 <td>
@@ -12185,6 +12430,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-2.png" target="_blank">6c21706</a>
@@ -12266,6 +12522,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-3.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-3.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -12336,6 +12603,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-4.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-4.png" target="_blank">6c21706</a>
@@ -12462,6 +12740,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-5.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/depth_layer_buffer_addition_trend-5.png" target="_blank">6c21706</a>
@@ -12793,8 +13082,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4911068   262.3    8682934   463.8    8682934   463.8
-Vcells 1957708228 14936.2 3617034840 27595.8 3617034840 27595.8</code></pre>
+Ncells    4943419   264.1    8370745   447.1    8370745   447.1
+Vcells 1962931869 14976.0 3617036116 27595.8 3617036116 27595.8</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -13214,6 +13503,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/speciation-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/cf99f96230e96f652eef91fe13fb2dbbe1e1accb/docs/figure/synopsis_OIA.Rmd/speciation-2.png" target="_blank">cf99f96</a>
 </td>
 <td>
@@ -13331,6 +13631,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/speciation-3.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/cf99f96230e96f652eef91fe13fb2dbbe1e1accb/docs/figure/synopsis_OIA.Rmd/speciation-3.png" target="_blank">cf99f96</a>
 </td>
 <td>
@@ -13388,8 +13699,8 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4644224   248.1    8682934   463.8    8682934   463.8
-Vcells 2134173374 16282.5 3617034840 27595.8 3617034840 27595.8</code></pre>
+Ncells    4669815   249.4    8370745   447.1    8370745   447.1
+Vcells 2139381069 16322.2 3617036116 27595.8 3617036116 27595.8</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
   acidification_trend_uncertainty_delta_total %&gt;%
   filter(depth &lt;= 600,
@@ -13429,6 +13740,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/061f1a8b685e2920549d417eb8f7393c5bf1809b/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-1.png" target="_blank">061f1a8</a>
@@ -13485,8 +13807,8 @@ acidification_bottom_raw &lt;-
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4666015   249.2    8682934   463.8    8682934   463.8
-Vcells 2589667096 19757.6 4340521808 33115.6 3617034840 27595.8</code></pre>
+Ncells    4692008   250.6    8370745   447.1    8370745   447.1
+Vcells 2594874944 19797.4 4340523339 33115.6 3617036116 27595.8</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -13610,6 +13932,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/061f1a8b685e2920549d417eb8f7393c5bf1809b/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-2.png" target="_blank">061f1a8</a>
 </td>
 <td>
@@ -13704,6 +14037,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-3.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-3.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -13791,6 +14135,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-4.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-4.png" target="_blank">6c21706</a>
@@ -13931,6 +14286,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-5.png" target="_blank">6c21706</a>
@@ -14332,6 +14698,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-6.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -14628,6 +15005,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-7.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/acidification_volumes_bottom-7.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -14708,8 +15096,8 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4981429   266.1    8682934   463.8    8682934   463.8
-Vcells 1931781459 14738.4 4340521808 33115.6 4333648012 33063.2</code></pre>
+Ncells    5009398   267.6    8370745   447.1    8370745   447.1
+Vcells 1936993457 14778.1 4340523339 33115.6 4338855852 33102.9</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -15099,6 +15487,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6e6f19a7f91d1fa3440fe98caa311efa220e7670/docs/figure/synopsis_OIA.Rmd/saturation_horizon_maps-2.png" target="_blank">6e6f19a</a>
@@ -15523,6 +15922,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d866c338f441b5b130c2ee7e6061d724634949ec/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-2.png" target="_blank">d866c33</a>
@@ -15990,6 +16400,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-3.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4ec0a9ff2f21e9f57fc03c92a7aabccfc4e07f72/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-3.png" target="_blank">4ec0a9f</a>
 </td>
 <td>
@@ -16051,6 +16472,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-4.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4ec0a9ff2f21e9f57fc03c92a7aabccfc4e07f72/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-4.png" target="_blank">4ec0a9f</a>
 </td>
 <td>
@@ -16110,6 +16542,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-5.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/4ec0a9ff2f21e9f57fc03c92a7aabccfc4e07f72/docs/figure/synopsis_OIA.Rmd/mean_basin_horizon-5.png" target="_blank">4ec0a9f</a>
@@ -17120,6 +17563,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/da6ff6cab362069242ba6a70f8359a2610be880b/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-1.png" target="_blank">da6ff6c</a>
 </td>
 <td>
@@ -17198,6 +17652,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/20e9857ceaf9bd6a5e123a709df18a563e89cd6c/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-2.png" target="_blank">20e9857</a>
 </td>
 <td>
@@ -17262,6 +17727,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-3.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/da6ff6cab362069242ba6a70f8359a2610be880b/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-3.png" target="_blank">da6ff6c</a>
@@ -17381,6 +17857,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-4.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/20e9857ceaf9bd6a5e123a709df18a563e89cd6c/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-4.png" target="_blank">20e9857</a>
 </td>
 <td>
@@ -17442,6 +17929,12 @@ tref
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 sat_level
 </th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+signif_single
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+signif_double
+</th>
 <th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
 depth_01
 </th>
@@ -17464,6 +17957,12 @@ Global
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 295 ± 160
 </td>
@@ -17484,8 +17983,40 @@ Global
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 229 ± 155
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 397 ± 40
@@ -17504,14 +18035,46 @@ Global
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 212 ± 40
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+761 ± 66
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 385 ± 213
 </td>
 <td style="text-align:left;">
-761 ± 66
+NA
 </td>
 </tr>
 <tr>
@@ -17524,14 +18087,46 @@ Global
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 197 ± 50
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+728 ± 90
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 353 ± 221
 </td>
 <td style="text-align:left;">
-728 ± 90
+NA
 </td>
 </tr>
 <tr>
@@ -17543,6 +18138,12 @@ Global
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 98 ± 11
@@ -17564,6 +18165,12 @@ Global
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 51 ± 5
 </td>
@@ -17583,6 +18190,12 @@ Global
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 50 ± 0
@@ -17604,6 +18217,12 @@ Global
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 61 ± 0
 </td>
@@ -17623,6 +18242,12 @@ Global
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 68 ± 5
@@ -17644,6 +18269,12 @@ Global
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 55 ± 5
 </td>
@@ -17663,6 +18294,12 @@ Global
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 54 ± 5
@@ -17684,6 +18321,12 @@ Global
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 54 ± 7
 </td>
@@ -17703,6 +18346,12 @@ Global
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 47 ± 5
@@ -17724,6 +18373,12 @@ Global
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 41 ± 0
 </td>
@@ -17743,6 +18398,12 @@ Global
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 41 ± 0
@@ -17764,6 +18425,12 @@ Global
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 38 ± 0
 </td>
@@ -17783,6 +18450,12 @@ Global
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 40 ± 12
@@ -17804,6 +18477,12 @@ Global
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 27 ± 12
 </td>
@@ -17823,6 +18502,12 @@ Global
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 23 ± 8
@@ -17844,6 +18529,12 @@ Global
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 18 ± 9
 </td>
@@ -17863,6 +18554,12 @@ Global
 </td>
 <td style="text-align:right;">
 4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 23 ± 8
@@ -17884,14 +18581,46 @@ Global
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 12 ± 0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+47 ± 5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 20 ± 16
 </td>
 <td style="text-align:left;">
-47 ± 5
+NA
 </td>
 </tr>
 <tr>
@@ -17903,6 +18632,12 @@ Global
 </td>
 <td style="text-align:right;">
 4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 12 ± 0
@@ -17924,8 +18659,40 @@ Global
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 10 ± 7
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 14 ± 6
@@ -17944,11 +18711,69 @@ Global
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 9 ± 0
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 11 ± 8
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 74 ± 16
@@ -17964,11 +18789,69 @@ Global
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 30 ± 0
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 30 ± 8
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 254 ± 16
@@ -17984,11 +18867,69 @@ Global
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 30 ± 0
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 30 ± 8
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 254 ± 16
@@ -18004,8 +18945,40 @@ Global
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 30 ± 0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Global
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 30 ± 11
@@ -18023,6 +18996,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 300 ± 0
@@ -18044,6 +19023,12 @@ North Atlantic
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 300 ± 0
 </td>
@@ -18063,6 +19048,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 300 ± 0
@@ -18084,6 +19075,12 @@ North Atlantic
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 300 ± 0
 </td>
@@ -18103,6 +19100,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 300 ± 20
@@ -18124,6 +19127,12 @@ North Atlantic
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 250 ± 0
 </td>
@@ -18143,6 +19152,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 150 ± 40
@@ -18164,6 +19179,12 @@ North Atlantic
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 112 ± 64
 </td>
@@ -18183,6 +19204,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 110 ± 0
@@ -18204,6 +19231,12 @@ North Atlantic
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 39 ± 0
 </td>
@@ -18223,6 +19256,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 32 ± 8
@@ -18244,6 +19283,12 @@ North Atlantic
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 27 ± 9
 </td>
@@ -18263,6 +19308,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 17 ± 4
@@ -18284,6 +19335,12 @@ North Atlantic
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 11 ± 0
 </td>
@@ -18303,6 +19360,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 10 ± 0
@@ -18324,6 +19387,12 @@ North Atlantic
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 8 ± 2
 </td>
@@ -18343,6 +19412,12 @@ North Atlantic
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 13 ± 0
@@ -18364,6 +19439,12 @@ North Atlantic
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
 <td style="text-align:left;">
 NA ± 0
 </td>
@@ -18383,6 +19464,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 128 ± 0
@@ -18404,6 +19491,12 @@ North Pacific
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 112 ± 0
 </td>
@@ -18423,6 +19516,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 104 ± 5
@@ -18444,6 +19543,12 @@ North Pacific
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 93 ± 16
 </td>
@@ -18463,6 +19568,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 71 ± 10
@@ -18484,6 +19595,12 @@ North Pacific
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 41 ± 0
 </td>
@@ -18503,6 +19620,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 31 ± 8
@@ -18524,6 +19647,12 @@ North Pacific
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 27 ± 11
 </td>
@@ -18543,6 +19672,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 29 ± 10
@@ -18564,6 +19699,12 @@ North Pacific
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 17 ± 4
 </td>
@@ -18584,6 +19725,12 @@ North Pacific
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 15 ± 0
 </td>
@@ -18603,6 +19750,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 14 ± 0
@@ -18624,6 +19777,12 @@ North Pacific
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 12 ± 0
 </td>
@@ -18643,6 +19802,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 11 ± 0
@@ -18664,6 +19829,12 @@ North Pacific
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 12 ± 0
 </td>
@@ -18683,6 +19854,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 11 ± 0
@@ -18704,6 +19881,12 @@ North Pacific
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 11 ± 0
 </td>
@@ -18723,6 +19906,12 @@ North Pacific
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 3 ± 0
@@ -18744,6 +19933,12 @@ North Pacific
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
 <td style="text-align:left;">
 NA ± 0
 </td>
@@ -18763,6 +19958,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 634 ± 297
@@ -18784,6 +19985,12 @@ Southern Ocean
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 400 ± 220
 </td>
@@ -18803,6 +20010,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 325 ± 200
@@ -18824,11 +20037,43 @@ Southern Ocean
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 250 ± 269
 </td>
 <td style="text-align:left;">
 469 ± 304
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Southern Ocean
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 704 ± 240
@@ -18843,6 +20088,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 75 ± 14
@@ -18864,6 +20115,12 @@ Southern Ocean
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 29 ± 10
 </td>
@@ -18884,8 +20141,40 @@ Southern Ocean
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 20 ± 28
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Southern Ocean
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 37 ± 10
@@ -18904,8 +20193,40 @@ Southern Ocean
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 19 ± 28
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Southern Ocean
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 45 ± 11
@@ -18923,6 +20244,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 22 ± 4
@@ -18944,6 +20271,12 @@ Southern Ocean
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 19 ± 2
 </td>
@@ -18963,6 +20296,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 17 ± 0
@@ -18984,14 +20323,46 @@ Southern Ocean
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 15 ± 0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+94 ± 20
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Southern Ocean
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 27 ± 16
 </td>
 <td style="text-align:left;">
-94 ± 20
+NA
 </td>
 </tr>
 <tr>
@@ -19003,6 +20374,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 11 ± 0
@@ -19024,6 +20401,12 @@ Southern Ocean
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 11 ± 0
 </td>
@@ -19043,6 +20426,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 10 ± 3
@@ -19064,8 +20453,40 @@ Southern Ocean
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 10 ± 10
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Southern Ocean
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 13 ± 0
@@ -19083,6 +20504,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 10 ± 0
@@ -19104,6 +20531,12 @@ Southern Ocean
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
 <td style="text-align:left;">
 NA ± 0
 </td>
@@ -19123,6 +20556,12 @@ Southern Ocean
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
 </td>
 <td style="text-align:left;">
 NA ± 0
@@ -19144,6 +20583,12 @@ Southern Ocean
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
 <td style="text-align:left;">
 NA ± 0
 </td>
@@ -19163,6 +20608,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 367 ± 20
@@ -19184,6 +20635,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 298 ± 0
 </td>
@@ -19203,6 +20660,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 293 ± 0
@@ -19224,6 +20687,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 286 ± 20
 </td>
@@ -19243,6 +20712,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 238 ± 20
@@ -19264,6 +20739,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 199 ± 0
 </td>
@@ -19283,6 +20764,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 193 ± 20
@@ -19304,6 +20791,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 185 ± 20
 </td>
@@ -19323,6 +20816,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 176 ± 5
@@ -19344,6 +20843,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 133 ± 5
 </td>
@@ -19363,6 +20868,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 124 ± 10
@@ -19384,6 +20895,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 112 ± 14
 </td>
@@ -19403,6 +20920,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 76 ± 0
@@ -19424,6 +20947,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 61 ± 0
 </td>
@@ -19443,6 +20972,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 58 ± 0
@@ -19464,6 +20999,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 52 ± 10
 </td>
@@ -19483,6 +21024,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 59 ± 12
@@ -19504,6 +21051,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 33 ± 12
 </td>
@@ -19523,6 +21076,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 27 ± 12
@@ -19544,8 +21103,40 @@ Subtropical Gyres
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 20 ± 19
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 50 ± 21
@@ -19563,6 +21154,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 25 ± 12
@@ -19584,6 +21181,12 @@ Subtropical Gyres
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 12 ± 0
 </td>
@@ -19603,6 +21206,12 @@ Subtropical Gyres
 </td>
 <td style="text-align:right;">
 4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 11 ± 0
@@ -19624,8 +21233,40 @@ Subtropical Gyres
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 9 ± 6
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 16 ± 4
@@ -19644,11 +21285,69 @@ Subtropical Gyres
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 11 ± 4
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 12 ± 8
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 116 ± 16
@@ -19664,11 +21363,69 @@ Subtropical Gyres
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 30 ± 4
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 30 ± 8
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 254 ± 16
@@ -19684,11 +21441,69 @@ Subtropical Gyres
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 30 ± 4
 </td>
 <td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
 30 ± 8
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 254 ± 16
@@ -19704,8 +21519,40 @@ Subtropical Gyres
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 30 ± 6
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Subtropical Gyres
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 30 ± 11
@@ -19723,6 +21570,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 254 ± 28
@@ -19744,6 +21597,12 @@ Upwelling regions
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 159 ± 20
 </td>
@@ -19764,8 +21623,40 @@ Upwelling regions
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 145 ± 112
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Upwelling regions
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 235 ± 20
@@ -19784,8 +21675,40 @@ Upwelling regions
 <td style="text-align:right;">
 1.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
 <td style="text-align:left;">
 136 ± 114
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Upwelling regions
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+1.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 225 ± 22
@@ -19803,6 +21726,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 109 ± 0
@@ -19824,6 +21753,12 @@ Upwelling regions
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 85 ± 0
 </td>
@@ -19843,6 +21778,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 1.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 77 ± 10
@@ -19864,6 +21805,12 @@ Upwelling regions
 <td style="text-align:right;">
 1.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 73 ± 14
 </td>
@@ -19883,6 +21830,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 72 ± 5
@@ -19904,6 +21857,12 @@ Upwelling regions
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 57 ± 0
 </td>
@@ -19923,6 +21882,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 2.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 53 ± 10
@@ -19944,6 +21909,12 @@ Upwelling regions
 <td style="text-align:right;">
 2.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 50 ± 14
 </td>
@@ -19963,6 +21934,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 38 ± 2
@@ -19984,6 +21961,12 @@ Upwelling regions
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 33 ± 2
 </td>
@@ -20003,6 +21986,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 3.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 31 ± 8
@@ -20024,6 +22013,12 @@ Upwelling regions
 <td style="text-align:right;">
 3.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 29 ± 11
 </td>
@@ -20043,6 +22038,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 31 ± 9
@@ -20064,6 +22065,12 @@ Upwelling regions
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 23 ± 4
 </td>
@@ -20083,6 +22090,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 3.5
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 20 ± 4
@@ -20104,6 +22117,12 @@ Upwelling regions
 <td style="text-align:right;">
 3.5
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 15 ± 4
 </td>
@@ -20123,6 +22142,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 22 ± 4
@@ -20144,6 +22169,12 @@ Upwelling regions
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 11 ± 0
 </td>
@@ -20163,6 +22194,12 @@ Upwelling regions
 </td>
 <td style="text-align:right;">
 4.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 <td style="text-align:left;">
 12 ± 2
@@ -20184,6 +22221,12 @@ Upwelling regions
 <td style="text-align:right;">
 4.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 11 ± 6
 </td>
@@ -20204,11 +22247,43 @@ Upwelling regions
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 7 ± 0
 </td>
 <td style="text-align:left;">
 9 ± 2
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Upwelling regions
+</td>
+<td style="text-align:right;">
+1800
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 12 ± 9
@@ -20224,11 +22299,43 @@ Upwelling regions
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 NA ± 0
 </td>
 <td style="text-align:left;">
 NA ± 0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Upwelling regions
+</td>
+<td style="text-align:right;">
+1994
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 NA ± 8
@@ -20244,11 +22351,43 @@ Upwelling regions
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 NA ± 0
 </td>
 <td style="text-align:left;">
 NA ± 0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Upwelling regions
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 NA ± 8
@@ -20264,11 +22403,43 @@ Upwelling regions
 <td style="text-align:right;">
 5.0
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 <td style="text-align:left;">
 NA ± 0
 </td>
 <td style="text-align:left;">
 NA ± 0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Upwelling regions
+</td>
+<td style="text-align:right;">
+2014
+</td>
+<td style="text-align:right;">
+5.0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:left;">
+NA
+</td>
+<td style="text-align:left;">
+NA
 </td>
 <td style="text-align:left;">
 NA ± 11
@@ -20346,6 +22517,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-5.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/da6ff6cab362069242ba6a70f8359a2610be880b/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-5.png" target="_blank">da6ff6c</a>
@@ -20454,6 +22636,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-6.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-6.png" target="_blank">6c21706</a>
@@ -20598,6 +22791,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-7.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/saturation_level_changes-7.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -20734,6 +22938,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/surface_saturated_area_decline-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/da6ff6cab362069242ba6a70f8359a2610be880b/docs/figure/synopsis_OIA.Rmd/surface_saturated_area_decline-2.png" target="_blank">da6ff6c</a>
@@ -20986,6 +23201,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/volume_loss-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/1dfb835ab3b33199388c07db95914b147f160ddd/docs/figure/synopsis_OIA.Rmd/volume_loss-1.png" target="_blank">1dfb835</a>
 </td>
 <td>
@@ -21137,6 +23363,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/volume_loss-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/3e4384fda0e3aa1ce78cf41bf7045fe6779baea2/docs/figure/synopsis_OIA.Rmd/volume_loss-2.png" target="_blank">3e4384f</a>
 </td>
 <td>
@@ -21186,6 +23423,12 @@ sd
 <th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
 std_case
 </th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+signif_single
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+signif_double
+</th>
 </tr>
 </thead>
 <tbody>
@@ -21208,6 +23451,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21227,6 +23476,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21248,6 +23503,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 35.8971180
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21268,6 +23529,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21287,6 +23554,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21308,6 +23581,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 16.2058770
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21328,6 +23607,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21347,6 +23632,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21368,6 +23659,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 9.9160245
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21388,6 +23685,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21407,6 +23710,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21428,6 +23737,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 4.2418075
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21448,6 +23763,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21467,6 +23788,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21488,6 +23815,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 2.6033746
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21508,6 +23841,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21527,6 +23866,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21548,6 +23893,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 1.2915084
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21568,6 +23919,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21587,6 +23944,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21608,6 +23971,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 0.0003288
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21627,6 +23996,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -10.9201242
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21648,6 +24023,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -3.9200099
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21667,6 +24048,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 31.9771082
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21688,6 +24075,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -21.5063439
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21707,6 +24100,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -3.4852916
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21728,6 +24127,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 12.7205854
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21747,6 +24152,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -24.5443418
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21768,6 +24179,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -2.4338229
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21787,6 +24204,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 7.4822015
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21808,6 +24231,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -32.4761019
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21827,6 +24256,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -1.3775737
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21848,6 +24283,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 2.8642338
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21867,6 +24308,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -44.6568353
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21888,6 +24335,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -1.1625847
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21907,6 +24360,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 1.4407899
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21928,6 +24387,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -78.6312090
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21947,6 +24412,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -1.0155287
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -21968,6 +24439,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 0.2759797
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -21987,6 +24464,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -100.0000000
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 <tr>
@@ -22008,6 +24491,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -0.0003288
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22027,6 +24516,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 <tr>
@@ -22048,6 +24543,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -14.2898241
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22067,6 +24568,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -5.1296350
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22088,6 +24595,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 30.7674830
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22107,6 +24620,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -26.2409700
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22128,6 +24647,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -4.2525793
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22147,6 +24672,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 11.9532977
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22168,6 +24699,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -30.0163970
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22187,6 +24724,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -2.9764333
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22208,6 +24751,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 6.9395912
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22227,6 +24776,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -39.8500981
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22248,6 +24803,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -1.6903645
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22267,6 +24828,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 2.5514431
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22288,6 +24855,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -55.0490126
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22307,6 +24880,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -1.4331320
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22328,6 +24907,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 1.1702426
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22347,6 +24932,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -91.0237883
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22368,6 +24959,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -1.1755799
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22387,6 +24984,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.1159285
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 <tr>
@@ -22408,6 +25011,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -100.0000000
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22428,6 +25037,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -0.0003288
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22447,6 +25062,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0000000
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 <tr>
@@ -22468,6 +25089,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -17.6771228
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22487,6 +25114,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -6.3455776
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22508,6 +25141,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 29.5515404
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22527,6 +25166,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -30.8899476
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22548,6 +25193,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -5.0059869
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22567,6 +25218,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 11.1998901
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22588,6 +25245,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -35.0175541
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22607,6 +25270,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -3.4723492
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22628,6 +25297,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 6.4436752
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22647,6 +25322,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -48.2959538
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22668,6 +25349,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -2.0486214
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22687,6 +25374,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 2.1931861
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22708,6 +25401,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -66.7375446
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22727,6 +25426,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -1.7374283
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22748,6 +25453,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 0.8659463
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22767,6 +25478,12 @@ Loss of saturated volume relative preindustrial volume (%)
 </td>
 <td style="text-align:right;">
 -97.6912436
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
 </td>
 </tr>
 <tr>
@@ -22788,6 +25505,12 @@ Loss of satured volume relative to total volume (%)
 <td style="text-align:right;">
 -1.2616906
 </td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22807,6 +25530,12 @@ Saturated volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 0.0298178
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 <tr>
@@ -22828,6 +25557,12 @@ Loss of saturated volume relative preindustrial volume (%)
 <td style="text-align:right;">
 -100.0000000
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
 <tr>
 <td style="text-align:right;">
@@ -22847,6 +25582,12 @@ Loss of satured volume relative to total volume (%)
 </td>
 <td style="text-align:right;">
 -0.0003288
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
 </td>
 </tr>
 <tr>
@@ -22868,6 +25609,12 @@ Saturated volume relative to total volume (%)
 <td style="text-align:right;">
 0.0000000
 </td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+0
+</td>
 </tr>
 </tbody>
 </table>
@@ -22884,9 +25631,9 @@ Saturated volume relative to total volume (%)
   undersaturated_volume_all
 )
 gc()</code></pre>
-<pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    4781446   255.4   13270903   708.8   16588628   886
-Vcells 2166516974 16529.3 4340521808 33115.6 4336250525 33083</code></pre>
+<pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
+Ncells    4808083   256.8   13457684   718.8   16822104   898.4
+Vcells 2171736966 16569.1 4340523339 33115.6 4340097426 33112.4</code></pre>
 </div>
 </div>
 <div id="summary-table" class="section level1">
@@ -23090,6 +25837,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/cwc_saturation_state-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/e100884f92a75694622c775eeaf2e9213c2caeab/docs/figure/synopsis_OIA.Rmd/cwc_saturation_state-1.png" target="_blank">e100884</a>
@@ -24330,6 +27088,16 @@ rm(acidification_zonal_buffer_absolute,
   unnest(zonal) %&gt;% 
   ungroup()
 
+acidification_global_section_uncertainty &lt;-
+  acidification_trend_uncertainty_delta_interval %&gt;%
+  group_by(tref, MLR_basin_mask, MLR_configuration) %&gt;%
+  nest() %&gt;%
+  mutate(zonal = map(.x = data, ~m_section_global_mean_sd(.x))) %&gt;%
+  select(-data) %&gt;%
+  unnest(zonal) %&gt;%
+  ungroup()
+
+
 buffer_global_section &lt;- buffer_trend_addition %&gt;%
   # pivot_wider(names_from = variable,
   #             values_from = sensitivity) %&gt;% 
@@ -24543,6 +27311,44 @@ acidification_global_section_total &lt;-
 
 rm(absolute_global_section_total)
 
+
+# compute uncertainty
+
+acidification_global_section_uncertainty &lt;-
+  acidification_global_section_uncertainty %&gt;%
+  select(dist,
+         depth,
+         tref,
+         MLR_basin_mask,
+         MLR_configuration,
+         contains(&quot;_mean&quot;)) %&gt;%
+  mutate(dist_grid = as.numeric(as.character(cut(dist, seq(0,50,1), seq(0.5,50,1)))),
+  depth_grid = as.numeric(as.character(cut(
+    depth,
+    c(seq(0, 500, 100), seq(1000, 10000, 500)),
+    c(seq(50, 450, 100), seq(750, 10000, 500)),
+    right = FALSE
+  )))
+  ) %&gt;%
+  rename_all(~ str_remove(., &quot;_mean&quot;)) %&gt;% 
+  group_by(dist_grid,
+           depth_grid,
+           tref,
+         MLR_basin_mask,
+         MLR_configuration) %&gt;%
+  summarise(across(
+    .cols = all_of(OIA_variables),
+    .fns = ~ mean(.x),
+    .names = &quot;{.col}_interval_mean&quot;
+  )) %&gt;%
+  ungroup() %&gt;%
+  rename(dist = dist_grid,
+         depth = depth_grid)
+
+acidification_global_section_uncertainty &lt;-
+  additive_uncertainty(df = acidification_global_section_uncertainty,
+                       mode = &quot;delta_interval&quot;)[[1]]
+
 # loop over OIA variables
 # print incremental sections
 
@@ -24562,14 +27368,22 @@ for (i_var in OIA_variables) {
   i_contour_level_abs &lt;- unlist(all_labels_breaks[4])
   i_legend_title  &lt;- unlist(all_labels_breaks[3])
   
+  i_acidification_global_section_uncertainty &lt;-
+    acidification_global_section_uncertainty %&gt;%
+    filter(variable == i_var, depth &lt;= 3000) %&gt;%
+    mutate(signif_double = signif_single, signif_single = 1)
+  
   p_global_section_period1 &lt;-
     i_acidification_global_section_total %&gt;%
     filter(tref == 1994) %&gt;%
     p_section_global(
+      df_uncertainty = i_acidification_global_section_uncertainty %&gt;% 
+        filter(tref == 1994),   
       var = &quot;delta_total&quot;,
       title_text = &quot;A   1800 - 1994&quot;,
       legend_title = i_legend_title,
       col_scale = &quot;RdPu&quot;,
+      col_uncertainty = &quot;grey60&quot;,
       breaks = i_breaks,
       n_labels = 2,
       subtitle_text = NULL,
@@ -24580,9 +27394,12 @@ for (i_var in OIA_variables) {
     i_acidification_global_section_total %&gt;%
     filter(tref == 2004) %&gt;%
     p_section_global(
+            df_uncertainty = i_acidification_global_section_uncertainty %&gt;% 
+        filter(tref == 2004),   
       var = &quot;delta_total&quot;,
       legend_title = i_legend_title,
       col_scale = &quot;RdPu&quot;,
+      col_uncertainty = &quot;grey60&quot;,
       title_text = &quot;B   1800 - 2004&quot;,
       subtitle_text = NULL,
       plot_slabs = &quot;n&quot;,
@@ -24594,9 +27411,12 @@ for (i_var in OIA_variables) {
     i_acidification_global_section_total %&gt;%
     filter(tref == 2014) %&gt;%
     p_section_global(
+            df_uncertainty = i_acidification_global_section_uncertainty %&gt;% 
+        filter(tref == 2014),   
       var = &quot;delta_total&quot;,
       legend_title = i_legend_title,
       col_scale = &quot;RdPu&quot;,
+      col_uncertainty = &quot;grey60&quot;,
       title_text = &quot;C   1800 - 2014&quot;,
       subtitle_text = NULL,
       plot_slabs = &quot;n&quot;,
@@ -26055,6 +28875,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-1.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -26158,6 +28989,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-2.png" target="_blank">6c21706</a>
@@ -26269,6 +29111,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-3.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-3.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -26376,6 +29229,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-4.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-4.png" target="_blank">6c21706</a>
@@ -26497,6 +29361,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-5.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-5.png" target="_blank">6c21706</a>
@@ -26630,6 +29505,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-6.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-6.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -26738,6 +29624,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-7.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-7.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -26844,6 +29741,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-8.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-8.png" target="_blank">6c21706</a>
@@ -26970,6 +29878,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-9.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/compute_mean_profiles_total_acidification_biomes_uncertainty-9.png" target="_blank">6c21706</a>
@@ -28051,6 +30970,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-1.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -28230,6 +31160,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ee9c7e1feefb087e4e78f1b1c71a9798d4c388ea/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-2.png" target="_blank">ee9c7e1</a>
 </td>
 <td>
@@ -28257,24 +31198,24 @@ jens-daniel-mueller
 # Groups:   biome [6]
    biome                variable          sd std_case
    &lt;chr&gt;                &lt;chr&gt;          &lt;dbl&gt;    &lt;dbl&gt;
- 1 &quot;Global&quot;             H_free          7.96     51.5
+ 1 &quot;Global&quot;             H_free         NA        NA  
  2 &quot;Global&quot;             OmegaAragonite  4.16     44.7
  3 &quot;Global&quot;             tco2            4.30     45.3
  4 &quot;North\nAtlantic&quot;    H_free         10.3      40.9
  5 &quot;North\nAtlantic&quot;    OmegaAragonite  7.24     32.3
  6 &quot;North\nAtlantic&quot;    tco2            7.34     33.0
- 7 &quot;North\nPacific&quot;     H_free         28.6      38.2
- 8 &quot;North\nPacific&quot;     OmegaAragonite 21.2      33.2
- 9 &quot;North\nPacific&quot;     tco2           22.1      33.3
-10 &quot;Southern\nOcean&quot;    H_free          6.13     51.4
+ 7 &quot;North\nPacific&quot;     H_free         NA        NA  
+ 8 &quot;North\nPacific&quot;     OmegaAragonite NA        NA  
+ 9 &quot;North\nPacific&quot;     tco2           NA        NA  
+10 &quot;Southern\nOcean&quot;    H_free         NA        NA  
 11 &quot;Southern\nOcean&quot;    OmegaAragonite  4.13     42.0
 12 &quot;Southern\nOcean&quot;    tco2            4.17     43.4
 13 &quot;Subtropical\nGyres&quot; H_free          4.79     56.8
 14 &quot;Subtropical\nGyres&quot; OmegaAragonite  3.26     47.5
 15 &quot;Subtropical\nGyres&quot; tco2            2.94     48.4
-16 &quot;Upwelling\nregions&quot; H_free         17.5      49.5
-17 &quot;Upwelling\nregions&quot; OmegaAragonite 12.1      41.8
-18 &quot;Upwelling\nregions&quot; tco2           13.2      42.9</code></pre>
+16 &quot;Upwelling\nregions&quot; H_free         NA        NA  
+17 &quot;Upwelling\nregions&quot; OmegaAragonite NA        NA  
+18 &quot;Upwelling\nregions&quot; tco2           NA        NA  </code></pre>
 </div>
 </div>
 <div id="total-changes-3" class="section level2">
@@ -29055,6 +31996,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/saturation_state_profiles_biome-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6e6f19a7f91d1fa3440fe98caa311efa220e7670/docs/figure/synopsis_OIA.Rmd/saturation_state_profiles_biome-1.png" target="_blank">6e6f19a</a>
 </td>
 <td>
@@ -29276,6 +32228,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6e6f19a7f91d1fa3440fe98caa311efa220e7670/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome-1.png" target="_blank">6e6f19a</a>
 </td>
 <td>
@@ -29396,6 +32359,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba47c9e4557b09a02fa84a0db00509e4a38ee972/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-1.png" target="_blank">ba47c9e</a>
@@ -29522,6 +32496,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-2.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/ba47c9e4557b09a02fa84a0db00509e4a38ee972/docs/figure/synopsis_OIA.Rmd/bio_impact_profiles_biome_presentation-2.png" target="_blank">ba47c9e</a>
@@ -29757,13 +32742,13 @@ acidification_profiles_biomes_uncertainty %&gt;%
   group_by(variable) %&gt;% 
   filter(abs(std_case) == max(abs(std_case))) %&gt;% 
   ungroup()</code></pre>
-<pre><code># A tibble: 4 × 6
-  biome  depth variable       tref  std_case      sd
-  &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;          &lt;fct&gt;    &lt;dbl&gt;   &lt;dbl&gt;
-1 Global     0 OmegaAragonite 2014    -0.652 0.00165
-2 Global     0 tco2           2014    65.9   0.0355 
-3 Global   100 pH             2014    -0.119 0.00378
-4 Global   250 H_free         2014     2.22  0.151  </code></pre>
+<pre><code># A tibble: 4 × 8
+  biome  depth variable       tref  std_case      sd signif_single signif_double
+  &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt;          &lt;fct&gt;    &lt;dbl&gt;   &lt;dbl&gt;         &lt;dbl&gt;         &lt;dbl&gt;
+1 Global     0 OmegaAragonite 2014    -0.652 0.00165             1             1
+2 Global     0 tco2           2014    65.9   0.0355              1             1
+3 Global   100 pH             2014    -0.119 0.00378             1             1
+4 Global   250 H_free         2014     2.22  0.151               1             1</code></pre>
 <pre class="r"><code>buffer_profiles_biome &lt;- 
   buffer_profiles_biome %&gt;% 
   mutate(tref = as.factor(tref))
@@ -30114,6 +33099,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/merged_profiles_global-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/merged_profiles_global-1.png" target="_blank">6c21706</a>
 </td>
 <td>
@@ -30401,6 +33397,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/merged_profiles_global_presentations-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/3e4384fda0e3aa1ce78cf41bf7045fe6779baea2/docs/figure/synopsis_OIA.Rmd/merged_profiles_global_presentations-1.png" target="_blank">3e4384f</a>
 </td>
 <td>
@@ -30544,6 +33551,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/merged_profiles_biome-1.png" target="_blank">d6c5fef</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/6c21706c492d0c7dd39d84e63aafaad5520e1252/docs/figure/synopsis_OIA.Rmd/merged_profiles_biome-1.png" target="_blank">6c21706</a>
