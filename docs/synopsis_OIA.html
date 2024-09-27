@@ -384,7 +384,7 @@ div.tocify {
 
 <h1 class="title toc-ignore">OIA Averaging</h1>
 <h4 class="author">Jens Daniel Müller</h4>
-<h4 class="date">25 September, 2024</h4>
+<h4 class="date">27 September, 2024</h4>
 
 </div>
 
@@ -413,7 +413,7 @@ class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2024-09-25
+<strong>Last updated:</strong> 2024-09-27
 </p>
 <p>
 <strong>Checks:</strong> <span
@@ -545,15 +545,15 @@ project makes it easier to run your code on other machines.</p>
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4af890879205ba024aec753e77df593a17507653targetblank4af8908a">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreec11295d7ed382bde828cf9a31d3ca3fbd24b7c97targetblankc11295da">
 <span class="glyphicon glyphicon-ok text-success"
 aria-hidden="true"></span> <strong>Repository version:</strong>
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4af890879205ba024aec753e77df593a17507653" target="_blank">4af8908</a>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/c11295d7ed382bde828cf9a31d3ca3fbd24b7c97" target="_blank">c11295d</a>
 </a>
 </p>
 </div>
 <div
-id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtree4af890879205ba024aec753e77df593a17507653targetblank4af8908a"
+id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleroceaninterioracidificationtreec11295d7ed382bde828cf9a31d3ca3fbd24b7c97targetblankc11295da"
 class="panel-collapse collapse">
 <div class="panel-body">
 <p>
@@ -563,7 +563,7 @@ reproducibility.
 </p>
 <p>
 The results in this page were generated with repository version
-<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/4af890879205ba024aec753e77df593a17507653" target="_blank">4af8908</a>.
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/tree/c11295d7ed382bde828cf9a31d3ca3fbd24b7c97" target="_blank">c11295d</a>.
 See the <em>Past versions</em> tab to see a history of the changes made
 to the R Markdown and HTML files.
 </p>
@@ -580,6 +580,7 @@ were generated:
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    data/14_001_WCMC001_ColdCorals2017_v5_1/
     Ignored:    output/
 
@@ -634,6 +635,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/c11295d7ed382bde828cf9a31d3ca3fbd24b7c97/analysis/synopsis_OIA.Rmd" target="_blank">c11295d</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-27
+</td>
+<td>
+temperture change added to global profiles
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/jens-daniel-mueller/ocean_interior_acidification/87281ee80ee67588e50ae247fdd8a025600b2e26/docs/synopsis_OIA.html" target="_blank">87281ee</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -2802,8 +2837,8 @@ buffer_variables_addition &lt;-
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    3162236   168.9    5642761   301.4    5429017   290.0
-Vcells 1546160412 11796.3 2037446032 15544.5 1546218588 11796.8</code></pre>
+Ncells    3162249   168.9    5642788   301.4    5429029   290.0
+Vcells 1546160543 11796.3 2037446220 15544.5 1546218719 11796.8</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty &lt;-
   bind_rows(acidification_trend_uncertainty %&gt;%
               select(-c(talk, temp, sal, phosphate, silicate)),
@@ -2815,8 +2850,8 @@ acidification_trend &lt;- acidification_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3162171   168.9    5642761   301.4    5429017   290
-Vcells 1418763820 10824.4 3012633774 22984.6 2849504415 21740</code></pre>
+Ncells    3162184   168.9    5642788   301.4    5429029   290
+Vcells 1418763951 10824.4 3012633932 22984.6 2849504546 21740</code></pre>
 <pre class="r"><code>acidification_trend_uncertainty_absolute &lt;-
   acidification_trend_uncertainty %&gt;%
   select(tref, lon, lat, depth,
@@ -2825,8 +2860,8 @@ Vcells 1418763820 10824.4 3012633774 22984.6 2849504415 21740</code></pre>
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3162201   168.9    5642761   301.4    5429017   290
-Vcells 1418763890 10824.4 3012633774 22984.6 2849504415 21740</code></pre>
+Ncells    3162214   168.9    5642788   301.4    5429029   290
+Vcells 1418764021 10824.4 3012633932 22984.6 2849504546 21740</code></pre>
 <pre class="r"><code>acidification_uncertainty_raw &lt;-
   acidification_trend_uncertainty %&gt;%
   filter(tref != 1800,
@@ -2934,8 +2969,8 @@ acidification_trend_uncertainty_delta_total &lt;-
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used  (Mb)
-Ncells    3162520   168.9    5642761   301.4    5429017   290
-Vcells 1395436034 10646.4 3012633774 22984.6 2849504415 21740</code></pre>
+Ncells    3162533   168.9    5642788   301.4    5429029   290
+Vcells 1395436157 10646.4 3012633932 22984.6 2849504546 21740</code></pre>
 <div id="buffer-trends" class="section level4">
 <h4>Buffer trends</h4>
 <pre class="r"><code># Load OIA estimates with 5 µmol/kg DIC added
@@ -10965,8 +11000,8 @@ rm(acidification_depth_layer_total_trend,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    5056552   270.1    8370745   447.1    8370745   447.1
-Vcells 2084001921 15899.7 3617036116 27595.8 3617036116 27595.8</code></pre>
+Ncells    5056565   270.1    8370694   447.1    8370694   447.1
+Vcells 2084002048 15899.7 3617036239 27595.8 3617036239 27595.8</code></pre>
 </div>
 <div id="depth-of-highest-change" class="section level3">
 <h3>Depth of highest change</h3>
@@ -13082,8 +13117,8 @@ buffer_addition_depth_layer_trend %&gt;%
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4943419   264.1    8370745   447.1    8370745   447.1
-Vcells 1962931869 14976.0 3617036116 27595.8 3617036116 27595.8</code></pre>
+Ncells    4943432   264.1    8370694   447.1    8370694   447.1
+Vcells 1962931992 14976.0 3617036239 27595.8 3617036239 27595.8</code></pre>
 </div>
 <div id="relative-changes" class="section level3">
 <h3>Relative changes</h3>
@@ -13699,8 +13734,8 @@ rm(biome_co2_speciation,
 
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4669815   249.4    8370745   447.1    8370745   447.1
-Vcells 2139381069 16322.2 3617036116 27595.8 3617036116 27595.8</code></pre>
+Ncells    4669828   249.4    8370694   447.1    8370694   447.1
+Vcells 2139381196 16322.2 3617036239 27595.8 3617036239 27595.8</code></pre>
 <pre class="r"><code>acidification_bottom_area &lt;-
   acidification_trend_uncertainty_delta_total %&gt;%
   filter(depth &lt;= 600,
@@ -13807,8 +13842,8 @@ acidification_bottom_raw &lt;-
                values_to = &quot;delta_total&quot;)
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4692008   250.6    8370745   447.1    8370745   447.1
-Vcells 2594874944 19797.4 4340523339 33115.6 3617036116 27595.8</code></pre>
+Ncells    4692021   250.6    8370694   447.1    8370694   447.1
+Vcells 2594875071 19797.4 4340523486 33115.6 3617036239 27595.8</code></pre>
 <pre class="r"><code>for (i_var in OIA_variables) {
   # i_var &lt;- OIA_variables[4]
   
@@ -15096,8 +15131,8 @@ rm(p_vol_OmegaAragonite, p_vol_H_free, p_vol_tco2,
    )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    5009398   267.6    8370745   447.1    8370745   447.1
-Vcells 1936993457 14778.1 4340523339 33115.6 4338855852 33102.9</code></pre>
+Ncells    5009411   267.6    8370694   447.1    8370694   447.1
+Vcells 1936993584 14778.1 4340523486 33115.6 4338855979 33102.9</code></pre>
 </div>
 <div id="saturation-state-changes" class="section level1">
 <h1>Saturation state changes</h1>
@@ -25632,8 +25667,8 @@ Saturated volume relative to total volume (%)
 )
 gc()</code></pre>
 <pre><code>             used    (Mb) gc trigger    (Mb)   max used    (Mb)
-Ncells    4808083   256.8   13457684   718.8   16822104   898.4
-Vcells 2171736966 16569.1 4340523339 33115.6 4340097426 33112.4</code></pre>
+Ncells    4808096   256.8   13457718   718.8   16822147   898.4
+Vcells 2171737093 16569.1 4340523486 33115.6 4340097428 33112.4</code></pre>
 </div>
 </div>
 <div id="summary-table" class="section level1">
@@ -27499,6 +27534,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/87281ee80ee67588e50ae247fdd8a025600b2e26/docs/figure/synopsis_OIA.Rmd/global_section_total_change-1.png" target="_blank">87281ee</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-1.png" target="_blank">906b19e</a>
 </td>
 <td>
@@ -27557,6 +27603,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/87281ee80ee67588e50ae247fdd8a025600b2e26/docs/figure/synopsis_OIA.Rmd/global_section_total_change-2.png" target="_blank">87281ee</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/12610bfcab328f0df56e4eafd4fa822a9b43c253/docs/figure/synopsis_OIA.Rmd/global_section_total_change-2.png" target="_blank">12610bf</a>
@@ -27630,6 +27687,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/87281ee80ee67588e50ae247fdd8a025600b2e26/docs/figure/synopsis_OIA.Rmd/global_section_total_change-3.png" target="_blank">87281ee</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-3.png" target="_blank">906b19e</a>
 </td>
 <td>
@@ -27688,6 +27756,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/87281ee80ee67588e50ae247fdd8a025600b2e26/docs/figure/synopsis_OIA.Rmd/global_section_total_change-4.png" target="_blank">87281ee</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/906b19e3b16f5a1d47da72a55ff30893fea91bdb/docs/figure/synopsis_OIA.Rmd/global_section_total_change-4.png" target="_blank">906b19e</a>
@@ -27774,6 +27853,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/87281ee80ee67588e50ae247fdd8a025600b2e26/docs/figure/synopsis_OIA.Rmd/global_section_total_change-5.png" target="_blank">87281ee</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/12610bfcab328f0df56e4eafd4fa822a9b43c253/docs/figure/synopsis_OIA.Rmd/global_section_total_change-5.png" target="_blank">12610bf</a>
@@ -29823,8 +29913,7 @@ jens-daniel-mueller
 </div>
 </div>
 <pre class="r"><code>acidification_profiles_biomes_uncertainty %&gt;%
-  filter(depth &lt;= ocean_depth,
-         biome != &quot;Global&quot;) %&gt;%
+  filter(depth &lt;= ocean_depth) %&gt;%
   mutate(tref = as.factor(tref)) %&gt;% 
   ggplot(aes(
     x = std_case,
@@ -30175,6 +30264,7 @@ dCant_temp_profiles_temp_contribution %&gt;%
   ) +
   scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
                      breaks = c(0, 100, 500, seq(1500, 5000, 1000)))</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/compute_mean_profiles_temperature_trend-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># join with 3D acidification fields
 
 dCant_temp_profiles_temp_contribution_biome &lt;-
@@ -30252,6 +30342,7 @@ dCant_temp_profiles_temp_contribution_biome %&gt;%
                         scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
                                            breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
                       ), 6))</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/compute_mean_profiles_temperature_trend_biomes-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code># join with 3D acidification fields
 
 DIC_dCant_temp_profiles &lt;-
@@ -31160,6 +31251,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/87281ee80ee67588e50ae247fdd8a025600b2e26/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-2.png" target="_blank">87281ee</a>
+</td>
+<td>
+jens-daniel-mueller
+</td>
+<td>
+2024-09-25
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://github.com/jens-daniel-mueller/ocean_interior_acidification/blob/d6c5fef3993ecc999d21ec6aa8473a8161f5b3ea/docs/figure/synopsis_OIA.Rmd/profiles_incremental_change-2.png" target="_blank">d6c5fef</a>
 </td>
 <td>
@@ -31463,21 +31565,22 @@ dCant_temp_profiles_temp_contribution_biome %&gt;%
          variable %in% OIA_variables)
 
 acidification_profiles_biome_long &lt;-
-acidification_profiles_biomes %&gt;%
-  select(tref,
-         biome,
-         depth,
-         contains(&quot;_delta_total&quot;)) %&gt;%
-  pivot_longer(contains(&quot;_delta_total&quot;),
-               names_to = &quot;variable&quot;,
-               values_to = &quot;delta_total&quot;) %&gt;%
-  mutate(variable = str_remove(variable, &quot;_delta_total&quot;)) %&gt;%
-  filter(tref != 1800,
-         depth &lt;= 3000,
+acidification_profiles_biomes_uncertainty %&gt;%
+  # select(tref,
+  #        biome,
+  #        depth,
+  #        contains(&quot;_delta_total&quot;)) %&gt;%
+  # pivot_longer(contains(&quot;_delta_total&quot;),
+  #              names_to = &quot;variable&quot;,
+  #              values_to = &quot;delta_total&quot;) %&gt;%
+  # mutate(variable = str_remove(variable, &quot;_delta_total&quot;)) %&gt;%
+  filter(depth &lt;= 3000,
          variable %in% OIA_variables)
 
 acidification_profiles_biome_long &lt;-
-full_join(acidification_profiles_biome_long,
+full_join(acidification_profiles_biome_long %&gt;% 
+            rename(delta_total = std_case) %&gt;% 
+            mutate(tref = as.factor(tref)),
           dCant_temp_profiles_temp_contribution_biome_long) %&gt;% 
   replace_na(list(delta_total = 0, delta_total_temp = 0))
 
@@ -31485,126 +31588,51 @@ acidification_profiles_biome_long &lt;- acidification_profiles_biome_long %&gt;%
   mutate(delta_total_temp = delta_total + delta_total_temp)
 
 
-
-p_acid_profiles_global &lt;-
-  acidification_profiles_biome_long %&gt;%
-  filter(biome == &quot;Global&quot;,
-         variable %in% c(&quot;OmegaAragonite&quot;, &quot;H_free&quot;, &quot;tco2&quot;, &quot;temp&quot;)) %&gt;%
-  mutate(variable = factor(variable, levels = c(
-    &quot;OmegaAragonite&quot;, &quot;H_free&quot;, &quot;tco2&quot;, &quot;temp&quot;
-  ))) %&gt;%
-  ggplot() +
-  geom_path(aes(delta_total_temp,
-                depth,
-                col = tref, linetype = &quot;dcant_temp&quot;),
-                linewidth = 0.8) +
-  geom_path(
-    data = . %&gt;% filter(variable != &quot;temp&quot;),
-    aes(delta_total,
-        depth,
-        col = tref, linetype = &quot;dcant_only&quot;),
-    linewidth = 0.8
-  ) +
-  scale_color_manual(values = three_year_colors) +
-  scale_linetype_manual(values = c(1, 2),
-                        labels = c(expression(Delta * C[ant]),
-                                   expression(atop(Delta * C[ant] ~ &quot;+&quot;, Temp)))) +
-  labs(y = &quot;Depth (m)&quot;,
-       title = &quot;Global&quot;) +
-  theme(
-    legend.position = &quot;none&quot;,
-    axis.title.x = element_blank(),
-    strip.text.x = element_markdown(),
-    legend.key.width = unit(1, &quot;cm&quot;)
-  ) +
-  facet_wrap(. ~ variable,
-             scales = &quot;free_x&quot;,
-             labeller = labeller(variable = x_axis_labels)
-             ) +
-  facetted_pos_scales(#x = x_axis_scales,
-    y = rep(list(
-      scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                         breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
-    ), 6))
-
-p_acid_profiles_global
-
-# ggsave(
-#   here::here(
-#     paste0(
-#       &quot;output/supplement/profiles_total_changes_global.png&quot;
-#     )
-#   ),
-#   width = 6,
-#   height = 8,
-#   dpi = 600,
-#   bg = &quot;white&quot;
-# )
-
-
-p_acid_profiles_biome &lt;-
 acidification_profiles_biome_long %&gt;%
-  filter(
-    !is.na(biome),
-    biome != &quot;Global&quot;,
-    variable %in% c(&quot;OmegaAragonite&quot;, &quot;H_free&quot;, &quot;tco2&quot;, &quot;temp&quot;)
-  ) %&gt;%
-  mutate(
-    variable = factor(variable,
-                      levels = c(
-                        &quot;OmegaAragonite&quot;, &quot;H_free&quot;, &quot;tco2&quot;, &quot;temp&quot;
-                      ))
-  ) %&gt;%
-  ggplot()+
-  geom_path(aes(delta_total_temp,
-                depth,
-                col = tref, linetype = &quot;dcant_temp&quot;)) +
-  geom_path(data = . %&gt;% filter(variable != &quot;temp&quot;),
-            aes(delta_total,
-        depth,
-        col = tref, linetype = &quot;dcant_only&quot;)
-  ) +
-  scale_color_manual(values = three_year_colors,
-                     name = &quot;1800 -&quot;) +
+  filter(depth &lt;= ocean_depth) %&gt;%
+  mutate(tref = as.factor(tref)) %&gt;%
+  ggplot(aes(
+    x = delta_total,
+    xmin = delta_total - sd,
+    xmax = delta_total + sd,
+    y = depth
+  )) +
+  geom_ribbon(alpha = 0.3, aes(fill = tref)) +
+  geom_path(aes(x = delta_total_temp, col = tref, linetype = &quot;dcant_temp&quot;)) +
+  geom_path(aes(col = tref, linetype = &quot;dcant_only&quot;)) +
+  scale_color_manual(values = four_year_colors, name = &quot;Change from\n1800 to:&quot;) +
+  scale_fill_manual(values = four_year_colors, name = &quot;Change from\n1800 to:&quot;) +
   scale_linetype_manual(values = c(1, 2),
-                           labels = c(expression(Delta * C[ant]),
-                                      expression(atop(Delta * C[ant] ~ &quot;+&quot;, Temp))),
-                        name = &quot;Driver&quot;) +
-  labs(y = &quot;Depth (m)&quot;) +
-  theme(
-    axis.title = element_blank(),
-    # strip.background.x = element_blank(),
-    # strip.placement = &quot;outside&quot;,
-    strip.text.x = element_markdown(),
-    legend.text.align = 0
-  ) +
+                        labels = c(expression(Delta * C[ant]), expression(atop(Delta * C[ant] ~ &quot;+&quot;, Temp)))) +
   facet_grid(
     biome ~ variable,
-    scales = &quot;free&quot;,
-    # switch = &quot;x&quot;,
+    scales = &quot;free_x&quot;,
+    switch = &quot;x&quot;,
     labeller = labeller(variable = x_axis_labels)
   ) +
-  facetted_pos_scales(x = x_axis_scales,
-                      y = rep(list(
-                        scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;),
-                                           breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
-                      ), 6))
-
-
-p_acid_profiles_global + p_acid_profiles_biome +
-  plot_layout(guides = &quot;collect&quot;)
-
-# ggsave(
-#   here::here(
-#     paste0(
-#       &quot;output/main/profiles_total_changes_biome.png&quot;
-#     )
-#   ),
-#   width = 10,
-#   height = 8,
-#   dpi = 600,
-#   bg = &quot;white&quot;
-# )</code></pre>
+  coord_cartesian(expand = 0) +
+  labs(y = &quot;Depth (m)&quot;) +
+  theme(
+    strip.text = element_markdown(),
+    strip.placement = &quot;outside&quot;,
+    strip.background.x = element_blank(),
+    axis.title.x = element_blank(),
+    legend.title = element_blank(),
+    panel.spacing.x = unit(6, &quot;mm&quot;)
+  ) +
+  scale_y_continuous(trans = trans_reverser(&quot;sqrt&quot;), breaks = c(0, 100, 500, seq(1500, 5000, 1000)))</code></pre>
+<p><img src="figure/synopsis_OIA.Rmd/profiles_total_change_biome-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggsave(
+  here::here(
+    paste0(
+      &quot;output/supplement/profiles_total_changes_biome.png&quot;
+    )
+  ),
+  width = 8,
+  height = 10,
+  dpi = 600,
+  bg = &quot;white&quot;
+)</code></pre>
 <pre class="r"><code>acidification_profiles_biome_long_interval &lt;-
 acidification_profiles_biomes %&gt;%
   select(tref,
