@@ -10270,8 +10270,7 @@ acidification_profiles_biomes_uncertainty_contribution %>%
 
 
 acidification_profiles_biomes_uncertainty %>%
-  filter(depth <= ocean_depth,
-         biome != "Global") %>%
+  filter(depth <= ocean_depth) %>%
   mutate(tref = as.factor(tref)) %>% 
   ggplot(aes(
     x = std_case,
@@ -10428,7 +10427,7 @@ acidification_profiles_station <- acidification_profiles_station %>%
 
 ```
 
-```{r compute_mean_profiles_temperature_trend, eval=FALSE}
+```{r compute_mean_profiles_temperature_trend}
 
 # compute total temperature contribution to changes from 1994 to 2004 and 2014
 
@@ -10531,7 +10530,7 @@ dCant_temp_profiles_temp_contribution %>%
 
 ```
 
-```{r compute_mean_profiles_temperature_trend_biomes, eval=FALSE}
+```{r compute_mean_profiles_temperature_trend_biomes}
 
 
 # join with 3D acidification fields
@@ -11676,7 +11675,7 @@ acidification_profiles_long_relative %>%
 
 ### Biomes
 
-```{r profiles_total_change_biome, eval=FALSE}
+```{r profiles_total_change_biome}
 
 dCant_temp_profiles_temp_contribution_biome_long <-
 dCant_temp_profiles_temp_contribution_biome %>%
@@ -11692,21 +11691,22 @@ dCant_temp_profiles_temp_contribution_biome %>%
          variable %in% OIA_variables)
 
 acidification_profiles_biome_long <-
-acidification_profiles_biomes %>%
-  select(tref,
-         biome,
-         depth,
-         contains("_delta_total")) %>%
-  pivot_longer(contains("_delta_total"),
-               names_to = "variable",
-               values_to = "delta_total") %>%
-  mutate(variable = str_remove(variable, "_delta_total")) %>%
-  filter(tref != 1800,
-         depth <= 3000,
+acidification_profiles_biomes_uncertainty %>%
+  # select(tref,
+  #        biome,
+  #        depth,
+  #        contains("_delta_total")) %>%
+  # pivot_longer(contains("_delta_total"),
+  #              names_to = "variable",
+  #              values_to = "delta_total") %>%
+  # mutate(variable = str_remove(variable, "_delta_total")) %>%
+  filter(depth <= 3000,
          variable %in% OIA_variables)
 
 acidification_profiles_biome_long <-
-full_join(acidification_profiles_biome_long,
+full_join(acidification_profiles_biome_long %>% 
+            rename(delta_total = std_case) %>% 
+            mutate(tref = as.factor(tref)),
           dCant_temp_profiles_temp_contribution_biome_long) %>% 
   replace_na(list(delta_total = 0, delta_total_temp = 0))
 
@@ -11714,126 +11714,52 @@ acidification_profiles_biome_long <- acidification_profiles_biome_long %>%
   mutate(delta_total_temp = delta_total + delta_total_temp)
 
 
-
-p_acid_profiles_global <-
-  acidification_profiles_biome_long %>%
-  filter(biome == "Global",
-         variable %in% c("OmegaAragonite", "H_free", "tco2", "temp")) %>%
-  mutate(variable = factor(variable, levels = c(
-    "OmegaAragonite", "H_free", "tco2", "temp"
-  ))) %>%
-  ggplot() +
-  geom_path(aes(delta_total_temp,
-                depth,
-                col = tref, linetype = "dcant_temp"),
-                linewidth = 0.8) +
-  geom_path(
-    data = . %>% filter(variable != "temp"),
-    aes(delta_total,
-        depth,
-        col = tref, linetype = "dcant_only"),
-    linewidth = 0.8
-  ) +
-  scale_color_manual(values = three_year_colors) +
-  scale_linetype_manual(values = c(1, 2),
-                        labels = c(expression(Delta * C[ant]),
-                                   expression(atop(Delta * C[ant] ~ "+", Temp)))) +
-  labs(y = "Depth (m)",
-       title = "Global") +
-  theme(
-    legend.position = "none",
-    axis.title.x = element_blank(),
-    strip.text.x = element_markdown(),
-    legend.key.width = unit(1, "cm")
-  ) +
-  facet_wrap(. ~ variable,
-             scales = "free_x",
-             labeller = labeller(variable = x_axis_labels)
-             ) +
-  facetted_pos_scales(#x = x_axis_scales,
-    y = rep(list(
-      scale_y_continuous(trans = trans_reverser("sqrt"),
-                         breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
-    ), 6))
-
-p_acid_profiles_global
-
-# ggsave(
-#   here::here(
-#     paste0(
-#       "output/supplement/profiles_total_changes_global.png"
-#     )
-#   ),
-#   width = 6,
-#   height = 8,
-#   dpi = 600,
-#   bg = "white"
-# )
-
-
-p_acid_profiles_biome <-
 acidification_profiles_biome_long %>%
-  filter(
-    !is.na(biome),
-    biome != "Global",
-    variable %in% c("OmegaAragonite", "H_free", "tco2", "temp")
-  ) %>%
-  mutate(
-    variable = factor(variable,
-                      levels = c(
-                        "OmegaAragonite", "H_free", "tco2", "temp"
-                      ))
-  ) %>%
-  ggplot()+
-  geom_path(aes(delta_total_temp,
-                depth,
-                col = tref, linetype = "dcant_temp")) +
-  geom_path(data = . %>% filter(variable != "temp"),
-            aes(delta_total,
-        depth,
-        col = tref, linetype = "dcant_only")
-  ) +
-  scale_color_manual(values = three_year_colors,
-                     name = "1800 -") +
+  filter(depth <= ocean_depth) %>%
+  mutate(tref = as.factor(tref)) %>%
+  ggplot(aes(
+    x = delta_total,
+    xmin = delta_total - sd,
+    xmax = delta_total + sd,
+    y = depth
+  )) +
+  geom_ribbon(alpha = 0.3, aes(fill = tref)) +
+  geom_path(aes(x = delta_total_temp, col = tref, linetype = "dcant_temp")) +
+  geom_path(aes(col = tref, linetype = "dcant_only")) +
+  scale_color_manual(values = four_year_colors, name = "Change from\n1800 to:") +
+  scale_fill_manual(values = four_year_colors, name = "Change from\n1800 to:") +
   scale_linetype_manual(values = c(1, 2),
-                           labels = c(expression(Delta * C[ant]),
-                                      expression(atop(Delta * C[ant] ~ "+", Temp))),
-                        name = "Driver") +
-  labs(y = "Depth (m)") +
-  theme(
-    axis.title = element_blank(),
-    # strip.background.x = element_blank(),
-    # strip.placement = "outside",
-    strip.text.x = element_markdown(),
-    legend.text.align = 0
-  ) +
+                        labels = c(expression(Delta * C[ant]), expression(atop(Delta * C[ant] ~ "+", Temp)))) +
   facet_grid(
     biome ~ variable,
-    scales = "free",
-    # switch = "x",
+    scales = "free_x",
+    switch = "x",
     labeller = labeller(variable = x_axis_labels)
   ) +
-  facetted_pos_scales(x = x_axis_scales,
-                      y = rep(list(
-                        scale_y_continuous(trans = trans_reverser("sqrt"),
-                                           breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
-                      ), 6))
+  coord_cartesian(expand = 0) +
+  labs(y = "Depth (m)") +
+  theme(
+    strip.text = element_markdown(),
+    strip.placement = "outside",
+    strip.background.x = element_blank(),
+    axis.title.x = element_blank(),
+    legend.title = element_blank(),
+    panel.spacing.x = unit(6, "mm")
+  ) +
+  scale_y_continuous(trans = trans_reverser("sqrt"), breaks = c(0, 100, 500, seq(1500, 5000, 1000)))
+  
+ggsave(
+  here::here(
+    paste0(
+      "output/supplement/profiles_total_changes_biome.png"
+    )
+  ),
+  width = 8,
+  height = 10,
+  dpi = 600,
+  bg = "white"
+)
 
-
-p_acid_profiles_global + p_acid_profiles_biome +
-  plot_layout(guides = "collect")
-
-# ggsave(
-#   here::here(
-#     paste0(
-#       "output/main/profiles_total_changes_biome.png"
-#     )
-#   ),
-#   width = 10,
-#   height = 8,
-#   dpi = 600,
-#   bg = "white"
-# )
 
 ```
 
