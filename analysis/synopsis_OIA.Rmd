@@ -73,7 +73,7 @@ labels_breaks <- function(i_var) {
     i_breaks <- c(-Inf, seq(0, 3.2, 0.4), Inf)
     i_contour_level <- 1.5
     i_legend_title <-
-      "ΔH<sup>+</sup><br>(nmol kg<sup>-1</sup>)"
+      "Δ[H<sup>+</sup>]<br>(nmol kg<sup>-1</sup>)"
     i_contour_level_abs <- 10
   }
   
@@ -176,7 +176,7 @@ labels_breaks_absolute <- function(i_var) {
     i_breaks <- c(-Inf, seq(5, 21, 2), Inf)
     i_contour_level <- 10
     i_legend_title <-
-      "H<sup>+</sup><br>(nmol kg<sup>-1</sup>)"
+      "[H<sup>+</sup>]<br>(nmol kg<sup>-1</sup>)"
     i_contour_level_abs <- 10
   }
   
@@ -252,7 +252,7 @@ x_axis_labels_stations <-
     "pHstar"  =  "ΔpH<sub>T</sub>*",
     "OmegaAragonitestar" = "ΔΩ<sub>arag</sub>*",
     "SIRstar" = "ΔSIR*",
-    "H_freestar" = "ΔH<sup>+</sup>*<br>(nmol kg<sup>-1</sup>)",
+    "H_freestar" = "Δ[H<sup>+</sup>]*<br>(nmol kg<sup>-1</sup>)",
     "tco2" = "ΔC<sub>ant</sub> or ΔDIC<br>(µmol kg<sup>-1</sup>)",
     "tco2star" = "ΔC<sub>ant</sub> or ΔDIC*<br>(µmol kg<sup>-1</sup>)",
     "PO4" = "ΔPO<sub>4</sub><br>(µmol kg<sup>-1</sup>)",
@@ -269,8 +269,8 @@ x_axis_labels_stations_absolute <-
     "OmegaAragonitestar" = "Ω<sub>arag</sub>*",
     "SIR" = "SIR",
     "SIRstar" = "SIR*",
-    "H_free" = "H<sup>+</sup><br>(nmol kg<sup>-1</sup>)",
-    "H_freestar" = "H<sup>+</sup>*<br>(nmol kg<sup>-1</sup>)",
+    "H_free" = "[H<sup>+</sup>]<br>(nmol kg<sup>-1</sup>)",
+    "H_freestar" = "[H<sup>+</sup>]*<br>(nmol kg<sup>-1</sup>)",
     "temp" = "T (°C)",
     "tco2" = "DIC<br>(µmol kg<sup>-1</sup>)",
     "tco2star" = "DIC*<br>(µmol kg<sup>-1</sup>)",
@@ -312,7 +312,7 @@ labels_breaks_buffer_variables_addition <- function(i_var) {
     i_breaks <- c(-Inf, seq(0, 0.18, 0.03), Inf)
     i_contour_level <- 0.08
     i_legend_title <-
-      "ΔH<sup>+</sup>/ΔDIC<br>(nmol kg<sup>-1</sup> / µmol kg<sup>-1</sup>)"
+      "Δ[H<sup>+</sup>]/ΔDIC<br>(nmol kg<sup>-1</sup> / µmol kg<sup>-1</sup>)"
   }
   
   all_labels_breaks <- lst(i_breaks,
@@ -388,7 +388,7 @@ labels_breaks_buffer_variables_addition_change <- function(i_var) {
     i_breaks <- c(-Inf, seq(0,25,5), Inf)
     i_contour_level <- 10
     i_legend_title <-
-      "Δ<sub>1900-2004</sub><br>ΔH<sup>+</sup>/ΔDIC<br>(%)"
+      "Δ<sub>1900-2004</sub><br>Δ[H<sup>+</sup>]/ΔDIC<br>(%)"
   }
   
   all_labels_breaks <- lst(i_breaks,
@@ -435,7 +435,7 @@ labels_breaks_buffer_variables <- function(i_var) {
     i_breaks <- c(-Inf, seq(0, 3, 0.5), Inf)
     i_contour_level <- 2
     i_legend_title <-
-      "ΔH<sup>+</sup><br>(nmol kg<sup>-1</sup>)"
+      "Δ[H<sup>+</sup>]<br>(nmol kg<sup>-1</sup>)"
   }
   
   all_labels_breaks <- lst(i_breaks,
